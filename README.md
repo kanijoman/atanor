@@ -1,5 +1,16 @@
 # Atanor
 
+# Información del documento
+
+| Campo                    | Valor                |
+| ------------------------ | -------------------- |
+| Proyecto                 | Atanor               |
+| Documento                | README               |
+| Estado del documento     | 🟢 Activo            |
+| Versión del documento    | 0.1                  |
+| Última actualización     | 2026-08-07           |
+| Público objetivo         | Usuarios y desarrolladores |
+
 > **Un asistente inteligente para la preparación de oposiciones.**
 
 Atanor es una plataforma diseñada para ayudar a opositores a estudiar de forma más eficiente mediante la organización del conocimiento, el análisis de fuentes oficiales y la aplicación de inteligencia artificial como herramienta de apoyo al aprendizaje.
