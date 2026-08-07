@@ -1,116 +1,153 @@
 # Architecture
 
-> Decisiones arquitectónicas y principios de diseño que guían la evolución técnica de Atanor.
+# Document Information
 
-# Información del documento
-
-| Campo                 | Valor                  |
-| --------------------- | ---------------------- |
-| Proyecto              | Atanor                 |
-| Documento             | ARCHITECTURE           |
-| Estado del documento  | 🟢 Activo              |
-| Versión del documento | 0.1                    |
-| Última actualización  | 2026-08-07             |
-| Estado de la arquitectura | 🟡 En evolución    |
-
----
-
-# 1. Propósito
-
-Este documento define la arquitectura de Atanor y las decisiones de diseño que condicionan su evolución.
-
-No pretende describir una arquitectura definitiva ni anticipar componentes futuros. Su objetivo es documentar únicamente aquellas decisiones que resultan necesarias para el estado actual del proyecto.
-
-La arquitectura evolucionará de forma iterativa, acompañando al dominio y a las necesidades reales del producto.
+| Field               | Value                       |
+| ------------------- | --------------------------- |
+| Project             | Atanor                      |
+| Document            | ARCHITECTURE                |
+| Status              | 🟢 Active                   |
+| Version             | 0.2                         |
+| Last Updated        | 2026-08-07                  |
+| Audience            | Contributors and Developers |
+| Architecture Status | 🟡 Evolving                 |
 
 ---
 
-# 2. Principios arquitectónicos
+# Purpose
 
-## El dominio dirige la arquitectura
+This document defines the architectural principles that guide the evolution of Atanor.
 
-Las decisiones técnicas estarán subordinadas al modelo del dominio. Ningún framework, librería o tecnología condicionará el diseño del sistema.
+It intentionally avoids describing speculative designs or future components. Instead, it records the architectural decisions that influence the project at its current stage.
 
-## Evolución incremental
-
-Solo se introducirán nuevos componentes cuando exista una necesidad funcional que los justifique.
-
-## Simplicidad
-
-Se priorizará la solución más sencilla que satisfaga los requisitos actuales, evitando sobreingeniería y dependencias innecesarias.
-
-## Bajo acoplamiento
-
-Los distintos módulos del sistema deberán comunicarse mediante interfaces bien definidas, minimizando las dependencias entre ellos.
-
-## Alta cohesión
-
-Cada módulo tendrá una única responsabilidad claramente definida.
-
-## Decisiones reversibles
-
-Siempre que sea posible, las decisiones técnicas deberán ser fáciles de sustituir en el futuro.
+Detailed implementation choices belong to the source code and Architecture Decision Records (ADR).
 
 ---
 
-# 3. Arquitectura actual
+# Architectural Vision
 
-En la versión actual del proyecto únicamente se han establecido las siguientes decisiones estructurales.
+Atanor is designed as a knowledge platform rather than a collection of independent features.
 
-## Organización del repositorio
+The architecture is expected to evolve together with the domain while preserving a stable set of guiding principles.
 
-```text
-atanor/
-
-├── docs/
-│   ├── architecture/
-│   ├── foundation/
-│   ├── roadmap/
-│   └── adr/
-│
-├── src/
-├── tests/
-└── scripts/
-```
-
-Esta estructura podrá evolucionar cuando el crecimiento del proyecto lo justifique.
-
-## Organización del código
-
-Todavía no se ha definido una arquitectura interna para el código fuente.
-
-La organización de `src/` se decidirá cuando aparezcan los primeros componentes funcionales del sistema.
+Business requirements drive architectural decisions—not frameworks, libraries or infrastructure.
 
 ---
 
-# 4. Decisiones pospuestas
+# Architectural Principles
 
-En este momento todavía no se han tomado decisiones sobre los siguientes aspectos:
+## Domain First
 
-- Lenguaje y versión objetivo.
-- Framework de aplicación.
-- Persistencia.
-- Modelo de datos.
-- Infraestructura.
-- Sistema de autenticación.
-- Integración con modelos de lenguaje.
-- Estrategia RAG.
-- Observabilidad.
-- Despliegue.
+The domain model is the primary driver of the architecture.
 
-Estas decisiones se incorporarán únicamente cuando sean necesarias para implementar funcionalidades del producto.
+Technical choices must support the domain rather than shape it.
 
 ---
 
-# 5. Evolución de la arquitectura
+## Incremental Evolution
 
-Las decisiones arquitectónicas relevantes se documentarán mediante ADR (Architecture Decision Records).
+Architecture grows together with the product.
 
-Cada ADR deberá responder, como mínimo, a las siguientes preguntas:
+New components are introduced only when they solve a real business or technical requirement.
 
-- ¿Qué decisión se ha tomado?
-- ¿Qué problema resuelve?
-- ¿Qué alternativas se consideraron?
-- ¿Por qué se eligió esta solución?
+---
 
-Los ADR complementan este documento y permiten comprender la evolución arquitectónica del proyecto sin modificar continuamente sus principios fundamentales.
+## Just Enough Architecture
+
+The project avoids speculative design.
+
+Architectural complexity should appear only when justified by the current stage of development.
+
+---
+
+## Simplicity
+
+Whenever multiple valid solutions exist, prefer the simplest one that satisfies the current requirements.
+
+Avoid unnecessary abstractions and premature optimization.
+
+---
+
+## Low Coupling
+
+System components should communicate through well-defined interfaces.
+
+Implementation details should remain isolated whenever possible.
+
+---
+
+## High Cohesion
+
+Each module should have a single, clearly defined responsibility.
+
+Related functionality should remain together.
+
+---
+
+## Reversible Decisions
+
+Architectural decisions should remain reversible whenever practical.
+
+Replacing a framework or technology should require minimal impact on the rest of the system.
+
+---
+
+# Current Architecture
+
+At the current stage of the project, only the following architectural decisions have been made:
+
+* The repository is organized as a monorepo.
+* Backend and frontend evolve independently.
+* Project documentation is maintained alongside the source code.
+* Architecture evolves incrementally.
+* Infrastructure is introduced only when required.
+* Technology decisions are documented separately.
+* Significant architectural changes are recorded through ADRs.
+
+No internal application architecture has been defined yet.
+
+It will emerge as the first functional components of the system are implemented.
+
+---
+
+# Deferred Decisions
+
+The following architectural decisions have intentionally been deferred until they become necessary:
+
+* Internal application structure.
+* Module boundaries.
+* Persistence architecture.
+* Authentication.
+* AI integration.
+* Retrieval architecture.
+* Deployment model.
+* Scalability strategy.
+* Observability.
+
+Deferring these decisions reduces unnecessary complexity and allows the architecture to remain aligned with the evolving product.
+
+---
+
+# Architecture Decision Records
+
+Significant architectural decisions should be documented through Architecture Decision Records (ADR).
+
+Each ADR should answer, at minimum:
+
+* What decision was made?
+* What problem does it solve?
+* Which alternatives were considered?
+* Why was this solution selected?
+* What are the expected consequences?
+
+ADRs complement this document by preserving the historical context behind architectural evolution without changing its guiding principles.
+
+---
+
+# Architecture Evolution
+
+Architecture is expected to evolve continuously throughout the project's lifetime.
+
+This document should remain concise and stable.
+
+Implementation details belong in the codebase, while significant architectural changes should be reflected through ADRs rather than by continuously rewriting this document.

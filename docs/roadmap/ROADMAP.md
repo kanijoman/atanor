@@ -1,326 +1,187 @@
-# ROADMAP
+# Atanor Roadmap
 
-# Información del documento
+# Document Information
 
-| Campo                 | Valor                                                                                    |
-| --------------------- | ---------------------------------------------------------------------------------------- |
-| Proyecto              | Atanor                                                                                   |
-| Documento             | ROADMAP                                                                                  |
-| Estado del documento  | 🟢 Activo                                                                                |
-| Versión del documento | 0.2                                                                                      |
-| Última actualización  | 2026-08-07                                                                               |
-| Hito activo           | Hito 1 · Foundation                                                                      |
-| Próximo objetivo      | Disponer de una plataforma base completamente operativa para el desarrollo del producto. |
-
----
-
-> **Documento vivo**
->
-> Este documento define la planificación estratégica y el estado de evolución del proyecto Atanor.
-> Debe mantenerse actualizado durante todo el ciclo de vida del proyecto y reflejar fielmente el estado real del desarrollo.
-> El detalle de las tareas se mantiene en el **BACKLOG**, mientras que este documento describe la evolución del producto mediante hitos.
+| Field        | Value                       |
+| ------------ | --------------------------- |
+| Project      | Atanor                      |
+| Document     | ROADMAP                     |
+| Status       | 🟢 Active                   |
+| Version      | 0.2                         |
+| Last Updated | 2026-08-07                  |
+| Audience     | Contributors and Developers |
 
 ---
 
-# Información del proyecto
+# Vision
 
-| Campo                | Valor                                                                  |
-| -------------------- | ---------------------------------------------------------------------- |
-| Proyecto             | Atanor                                                                 |
-| Estado               | 🟢 En desarrollo                                                       |
-| Versión del roadmap  | 0.2                                                                    |
-| Última actualización | 2026-08-07                                                             |
-| Hito activo          | Hito 1 · Foundation                                                    |
-| Próximo objetivo     | Construir la infraestructura técnica sobre la que evolucionará Atanor. |
+Atanor aims to become an AI-powered knowledge platform capable of managing, organizing and retrieving structured knowledge while maintaining complete traceability to authoritative sources.
+
+The initial MVP focuses on the preparation of Spanish General State Administration competitive examinations. However, the long-term vision is to evolve into a general-purpose knowledge platform that can be adapted to different domains requiring reliable knowledge management and AI-assisted learning.
 
 ---
 
-# Visión del MVP
+# Development Strategy
 
-El objetivo del MVP es desarrollar un asistente inteligente para la preparación de oposiciones de la Administración General del Estado.
+Atanor follows an incremental delivery model.
 
-El sistema deberá ser capaz de:
+Infrastructure, frameworks and supporting technologies are introduced only when they solve an existing problem. This **Just Enough Infrastructure** approach minimizes unnecessary complexity, reduces technical debt and allows the architecture to evolve naturally as new requirements emerge.
 
-* Gestionar conocimiento jurídico.
-* Organizar temarios oficiales.
-* Relacionar el contenido con fuentes oficiales.
-* Guiar el proceso de aprendizaje del opositor.
-* Generar contenido de estudio fundamentado.
-
-Todo el desarrollo debe orientarse a este objetivo.
+Every sprint should produce a measurable improvement to the project while keeping the repository simple, maintainable and fully operational.
 
 ---
 
-# Roadmap general
+# Roadmap Principles
 
-| Hito   | Objetivo                      | Prioridad | Estado       | Progreso |
-| ------ | ----------------------------- | --------- | ------------ | -------- |
-| Hito 0 | Fundamentos                   | 🔴 Alta   | ✅ Completado | 100 %    |
-| Hito 1 | Foundation                    | 🔴 Alta   | 🟡 En curso  | 0 %      |
-| Hito 2 | Ingesta documental            | 🔴 Alta   | ⚪ Pendiente  | 0 %      |
-| Hito 3 | Recuperación del conocimiento | 🔴 Alta   | ⚪ Pendiente  | 0 %      |
-| Hito 4 | Asistente jurídico            | 🔴 Alta   | ⚪ Pendiente  | 0 %      |
-| Hito 5 | Plataforma de aprendizaje     | 🔴 Alta   | ⚪ Pendiente  | 0 %      |
-| Hito 6 | Escalabilidad                 | 🟡 Media  | ⚪ Pendiente  | 0 %      |
+Development is guided by the following principles:
 
----
-
-# Estado de ejecución
-
-## Hito activo
-
-**Hito 1 · Foundation**
-
-## Estado
-
-🟡 En curso
-
-## Progreso
-
-**0 %**
+* Deliver working software at every milestone.
+* Introduce infrastructure only when necessary.
+* Prefer small, atomic and traceable changes.
+* Keep the architecture adaptable.
+* Prioritize business capabilities over technology adoption.
+* Continuously reduce technical debt instead of accumulating it.
 
 ---
 
-# Hito 0 · Fundamentos
+# Product Evolution
 
-## Objetivo
+The roadmap is organized around product capabilities rather than specific technologies.
 
-Construir una base conceptual, organizativa y arquitectónica sólida que permita desarrollar Atanor de forma iterativa, manteniendo una visión clara del producto y reduciendo el riesgo de rediseños futuros.
-
----
-
-## Estado
-
-✅ Completado
+Each milestone should deliver a complete and demonstrable improvement to the platform.
 
 ---
 
-## Resultados obtenidos
+# Sprint 1 · Foundation
 
-* Definición de la visión y alcance del producto.
-* Diseño de la arquitectura inicial.
-* Definición del roadmap estratégico.
-* Establecimiento de las convenciones de desarrollo.
-* Creación del README del proyecto.
-* Consolidación de la documentación fundacional.
+## Objective
 
----
+Establish the technical and organizational foundations of the project.
 
-## Entregables
+## Expected Outcome
 
-* Visión del producto.
-* Arquitectura inicial.
-* Roadmap.
-* Convenciones de desarrollo.
-* README.
-* Documentación técnica inicial.
+* Repository structure established.
+* Development conventions defined.
+* Project documentation created.
+* Development workflow agreed.
+* Backend and frontend projects initialized.
+* Architecture prepared for future implementation.
 
 ---
 
-# Hito 1 · Foundation
+# Sprint 2 · First Running System
 
-## Objetivo
+## Objective
 
-Construir la infraestructura técnica mínima que permita desarrollar funcionalidades de forma rápida, segura y mantenible durante el resto del proyecto.
+Deliver the first executable version of Atanor.
 
----
+## Expected Outcome
 
-## Estado
+* Backend application running.
+* Frontend application running.
+* Basic communication between frontend and backend.
+* Health endpoint available.
+* Local development environment operational.
 
-🟡 En curso
-
----
-
-## Progreso
-
-**0 %**
+This milestone establishes the first complete vertical slice of the application.
 
 ---
 
-## Líneas de trabajo
+# Sprint 3 · Knowledge Core
 
-### Infraestructura
+## Objective
 
-* Definir la estructura del repositorio.
-* Configurar el entorno de desarrollo.
-* Configurar Git y la estrategia de ramas.
-* Configurar Docker.
+Implement the core domain model and document management capabilities.
 
-### Backend
+## Expected Outcome
 
-* Inicializar FastAPI.
-* Configurar el sistema de configuración mediante variables de entorno.
-* Implementar el sistema de logging.
-* Crear los endpoints básicos del sistema.
+* Document storage.
+* Document import pipeline.
+* Knowledge organization.
+* Source traceability.
+* Initial persistence layer.
+* First searchable knowledge base.
 
-### Persistencia
-
-* Configurar PostgreSQL.
-* Integrar SQLAlchemy.
-* Configurar Alembic.
-* Generar la primera migración.
-
-### Frontend
-
-* Inicializar React + TypeScript.
-* Configurar Vite.
-* Configurar Tailwind CSS.
-* Crear la primera interfaz del proyecto.
-
-### Calidad
-
-* Configurar Ruff.
-* Configurar MyPy.
-* Configurar Pytest.
-* Configurar ESLint y Prettier.
-* Configurar GitHub Actions.
-
-### Vertical Slice
-
-* Implementar la primera entidad del dominio.
-* Exponer un CRUD básico.
-* Validar el flujo Frontend → Backend → Base de datos.
+At the end of this sprint, Atanor should be capable of managing official documentation as structured knowledge.
 
 ---
 
-## Entregables
+# Sprint 4 · AI Assistant
 
-* Backend operativo.
-* Frontend operativo.
-* Base de datos funcional.
-* Docker Compose.
-* Pipeline de integración continua.
-* Primera entidad persistida.
-* Vertical Slice completamente funcional.
+## Objective
 
----
+Enable AI-assisted interaction with the knowledge base.
 
-## Criterios de aceptación
+## Expected Outcome
 
-El hito se considerará completado cuando:
+* Retrieval-Augmented Generation (RAG).
+* Grounded question answering.
+* Source citation.
+* Context-aware conversations.
+* AI-assisted explanations.
 
-* [ ] El proyecto pueda ejecutarse completamente mediante Docker Compose.
-* [ ] Backend y frontend se comuniquen correctamente.
-* [ ] Exista una primera migración funcional.
-* [ ] La integración continua valide lint, tests y build.
-* [ ] Exista una primera entidad persistida en la base de datos.
-* [ ] La arquitectura esté preparada para comenzar el desarrollo funcional.
+The assistant must always provide verifiable answers grounded in official documentation.
 
 ---
 
-# Próximos hitos
+# Sprint 5 · Learning Platform
 
-## Hito 2 · Ingesta documental
+## Objective
 
-**Objetivo**
+Transform the knowledge base into an active learning environment.
 
-Permitir la incorporación, almacenamiento y procesamiento de documentos jurídicos y temarios oficiales.
+## Expected Outcome
 
----
+* Personalized study sessions.
+* Quiz generation.
+* Progress tracking.
+* Learning analytics.
+* Revision planning.
+* Spaced repetition.
 
-## Hito 3 · Recuperación del conocimiento
-
-**Objetivo**
-
-Implementar mecanismos de búsqueda, indexación y recuperación eficiente de la información.
-
----
-
-## Hito 4 · Asistente jurídico
-
-**Objetivo**
-
-Incorporar un asistente inteligente capaz de responder utilizando el conocimiento almacenado.
+At this stage, Atanor becomes a complete study platform rather than a document repository.
 
 ---
 
-## Hito 5 · Plataforma de aprendizaje
+# Sprint 6 · Ecosystem Expansion
 
-**Objetivo**
+## Objective
 
-Desarrollar las funcionalidades específicas para la preparación de oposiciones: planificación, estudio, evaluación y seguimiento.
+Expand the platform beyond the initial MVP.
 
----
+## Potential Capabilities
 
-## Hito 6 · Escalabilidad
+* Additional examination domains.
+* Plugin architecture.
+* Knowledge graph extensions.
+* Advanced analytics.
+* Collaboration features.
+* External integrations.
 
-**Objetivo**
-
-Preparar Atanor para despliegues en producción, soporte multiusuario y crecimiento del producto.
-
----
-
-# Definition of Done
-
-Todo hito deberá cumplir los siguientes requisitos antes de darse por finalizado.
-
-* [ ] Objetivos del hito completados.
-* [ ] Código implementado.
-* [ ] Tests básicos superados.
-* [ ] Documentación actualizada.
-* [ ] Sin incidencias críticas abiertas.
-* [ ] Integración en la rama principal.
+The exact scope of this sprint will depend on user feedback and the evolution of the MVP.
 
 ---
 
-# Decisiones de arquitectura
+# Long-Term Vision
 
-| Fecha      | Decisión                                                                                 | Motivo                                                                        |
-| ---------- | ---------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------- |
-| 2026-08-06 | Python como lenguaje principal                                                           | Máxima productividad y ecosistema de IA.                                      |
-| 2026-08-06 | Arquitectura orientada al dominio                                                        | El modelo de conocimiento será el núcleo de Atanor.                           |
-| 2026-08-06 | SQLAlchemy como ORM inicial                                                              | Flexibilidad y control sobre el modelo relacional.                            |
-| 2026-08-06 | Desarrollo iterativo por hitos                                                           | Reducir riesgo y validar continuamente la arquitectura.                       |
-| 2026-08-07 | El MVP se centrará exclusivamente en oposiciones de la Administración General del Estado | Mantener un alcance reducido y maximizar la probabilidad de éxito.            |
-| 2026-08-07 | Eliminación de sprints temporales                                                        | Adaptar la planificación a un desarrollo iterativo propio de un side project. |
+Although the first release targets Spanish public administration examinations, the architecture is intentionally domain-independent.
 
----
+Future versions should support any knowledge-intensive domain requiring:
 
-# Decisiones pendientes
+* Structured documentation.
+* Source traceability.
+* AI-assisted retrieval.
+* Knowledge management.
+* Personalized learning.
 
-* [ ] SQLAlchemy vs SQLModel.
-* [ ] SQLite o PostgreSQL durante la beta.
-* [ ] Estrategia de almacenamiento vectorial.
-* [ ] Arquitectura multi-provider para LLM.
-* [ ] Sistema de versionado documental.
-* [ ] Estrategia de actualización automática de normativa.
+The objective is to build a reusable knowledge platform rather than a solution limited to a single use case.
 
 ---
 
-# Riesgos conocidos
+# Living Document
 
-* Evolución del modelo de dominio durante las primeras iteraciones.
-* Cambios en la normativa jurídica.
-* Dependencia de proveedores de modelos LLM.
-* Complejidad creciente del grafo de conocimiento.
+This roadmap defines the strategic direction of the project.
 
----
+Specific implementation details are maintained in the project backlog and may evolve throughout development.
 
-# Métricas del proyecto
-
-| Indicador                | Valor               |
-| ------------------------ | ------------------- |
-| Hitos completados        | 1 / 7               |
-| Hito activo              | Hito 1 · Foundation |
-| Progreso global estimado | 12 %                |
-| Bloqueadores             | Ninguno             |
-
----
-
-# Changelog
-
-## 2026-08-07
-
-* Creación del ROADMAP.md.
-* Definición del Hito 0.
-* Definición del roadmap inicial.
-* Incorporación de métricas de progreso.
-* Registro inicial de decisiones de arquitectura.
-
-## 2026-08-07 (Actualización)
-
-* Finalizado el Hito 0 · Fundamentos.
-* Reorganización del roadmap en torno a hitos de producto.
-* Eliminado el concepto de sprint como unidad temporal.
-* Inicio del Hito 1 · Foundation.
-* Separación conceptual entre ROADMAP y BACKLOG.
+Architectural decisions are documented independently and may change provided they remain aligned with the goals and principles described in this roadmap.

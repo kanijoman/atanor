@@ -1,178 +1,175 @@
-# FOUNDATION
+# Foundations
 
-> *El problema de las oposiciones no es la falta de información. Es la dificultad de transformar esa información en conocimiento aprendido.*
+> *The challenge of public service examinations is not the lack of information. It is the difficulty of transforming that information into lasting knowledge.*
 
----
+# Document Information
 
-# Información del documento
-
-| Campo                    | Valor                      |
-| ------------------------ | -------------------------- |
-| Proyecto                 | Atanor                     |
-| Documento                | FOUNDATIONS                |
-| Estado del documento     | 🟢 Activo                  |
-| Versión del documento    | 0.1                        |
-| Última actualización     | 2026-08-07                 |
-| Alcance                  | Proyecto completo          |
-
-# ¿Qué es este proyecto?
-
-Este proyecto nace con un objetivo muy concreto:
-
-**Construir una plataforma capaz de transformar fuentes de conocimiento autorizadas en un proceso de aprendizaje estructurado, personalizado y medible.**
-
-No pretende ser un repositorio de documentos.
-
-No pretende ser un buscador.
-
-No pretende responder preguntas.
-
-Su propósito es acompañar al usuario durante todo el proceso de preparación hasta que domine el conocimiento exigido por una oposición.
+| Field        | Value                       |
+| ------------ | --------------------------- |
+| Project      | Atanor                      |
+| Document     | FOUNDATIONS                 |
+| Status       | 🟢 Active                   |
+| Version      | 0.2                         |
+| Last Updated | 2026-08-07                  |
+| Audience     | Contributors and Developers |
 
 ---
 
-# El problema
+# Why This Project Exists
 
-Preparar una oposición implica mucho más que estudiar.
+Atanor was created with a clear objective:
 
-El opositor debe interpretar las bases de la convocatoria, identificar qué conocimientos necesita, localizar las fuentes adecuadas, comprobar que están actualizadas, organizar un temario, planificar el estudio, medir su progreso y decidir continuamente qué debe estudiar a continuación.
+**To build a platform capable of transforming authoritative knowledge sources into a structured, personalized and measurable learning experience.**
 
-La mayor parte de ese trabajo no consiste en aprender.
+It is not intended to be a document repository.
 
-Consiste en organizar el aprendizaje.
+It is not intended to be a search engine.
 
-Ese es el problema que este proyecto pretende resolver.
+It is not intended to be a chatbot.
 
----
-
-# Nuestra misión
-
-Transformar conocimiento autorizado en aprendizaje.
-
-El usuario no debería invertir tiempo en organizar su preparación.
-
-Debería dedicar todo su esfuerzo a comprender, practicar y consolidar el conocimiento.
+Its purpose is to guide users throughout their learning journey until they genuinely master the required knowledge.
 
 ---
 
-# Nuestra visión
+# The Problem
 
-Cualquier persona debería poder aportar una convocatoria, un programa oficial o un temario y obtener un itinerario completo de aprendizaje adaptado a sus objetivos.
+Preparing for a competitive public service examination involves much more than studying.
 
-La plataforma debe ser capaz de convertir ese conocimiento en una experiencia de estudio coherente, manteniendo siempre la trazabilidad hacia las fuentes que lo sustentan.
+Candidates must understand the examination requirements, identify the necessary knowledge, locate authoritative sources, verify that they are up to date, organize a syllabus, plan their study, measure their progress and continuously decide what to study next.
 
----
+Most of that effort is not actual learning.
 
-# Qué somos
+It is the organization of learning.
 
-Somos una plataforma de aprendizaje.
-
-Nuestro objetivo no es mostrar información.
-
-Nuestro objetivo es conseguir que el usuario aprenda.
+That is the problem Atanor aims to solve.
 
 ---
 
-# Qué no somos
+# Mission
 
-No somos un chatbot.
+Transform authoritative knowledge into effective learning.
 
-No somos una academia tradicional.
-
-No somos un repositorio documental.
-
-No somos un buscador especializado.
-
-Responder preguntas puede formar parte de la experiencia del usuario, pero nunca constituye el propósito principal de la plataforma.
+Users should spend their time understanding, practicing and consolidating knowledge—not organizing their preparation.
 
 ---
 
-# Nuestros principios
+# Vision
 
-## El conocimiento es el activo principal
+Anyone should be able to provide an official syllabus, regulation, examination notice or collection of authoritative documents and obtain a complete learning journey tailored to their goals.
 
-El valor de la plataforma reside en la forma en que representa, organiza y mantiene el conocimiento.
-
-Los documentos son únicamente una de sus posibles fuentes.
+The platform should transform that knowledge into a coherent study experience while maintaining complete traceability to the sources that support every piece of information.
 
 ---
 
-## El conocimiento debe ser verificable
+# What We Are
 
-Toda unidad de conocimiento debe poder relacionarse con las fuentes autorizadas que la respaldan.
+Atanor is a learning platform.
 
-Las explicaciones pueden evolucionar.
+Its purpose is not to display information.
 
-La trazabilidad nunca.
-
----
-
-## El conocimiento es modular
-
-El conocimiento no debe existir como manuales estáticos.
-
-Debe construirse a partir de unidades independientes, reutilizables y relacionadas entre sí.
-
-Cada itinerario de aprendizaje se compone ensamblando dichas unidades según las necesidades del usuario.
+Its purpose is to help people learn.
 
 ---
 
-## El conocimiento está vivo
+# What We Are Not
 
-El conocimiento evoluciona.
+Atanor is **not**:
 
-Las fuentes se actualizan.
+* a chatbot;
+* a traditional academy;
+* a document repository;
+* a specialized search engine.
 
-Las convocatorias cambian.
-
-La plataforma debe reflejar esa evolución de forma continua.
-
----
-
-## El aprendizaje debe estar guiado
-
-El usuario nunca debería enfrentarse a una página en blanco.
-
-La plataforma debe conocer siempre cuál es el siguiente paso más adecuado para continuar el aprendizaje.
+Answering questions may be part of the user experience, but it is never the primary purpose of the platform.
 
 ---
 
-## Aprender significa demostrar dominio
+# Core Principles
 
-Completar un tema no significa haberlo aprendido.
+## Knowledge Is the Primary Asset
 
-El progreso debe medirse por el grado de dominio alcanzado y no únicamente por el contenido recorrido.
+The value of the platform lies in how knowledge is represented, organized and maintained.
 
----
-
-## El aprendizaje debe adaptarse al usuario
-
-Cada persona dispone de un tiempo distinto, unos conocimientos previos diferentes y un ritmo de aprendizaje propio.
-
-La plataforma debe adaptarse al usuario.
-
-Nunca al contrario.
+Documents are only one possible source of that knowledge.
 
 ---
 
-# Nuestra propuesta de valor
+## Knowledge Must Be Verifiable
 
-Las academias ayudan al opositor proporcionando contenido y una planificación.
+Every unit of knowledge must be traceable to the authoritative sources that support it.
 
-Nuestro objetivo es ofrecer ambas cosas de forma dinámica.
+Explanations may evolve.
 
-El contenido debe mantenerse actualizado.
-
-La planificación debe adaptarse continuamente.
-
-El usuario no debería preocuparse por reorganizar su estudio cuando cambie una convocatoria, una fuente autorizada o su disponibilidad de tiempo.
+Traceability must not.
 
 ---
 
-# Nuestro compromiso
+## Knowledge Is Modular
 
-Toda decisión que se tome durante el desarrollo del proyecto deberá responder afirmativamente a una única pregunta:
+Knowledge should not exist as static manuals.
 
-> **¿Ayuda esta decisión a transformar conocimiento autorizado en un aprendizaje mejor, más sencillo y más eficaz para el usuario?**
+It should be built from independent, reusable and interconnected knowledge units.
 
-Si la respuesta es negativa, esa decisión no forma parte del propósito de este proyecto.
+Every learning journey is assembled dynamically according to the user's objectives.
+
+---
+
+## Knowledge Evolves
+
+Knowledge changes.
+
+Authoritative sources are updated.
+
+Regulations evolve.
+
+The platform must evolve with them.
+
+---
+
+## Learning Must Be Guided
+
+Users should never face an empty page wondering what to study next.
+
+The platform should always know the most appropriate next step.
+
+---
+
+## Learning Means Mastery
+
+Completing a topic does not mean mastering it.
+
+Progress should be measured by demonstrated understanding rather than by the amount of content consumed.
+
+---
+
+## Learning Must Adapt to the User
+
+Every learner has different prior knowledge, available time and learning pace.
+
+The platform adapts to the learner.
+
+Never the other way around.
+
+---
+
+# Value Proposition
+
+Traditional academies provide study material and a predefined plan.
+
+Atanor aims to provide both dynamically.
+
+Knowledge should remain continuously updated.
+
+Study planning should continuously adapt.
+
+Users should never need to reorganize their preparation because an official source changes or their personal circumstances evolve.
+
+---
+
+# Guiding Question
+
+Every architectural, functional or technical decision should answer one fundamental question:
+
+> **Does this decision help transform authoritative knowledge into a better, simpler and more effective learning experience?**
+
+If the answer is no, it does not belong in Atanor.

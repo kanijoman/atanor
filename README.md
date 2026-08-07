@@ -1,116 +1,142 @@
 # Atanor
 
-# Información del documento
+# Document Information
 
-| Campo                    | Valor                |
-| ------------------------ | -------------------- |
-| Proyecto                 | Atanor               |
-| Documento                | README               |
-| Estado del documento     | 🟢 Activo            |
-| Versión del documento    | 0.1                  |
-| Última actualización     | 2026-08-07           |
-| Público objetivo         | Usuarios y desarrolladores |
+| Field        | Value                |
+| ------------ | -------------------- |
+| Project      | Atanor               |
+| Document     | README               |
+| Status       | 🟢 Active            |
+| Version      | 0.2                  |
+| Last Updated | 2026-08-07           |
+| Audience     | Users and Developers |
 
-> **Un asistente inteligente para la preparación de oposiciones.**
+> **An AI-powered knowledge platform for public service exam preparation.**
 
-Atanor es una plataforma diseñada para ayudar a opositores a estudiar de forma más eficiente mediante la organización del conocimiento, el análisis de fuentes oficiales y la aplicación de inteligencia artificial como herramienta de apoyo al aprendizaje.
+Atanor is an open-source platform designed to help candidates prepare for competitive public service examinations through structured knowledge management, official source analysis and artificial intelligence.
 
-El proyecto nace con un objetivo muy concreto: construir un asistente capaz de preparar oposiciones de la Administración General del Estado utilizando exclusivamente información fundamentada y trazable.
-
-Aunque el primer MVP está centrado en oposiciones, la arquitectura está diseñada para evolucionar hacia una plataforma de gestión del conocimiento aplicable a otros ámbitos.
+The first MVP focuses on the Spanish General State Administration examinations, but the architecture is designed to evolve into a general-purpose knowledge management and learning platform.
 
 ---
 
-## Objetivos
+# Goals
 
-El MVP de Atanor debe ser capaz de:
+The first MVP aims to provide the following capabilities:
 
-* Gestionar temarios y documentación oficial.
-* Organizar el conocimiento en una estructura coherente y reutilizable.
-* Relacionar cada contenido con sus fuentes oficiales.
-* Ayudar al opositor durante el proceso de estudio.
-* Generar preguntas, explicaciones y material de aprendizaje fundamentado.
-* Realizar un seguimiento del progreso del estudiante.
-
----
-
-## Principios del proyecto
-
-Atanor se desarrolla siguiendo una serie de principios fundamentales:
-
-* **El conocimiento es el núcleo del sistema.**
-* **La IA es una herramienta, no el producto.**
-* **Toda respuesta debe ser trazable hasta una fuente verificable.**
-* **La arquitectura debe priorizar la mantenibilidad sobre la complejidad.**
-* **El desarrollo será iterativo, incremental y orientado al dominio.**
+* Manage official documentation and study material.
+* Organize knowledge into a coherent and reusable domain model.
+* Preserve complete traceability between generated content and official sources.
+* Assist candidates throughout the learning process.
+* Generate explanations, quizzes and study material grounded in verified information.
+* Track learning progress over time.
 
 ---
 
-## Estado del proyecto
+# Project Principles
 
-Actualmente el proyecto se encuentra en la fase de definición de la arquitectura y del modelo de conocimiento.
+Atanor is developed around a small set of core principles:
 
-El desarrollo activo corresponde al:
-
-> **Hito 0 · Fundamentos**
-
-En esta etapa se está definiendo el dominio que permitirá representar el conocimiento jurídico y académico dentro de Atanor antes de comenzar el desarrollo de funcionalidades.
-
----
-
-## Documentación
-
-La documentación principal del proyecto se encuentra en los siguientes archivos:
-
-| Documento          | Descripción                                                                           |
-| ------------------ | ------------------------------------------------------------------------------------- |
-| **FOUNDATIONS.md** | Visión del proyecto, principios de diseño y decisiones arquitectónicas fundamentales. |
-| **ROADMAP.md**     | Estado del proyecto, planificación, hitos y progreso del desarrollo.                  |
+* **Knowledge is the core of the platform.**
+* **Artificial Intelligence is a tool, not the product itself.**
+* **Every generated answer must be traceable to a verifiable source.**
+* **Maintainability always takes precedence over unnecessary complexity.**
+* **Development is iterative, incremental and domain-driven.**
 
 ---
 
-## Filosofía de desarrollo
+# Development Philosophy
 
-Atanor adopta un enfoque **Domain-Driven Design (DDD) ligero**, donde el modelo de conocimiento constituye el centro de toda la arquitectura.
+Atanor follows a pragmatic and incremental development process.
 
-Antes de implementar nuevas funcionalidades se define el dominio que representan, permitiendo construir una base sólida sobre la que evolucionar sin necesidad de rediseños constantes.
+The project introduces infrastructure only when it solves an existing problem. Technologies, frameworks and project structure are incorporated as they become necessary, avoiding speculative design and unnecessary complexity.
 
-Cada iteración busca entregar un incremento funcional manteniendo una arquitectura limpia, desacoplada y fácilmente extensible.
+This philosophy keeps the repository easy to understand, the Git history meaningful and the architecture adaptable as the project evolves.
+
+Development follows modern software engineering practices, including:
+
+* Clean Code
+* SOLID principles
+* DRY
+* Pragmatic design
+* Test-Driven Development whenever it provides clear value
 
 ---
 
-## Tecnologías previstas
+# Current Status
 
-La implementación inicial utilizará:
+The project is currently completing the **Foundation Sprint**, during which the development environment, project conventions and architectural principles are being established.
 
-* Python
-* SQLAlchemy
-* SQLite (MVP)
+The initial repository structure has been created and the development workflow has been defined before implementing the first application features.
+
+---
+
+# Planned Technology Stack
+
+The initial MVP is expected to be built using:
+
+## Backend
+
+* Python 3.14
+* uv
 * FastAPI
+* SQLAlchemy
 * Pydantic
-* Pytest
 
-La arquitectura permitirá incorporar nuevos proveedores de modelos de lenguaje y migrar la infraestructura cuando el proyecto lo requiera.
+## Frontend
 
----
+* Node.js 24 LTS
+* pnpm
+* React
+* Vite
 
-## Estado actual del desarrollo
+## Persistence
 
-* ✅ Repositorio inicial creado.
-* ✅ Documento fundacional (`FOUNDATIONS.md`).
-* ✅ Roadmap del proyecto (`ROADMAP.md`).
-* 🚧 Diseño del modelo de conocimiento en curso.
+* SQLite (MVP)
+* PostgreSQL (future iterations)
 
----
-
-## Licencia
-
-Pendiente de definir.
+The technology stack may evolve as the project grows while preserving architectural stability.
 
 ---
 
-## Visión
+# Documentation
 
-Atanor no pretende ser un chatbot que responda preguntas.
+The main project documentation can be found under the `docs/` directory.
 
-Pretende convertirse en un sistema capaz de comprender, organizar y relacionar conocimiento para ayudar a las personas a aprender de forma más eficiente, manteniendo siempre el vínculo con las fuentes originales y ofreciendo respuestas fundamentadas y verificables.
+Key documents include:
+
+| Document           | Description                                            |
+| ------------------ | ------------------------------------------------------ |
+| **FOUNDATIONS.md** | Vision, design principles and architectural decisions. |
+| **ROADMAP.md**     | Product roadmap, milestones and long-term planning.    |
+| **BACKLOG.md**     | Current development tasks and implementation progress. |
+| **CONVENTIONS.md** | Development conventions and coding standards.          |
+
+---
+
+# Current Progress
+
+Completed:
+
+* ✅ Initial repository created.
+* ✅ Backend project initialized.
+* ✅ Frontend project initialized.
+* ✅ Development conventions established.
+* ✅ Backlog management rules defined.
+
+In progress:
+
+* 🚧 Sprint 1 · Foundation.
+
+---
+
+# License
+
+License selection is pending.
+
+---
+
+# Vision
+
+Atanor is not intended to become another conversational chatbot.
+
+Its purpose is to become a knowledge platform capable of understanding, organizing and relating information, allowing users to study more effectively while maintaining complete traceability to official sources and providing reliable, verifiable answers.

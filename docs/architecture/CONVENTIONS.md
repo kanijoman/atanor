@@ -1,197 +1,171 @@
-# Conventions
+# Development Conventions
 
-> Convenciones de desarrollo y criterios de calidad aplicables a todo el código de Atanor.
+# Document Information
 
-# Información del documento
-
-| Campo                 | Valor       |
-| --------------------- | ----------- |
-| Proyecto              | Atanor      |
-| Documento             | CONVENTIONS |
-| Estado del documento  | 🟢 Activo   |
-| Versión del documento | 0.2         |
-| Última actualización  | 2026-08-07  |
-
----
-
-# 1. Propósito
-
-Este documento establece las convenciones de desarrollo aplicables al proyecto Atanor.
-
-Su objetivo es garantizar que cualquier contribución mantenga un nivel homogéneo de calidad, facilite el mantenimiento del código y reduzca el coste de incorporación de nuevos colaboradores.
-
-Estas convenciones deberán aplicarse tanto al código desarrollado por personas como al código generado con asistencia de herramientas de Inteligencia Artificial.
+| Field        | Value                       |
+| ------------ | --------------------------- |
+| Project      | Atanor                      |
+| Document     | CONVENTIONS                 |
+| Status       | 🟢 Active                   |
+| Version      | 0.2                         |
+| Last Updated | 2026-08-07                  |
+| Audience     | Contributors and Developers |
 
 ---
 
-# 2. Idioma del proyecto
+# Purpose
 
-El idioma oficial del proyecto es el inglés.
+This document defines the development conventions followed throughout the Atanor project.
 
-Esto incluye:
+Its objective is to ensure consistency, maintainability and high code quality while enabling contributors to work using shared principles and practices.
 
-* Código fuente.
-* Nombres de módulos, clases, funciones y variables.
-* Comentarios.
-* Docstrings.
-* Documentación técnica.
-* Mensajes de error cuando no exista un requisito funcional que indique lo contrario.
-
-El uso de un único idioma facilita la colaboración internacional y evita inconsistencias en el código base.
+Whenever possible, decisions should prioritize simplicity, clarity and long-term maintainability over short-term convenience.
 
 ---
 
-# 3. Principios de desarrollo
+# General Principles
 
-Todo el desarrollo del proyecto deberá guiarse por los siguientes principios:
+Development should always be guided by the following principles:
 
-* **Clean Code**.
-* **SOLID**.
-* **DRY (Don't Repeat Yourself)**.
-* **KISS (Keep It Simple, Stupid)**.
-* **YAGNI (You Aren't Gonna Need It)**.
-* **Pragmatismo sobre dogmatismo**.
+* Keep solutions as simple as possible.
+* Prefer readability over cleverness.
+* Build only what is currently required.
+* Avoid speculative design.
+* Maintain a clean and understandable Git history.
+* Favor consistency over personal preferences.
 
-Los principios anteriores constituyen una guía para la toma de decisiones, no un conjunto de reglas rígidas.
-
-Cuando dos principios entren en conflicto, se priorizará la solución más simple, mantenible y adecuada para resolver el problema del dominio.
-
-Las excepciones deberán estar justificadas técnicamente y, cuando tengan impacto arquitectónico, documentarse mediante un Architecture Decision Record (ADR).
+Whenever multiple valid solutions exist, choose the one that minimizes unnecessary complexity.
 
 ---
 
-# 4. Organización del código
+# Language
 
-* Cada módulo deberá tener una única responsabilidad.
-* Se favorecerá un bajo acoplamiento entre módulos.
-* Las dependencias deberán apuntar hacia el dominio.
-* Se evitarán dependencias innecesarias.
-* La estructura del código deberá poder evolucionar sin grandes refactorizaciones.
+To maximize accessibility and encourage external contributions, the project adopts English as its official language.
 
-La organización concreta del código evolucionará junto con la arquitectura del proyecto.
+The following must be written in English:
 
----
+* Source code.
+* Identifiers.
+* Comments.
+* Documentation.
+* Commit messages.
+* Pull requests.
+* Issues.
 
-# 5. Convenciones de implementación
-
-## Tipado
-
-Todo el código nuevo deberá incorporar anotaciones de tipo siempre que resulte razonable.
-
-El tipado forma parte de la documentación del código y contribuye a reducir errores durante el desarrollo.
-
-## Legibilidad
-
-La claridad tendrá prioridad sobre la concisión.
-
-Un código fácil de leer y comprender será preferible a una solución más compacta pero menos expresiva.
-
-## Comentarios
-
-Los comentarios deberán explicar el **por qué**, no el **qué**.
-
-Siempre que sea posible, la intención del código deberá expresarse mediante nombres claros y una estructura sencilla.
-
-## Reutilización
-
-Antes de introducir una nueva abstracción deberá evaluarse si realmente aporta valor al dominio o si añade complejidad innecesaria.
+Domain content (laws, regulations, examination material and official documents) naturally remains in its original language.
 
 ---
 
-# 6. Flujo de trabajo
+# Development Philosophy
 
-El desarrollo de Atanor se organiza en torno al **ROADMAP** y al **BACKLOG**.
+Atanor follows an incremental development model.
 
-El ROADMAP define la evolución estratégica del producto, mientras que el BACKLOG recoge el trabajo pendiente y constituye la referencia operativa del proyecto.
+Infrastructure, frameworks and supporting technologies are introduced only when they solve an existing problem.
 
-## Desarrollo orientado a tareas
+This **Just Enough Infrastructure** philosophy prevents unnecessary complexity, keeps the repository lightweight and allows the architecture to evolve naturally.
 
-Cada cambio deberá estar asociado a una única tarea identificada mediante un código del tipo:
-
-* AT-001
-* AT-002
-* AT-003
-* ...
-
-Siempre que sea posible, una tarea deberá representar una unidad de trabajo autocontenida.
-
-## Granularidad
-
-Las tareas deberán ser pequeñas, independientes y aportar una mejora tangible al proyecto.
-
-Si durante su implementación una tarea crece excesivamente, deberá dividirse en nuevas tareas del BACKLOG en lugar de prolongar indefinidamente su alcance.
-
-## Commits
-
-Como norma general:
-
-> **Una tarea equivale a un commit (o a una pequeña serie de commits inseparables).**
-
-Cada commit deberá implementar una única responsabilidad claramente identificable.
-
-Se evitarán commits que mezclen cambios no relacionados.
-
-## Push
-
-Cada push deberá dejar el repositorio en un estado consistente.
-
-Antes de realizar un push deberán cumplirse, como mínimo, los siguientes requisitos:
-
-* La tarea implementada compila correctamente.
-* Las pruebas existentes continúan pasando.
-* No se introducen errores conocidos.
-* La documentación afectada ha sido actualizada.
-
-## Finalización de tareas
-
-Una tarea únicamente podrá considerarse completada cuando:
-
-* La implementación haya finalizado.
-* Se hayan realizado las pruebas necesarias.
-* La documentación correspondiente esté actualizada.
-* El BACKLOG refleje su estado como **Completada**.
-
-No se iniciará una nueva tarea mientras la anterior permanezca parcialmente implementada, salvo que exista un bloqueo técnico debidamente identificado.
-
-## Conversaciones de desarrollo
-
-Cada sesión de trabajo deberá centrarse en una única tarea del BACKLOG.
-
-El objetivo es mantener el contexto reducido, facilitar la trazabilidad y asegurar que cada sesión produce un avance tangible en el proyecto.
+Every task should leave the project objectively better than before.
 
 ---
 
-# 7. Testing
+# Software Design
 
-El desarrollo seguirá preferentemente un enfoque **Test-Driven Development (TDD)** siempre que resulte adecuado para la naturaleza de la tarea.
+The project follows widely accepted software engineering practices.
 
-El flujo recomendado será:
+Whenever applicable:
 
-1. Definir el comportamiento esperado.
-2. Diseñar las pruebas.
-3. Implementar una prueba que falle.
-4. Desarrollar la funcionalidad mínima necesaria.
-5. Refactorizar manteniendo todas las pruebas en verde.
+* Clean Code
+* SOLID principles
+* DRY
+* Separation of Concerns
+* High cohesion
+* Low coupling
 
-## Estrategia de pruebas
-
-El objetivo principal no será maximizar el porcentaje de cobertura, sino maximizar la confianza en el comportamiento del sistema.
-
-Se priorizarán:
-
-* Smoke tests.
-* Tests funcionales.
-* Tests de integración.
-* Tests End-to-End.
-
-Las pruebas unitarias deberán centrarse en validar la lógica de negocio y evitar comprobar comportamientos triviales, implementaciones internas o funcionalidades ya garantizadas por librerías de terceros.
+Design decisions should always favor maintainability over premature optimization.
 
 ---
 
-# 8. Evolución
+# Pragmatism
 
-Estas convenciones evolucionarán junto con el proyecto.
+Engineering decisions should be pragmatic.
 
-Toda modificación deberá perseguir una mejora objetiva de la mantenibilidad, la calidad del software o la experiencia de desarrollo.
+Theoretical purity should never take precedence over practical value.
 
-Las convenciones deberán revisarse cuando la evolución del proyecto demuestre que una decisión previa ha dejado de aportar valor.
+When a simpler solution adequately solves the problem, it should be preferred over a more sophisticated alternative.
+
+---
+
+# Test-Driven Development
+
+Test-Driven Development is encouraged whenever it provides clear value.
+
+The preferred workflow is:
+
+1. Understand the requirement.
+2. Design the behavior.
+3. Write the tests.
+4. Implement the solution.
+5. Refactor while preserving correctness.
+
+TDD is considered a development technique rather than a mandatory rule.
+
+---
+
+# Git Workflow
+
+Each commit should represent a single logical change.
+
+Commits should:
+
+* Be atomic.
+* Be self-contained.
+* Compile successfully.
+* Leave the project in a consistent state.
+
+Large changes should be split into multiple commits whenever practical.
+
+---
+
+# Backlog
+
+The backlog defines the implementation plan, not the technical specification.
+
+Implementation details belong in the corresponding commits.
+
+Tasks should remain focused on a single responsibility and should not expand their scope during implementation.
+
+---
+
+# Dependencies
+
+New dependencies should be introduced only when they provide clear and immediate value.
+
+Before adding a dependency, contributors should evaluate:
+
+* Whether the functionality can reasonably be implemented without it.
+* Long-term maintenance cost.
+* Community adoption.
+* Documentation quality.
+* Compatibility with the existing architecture.
+
+Avoid introducing libraries solely for convenience.
+
+---
+
+# Documentation
+
+Documentation evolves together with the project.
+
+Documentation should describe implemented decisions rather than speculative future designs.
+
+Whenever code changes affect documented behavior or architecture, the corresponding documentation should be updated within the same change whenever possible.
+
+---
+
+# Continuous Improvement
+
+Conventions are expected to evolve.
+
+When better practices are identified, they should be discussed and incorporated while preserving consistency across the project.
+
+The objective is continuous improvement rather than rigid adherence to historical decisions.

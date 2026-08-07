@@ -1,228 +1,149 @@
-# BACKLOG
+# Backlog
 
-# Información del documento
+# Document Information
 
-| Campo                | Valor               |
-| -------------------- | ------------------- |
-| Proyecto             | Atanor              |
-| Documento            | BACKLOG             |
-| Estado del documento | 🟢 Activo           |
-| Versión              | 0.1                 |
-| Última actualización | 2026-08-07          |
-| Hito activo          | Hito 1 · Foundation |
-
----
-
-> **Documento vivo**
->
-> Este documento recoge el trabajo pendiente del proyecto Atanor.
->
-> Las tareas se organizan por hitos y épicas, siguiendo el roadmap del proyecto.
-> Únicamente el hito activo se detalla a nivel de tareas. Los hitos futuros se refinan conforme pasan a estar activos.
+| Field        | Value                       |
+| ------------ | --------------------------- |
+| Project      | Atanor                      |
+| Document     | BACKLOG                     |
+| Status       | 🟢 Active                   |
+| Version      | 0.2                         |
+| Last Updated | 2026-08-07                  |
+| Audience     | Contributors and Developers |
 
 ---
 
-# Estado del backlog
+# Purpose
 
-| Estado      | Cantidad |
-| ----------- | -------: |
-| Pendientes  |       19 |
-| En progreso |        0 |
-| Completadas |        3 |
-| Canceladas  |        2 |
-| Bloqueadas  |        0 |
+This backlog defines the implementation plan for Atanor.
+
+It represents the current development roadmap and tracks the progress of implementation tasks.
+
+The backlog is a planning tool rather than a technical specification. Technical implementation details belong in the corresponding commits and Architecture Decision Records (ADRs).
 
 ---
 
-# Convenciones
+# Backlog Status
 
-# Gestión del backlog
+| Metric      | Value |
+| ----------- | ----: |
+| Total Tasks |    23 |
+| Pending     |    18 |
+| In Progress |     0 |
+| Completed   |     3 |
+| Cancelled   |     2 |
+| Blocked     |     0 |
 
-El backlog es una herramienta de planificación viva que refleja el estado y la dirección del proyecto, pero no constituye una especificación técnica detallada.
-
-## Principios
-
-- Los identificadores de las tareas son únicos e inmutables. Nunca se renumeran.
-- Una vez que una tarea pasa a estado **En progreso**, su definición se considera congelada. Los detalles de implementación se documentan mediante los commits asociados.
-- Si durante la implementación se detecta trabajo adicional, este deberá planificarse como una nueva tarea, evitando ampliar el alcance de la tarea en curso.
-- Una tarea puede cancelarse si deja de aportar valor al proyecto o si se considera prematura. En ese caso, no se reutilizará su identificador.
-- Si en el futuro el trabajo vuelve a ser necesario, se creará una nueva tarea con un nuevo identificador.
-- El historial de Git constituye el registro técnico del proyecto; el backlog refleja únicamente la planificación y el estado de las tareas.
-
-## Identificador
-
-Todas las tareas se identifican mediante un código único.
-
-```
-AT-001
-AT-002
-AT-003
-...
-```
+**Current Sprint:** Sprint 1 · Foundation
 
 ---
 
-## Estados
+# Task Status
 
-* ⬜ Pendiente
-* 🟡 En progreso
-* ✅ Completada
-* ❌ Cancelada
-* ⛔ Bloqueada
-
----
-
-## Prioridades
-
-* 🔴 Alta
-* 🟠 Media
-* 🟡 Baja
+* ⬜ Pending
+* 🟡 In Progress
+* ✅ Completed
+* ❌ Cancelled
+* ⛔ Blocked
 
 ---
 
-# Hito 1 · Foundation
+# Priority
 
-**Objetivo**
-
-Disponer de una plataforma base completamente operativa sobre la que desarrollar el resto del producto.
-
----
-
-## Épica A · Infraestructura
-
-| ID     | Tarea                                       | Prioridad | Estado |
-| ------ | ------------------------------------------- | --------- | ------ |
-| AT-001 | Crear la estructura inicial del repositorio | 🔴 Alta   | ✅ |
-| AT-002 | Inicializar el repositorio backend          | 🔴 Alta   | ✅      |
-| AT-003 | Inicializar el repositorio frontend         | 🔴 Alta   | ✅      |
-| AT-004 | Configurar Docker Compose inicial           | 🔴 Alta   | ❌      |
-| AT-005 | Configurar variables de entorno             | 🔴 Alta   | ❌      |
+* 🔴 High
+* 🟡 Medium
+* 🟢 Low
 
 ---
 
-## Épica B · Backend
+# Backlog Governance
 
-| ID     | Tarea                               | Prioridad | Estado |
-| ------ | ----------------------------------- | --------- | ------ |
-| AT-010 | Inicializar proyecto FastAPI        | 🔴 Alta   | ⬜      |
-| AT-011 | Configurar sistema de configuración | 🔴 Alta   | ⬜      |
-| AT-012 | Implementar logging                 | 🟠 Media  | ⬜      |
-| AT-013 | Implementar endpoint `/health`      | 🔴 Alta   | ⬜      |
-| AT-014 | Implementar endpoint `/version`     | 🟠 Media  | ⬜      |
+The backlog defines the implementation plan of the project, not its technical specification.
 
----
+## Principles
 
-## Épica C · Persistencia
-
-| ID     | Tarea                                      | Prioridad | Estado |
-| ------ | ------------------------------------------ | --------- | ------ |
-| AT-020 | Configurar PostgreSQL                      | 🔴 Alta   | ⬜      |
-| AT-021 | Integrar SQLAlchemy                        | 🔴 Alta   | ⬜      |
-| AT-022 | Configurar Alembic                         | 🔴 Alta   | ⬜      |
-| AT-023 | Crear la primera migración                 | 🔴 Alta   | ⬜      |
-| AT-024 | Implementar la primera entidad del dominio | 🔴 Alta   | ⬜      |
+* Task identifiers are unique and immutable once work has started.
+* Once a task enters the **In Progress** state, its definition is considered frozen.
+* Implementation details belong in commits, not in the backlog.
+* Additional work discovered during implementation must be planned as a new task.
+* Tasks may be cancelled if they no longer provide value or are considered premature.
+* Cancelled task identifiers are never reused.
+* If the work becomes necessary again, a new task must be created with a new identifier.
+* Git history is the project's technical record; the backlog reflects planning and execution status.
 
 ---
 
-## Épica D · Frontend
+# Sprint 1 · Foundation
 
-| ID     | Tarea                                   | Prioridad | Estado |
-| ------ | --------------------------------------- | --------- | ------ |
-| AT-030 | Inicializar proyecto React + TypeScript | 🔴 Alta   | ⬜      |
-| AT-031 | Configurar Tailwind CSS                 | 🟠 Media  | ⬜      |
-| AT-032 | Crear la página principal               | 🔴 Alta   | ⬜      |
-| AT-033 | Configurar cliente HTTP                 | 🟠 Media  | ⬜      |
+## Epic A · Infrastructure
 
----
-
-## Épica E · Calidad
-
-| ID     | Tarea                        | Prioridad | Estado |
-| ------ | ---------------------------- | --------- | ------ |
-| AT-040 | Configurar Ruff              | 🔴 Alta   | ⬜      |
-| AT-041 | Configurar Pytest            | 🔴 Alta   | ⬜      |
-| AT-042 | Configurar ESLint y Prettier | 🟠 Media  | ⬜      |
-| AT-043 | Configurar GitHub Actions    | 🔴 Alta   | ⬜      |
+| ID     | Task                                | Priority | Status |
+| ------ | ----------------------------------- | :------: | :----: |
+| AT-001 | Create initial repository structure |    🔴    |    ✅   |
+| AT-002 | Initialize backend project          |    🔴    |    ✅   |
+| AT-003 | Initialize frontend project         |    🔴    |    ✅   |
+| AT-004 | Configure initial Docker Compose    |    🔴    |    ❌   |
+| AT-005 | Configure environment variables     |    🔴    |    ❌   |
 
 ---
 
-## Épica F · Vertical Slice
+## Epic B · Backend
 
-| ID     | Tarea                                | Prioridad | Estado |
-| ------ | ------------------------------------ | --------- | ------ |
-| AT-050 | Diseñar la entidad Documento         | 🔴 Alta   | ⬜      |
-| AT-051 | Implementar CRUD de Documento        | 🔴 Alta   | ⬜      |
-| AT-052 | Persistir Documento en base de datos | 🔴 Alta   | ⬜      |
-| AT-053 | Exponer la API de Documento          | 🔴 Alta   | ⬜      |
-| AT-054 | Integrar Frontend ↔ Backend          | 🔴 Alta   | ⬜      |
-| AT-055 | Validar el flujo end-to-end          | 🔴 Alta   | ⬜      |
+| ID     | Task                           | Priority | Status |
+| ------ | ------------------------------ | :------: | :----: |
+| AT-006 | Initialize FastAPI application |    🔴    |    ⬜   |
+| AT-007 | Implement configuration system |    🔴    |    ⬜   |
+| AT-008 | Configure logging              |    🟡    |    ⬜   |
+| AT-009 | Implement health endpoint      |    🟡    |    ⬜   |
 
 ---
 
-# Hito 2 · Ingesta documental
+## Epic C · Persistence
 
-## Épicas previstas
-
-* Carga de documentos.
-* Extracción de texto.
-* Normalización documental.
-* Persistencia documental.
-
----
-
-# Hito 3 · Recuperación del conocimiento
-
-## Épicas previstas
-
-* Indexación.
-* Búsqueda.
-* Recuperación semántica.
-* Ranking de resultados.
+| ID     | Task                        | Priority | Status |
+| ------ | --------------------------- | :------: | :----: |
+| AT-010 | Configure persistence layer |    🔴    |    ⬜   |
+| AT-011 | Define initial domain model |    🔴    |    ⬜   |
+| AT-012 | Configure migrations        |    🟡    |    ⬜   |
 
 ---
 
-# Hito 4 · Asistente jurídico
+## Epic D · Frontend
 
-## Épicas previstas
-
-* Integración de LLM.
-* Arquitectura RAG.
-* Gestión de citas y referencias.
-* Conversación contextual.
-
----
-
-# Hito 5 · Plataforma de aprendizaje
-
-## Épicas previstas
-
-* Gestión de temarios.
-* Planificador de estudio.
-* Generación de tests.
-* Seguimiento del progreso.
-* Repaso espaciado.
+| ID     | Task                         | Priority | Status |
+| ------ | ---------------------------- | :------: | :----: |
+| AT-013 | Initialize React application |    🔴    |    ⬜   |
+| AT-014 | Configure routing            |    🟡    |    ⬜   |
+| AT-015 | Create application layout    |    🟡    |    ⬜   |
 
 ---
 
-# Hito 6 · Escalabilidad
+## Epic E · Quality
 
-## Épicas previstas
-
-* Autenticación.
-* Gestión de usuarios.
-* Autorización y permisos.
-* Monitorización.
-* Despliegue en producción.
+| ID     | Task                        | Priority | Status |
+| ------ | --------------------------- | :------: | :----: |
+| AT-016 | Configure Ruff              |    🟡    |    ⬜   |
+| AT-017 | Configure Pyright           |    🟡    |    ⬜   |
+| AT-018 | Configure pre-commit hooks  |    🟡    |    ⬜   |
+| AT-019 | Configure testing framework |    🟡    |    ⬜   |
 
 ---
 
-# Icebox
+## Epic F · First Running System
 
-Ideas que no forman parte del MVP pero que pueden aportar valor en futuras iteraciones.
+| ID     | Task                                   | Priority | Status |
+| ------ | -------------------------------------- | :------: | :----: |
+| AT-020 | Connect frontend and backend           |    🔴    |    ⬜   |
+| AT-021 | Implement API client                   |    🟡    |    ⬜   |
+| AT-022 | Display backend status in the frontend |    🟡    |    ⬜   |
+| AT-023 | Verify end-to-end execution            |    🔴    |    ⬜   |
 
-* Visualización del grafo de conocimiento.
-* Aplicación móvil.
-* Importación automática desde el BOE.
-* Sincronización entre dispositivos.
-* API pública.
-* Soporte multiidioma.
+---
+
+# Living Document
+
+This backlog evolves together with the project.
+
+Tasks may be added, cancelled or reprioritized as development progresses, provided such changes remain aligned with the project's roadmap and guiding principles.
+
+The objective is to maintain a backlog that is concise, accurate and focused on delivering incremental value.

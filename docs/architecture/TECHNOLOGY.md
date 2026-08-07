@@ -1,102 +1,153 @@
-# Technology
+# Technology Decisions
 
-> Decisiones tecnológicas adoptadas para el desarrollo de Atanor.
+# Document Information
 
-# Información del documento
-
-| Campo                    | Valor                  |
-| ------------------------ | ---------------------- |
-| Proyecto                 | Atanor                 |
-| Documento                | TECHNOLOGY             |
-| Estado del documento     | 🟢 Activo              |
-| Versión del documento    | 0.1                    |
-| Última actualización     | 2026-08-07             |
-
----
-
-# 1. Propósito
-
-Este documento recoge las decisiones tecnológicas adoptadas para el desarrollo de Atanor.
-
-Su objetivo no es listar todas las tecnologías que podrían utilizarse en el futuro, sino documentar únicamente aquellas decisiones que condicionan el desarrollo actual del proyecto.
-
-Las decisiones tecnológicas se revisarán de forma iterativa conforme evolucionen los requisitos del producto y quedarán reflejadas tanto en este documento como, cuando sea necesario, en los correspondientes Architecture Decision Records (ADR).
+| Field        | Value                       |
+| ------------ | --------------------------- |
+| Project      | Atanor                      |
+| Document     | TECHNOLOGY                  |
+| Status       | 🟢 Active                   |
+| Version      | 0.2                         |
+| Last Updated | 2026-08-07                  |
+| Audience     | Contributors and Developers |
 
 ---
 
-# 2. Tecnologías adoptadas
+# Purpose
 
-## Lenguaje de programación
+This document records the technology decisions currently adopted by the Atanor project.
 
-### Python 3.13
+Its purpose is **not** to describe every technology that may eventually be used, but only those that have been formally adopted and currently influence development.
 
-**Estado:** ✅ Adoptado
+Technology decisions evolve together with the project and should remain aligned with the project's architecture, roadmap and development conventions.
 
-**Justificación**
-
-Python ofrece el ecosistema más maduro para el desarrollo de aplicaciones basadas en Inteligencia Artificial y Procesamiento del Lenguaje Natural, principales pilares tecnológicos de Atanor.
-
-La elección de la versión 3.13 responde al objetivo de construir el proyecto sobre una versión estable y moderna del lenguaje, aprovechando las mejoras de rendimiento, tipado y mantenimiento del ecosistema Python.
+When a technology decision requires additional context or long-term justification, it should be documented through an Architecture Decision Record (ADR).
 
 ---
 
-## Gestión del proyecto
+# Technology Selection Principles
 
-### pyproject.toml
+Technology choices are guided by the following principles:
 
-**Estado:** ✅ Adoptado
+* Solve existing problems, not hypothetical ones.
+* Prefer mature and well-supported ecosystems.
+* Minimize long-term maintenance cost.
+* Follow industry standards whenever practical.
+* Avoid unnecessary dependencies.
+* Introduce infrastructure only when it provides immediate value.
 
-**Justificación**
-
-Toda la configuración del proyecto se centralizará en el archivo `pyproject.toml`, siguiendo el estándar actual del ecosistema Python.
-
-Esto permite mantener una única fuente de configuración para herramientas, dependencias y metadatos del proyecto.
+Technology should always support the product, never dictate its architecture.
 
 ---
 
-## Gestión de dependencias
+# Adopted Technologies
+
+## Backend
+
+### Python 3.14
+
+**Status:** ✅ Adopted
+
+Python is the primary programming language of the project due to its mature ecosystem for Artificial Intelligence, Natural Language Processing and modern backend development.
+
+The project targets Python 3.14 to benefit from the latest stable language improvements while avoiding unnecessary legacy compatibility.
+
+---
 
 ### uv
 
-**Estado:** ✅ Adoptado
+**Status:** ✅ Adopted
 
-**Justificación**
+`uv` is used for Python environment and dependency management.
 
-Se utilizará **uv** como gestor de entornos virtuales y dependencias.
+Reasons for adoption:
 
-Su elección responde a los siguientes criterios:
-
-- Alto rendimiento.
-- Compatibilidad con el estándar `pyproject.toml`.
-- Simplicidad de uso.
-- Bajo coste de mantenimiento.
-- Amplia compatibilidad con el ecosistema Python.
+* Excellent performance.
+* Native support for the modern Python packaging ecosystem.
+* Full compatibility with `pyproject.toml`.
+* Minimal configuration.
+* Low maintenance overhead.
 
 ---
 
-# 3. Decisiones pendientes
+### pyproject.toml
 
-En el momento de redactar este documento todavía no se han tomado decisiones sobre:
+**Status:** ✅ Adopted
 
-- Framework de aplicación.
-- Persistencia de datos.
-- Sistema de migraciones.
-- Framework de validación.
-- Framework para APIs.
-- Integración con modelos de lenguaje.
-- Estrategia RAG.
-- Sistema de autenticación.
-- Contenedorización.
-- Integración continua.
-- Observabilidad.
-- Despliegue.
+The Python project is configured through `pyproject.toml` following PEP 621.
 
-Estas decisiones se incorporarán cuando resulten necesarias para implementar nuevas funcionalidades del producto.
+Project metadata, dependencies and tool configuration are centralized in a single standard file.
 
 ---
 
-# 4. Evolución
+## Frontend
 
-Este documento evolucionará junto con el proyecto.
+### Node.js 24 LTS
 
-Solo se añadirán nuevas tecnologías cuando exista una decisión firme sobre su adopción. Las tecnologías descartadas o sustituidas deberán quedar reflejadas mediante un Architecture Decision Record (ADR) para preservar el contexto histórico de las decisiones.
+**Status:** ✅ Adopted
+
+Node.js 24 LTS is the reference runtime for frontend development.
+
+Choosing the current LTS release provides long-term stability while remaining aligned with the modern JavaScript ecosystem.
+
+---
+
+### pnpm
+
+**Status:** ✅ Adopted
+
+`pnpm` is the project's package manager.
+
+Reasons for adoption:
+
+* Fast installation.
+* Efficient disk usage.
+* Excellent support for monorepositories.
+* Wide adoption within the modern frontend ecosystem.
+
+---
+
+# Technologies Deferred
+
+Some technologies are expected to become part of the project but have **not yet been adopted**.
+
+They will only be incorporated when they solve an actual development need.
+
+Examples include:
+
+* FastAPI
+* SQLAlchemy
+* Pydantic
+* React
+* Vite
+* PostgreSQL
+* Docker
+* Authentication
+* CI/CD
+* Observability
+
+Listing them here does **not** imply commitment to their adoption.
+
+---
+
+# Technology Evolution
+
+Technology decisions are expected to evolve.
+
+Whenever a new technology is adopted:
+
+* the decision should be justified;
+* this document should be updated;
+* any significant architectural impact should be recorded through an ADR.
+
+Technologies that are replaced or discarded should remain traceable through the project's architectural documentation.
+
+---
+
+# Guiding Principle
+
+Atanor follows a **Just Enough Technology** philosophy.
+
+A technology is adopted only when it provides immediate value to the current stage of development.
+
+This approach keeps the project simple, maintainable and adaptable while minimizing unnecessary technical debt.
