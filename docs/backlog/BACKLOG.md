@@ -29,7 +29,7 @@
 | Pendientes  |       19 |
 | En progreso |        0 |
 | Completadas |        3 |
-| Canceladas  |        1 |
+| Canceladas  |        2 |
 | Bloqueadas  |        0 |
 
 ---
@@ -96,7 +96,7 @@ Disponer de una plataforma base completamente operativa sobre la que desarrollar
 | AT-002 | Inicializar el repositorio backend          | 🔴 Alta   | ✅      |
 | AT-003 | Inicializar el repositorio frontend         | 🔴 Alta   | ✅      |
 | AT-004 | Configurar Docker Compose inicial           | 🔴 Alta   | ❌      |
-| AT-005 | Configurar variables de entorno             | 🔴 Alta   | ⬜      |
+| AT-005 | Configurar variables de entorno             | 🔴 Alta   | ❌      |
 
 ---
 
