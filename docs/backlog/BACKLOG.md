@@ -26,9 +26,9 @@
 
 | Estado      | Cantidad |
 | ----------- | -------: |
-| Pendientes  |       23 |
+| Pendientes  |       22 |
 | En progreso |        0 |
-| Completadas |        0 |
+| Completadas |        1 |
 | Bloqueadas  |        0 |
 
 ---
@@ -77,7 +77,7 @@ Disponer de una plataforma base completamente operativa sobre la que desarrollar
 
 | ID     | Tarea                                       | Prioridad | Estado |
 | ------ | ------------------------------------------- | --------- | ------ |
-| AT-001 | Crear la estructura inicial del repositorio | 🔴 Alta   | ⬜      |
+| AT-001 | Crear la estructura inicial del repositorio | 🔴 Alta   | ✅ |
 | AT-002 | Inicializar el repositorio backend          | 🔴 Alta   | ⬜      |
 | AT-003 | Inicializar el repositorio frontend         | 🔴 Alta   | ⬜      |
 | AT-004 | Configurar Docker Compose inicial           | 🔴 Alta   | ⬜      |
