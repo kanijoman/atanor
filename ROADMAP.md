@@ -1,5 +1,18 @@
 # ROADMAP
 
+# Información del documento
+
+| Campo                    | Valor                                                       |
+| ------------------------ | ----------------------------------------------------------- |
+| Proyecto                 | Atanor                                                      |
+| Documento                | ROADMAP                                                     |
+| Estado del documento     | 🟢 Activo                                                   |
+| Versión del documento    | 0.1                                                         |
+| Última actualización     | 2026-08-07                                                  |
+| Sprint activo            | Sprint 0.1 – Modelo de Conocimiento                         |
+| Próximo objetivo         | Definir el modelo conceptual del dominio                    |
+
+---
 > **Documento vivo**
 >
 > Este documento define la planificación y el estado de ejecución del proyecto Atanor.
