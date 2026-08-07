@@ -26,14 +26,28 @@
 
 | Estado      | Cantidad |
 | ----------- | -------: |
-| Pendientes  |       20 |
+| Pendientes  |       19 |
 | En progreso |        0 |
 | Completadas |        3 |
+| Canceladas  |        1 |
 | Bloqueadas  |        0 |
 
 ---
 
 # Convenciones
+
+# Gestión del backlog
+
+El backlog es una herramienta de planificación viva que refleja el estado y la dirección del proyecto, pero no constituye una especificación técnica detallada.
+
+## Principios
+
+- Los identificadores de las tareas son únicos e inmutables. Nunca se renumeran.
+- Una vez que una tarea pasa a estado **En progreso**, su definición se considera congelada. Los detalles de implementación se documentan mediante los commits asociados.
+- Si durante la implementación se detecta trabajo adicional, este deberá planificarse como una nueva tarea, evitando ampliar el alcance de la tarea en curso.
+- Una tarea puede cancelarse si deja de aportar valor al proyecto o si se considera prematura. En ese caso, no se reutilizará su identificador.
+- Si en el futuro el trabajo vuelve a ser necesario, se creará una nueva tarea con un nuevo identificador.
+- El historial de Git constituye el registro técnico del proyecto; el backlog refleja únicamente la planificación y el estado de las tareas.
 
 ## Identificador
 
@@ -53,6 +67,7 @@ AT-003
 * ⬜ Pendiente
 * 🟡 En progreso
 * ✅ Completada
+* ❌ Cancelada
 * ⛔ Bloqueada
 
 ---
@@ -80,7 +95,7 @@ Disponer de una plataforma base completamente operativa sobre la que desarrollar
 | AT-001 | Crear la estructura inicial del repositorio | 🔴 Alta   | ✅ |
 | AT-002 | Inicializar el repositorio backend          | 🔴 Alta   | ✅      |
 | AT-003 | Inicializar el repositorio frontend         | 🔴 Alta   | ✅      |
-| AT-004 | Configurar Docker Compose inicial           | 🔴 Alta   | ⬜      |
+| AT-004 | Configurar Docker Compose inicial           | 🔴 Alta   | ❌      |
 | AT-005 | Configurar variables de entorno             | 🔴 Alta   | ⬜      |
 
 ---
