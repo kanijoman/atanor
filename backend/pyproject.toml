@@ -1,0 +1,14 @@
+[project]
+name = "atanor-backend"
+version = "0.1.0"
+description = "Backend for the Atanor platform."
+readme = "../README.md"
+requires-python = ">=3.14"
+dependencies = []
+
+[dependency-groups]
+dev = []
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
