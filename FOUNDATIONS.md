@@ -4,6 +4,17 @@
 
 ---
 
+# Información del documento
+
+| Campo                    | Valor                      |
+| ------------------------ | -------------------------- |
+| Proyecto                 | Atanor                     |
+| Documento                | FOUNDATIONS                |
+| Estado del documento     | 🟢 Activo                  |
+| Versión del documento    | 0.1                        |
+| Última actualización     | 2026-08-07                 |
+| Alcance                  | Proyecto completo          |
+
 # ¿Qué es este proyecto?
 
 Este proyecto nace con un objetivo muy concreto:
