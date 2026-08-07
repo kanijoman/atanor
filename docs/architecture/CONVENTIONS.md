@@ -4,13 +4,13 @@
 
 # Información del documento
 
-| Campo                    | Valor                  |
-| ------------------------ | ---------------------- |
-| Proyecto                 | Atanor                 |
-| Documento                | CONVENTIONS            |
-| Estado del documento     | 🟢 Activo              |
-| Versión del documento    | 0.1                    |
-| Última actualización     | 2026-08-07             |
+| Campo                 | Valor       |
+| --------------------- | ----------- |
+| Proyecto              | Atanor      |
+| Documento             | CONVENTIONS |
+| Estado del documento  | 🟢 Activo   |
+| Versión del documento | 0.2         |
+| Última actualización  | 2026-08-07  |
 
 ---
 
@@ -30,12 +30,12 @@ El idioma oficial del proyecto es el inglés.
 
 Esto incluye:
 
-- Código fuente.
-- Nombres de módulos, clases, funciones y variables.
-- Comentarios.
-- Docstrings.
-- Documentación técnica.
-- Mensajes de error cuando no exista un requisito funcional que indique lo contrario.
+* Código fuente.
+* Nombres de módulos, clases, funciones y variables.
+* Comentarios.
+* Docstrings.
+* Documentación técnica.
+* Mensajes de error cuando no exista un requisito funcional que indique lo contrario.
 
 El uso de un único idioma facilita la colaboración internacional y evita inconsistencias en el código base.
 
@@ -45,12 +45,12 @@ El uso de un único idioma facilita la colaboración internacional y evita incon
 
 Todo el desarrollo del proyecto deberá guiarse por los siguientes principios:
 
-- **Clean Code**.
-- **SOLID**.
-- **DRY (Don't Repeat Yourself)**.
-- **KISS (Keep It Simple, Stupid)**.
-- **YAGNI (You Aren't Gonna Need It)**.
-- **Pragmatismo sobre dogmatismo**.
+* **Clean Code**.
+* **SOLID**.
+* **DRY (Don't Repeat Yourself)**.
+* **KISS (Keep It Simple, Stupid)**.
+* **YAGNI (You Aren't Gonna Need It)**.
+* **Pragmatismo sobre dogmatismo**.
 
 Los principios anteriores constituyen una guía para la toma de decisiones, no un conjunto de reglas rígidas.
 
@@ -62,11 +62,11 @@ Las excepciones deberán estar justificadas técnicamente y, cuando tengan impac
 
 # 4. Organización del código
 
-- Cada módulo deberá tener una única responsabilidad.
-- Se favorecerá un bajo acoplamiento entre módulos.
-- Las dependencias deberán apuntar hacia el dominio.
-- Se evitarán dependencias innecesarias.
-- La estructura del código deberá poder evolucionar sin grandes refactorizaciones.
+* Cada módulo deberá tener una única responsabilidad.
+* Se favorecerá un bajo acoplamiento entre módulos.
+* Las dependencias deberán apuntar hacia el dominio.
+* Se evitarán dependencias innecesarias.
+* La estructura del código deberá poder evolucionar sin grandes refactorizaciones.
 
 La organización concreta del código evolucionará junto con la arquitectura del proyecto.
 
@@ -98,7 +98,70 @@ Antes de introducir una nueva abstracción deberá evaluarse si realmente aporta
 
 ---
 
-# 6. Testing
+# 6. Flujo de trabajo
+
+El desarrollo de Atanor se organiza en torno al **ROADMAP** y al **BACKLOG**.
+
+El ROADMAP define la evolución estratégica del producto, mientras que el BACKLOG recoge el trabajo pendiente y constituye la referencia operativa del proyecto.
+
+## Desarrollo orientado a tareas
+
+Cada cambio deberá estar asociado a una única tarea identificada mediante un código del tipo:
+
+* AT-001
+* AT-002
+* AT-003
+* ...
+
+Siempre que sea posible, una tarea deberá representar una unidad de trabajo autocontenida.
+
+## Granularidad
+
+Las tareas deberán ser pequeñas, independientes y aportar una mejora tangible al proyecto.
+
+Si durante su implementación una tarea crece excesivamente, deberá dividirse en nuevas tareas del BACKLOG en lugar de prolongar indefinidamente su alcance.
+
+## Commits
+
+Como norma general:
+
+> **Una tarea equivale a un commit (o a una pequeña serie de commits inseparables).**
+
+Cada commit deberá implementar una única responsabilidad claramente identificable.
+
+Se evitarán commits que mezclen cambios no relacionados.
+
+## Push
+
+Cada push deberá dejar el repositorio en un estado consistente.
+
+Antes de realizar un push deberán cumplirse, como mínimo, los siguientes requisitos:
+
+* La tarea implementada compila correctamente.
+* Las pruebas existentes continúan pasando.
+* No se introducen errores conocidos.
+* La documentación afectada ha sido actualizada.
+
+## Finalización de tareas
+
+Una tarea únicamente podrá considerarse completada cuando:
+
+* La implementación haya finalizado.
+* Se hayan realizado las pruebas necesarias.
+* La documentación correspondiente esté actualizada.
+* El BACKLOG refleje su estado como **Completada**.
+
+No se iniciará una nueva tarea mientras la anterior permanezca parcialmente implementada, salvo que exista un bloqueo técnico debidamente identificado.
+
+## Conversaciones de desarrollo
+
+Cada sesión de trabajo deberá centrarse en una única tarea del BACKLOG.
+
+El objetivo es mantener el contexto reducido, facilitar la trazabilidad y asegurar que cada sesión produce un avance tangible en el proyecto.
+
+---
+
+# 7. Testing
 
 El desarrollo seguirá preferentemente un enfoque **Test-Driven Development (TDD)** siempre que resulte adecuado para la naturaleza de la tarea.
 
@@ -116,16 +179,16 @@ El objetivo principal no será maximizar el porcentaje de cobertura, sino maximi
 
 Se priorizarán:
 
-- Smoke tests.
-- Tests funcionales.
-- Tests de integración.
-- Tests End-to-End.
+* Smoke tests.
+* Tests funcionales.
+* Tests de integración.
+* Tests End-to-End.
 
 Las pruebas unitarias deberán centrarse en validar la lógica de negocio y evitar comprobar comportamientos triviales, implementaciones internas o funcionalidades ya garantizadas por librerías de terceros.
 
 ---
 
-# 7. Evolución
+# 8. Evolución
 
 Estas convenciones evolucionarán junto con el proyecto.
 

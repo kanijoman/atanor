@@ -2,34 +2,36 @@
 
 # Información del documento
 
-| Campo                    | Valor                                                       |
-| ------------------------ | ----------------------------------------------------------- |
-| Proyecto                 | Atanor                                                      |
-| Documento                | ROADMAP                                                     |
-| Estado del documento     | 🟢 Activo                                                   |
-| Versión del documento    | 0.1                                                         |
-| Última actualización     | 2026-08-07                                                  |
-| Sprint activo            | Sprint 0.1 – Modelo de Conocimiento                         |
-| Próximo objetivo         | Definir el modelo conceptual del dominio                    |
+| Campo                 | Valor                                                                                    |
+| --------------------- | ---------------------------------------------------------------------------------------- |
+| Proyecto              | Atanor                                                                                   |
+| Documento             | ROADMAP                                                                                  |
+| Estado del documento  | 🟢 Activo                                                                                |
+| Versión del documento | 0.2                                                                                      |
+| Última actualización  | 2026-08-07                                                                               |
+| Hito activo           | Hito 1 · Foundation                                                                      |
+| Próximo objetivo      | Disponer de una plataforma base completamente operativa para el desarrollo del producto. |
 
 ---
+
 > **Documento vivo**
 >
-> Este documento define la planificación y el estado de ejecución del proyecto Atanor.
+> Este documento define la planificación estratégica y el estado de evolución del proyecto Atanor.
 > Debe mantenerse actualizado durante todo el ciclo de vida del proyecto y reflejar fielmente el estado real del desarrollo.
+> El detalle de las tareas se mantiene en el **BACKLOG**, mientras que este documento describe la evolución del producto mediante hitos.
 
 ---
 
 # Información del proyecto
 
-| Campo                | Valor                                    |
-| -------------------- | ---------------------------------------- |
-| Proyecto             | Atanor                                   |
-| Estado               | 🟢 En desarrollo                         |
-| Versión del roadmap  | 0.1                                      |
-| Última actualización | 2026-08-07                               |
-| Sprint activo        | Sprint 0.1 – Modelo de Conocimiento      |
-| Próximo objetivo     | Definir el modelo conceptual del dominio |
+| Campo                | Valor                                                                  |
+| -------------------- | ---------------------------------------------------------------------- |
+| Proyecto             | Atanor                                                                 |
+| Estado               | 🟢 En desarrollo                                                       |
+| Versión del roadmap  | 0.2                                                                    |
+| Última actualización | 2026-08-07                                                             |
+| Hito activo          | Hito 1 · Foundation                                                    |
+| Próximo objetivo     | Construir la infraestructura técnica sobre la que evolucionará Atanor. |
 
 ---
 
@@ -51,23 +53,31 @@ Todo el desarrollo debe orientarse a este objetivo.
 
 # Roadmap general
 
-| Hito   | Objetivo                 | Prioridad | Estado      | Progreso |
-| ------ | ------------------------ | --------- | ----------- | -------- |
-| Hito 0 | Fundamentos              | 🔴 Alta   | 🟡 En curso | 10%      |
-| Hito 1 | Gestión del conocimiento | 🔴 Alta   | ⚪ Pendiente | 0%       |
-| Hito 2 | Integración de fuentes   | 🟠 Media  | ⚪ Pendiente | 0%       |
-| Hito 3 | Motor de aprendizaje     | 🔴 Alta   | ⚪ Pendiente | 0%       |
-| Hito 4 | Guiado inteligente       | 🔴 Alta   | ⚪ Pendiente | 0%       |
-| Hito 5 | Analítica                | 🟡 Baja   | ⚪ Pendiente | 0%       |
-| Hito 6 | Escalabilidad            | 🟡 Baja   | ⚪ Pendiente | 0%       |
+| Hito   | Objetivo                      | Prioridad | Estado       | Progreso |
+| ------ | ----------------------------- | --------- | ------------ | -------- |
+| Hito 0 | Fundamentos                   | 🔴 Alta   | ✅ Completado | 100 %    |
+| Hito 1 | Foundation                    | 🔴 Alta   | 🟡 En curso  | 0 %      |
+| Hito 2 | Ingesta documental            | 🔴 Alta   | ⚪ Pendiente  | 0 %      |
+| Hito 3 | Recuperación del conocimiento | 🔴 Alta   | ⚪ Pendiente  | 0 %      |
+| Hito 4 | Asistente jurídico            | 🔴 Alta   | ⚪ Pendiente  | 0 %      |
+| Hito 5 | Plataforma de aprendizaje     | 🔴 Alta   | ⚪ Pendiente  | 0 %      |
+| Hito 6 | Escalabilidad                 | 🟡 Media  | ⚪ Pendiente  | 0 %      |
 
 ---
 
 # Estado de ejecución
 
-| Sprint                              | Prioridad | Estado      | Progreso |
-| ----------------------------------- | --------- | ----------- | -------- |
-| Sprint 0.1 · Modelo de Conocimiento | 🔴 Alta   | 🟡 En curso | 0%       |
+## Hito activo
+
+**Hito 1 · Foundation**
+
+## Estado
+
+🟡 En curso
+
+## Progreso
+
+**0 %**
 
 ---
 
@@ -75,25 +85,43 @@ Todo el desarrollo debe orientarse a este objetivo.
 
 ## Objetivo
 
-Construir una base técnica y conceptual sólida que permita evolucionar Atanor durante los próximos años sin necesidad de rediseñar la arquitectura.
-
-Este hito no persigue funcionalidades para el usuario final, sino definir correctamente el dominio del problema.
+Construir una base conceptual, organizativa y arquitectónica sólida que permita desarrollar Atanor de forma iterativa, manteniendo una visión clara del producto y reduciendo el riesgo de rediseños futuros.
 
 ---
 
-# Sprint 0.1 · Modelo de Conocimiento
+## Estado
+
+✅ Completado
+
+---
+
+## Resultados obtenidos
+
+* Definición de la visión y alcance del producto.
+* Diseño de la arquitectura inicial.
+* Definición del roadmap estratégico.
+* Establecimiento de las convenciones de desarrollo.
+* Creación del README del proyecto.
+* Consolidación de la documentación fundacional.
+
+---
+
+## Entregables
+
+* Visión del producto.
+* Arquitectura inicial.
+* Roadmap.
+* Convenciones de desarrollo.
+* README.
+* Documentación técnica inicial.
+
+---
+
+# Hito 1 · Foundation
 
 ## Objetivo
 
-Diseñar el modelo conceptual del conocimiento que utilizará Atanor.
-
-Antes de implementar funcionalidades, bases de datos o IA, el sistema debe comprender correctamente cómo se estructura el conocimiento jurídico y académico.
-
----
-
-## Prioridad
-
-🔴 Alta
+Construir la infraestructura técnica mínima que permita desarrollar funcionalidades de forma rápida, segura y mantenible durante el resto del proyecto.
 
 ---
 
@@ -109,103 +137,108 @@ Antes de implementar funcionalidades, bases de datos o IA, el sistema debe compr
 
 ---
 
-## Tareas
+## Líneas de trabajo
 
-### Modelo conceptual
+### Infraestructura
 
-* [ ] Definir las entidades principales del dominio.
-* [ ] Definir relaciones entre entidades.
-* [ ] Definir cardinalidades.
-* [ ] Establecer reglas de negocio.
+* Definir la estructura del repositorio.
+* Configurar el entorno de desarrollo.
+* Configurar Git y la estrategia de ramas.
+* Configurar Docker.
 
-### Modelo de persistencia
+### Backend
 
-* [ ] Diseñar el modelo relacional.
-* [ ] Diseñar relaciones muchos-a-muchos.
-* [ ] Definir claves primarias y foráneas.
+* Inicializar FastAPI.
+* Configurar el sistema de configuración mediante variables de entorno.
+* Implementar el sistema de logging.
+* Crear los endpoints básicos del sistema.
 
-### Implementación
+### Persistencia
 
-* [ ] Crear entidades mediante SQLAlchemy.
-* [ ] Generar el esquema inicial de base de datos.
-* [ ] Validar la integridad del modelo.
+* Configurar PostgreSQL.
+* Integrar SQLAlchemy.
+* Configurar Alembic.
+* Generar la primera migración.
 
----
+### Frontend
 
-## Entidades previstas
+* Inicializar React + TypeScript.
+* Configurar Vite.
+* Configurar Tailwind CSS.
+* Crear la primera interfaz del proyecto.
 
-* Documento
-* Capítulo
-* Artículo
-* Fuente
-* Tema
-* Epígrafe
-* Pregunta
-* Fragmento *(entidad prevista para futuras funcionalidades de recuperación semántica y RAG)*
+### Calidad
+
+* Configurar Ruff.
+* Configurar MyPy.
+* Configurar Pytest.
+* Configurar ESLint y Prettier.
+* Configurar GitHub Actions.
+
+### Vertical Slice
+
+* Implementar la primera entidad del dominio.
+* Exponer un CRUD básico.
+* Validar el flujo Frontend → Backend → Base de datos.
 
 ---
 
 ## Entregables
 
-* Modelo conceptual del dominio.
-* Diagrama de entidades.
-* Modelo relacional.
-* Esquema inicial de base de datos.
-* Implementación inicial del dominio.
+* Backend operativo.
+* Frontend operativo.
+* Base de datos funcional.
+* Docker Compose.
+* Pipeline de integración continua.
+* Primera entidad persistida.
+* Vertical Slice completamente funcional.
 
 ---
 
 ## Criterios de aceptación
 
-El sprint se considerará completado cuando:
+El hito se considerará completado cuando:
 
-* [ ] El modelo represente correctamente un temario oficial.
-* [ ] Permita relacionar un mismo tema con múltiples fuentes.
-* [ ] Permita reutilizar una fuente en distintos temas.
-* [ ] El modelo pueda evolucionar sin modificaciones estructurales importantes.
-* [ ] Existan pruebas básicas de validación.
+* [ ] El proyecto pueda ejecutarse completamente mediante Docker Compose.
+* [ ] Backend y frontend se comuniquen correctamente.
+* [ ] Exista una primera migración funcional.
+* [ ] La integración continua valide lint, tests y build.
+* [ ] Exista una primera entidad persistida en la base de datos.
+* [ ] La arquitectura esté preparada para comenzar el desarrollo funcional.
 
 ---
 
 # Próximos hitos
 
-## Hito 1 · Gestión del Conocimiento
+## Hito 2 · Ingesta documental
 
 **Objetivo**
 
-Gestionar documentos, temas y estructura del conocimiento.
+Permitir la incorporación, almacenamiento y procesamiento de documentos jurídicos y temarios oficiales.
 
 ---
 
-## Hito 2 · Integración de Fuentes
+## Hito 3 · Recuperación del conocimiento
 
 **Objetivo**
 
-Importar conocimiento desde fuentes oficiales y temarios.
+Implementar mecanismos de búsqueda, indexación y recuperación eficiente de la información.
 
 ---
 
-## Hito 3 · Motor de Aprendizaje
+## Hito 4 · Asistente jurídico
 
 **Objetivo**
 
-Gestionar el progreso del estudiante y la trazabilidad del conocimiento.
+Incorporar un asistente inteligente capaz de responder utilizando el conocimiento almacenado.
 
 ---
 
-## Hito 4 · Guiado Inteligente
+## Hito 5 · Plataforma de aprendizaje
 
 **Objetivo**
 
-Incorporar funcionalidades inteligentes para asistir el aprendizaje.
-
----
-
-## Hito 5 · Analítica
-
-**Objetivo**
-
-Proporcionar métricas y recomendaciones personalizadas.
+Desarrollar las funcionalidades específicas para la preparación de oposiciones: planificación, estudio, evaluación y seguimiento.
 
 ---
 
@@ -213,15 +246,15 @@ Proporcionar métricas y recomendaciones personalizadas.
 
 **Objetivo**
 
-Preparar Atanor para un entorno multiusuario y despliegues en producción.
+Preparar Atanor para despliegues en producción, soporte multiusuario y crecimiento del producto.
 
 ---
 
 # Definition of Done
 
-Todo sprint deberá cumplir los siguientes requisitos antes de darse por finalizado.
+Todo hito deberá cumplir los siguientes requisitos antes de darse por finalizado.
 
-* [ ] Objetivos del sprint completados.
+* [ ] Objetivos del hito completados.
 * [ ] Código implementado.
 * [ ] Tests básicos superados.
 * [ ] Documentación actualizada.
@@ -232,13 +265,14 @@ Todo sprint deberá cumplir los siguientes requisitos antes de darse por finaliz
 
 # Decisiones de arquitectura
 
-| Fecha      | Decisión                                                                                 | Motivo                                                             |
-| ---------- | ---------------------------------------------------------------------------------------- | ------------------------------------------------------------------ |
-| 2026-08-06 | Python como lenguaje principal                                                           | Máxima productividad y ecosistema de IA.                           |
-| 2026-08-06 | Arquitectura orientada al dominio                                                        | El modelo de conocimiento será el núcleo de Atanor.                |
-| 2026-08-06 | SQLAlchemy como ORM inicial                                                              | Flexibilidad y control sobre el modelo relacional.                 |
-| 2026-08-06 | Desarrollo iterativo por hitos y sprints                                                 | Reducir riesgo y validar continuamente la arquitectura.            |
-| 2026-08-07 | El MVP se centrará exclusivamente en oposiciones de la Administración General del Estado | Mantener un alcance reducido y maximizar la probabilidad de éxito. |
+| Fecha      | Decisión                                                                                 | Motivo                                                                        |
+| ---------- | ---------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------- |
+| 2026-08-06 | Python como lenguaje principal                                                           | Máxima productividad y ecosistema de IA.                                      |
+| 2026-08-06 | Arquitectura orientada al dominio                                                        | El modelo de conocimiento será el núcleo de Atanor.                           |
+| 2026-08-06 | SQLAlchemy como ORM inicial                                                              | Flexibilidad y control sobre el modelo relacional.                            |
+| 2026-08-06 | Desarrollo iterativo por hitos                                                           | Reducir riesgo y validar continuamente la arquitectura.                       |
+| 2026-08-07 | El MVP se centrará exclusivamente en oposiciones de la Administración General del Estado | Mantener un alcance reducido y maximizar la probabilidad de éxito.            |
+| 2026-08-07 | Eliminación de sprints temporales                                                        | Adaptar la planificación a un desarrollo iterativo propio de un side project. |
 
 ---
 
@@ -264,12 +298,12 @@ Todo sprint deberá cumplir los siguientes requisitos antes de darse por finaliz
 
 # Métricas del proyecto
 
-| Indicador                | Valor      |
-| ------------------------ | ---------- |
-| Hitos completados        | 0 / 7      |
-| Sprint activo            | Sprint 0.1 |
-| Progreso global estimado | 2 %        |
-| Bloqueadores             | Ninguno    |
+| Indicador                | Valor               |
+| ------------------------ | ------------------- |
+| Hitos completados        | 1 / 7               |
+| Hito activo              | Hito 1 · Foundation |
+| Progreso global estimado | 12 %                |
+| Bloqueadores             | Ninguno             |
 
 ---
 
@@ -279,6 +313,14 @@ Todo sprint deberá cumplir los siguientes requisitos antes de darse por finaliz
 
 * Creación del ROADMAP.md.
 * Definición del Hito 0.
-* Definición del Sprint 0.1.
+* Definición del roadmap inicial.
 * Incorporación de métricas de progreso.
 * Registro inicial de decisiones de arquitectura.
+
+## 2026-08-07 (Actualización)
+
+* Finalizado el Hito 0 · Fundamentos.
+* Reorganización del roadmap en torno a hitos de producto.
+* Eliminado el concepto de sprint como unidad temporal.
+* Inicio del Hito 1 · Foundation.
+* Separación conceptual entre ROADMAP y BACKLOG.
