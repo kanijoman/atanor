@@ -7,8 +7,8 @@
 | Project      | Atanor                      |
 | Document     | CONVENTIONS                 |
 | Status       | 🟢 Active                   |
-| Version      | 0.2                         |
-| Last Updated | 2026-08-07                  |
+| Version      | 0.3                         |
+| Last Updated | 2026-08-10                  |
 | Audience     | Contributors and Developers |
 
 ---
@@ -25,34 +25,35 @@ Whenever possible, decisions should prioritize simplicity, clarity and long-term
 
 # General Principles
 
-Development should always be guided by the following principles:
+Development should always be guided by:
 
-* Keep solutions as simple as possible.
-* Prefer readability over cleverness.
-* Build only what is currently required.
-* Avoid speculative design.
-* Maintain a clean and understandable Git history.
-* Favor consistency over personal preferences.
+- Keep solutions as simple as possible.
+- Prefer readability over cleverness.
+- Build only what is currently required.
+- Avoid speculative design.
+- Validate important domain assumptions before encoding them into software.
+- Maintain a clean and understandable Git history.
+- Favor consistency over personal preferences.
 
-Whenever multiple valid solutions exist, choose the one that minimizes unnecessary complexity.
+When multiple valid solutions exist, choose the one that minimizes unnecessary complexity.
 
 ---
 
 # Language
 
-To maximize accessibility and encourage external contributions, the project adopts English as its official language.
+To maximize accessibility and encourage external contributions, the project adopts English as its official project language.
 
 The following must be written in English:
 
-* Source code.
-* Identifiers.
-* Comments.
-* Documentation.
-* Commit messages.
-* Pull requests.
-* Issues.
+- source code;
+- identifiers;
+- comments;
+- documentation;
+- commit messages;
+- pull requests;
+- issues.
 
-Domain content (laws, regulations, examination material and official documents) naturally remains in its original language.
+Domain content such as laws, regulations, examination material and official documents naturally remains in its original language.
 
 ---
 
@@ -64,6 +65,8 @@ Infrastructure, frameworks and supporting technologies are introduced only when 
 
 This **Just Enough Infrastructure** philosophy prevents unnecessary complexity, keeps the repository lightweight and allows the architecture to evolve naturally.
 
+Domain modeling follows the same principle: do not introduce abstractions merely because they might be useful later.
+
 Every task should leave the project objectively better than before.
 
 ---
@@ -74,14 +77,16 @@ The project follows widely accepted software engineering practices.
 
 Whenever applicable:
 
-* Clean Code
-* SOLID principles
-* DRY
-* Separation of Concerns
-* High cohesion
-* Low coupling
+- Clean Code;
+- SOLID principles;
+- DRY;
+- Separation of Concerns;
+- high cohesion;
+- low coupling.
 
-Design decisions should always favor maintainability over premature optimization.
+Design decisions should favor maintainability over premature optimization.
+
+Domain concepts should be modeled according to validated product needs rather than being derived prematurely from implementation technology.
 
 ---
 
@@ -92,6 +97,8 @@ Engineering decisions should be pragmatic.
 Theoretical purity should never take precedence over practical value.
 
 When a simpler solution adequately solves the problem, it should be preferred over a more sophisticated alternative.
+
+At the same time, simplicity must not be achieved by hiding important domain distinctions, such as the difference between a requirement, a source and the knowledge supported by that source.
 
 ---
 
@@ -107,7 +114,7 @@ The preferred workflow is:
 4. Implement the solution.
 5. Refactor while preserving correctness.
 
-TDD is considered a development technique rather than a mandatory rule.
+TDD is a development technique rather than a mandatory rule.
 
 ---
 
@@ -117,12 +124,14 @@ Each commit should represent a single logical change.
 
 Commits should:
 
-* Be atomic.
-* Be self-contained.
-* Compile successfully.
-* Leave the project in a consistent state.
+- be atomic;
+- be self-contained;
+- compile or pass the applicable checks;
+- leave the project in a consistent state.
 
 Large changes should be split into multiple commits whenever practical.
+
+A push should normally correspond to a single isolated backlog task, so that introduced changes remain traceable and potential regressions can be associated with a specific task.
 
 ---
 
@@ -130,9 +139,11 @@ Large changes should be split into multiple commits whenever practical.
 
 The backlog defines the implementation plan, not the technical specification.
 
-Implementation details belong in the corresponding commits.
+Implementation details belong in the corresponding commits and technical documentation.
 
 Tasks should remain focused on a single responsibility and should not expand their scope during implementation.
+
+If implementation reveals additional necessary work, that work should be evaluated and, where appropriate, created as a separate task rather than silently expanding the current task.
 
 ---
 
@@ -142,11 +153,11 @@ New dependencies should be introduced only when they provide clear and immediate
 
 Before adding a dependency, contributors should evaluate:
 
-* Whether the functionality can reasonably be implemented without it.
-* Long-term maintenance cost.
-* Community adoption.
-* Documentation quality.
-* Compatibility with the existing architecture.
+- whether the functionality can reasonably be implemented without it;
+- long-term maintenance cost;
+- community adoption;
+- documentation quality;
+- compatibility with the existing architecture.
 
 Avoid introducing libraries solely for convenience.
 
@@ -156,9 +167,11 @@ Avoid introducing libraries solely for convenience.
 
 Documentation evolves together with the project.
 
-Documentation should describe implemented decisions rather than speculative future designs.
+Documentation should describe validated decisions and sufficiently established domain concepts rather than speculative future designs.
 
-Whenever code changes affect documented behavior or architecture, the corresponding documentation should be updated within the same change whenever possible.
+When code changes affect documented behavior or architecture, the corresponding documentation should be updated within the same change whenever practical.
+
+Documentation should remain proportional to the project's needs. Updating a document is not automatically justified by every implementation change; the cost of maintaining the documentation must be weighed against its long-term value.
 
 ---
 

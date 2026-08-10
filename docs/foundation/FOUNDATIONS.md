@@ -1,6 +1,6 @@
 # Foundations
 
-> *The challenge of public service examinations is not the lack of information. It is the difficulty of transforming that information into lasting knowledge.*
+> *The challenge of public service examinations is not the lack of information. It is the difficulty of transforming that information into reliable, relevant and learnable knowledge.*
 
 # Document Information
 
@@ -9,78 +9,111 @@
 | Project      | Atanor                      |
 | Document     | FOUNDATIONS                 |
 | Status       | 🟢 Active                   |
-| Version      | 0.2                         |
-| Last Updated | 2026-08-07                  |
+| Version      | 0.3                         |
+| Last Updated | 2026-08-10                  |
 | Audience     | Contributors and Developers |
 
 ---
 
 # Why This Project Exists
 
-Atanor was created with a clear objective:
+Atanor was created to solve a specific problem in knowledge-intensive learning, initially public service examinations.
 
-**To build a platform capable of transforming authoritative knowledge sources into a structured, personalized and measurable learning experience.**
+A competitive examination does not normally provide everything a candidate needs to learn. Its requirements often define a subject or source without specifying the complete knowledge coverage, the appropriate level of detail, or the best explanatory sources.
 
-It is not intended to be a document repository.
+The difficult part is therefore not only finding information.
 
-It is not intended to be a search engine.
+It is determining:
 
-It is not intended to be a chatbot.
+- what knowledge is required;
+- how deeply it must be understood;
+- which sources should support it;
+- how different sources relate to each other;
+- how the resulting knowledge should be organized into a coherent learning journey.
 
-Its purpose is to guide users throughout their learning journey until they genuinely master the required knowledge.
+That refinement is a major part of the value traditionally provided by academic preparation services.
 
----
-
-# The Problem
-
-Preparing for a competitive public service examination involves much more than studying.
-
-Candidates must understand the examination requirements, identify the necessary knowledge, locate authoritative sources, verify that they are up to date, organize a syllabus, plan their study, measure their progress and continuously decide what to study next.
-
-Most of that effort is not actual learning.
-
-It is the organization of learning.
-
-That is the problem Atanor aims to solve.
+Atanor aims to make that process systematic, traceable and continuously maintainable.
 
 ---
 
 # Mission
 
-Transform authoritative knowledge into effective learning.
+**Transform authoritative knowledge and explicit learning requirements into effective, verifiable and adaptive learning.**
 
-Users should spend their time understanding, practicing and consolidating knowledge—not organizing their preparation.
+Users should spend their time understanding, practicing and consolidating knowledge—not manually determining what they need to study, where to find it, or how it fits together.
 
 ---
 
 # Vision
 
-Anyone should be able to provide an official syllabus, regulation, examination notice or collection of authoritative documents and obtain a complete learning journey tailored to their goals.
+A user should be able to provide an official syllabus, examination notice, regulation, or other relevant documents and obtain a justified learning scope and a coherent learning journey.
 
-The platform should transform that knowledge into a coherent study experience while maintaining complete traceability to the sources that support every piece of information.
+Atanor should be able to construct and maintain that knowledge using:
+
+- public and freely accessible sources;
+- authoritative sources;
+- documents provided by the user.
+
+Paid third-party material must never be a structural dependency of the platform.
+
+The platform should make uncertainty explicit rather than presenting unsupported assumptions as facts.
+
+---
+
+# The Core Product Problem
+
+A requirement such as:
+
+> "Operating Systems"
+
+does not, by itself, determine:
+
+- which concepts must be covered;
+- how those concepts should be decomposed;
+- how much detail is appropriate;
+- which sources should be used;
+- which parts are explicitly required and which are inferred from the domain.
+
+Atanor therefore needs an intermediate process between a requirement and canonical knowledge.
+
+Conceptually:
+
+```text
+Requirement
+    ↓
+Scope Discovery
+    ↓
+Knowledge Blueprint
+    ↓
+Canonical Knowledge
+    ↓
+Learning Path
+```
+
+The Knowledge Blueprint describes the proposed coverage, expected depth, evidence and confidence before the final knowledge corpus is built.
 
 ---
 
 # What We Are
 
-Atanor is a learning platform.
+Atanor is a learning platform built around a structured, traceable knowledge model.
 
-Its purpose is not to display information.
-
-Its purpose is to help people learn.
+Its core capability is not merely storing documents or answering questions. It is transforming requirements and evidence into knowledge that can be organized, evaluated and learned.
 
 ---
 
 # What We Are Not
 
-Atanor is **not**:
+Atanor is not:
 
-* a chatbot;
-* a traditional academy;
-* a document repository;
-* a specialized search engine.
+- a traditional academy;
+- a document repository;
+- a specialized search engine;
+- merely a chatbot;
+- dependent on proprietary commercial study material.
 
-Answering questions may be part of the user experience, but it is never the primary purpose of the platform.
+AI may support many capabilities, but AI itself is not the product.
 
 ---
 
@@ -88,41 +121,83 @@ Answering questions may be part of the user experience, but it is never the prim
 
 ## Knowledge Is the Primary Asset
 
-The value of the platform lies in how knowledge is represented, organized and maintained.
+The value of Atanor lies in how knowledge is represented, organized, related and maintained.
 
-Documents are only one possible source of that knowledge.
+Documents are sources of knowledge, not necessarily the knowledge model itself.
+
+---
+
+## Requirements Do Not Define the Whole Knowledge Model
+
+A requirement identifies an expected area or source of knowledge.
+
+It does not necessarily define its complete coverage or depth.
+
+Atanor must therefore distinguish:
+
+```text
+Requirement
+    ↓
+Scope
+    ↓
+Coverage + Depth
+    ↓
+Knowledge
+```
+
+---
+
+## Knowledge Is Independent of Curriculum
+
+Canonical knowledge must not belong to a single examination or syllabus.
+
+The same knowledge may be required by multiple convocations, topics or learning paths.
+
+Curriculum defines which knowledge is relevant in a particular context.
 
 ---
 
 ## Knowledge Must Be Verifiable
 
-Every unit of knowledge must be traceable to the authoritative sources that support it.
+Knowledge should maintain traceability to the sources or evidence that support it.
 
-Explanations may evolve.
+The system should distinguish between:
 
-Traceability must not.
+- directly supported facts;
+- user-provided requirements;
+- inferred or proposed coverage;
+- unresolved or unknown information.
+
+Uncertainty must not be silently converted into certainty.
 
 ---
 
 ## Knowledge Is Modular
 
-Knowledge should not exist as static manuals.
+Knowledge should be represented as reusable and interconnected units rather than static manuals.
 
-It should be built from independent, reusable and interconnected knowledge units.
+A knowledge unit may participate in multiple curricula, explanations, questions and learning paths.
 
-Every learning journey is assembled dynamically according to the user's objectives.
+---
+
+## Sources and Knowledge Are Different
+
+The source that establishes that something must be learned does not necessarily need to be the source that best explains it.
+
+Atanor should therefore distinguish:
+
+- curricular evidence;
+- authoritative knowledge sources;
+- explanatory or academic sources;
+- user-provided material.
 
 ---
 
 ## Knowledge Evolves
 
-Knowledge changes.
+Authoritative sources change, requirements change and the state of knowledge evolves.
 
-Authoritative sources are updated.
-
-Regulations evolve.
-
-The platform must evolve with them.
+Atanor must be able to update knowledge while preserving provenance and historical context where necessary.
 
 ---
 
@@ -130,7 +205,17 @@ The platform must evolve with them.
 
 Users should never face an empty page wondering what to study next.
 
-The platform should always know the most appropriate next step.
+The platform should construct a learning path from:
+
+```text
+Required Knowledge
+        +
+Knowledge Dependencies
+        +
+User Knowledge State
+        ↓
+Learning Path
+```
 
 ---
 
@@ -138,38 +223,46 @@ The platform should always know the most appropriate next step.
 
 Completing a topic does not mean mastering it.
 
-Progress should be measured by demonstrated understanding rather than by the amount of content consumed.
+Progress should ultimately be measured through demonstrated understanding rather than the amount of content consumed.
 
 ---
 
 ## Learning Must Adapt to the User
 
-Every learner has different prior knowledge, available time and learning pace.
-
-The platform adapts to the learner.
-
-Never the other way around.
+The learning experience should adapt to prior knowledge, available time, progress and demonstrated weaknesses.
 
 ---
 
 # Value Proposition
 
-Traditional academies provide study material and a predefined plan.
+Traditional preparation services provide a refined interpretation of a syllabus, study material and a predefined learning plan.
 
-Atanor aims to provide both dynamically.
+Atanor aims to make that refinement dynamic and traceable.
 
-Knowledge should remain continuously updated.
+Instead of treating a syllabus as a static table of contents, Atanor aims to construct:
 
-Study planning should continuously adapt.
+```text
+Requirement
+    ↓
+Evidence
+    ↓
+Coverage Model
+    ↓
+Depth Model
+    ↓
+Canonical Knowledge
+    ↓
+Learning Path
+```
 
-Users should never need to reorganize their preparation because an official source changes or their personal circumstances evolve.
+The resulting study material becomes a generated view of the underlying knowledge model rather than the primary asset itself.
 
 ---
 
 # Guiding Question
 
-Every architectural, functional or technical decision should answer one fundamental question:
+Every architectural, functional or technical decision should answer:
 
-> **Does this decision help transform authoritative knowledge into a better, simpler and more effective learning experience?**
+> **Does this decision help transform requirements and authoritative knowledge into a better, simpler and more effective learning experience?**
 
 If the answer is no, it does not belong in Atanor.

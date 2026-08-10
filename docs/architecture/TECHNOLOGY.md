@@ -7,36 +7,37 @@
 | Project      | Atanor                      |
 | Document     | TECHNOLOGY                  |
 | Status       | 🟢 Active                   |
-| Version      | 0.2                         |
-| Last Updated | 2026-08-07                  |
+| Version      | 0.3                         |
+| Last Updated | 2026-08-10                  |
 | Audience     | Contributors and Developers |
 
 ---
 
 # Purpose
 
-This document records the technology decisions currently adopted by the Atanor project.
+This document records technology decisions currently adopted by Atanor.
 
-Its purpose is **not** to describe every technology that may eventually be used, but only those that have been formally adopted and currently influence development.
+It does not describe technologies that might be useful in the future unless they have been formally adopted.
 
-Technology decisions evolve together with the project and should remain aligned with the project's architecture, roadmap and development conventions.
+Technology decisions must remain aligned with the product's architecture, roadmap and development conventions.
 
-When a technology decision requires additional context or long-term justification, it should be documented through an Architecture Decision Record (ADR).
+When a technology decision requires significant architectural justification, it should be documented through an Architecture Decision Record (ADR).
 
 ---
 
 # Technology Selection Principles
 
-Technology choices are guided by the following principles:
+Technology choices are guided by:
 
-* Solve existing problems, not hypothetical ones.
-* Prefer mature and well-supported ecosystems.
-* Minimize long-term maintenance cost.
-* Follow industry standards whenever practical.
-* Avoid unnecessary dependencies.
-* Introduce infrastructure only when it provides immediate value.
+- Solve existing problems, not hypothetical ones.
+- Prefer mature and well-supported ecosystems.
+- Minimize long-term maintenance cost.
+- Follow standards whenever practical.
+- Avoid unnecessary dependencies.
+- Introduce infrastructure only when it provides immediate value.
+- Keep the technology layer subordinate to the domain model.
 
-Technology should always support the product, never dictate its architecture.
+Technology should support the product rather than dictate its architecture.
 
 ---
 
@@ -48,9 +49,11 @@ Technology should always support the product, never dictate its architecture.
 
 **Status:** ✅ Adopted
 
-Python is the primary programming language of the project due to its mature ecosystem for Artificial Intelligence, Natural Language Processing and modern backend development.
+Python is the primary backend language.
 
-The project targets Python 3.14 to benefit from the latest stable language improvements while avoiding unnecessary legacy compatibility.
+The project targets Python 3.14 as the currently selected runtime.
+
+The language choice is also compatible with Atanor's expected future work in information processing, natural language processing and AI-assisted capabilities, but those future capabilities do not by themselves justify additional dependencies.
 
 ---
 
@@ -60,13 +63,12 @@ The project targets Python 3.14 to benefit from the latest stable language impro
 
 `uv` is used for Python environment and dependency management.
 
-Reasons for adoption:
+Reasons include:
 
-* Excellent performance.
-* Native support for the modern Python packaging ecosystem.
-* Full compatibility with `pyproject.toml`.
-* Minimal configuration.
-* Low maintenance overhead.
+- fast environment and dependency operations;
+- support for the modern Python packaging ecosystem;
+- compatibility with `pyproject.toml`;
+- minimal configuration.
 
 ---
 
@@ -74,9 +76,9 @@ Reasons for adoption:
 
 **Status:** ✅ Adopted
 
-The Python project is configured through `pyproject.toml` following PEP 621.
+The Python project is configured through `pyproject.toml` following modern Python packaging conventions.
 
-Project metadata, dependencies and tool configuration are centralized in a single standard file.
+Project metadata, dependencies and tool configuration are centralized there.
 
 ---
 
@@ -88,57 +90,68 @@ Project metadata, dependencies and tool configuration are centralized in a singl
 
 Node.js 24 LTS is the reference runtime for frontend development.
 
-Choosing the current LTS release provides long-term stability while remaining aligned with the modern JavaScript ecosystem.
-
 ---
 
 ### pnpm
 
 **Status:** ✅ Adopted
 
-`pnpm` is the project's package manager.
+`pnpm` is the frontend package manager.
 
-Reasons for adoption:
+Reasons include:
 
-* Fast installation.
-* Efficient disk usage.
-* Excellent support for monorepositories.
-* Wide adoption within the modern frontend ecosystem.
+- efficient installation;
+- efficient disk usage;
+- strong support for modern JavaScript projects;
+- good support for workspace-based repositories.
 
 ---
 
 # Technologies Deferred
 
-Some technologies are expected to become part of the project but have **not yet been adopted**.
+The following technologies remain deferred unless an actual requirement justifies their adoption:
 
-They will only be incorporated when they solve an actual development need.
+- FastAPI
+- SQLAlchemy
+- Pydantic
+- React
+- Vite
+- PostgreSQL
+- Docker
+- Authentication
+- CI/CD
+- Observability
 
-Examples include:
+Their presence in this list is not a commitment to adopt them.
 
-* FastAPI
-* SQLAlchemy
-* Pydantic
-* React
-* Vite
-* PostgreSQL
-* Docker
-* Authentication
-* CI/CD
-* Observability
+In particular, the current domain-model work must not be used as justification for selecting a persistence technology before the conceptual model has been sufficiently validated.
 
-Listing them here does **not** imply commitment to their adoption.
+---
+
+# Technology and Domain Model
+
+Technology selection must follow domain understanding.
+
+At the current stage, the product domain is being refined around:
+
+- requirements;
+- knowledge scopes;
+- knowledge blueprints;
+- knowledge entities and assertions;
+- provenance and evidence;
+- learning paths.
+
+The persistence strategy should be selected only after the conceptual model and its required relationships are sufficiently understood.
 
 ---
 
 # Technology Evolution
 
-Technology decisions are expected to evolve.
-
 Whenever a new technology is adopted:
 
-* the decision should be justified;
-* this document should be updated;
-* any significant architectural impact should be recorded through an ADR.
+- the decision should be justified;
+- this document should be updated;
+- significant architectural impact should be recorded through an ADR.
 
 Technologies that are replaced or discarded should remain traceable through the project's architectural documentation.
 
@@ -148,6 +161,6 @@ Technologies that are replaced or discarded should remain traceable through the 
 
 Atanor follows a **Just Enough Technology** philosophy.
 
-A technology is adopted only when it provides immediate value to the current stage of development.
+A technology is adopted only when it provides clear value to the current stage of development.
 
-This approach keeps the project simple, maintainable and adaptable while minimizing unnecessary technical debt.
+The simplest technology that adequately supports the validated domain should be preferred.

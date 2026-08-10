@@ -7,17 +7,19 @@
 | Project      | Atanor                      |
 | Document     | ROADMAP                     |
 | Status       | 🟢 Active                   |
-| Version      | 0.2                         |
-| Last Updated | 2026-08-07                  |
+| Version      | 0.3                         |
+| Last Updated | 2026-08-10                  |
 | Audience     | Contributors and Developers |
 
 ---
 
 # Vision
 
-Atanor aims to become an AI-powered knowledge platform capable of managing, organizing and retrieving structured knowledge while maintaining complete traceability to authoritative sources.
+Atanor aims to become a knowledge-driven learning platform capable of transforming examination requirements and authoritative sources into structured, traceable and adaptive learning experiences.
 
-The initial MVP focuses on the preparation of Spanish General State Administration competitive examinations. However, the long-term vision is to evolve into a general-purpose knowledge platform that can be adapted to different domains requiring reliable knowledge management and AI-assisted learning.
+The initial MVP focuses on preparation for Spanish General State Administration competitive examinations.
+
+The long-term vision is broader: a reusable platform for knowledge-intensive learning domains where reliable sources, structured knowledge and personalized learning are valuable.
 
 ---
 
@@ -25,163 +27,186 @@ The initial MVP focuses on the preparation of Spanish General State Administrati
 
 Atanor follows an incremental delivery model.
 
-Infrastructure, frameworks and supporting technologies are introduced only when they solve an existing problem. This **Just Enough Infrastructure** approach minimizes unnecessary complexity, reduces technical debt and allows the architecture to evolve naturally as new requirements emerge.
+Infrastructure, frameworks and supporting technologies are introduced only when they solve an existing problem.
 
-Every sprint should produce a measurable improvement to the project while keeping the repository simple, maintainable and fully operational.
+Every milestone should produce a measurable improvement while keeping the repository simple, maintainable and operational.
+
+The roadmap describes strategic direction. It does not attempt to enumerate implementation tasks or establish one-to-one correspondence with the backlog.
 
 ---
 
 # Roadmap Principles
 
-Development is guided by the following principles:
+Development is guided by:
 
-* Deliver working software at every milestone.
-* Introduce infrastructure only when necessary.
-* Prefer small, atomic and traceable changes.
-* Keep the architecture adaptable.
-* Prioritize business capabilities over technology adoption.
-* Continuously reduce technical debt instead of accumulating it.
+- Deliver working software at every meaningful milestone.
+- Introduce infrastructure only when necessary.
+- Prefer small, atomic and traceable changes.
+- Keep the architecture adaptable.
+- Prioritize product capabilities over technology adoption.
+- Validate important domain assumptions before committing to implementation.
+- Continuously reduce technical debt.
+- Keep the MVP aligned with the needs of the initial examination use case.
 
 ---
 
 # Product Evolution
 
-The roadmap is organized around product capabilities rather than specific technologies.
+The roadmap is organized around capabilities rather than technologies.
 
-Each milestone should deliver a complete and demonstrable improvement to the platform.
-
----
-
-# Sprint 1 · Foundation
-
-## Objective
-
-Establish the technical and organizational foundations of the project.
-
-## Expected Outcome
-
-* Repository structure established.
-* Development conventions defined.
-* Project documentation created.
-* Development workflow agreed.
-* Backend and frontend projects initialized.
-* Architecture prepared for future implementation.
+The order below describes the intended evolution of the product. The exact implementation sequence may change as domain knowledge and validation results evolve.
 
 ---
 
-# Sprint 2 · First Running System
+# Stage 1 · Foundation
 
 ## Objective
 
-Deliver the first executable version of Atanor.
+Establish the technical, organizational and development foundations of Atanor.
 
-## Expected Outcome
+## Outcome
 
-* Backend application running.
-* Frontend application running.
-* Basic communication between frontend and backend.
-* Health endpoint available.
-* Local development environment operational.
-
-This milestone establishes the first complete vertical slice of the application.
+- Repository structure established.
+- Development conventions defined.
+- Core documentation established.
+- Development workflow agreed.
+- Backend and frontend foundations initialized.
+- Initial application executable.
 
 ---
 
-# Sprint 3 · Knowledge Core
+# Stage 2 · Knowledge Foundation
 
 ## Objective
 
-Implement the core domain model and document management capabilities.
+Establish the conceptual and technical foundation required to represent Atanor's knowledge domain.
 
-## Expected Outcome
+## Outcome
 
-* Document storage.
-* Document import pipeline.
-* Knowledge organization.
-* Source traceability.
-* Initial persistence layer.
-* First searchable knowledge base.
+Atanor should be able to distinguish, at a minimum:
 
-At the end of this sprint, Atanor should be capable of managing official documentation as structured knowledge.
+- examination requirements;
+- knowledge scope;
+- candidate coverage;
+- expected depth;
+- knowledge entities;
+- knowledge assertions;
+- sources and evidence;
+- relationships and dependencies.
+
+A key goal of this stage is to validate the Knowledge Blueprint concept before committing to a detailed persistence model.
 
 ---
 
-# Sprint 4 · AI Assistant
+# Stage 3 · Knowledge Construction
 
 ## Objective
 
-Enable AI-assisted interaction with the knowledge base.
+Build the capability to transform requirements and sources into structured knowledge.
 
-## Expected Outcome
+## Outcome
 
-* Retrieval-Augmented Generation (RAG).
-* Grounded question answering.
-* Source citation.
-* Context-aware conversations.
-* AI-assisted explanations.
+Atanor should progressively support:
 
-The assistant must always provide verifiable answers grounded in official documentation.
+- requirement analysis;
+- scope discovery;
+- source identification;
+- extraction of candidate knowledge;
+- coverage refinement;
+- depth estimation;
+- provenance and evidence;
+- canonical knowledge construction.
+
+Public and freely accessible sources and user-provided documents must be sufficient to construct the knowledge base. Commercial material may be used only when explicitly provided by the user.
 
 ---
 
-# Sprint 5 · Learning Platform
+# Stage 4 · Knowledge Retrieval and Assistance
 
 ## Objective
 
-Transform the knowledge base into an active learning environment.
+Make structured knowledge usable through search and AI-assisted interaction.
 
-## Expected Outcome
+## Potential capabilities
 
-* Personalized study sessions.
-* Quiz generation.
-* Progress tracking.
-* Learning analytics.
-* Revision planning.
-* Spaced repetition.
+- grounded retrieval;
+- source-aware answers;
+- source citation;
+- explanations;
+- knowledge exploration;
+- gap and uncertainty reporting.
 
-At this stage, Atanor becomes a complete study platform rather than a document repository.
+AI should operate over structured and traceable knowledge rather than becoming an opaque substitute for it.
 
 ---
 
-# Sprint 6 · Ecosystem Expansion
+# Stage 5 · Learning Platform
 
 ## Objective
 
-Expand the platform beyond the initial MVP.
+Transform the knowledge model into an adaptive learning environment.
 
-## Potential Capabilities
+## Potential capabilities
 
-* Additional examination domains.
-* Plugin architecture.
-* Knowledge graph extensions.
-* Advanced analytics.
-* Collaboration features.
-* External integrations.
+- learning-path generation;
+- personalized study sessions;
+- question generation;
+- assessment;
+- progress tracking;
+- weakness detection;
+- revision planning;
+- spaced repetition.
 
-The exact scope of this sprint will depend on user feedback and the evolution of the MVP.
+The learning path should be derived from required knowledge, dependencies and the learner's current state.
+
+---
+
+# Stage 6 · Ecosystem Expansion
+
+## Objective
+
+Expand Atanor beyond the initial MVP once the core product has been validated.
+
+## Potential capabilities
+
+- additional examination domains;
+- external integrations;
+- advanced analytics;
+- collaboration;
+- plugin architecture;
+- additional knowledge sources;
+- broader learning use cases.
+
+The exact scope should depend on product validation and user feedback.
 
 ---
 
 # Long-Term Vision
 
-Although the first release targets Spanish public administration examinations, the architecture is intentionally domain-independent.
+Although the initial product targets Spanish public administration examinations, the underlying model should remain sufficiently general to support other knowledge-intensive domains.
 
-Future versions should support any knowledge-intensive domain requiring:
+The reusable foundation is:
 
-* Structured documentation.
-* Source traceability.
-* AI-assisted retrieval.
-* Knowledge management.
-* Personalized learning.
+```text
+Requirements
+    ↓
+Knowledge Scope
+    ↓
+Evidence
+    ↓
+Canonical Knowledge
+    ↓
+Learning
+```
 
-The objective is to build a reusable knowledge platform rather than a solution limited to a single use case.
+The product should not be architected around a single examination structure when a more general domain model is justified.
 
 ---
 
 # Living Document
 
-This roadmap defines the strategic direction of the project.
+This roadmap defines strategic direction.
 
-Specific implementation details are maintained in the project backlog and may evolve throughout development.
+Implementation detail belongs in the backlog and in the relevant technical documentation.
 
-Architectural decisions are documented independently and may change provided they remain aligned with the goals and principles described in this roadmap.
+The roadmap may evolve when new evidence invalidates assumptions or when product validation changes priorities.
