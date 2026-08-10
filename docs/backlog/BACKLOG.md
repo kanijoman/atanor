@@ -91,7 +91,7 @@ The backlog defines the implementation plan of the project, not its technical sp
 
 | ID     | Task                           | Priority | Status |
 | ------ | ------------------------------ | :------: | :----: |
-| AT-006 | Initialize FastAPI application |    🔴    |    ⬜   |
+| AT-006 | Initialize FastAPI application |    🔴    |    ✅   |
 | AT-007 | Implement configuration system |    🔴    |    ⬜   |
 | AT-008 | Configure logging              |    🟡    |    ⬜   |
 | AT-009 | Implement health endpoint      |    🟡    |    ⬜   |
