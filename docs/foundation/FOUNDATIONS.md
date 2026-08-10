@@ -9,7 +9,7 @@
 | Project      | Atanor                      |
 | Document     | FOUNDATIONS                 |
 | Status       | 🟢 Active                   |
-| Version      | 0.3                         |
+| Version      | 0.4                         |
 | Last Updated | 2026-08-10                  |
 | Audience     | Contributors and Developers |
 
@@ -29,11 +29,11 @@ It is determining:
 - how deeply it must be understood;
 - which sources should support it;
 - how different sources relate to each other;
-- how the resulting knowledge should be organized into a coherent learning journey.
+- how the required knowledge should be organized into a coherent learning journey.
 
 That refinement is a major part of the value traditionally provided by academic preparation services.
 
-Atanor aims to make that process systematic, traceable and continuously maintainable.
+Atanor aims to make that process systematic, traceable and maintainable without depending structurally on proprietary study material.
 
 ---
 
@@ -49,11 +49,12 @@ Users should spend their time understanding, practicing and consolidating knowle
 
 A user should be able to provide an official syllabus, examination notice, regulation, or other relevant documents and obtain a justified learning scope and a coherent learning journey.
 
-Atanor should be able to construct and maintain that knowledge using:
+Atanor should construct and refine the required knowledge using:
 
 - public and freely accessible sources;
 - authoritative sources;
-- documents provided by the user.
+- documents provided by the user;
+- knowledge already accumulated and validated in the canonical corpus.
 
 Paid third-party material must never be a structural dependency of the platform.
 
@@ -86,12 +87,60 @@ Scope Discovery
     ↓
 Knowledge Blueprint
     ↓
+Knowledge Assessment
+    ↓
+Source Discovery / Acquisition
+    ↓
+Knowledge Candidates
+    ↓
+Evidence & Validation
+    ↓
 Canonical Knowledge
     ↓
 Learning Path
 ```
 
-The Knowledge Blueprint describes the proposed coverage, expected depth, evidence and confidence before the final knowledge corpus is built.
+This flow is iterative rather than strictly linear.
+
+The Knowledge Blueprint defines the proposed coverage, expected depth, evidence needs and confidence. It also acts as the specification used to evaluate existing knowledge and determine whether new acquisition or refinement is necessary.
+
+---
+
+# The Canonical Knowledge Corpus
+
+Atanor does not assume the existence of a complete corpus before the system can operate.
+
+The canonical knowledge corpus is a **cumulative asset built progressively and on demand**.
+
+When a new requirement is introduced, Atanor should first evaluate whether the existing canonical knowledge is sufficient. If it is, the system should reuse it. If it is incomplete or insufficient for the current requirement, Atanor may acquire additional source material, extract candidate knowledge, validate it and extend the corpus.
+
+Conceptually:
+
+```text
+Requirement
+     ↓
+Knowledge Blueprint
+     ↓
+Existing Canonical Knowledge
+     │
+     ├── Sufficient ───────→ Reuse
+     │
+     ├── Insufficient ─────→ Extend / Revalidate
+     │
+     └── Missing ──────────→ Acquire
+                                  ↓
+                         Candidate Knowledge
+                                  ↓
+                         Evidence & Validation
+                                  ↓
+                         Canonical Knowledge
+```
+
+The corpus is therefore **demand-driven rather than continuously maintained for its own sake**.
+
+Atanor does not need to proactively re-evaluate the entire corpus on a permanent schedule. Knowledge is re-evaluated when a real requirement provides a reason to do so, such as a new curriculum, a different expected depth, insufficient evidence, or a relevant source change discovered during use.
+
+This keeps acquisition and maintenance aligned with actual product needs.
 
 ---
 
@@ -99,7 +148,9 @@ The Knowledge Blueprint describes the proposed coverage, expected depth, evidenc
 
 Atanor is a learning platform built around a structured, traceable knowledge model.
 
-Its core capability is not merely storing documents or answering questions. It is transforming requirements and evidence into knowledge that can be organized, evaluated and learned.
+Its core capability is not merely storing documents or answering questions. It is transforming requirements, evidence and source material into knowledge that can be organized, evaluated, reused and learned.
+
+The canonical knowledge corpus is one of the primary product assets, but it is not a static repository of documents. It is a reusable representation of validated knowledge that grows through real learning requirements.
 
 ---
 
@@ -111,7 +162,8 @@ Atanor is not:
 - a document repository;
 - a specialized search engine;
 - merely a chatbot;
-- dependent on proprietary commercial study material.
+- dependent on proprietary commercial study material;
+- a system that requires a permanently maintained global corpus before it can serve users.
 
 AI may support many capabilities, but AI itself is not the product.
 
@@ -121,9 +173,11 @@ AI may support many capabilities, but AI itself is not the product.
 
 ## Knowledge Is the Primary Asset
 
-The value of Atanor lies in how knowledge is represented, organized, related and maintained.
+The value of Atanor lies in how knowledge is represented, organized, related, verified and maintained.
 
 Documents are sources of knowledge, not necessarily the knowledge model itself.
+
+The canonical corpus should be reusable independently of any particular curriculum.
 
 ---
 
@@ -151,9 +205,59 @@ Knowledge
 
 Canonical knowledge must not belong to a single examination or syllabus.
 
-The same knowledge may be required by multiple convocations, topics or learning paths.
+The same knowledge may be required by multiple curricula, topics or learning paths.
 
 Curriculum defines which knowledge is relevant in a particular context.
+
+---
+
+## The Blueprint Defines the Required Knowledge Scope
+
+The Knowledge Blueprint is the bridge between an external requirement and the reusable knowledge corpus.
+
+It should conceptually capture:
+
+- candidate coverage;
+- expected depth;
+- evidence requirements;
+- provenance;
+- confidence;
+- unresolved gaps.
+
+The Blueprint is not merely a table of contents. It is also the specification against which existing knowledge is assessed.
+
+---
+
+## Knowledge Is Built on Demand
+
+Atanor should not require a complete knowledge corpus before serving users.
+
+Real requirements drive knowledge construction.
+
+A new requirement may:
+
+- reuse existing knowledge;
+- expose a gap in existing knowledge;
+- require deeper treatment;
+- trigger source discovery;
+- require revalidation of existing knowledge.
+
+This creates a cumulative knowledge asset without imposing permanent, global maintenance as a product requirement.
+
+---
+
+## Sources and Knowledge Are Different
+
+The source that establishes that something must be learned does not necessarily need to be the source that best explains it.
+
+Atanor should distinguish:
+
+- curricular evidence;
+- authoritative knowledge sources;
+- explanatory or academic sources;
+- user-provided material.
+
+A source can therefore contribute to scope discovery, knowledge construction, or both.
 
 ---
 
@@ -166,6 +270,7 @@ The system should distinguish between:
 - directly supported facts;
 - user-provided requirements;
 - inferred or proposed coverage;
+- insufficiently supported knowledge;
 - unresolved or unknown information.
 
 Uncertainty must not be silently converted into certainty.
@@ -180,24 +285,15 @@ A knowledge unit may participate in multiple curricula, explanations, questions 
 
 ---
 
-## Sources and Knowledge Are Different
+## Knowledge Evolves Through Use
 
-The source that establishes that something must be learned does not necessarily need to be the source that best explains it.
+Authoritative sources change, requirements change and the required depth of knowledge changes.
 
-Atanor should therefore distinguish:
+Atanor should be able to update knowledge while preserving provenance and historical context where necessary.
 
-- curricular evidence;
-- authoritative knowledge sources;
-- explanatory or academic sources;
-- user-provided material.
+However, continuous global re-evaluation is not a product requirement.
 
----
-
-## Knowledge Evolves
-
-Authoritative sources change, requirements change and the state of knowledge evolves.
-
-Atanor must be able to update knowledge while preserving provenance and historical context where necessary.
+Knowledge should normally be re-evaluated when a concrete requirement creates a reason to do so.
 
 ---
 
@@ -244,11 +340,13 @@ Instead of treating a syllabus as a static table of contents, Atanor aims to con
 ```text
 Requirement
     ↓
-Evidence
+Scope Discovery
     ↓
-Coverage Model
+Knowledge Blueprint
     ↓
-Depth Model
+Knowledge Assessment
+    ↓
+Source Discovery / Acquisition
     ↓
 Canonical Knowledge
     ↓
@@ -256,6 +354,8 @@ Learning Path
 ```
 
 The resulting study material becomes a generated view of the underlying knowledge model rather than the primary asset itself.
+
+The accumulated corpus improves the efficiency of future requirements because previously validated knowledge can be reused rather than reconstructed.
 
 ---
 

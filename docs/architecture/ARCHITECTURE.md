@@ -1,38 +1,84 @@
-# Architecture
+# Foundations
+
+> *The challenge of public service examinations is not the lack of information. It is the difficulty of transforming that information into reliable, relevant and learnable knowledge.*
 
 # Document Information
 
-| Field               | Value                       |
-| ------------------- | --------------------------- |
-| Project             | Atanor                      |
-| Document            | ARCHITECTURE                |
-| Status              | 🟢 Active                   |
-| Version             | 0.3                         |
-| Last Updated        | 2026-08-10                  |
-| Audience            | Contributors and Developers |
-| Architecture Status | 🟡 Evolving                 |
+| Field        | Value                       |
+| ------------ | --------------------------- |
+| Project      | Atanor                      |
+| Document     | FOUNDATIONS                 |
+| Status       | 🟢 Active                   |
+| Version      | 0.4                         |
+| Last Updated | 2026-08-10                  |
+| Audience     | Contributors and Developers |
 
 ---
 
-# Purpose
+# Why This Project Exists
 
-This document defines the architectural principles and currently validated architectural direction of Atanor.
+Atanor was created to solve a specific problem in knowledge-intensive learning, initially public service examinations.
 
-It intentionally avoids describing speculative implementation details or prematurely committing the project to frameworks, infrastructure or persistence technologies.
+A competitive examination does not normally provide everything a candidate needs to learn. Its requirements often define a subject or source without specifying the complete knowledge coverage, the appropriate level of detail, or the best explanatory sources.
 
-The architecture must evolve from the validated domain model.
+The difficult part is therefore not only finding information.
 
-Detailed implementation choices belong in the source code and Architecture Decision Records (ADR).
+It is determining:
+
+- what knowledge is required;
+- how deeply it must be understood;
+- which sources should support it;
+- how different sources relate to each other;
+- how the required knowledge should be organized into a coherent learning journey.
+
+That refinement is a major part of the value traditionally provided by academic preparation services.
+
+Atanor aims to make that process systematic, traceable and maintainable without depending structurally on proprietary study material.
 
 ---
 
-# Architectural Vision
+# Mission
 
-Atanor is designed as a knowledge platform rather than a collection of independent features.
+**Transform authoritative knowledge and explicit learning requirements into effective, verifiable and adaptive learning.**
 
-Its architecture must support the transformation of learning requirements and evidence into structured, traceable and reusable knowledge, and eventually into adaptive learning experiences.
+Users should spend their time understanding, practicing and consolidating knowledge—not manually determining what they need to study, where to find it, or how it fits together.
 
-The current conceptual flow is:
+---
+
+# Vision
+
+A user should be able to provide an official syllabus, examination notice, regulation, or other relevant documents and obtain a justified learning scope and a coherent learning journey.
+
+Atanor should construct and refine the required knowledge using:
+
+- public and freely accessible sources;
+- authoritative sources;
+- documents provided by the user;
+- knowledge already accumulated and validated in the canonical corpus.
+
+Paid third-party material must never be a structural dependency of the platform.
+
+The platform should make uncertainty explicit rather than presenting unsupported assumptions as facts.
+
+---
+
+# The Core Product Problem
+
+A requirement such as:
+
+> "Operating Systems"
+
+does not, by itself, determine:
+
+- which concepts must be covered;
+- how those concepts should be decomposed;
+- how much detail is appropriate;
+- which sources should be used;
+- which parts are explicitly required and which are inferred from the domain.
+
+Atanor therefore needs an intermediate process between a requirement and canonical knowledge.
+
+Conceptually:
 
 ```text
 Requirement
@@ -41,261 +87,282 @@ Scope Discovery
     ↓
 Knowledge Blueprint
     ↓
+Knowledge Assessment
+    ↓
+Source Discovery / Acquisition
+    ↓
+Knowledge Candidates
+    ↓
+Evidence & Validation
+    ↓
 Canonical Knowledge
     ↓
 Learning Path
 ```
 
-This flow represents the current domain direction, not a finalized implementation architecture.
+This flow is iterative rather than strictly linear.
 
-Business requirements and validated domain concepts drive architectural decisions—not frameworks, libraries or infrastructure.
-
----
-
-# Architectural Principles
-
-## Domain First
-
-The domain model is the primary driver of the architecture.
-
-Technical choices must support the domain rather than shape it.
-
-The conceptual model must therefore be validated before selecting a persistence strategy or introducing application structures around it.
+The Knowledge Blueprint defines the proposed coverage, expected depth, evidence needs and confidence. It also acts as the specification used to evaluate existing knowledge and determine whether new acquisition or refinement is necessary.
 
 ---
 
-## Knowledge and Curriculum Are Distinct
+# The Canonical Knowledge Corpus
 
-Atanor must distinguish between:
+Atanor does not assume the existence of a complete corpus before the system can operate.
 
-- the knowledge that exists in the canonical knowledge model;
-- the requirements imposed by a particular curriculum or examination;
-- the scope of knowledge considered relevant to those requirements.
+The canonical knowledge corpus is a **cumulative asset built progressively and on demand**.
 
-The same knowledge may be reused by multiple curricula.
+When a new requirement is introduced, Atanor should first evaluate whether the existing canonical knowledge is sufficient. If it is, the system should reuse it. If it is incomplete or insufficient for the current requirement, Atanor may acquire additional source material, extract candidate knowledge, validate it and extend the corpus.
 
-A curriculum should therefore select and contextualize knowledge rather than own it.
+Conceptually:
+
+```text
+Requirement
+     ↓
+Knowledge Blueprint
+     ↓
+Existing Canonical Knowledge
+     │
+     ├── Sufficient ───────→ Reuse
+     │
+     ├── Insufficient ─────→ Extend / Revalidate
+     │
+     └── Missing ──────────→ Acquire
+                                  ↓
+                         Candidate Knowledge
+                                  ↓
+                         Evidence & Validation
+                                  ↓
+                         Canonical Knowledge
+```
+
+The corpus is therefore **demand-driven rather than continuously maintained for its own sake**.
+
+Atanor does not need to proactively re-evaluate the entire corpus on a permanent schedule. Knowledge is re-evaluated when a real requirement provides a reason to do so, such as a new curriculum, a different expected depth, insufficient evidence, or a relevant source change discovered during use.
+
+This keeps acquisition and maintenance aligned with actual product needs.
 
 ---
 
-## Scope Before Knowledge
+# What We Are
 
-A requirement does not necessarily define the complete knowledge that must be learned.
+Atanor is a learning platform built around a structured, traceable knowledge model.
 
-Atanor needs an intermediate scope-definition process capable of determining, with explicit evidence and confidence:
+Its core capability is not merely storing documents or answering questions. It is transforming requirements, evidence and source material into knowledge that can be organized, evaluated, reused and learned.
+
+The canonical knowledge corpus is one of the primary product assets, but it is not a static repository of documents. It is a reusable representation of validated knowledge that grows through real learning requirements.
+
+---
+
+# What We Are Not
+
+Atanor is not:
+
+- a traditional academy;
+- a document repository;
+- a specialized search engine;
+- merely a chatbot;
+- dependent on proprietary commercial study material;
+- a system that requires a permanently maintained global corpus before it can serve users.
+
+AI may support many capabilities, but AI itself is not the product.
+
+---
+
+# Core Principles
+
+## Knowledge Is the Primary Asset
+
+The value of Atanor lies in how knowledge is represented, organized, related, verified and maintained.
+
+Documents are sources of knowledge, not necessarily the knowledge model itself.
+
+The canonical corpus should be reusable independently of any particular curriculum.
+
+---
+
+## Requirements Do Not Define the Whole Knowledge Model
+
+A requirement identifies an expected area or source of knowledge.
+
+It does not necessarily define its complete coverage or depth.
+
+Atanor must therefore distinguish:
+
+```text
+Requirement
+    ↓
+Scope
+    ↓
+Coverage + Depth
+    ↓
+Knowledge
+```
+
+---
+
+## Knowledge Is Independent of Curriculum
+
+Canonical knowledge must not belong to a single examination or syllabus.
+
+The same knowledge may be required by multiple curricula, topics or learning paths.
+
+Curriculum defines which knowledge is relevant in a particular context.
+
+---
+
+## The Blueprint Defines the Required Knowledge Scope
+
+The Knowledge Blueprint is the bridge between an external requirement and the reusable knowledge corpus.
+
+It should conceptually capture:
 
 - candidate coverage;
 - expected depth;
-- relevant sources;
+- evidence requirements;
+- provenance;
+- confidence;
+- unresolved gaps.
+
+The Blueprint is not merely a table of contents. It is also the specification against which existing knowledge is assessed.
+
+---
+
+## Knowledge Is Built on Demand
+
+Atanor should not require a complete knowledge corpus before serving users.
+
+Real requirements drive knowledge construction.
+
+A new requirement may:
+
+- reuse existing knowledge;
+- expose a gap in existing knowledge;
+- require deeper treatment;
+- trigger source discovery;
+- require revalidation of existing knowledge.
+
+This creates a cumulative knowledge asset without imposing permanent, global maintenance as a product requirement.
+
+---
+
+## Sources and Knowledge Are Different
+
+The source that establishes that something must be learned does not necessarily need to be the source that best explains it.
+
+Atanor should distinguish:
+
 - curricular evidence;
-- unresolved uncertainty.
+- authoritative knowledge sources;
+- explanatory or academic sources;
+- user-provided material.
 
-The resulting Knowledge Blueprint is a conceptual boundary between a requirement and the canonical knowledge model.
-
-This is a validated domain direction, but its final representation and persistence model remain open.
-
----
-
-## Evidence and Provenance
-
-The architecture must preserve the distinction between knowledge and the evidence supporting it.
-
-Atanor should be able to distinguish, at least conceptually:
-
-- authoritative source material;
-- user-provided material;
-- curricular evidence;
-- inferred or proposed scope;
-- unresolved information.
-
-A source establishing that something should be learned does not necessarily need to be the source that best explains the knowledge.
-
-The architecture should therefore allow multiple kinds of evidence and sources to participate without conflating their roles.
+A source can therefore contribute to scope discovery, knowledge construction, or both.
 
 ---
 
-## Explicit Uncertainty
+## Knowledge Must Be Verifiable
 
-Atanor must not silently turn inference into fact.
+Knowledge should maintain traceability to the sources or evidence that support it.
 
-The system should be able to represent that a conclusion is:
+The system should distinguish between:
 
-- directly supported;
-- inferred from multiple sources;
-- provided by the user;
-- insufficiently supported;
-- unknown.
+- directly supported facts;
+- user-provided requirements;
+- inferred or proposed coverage;
+- insufficiently supported knowledge;
+- unresolved or unknown information.
 
-This is especially important when determining coverage and expected depth from requirements that do not specify them explicitly.
-
----
-
-## Incremental Evolution
-
-Architecture grows together with the product.
-
-New components are introduced only when they solve a real business or technical requirement.
-
-Important domain assumptions should be validated through small experiments before becoming architectural commitments.
+Uncertainty must not be silently converted into certainty.
 
 ---
 
-## Just Enough Architecture
+## Knowledge Is Modular
 
-The project avoids speculative design.
+Knowledge should be represented as reusable and interconnected units rather than static manuals.
 
-Architectural complexity should appear only when justified by the current stage of development.
-
-In particular, the emerging Knowledge Blueprint and canonical knowledge model should not be translated prematurely into a large set of technical abstractions.
+A knowledge unit may participate in multiple curricula, explanations, questions and learning paths.
 
 ---
 
-## Simplicity
+## Knowledge Evolves Through Use
 
-Whenever multiple valid solutions exist, prefer the simplest one that satisfies the current requirements.
+Authoritative sources change, requirements change and the required depth of knowledge changes.
 
-Avoid unnecessary abstractions and premature optimization.
+Atanor should be able to update knowledge while preserving provenance and historical context where necessary.
 
-Simplicity must not, however, erase important domain distinctions such as:
+However, continuous global re-evaluation is not a product requirement.
+
+Knowledge should normally be re-evaluated when a concrete requirement creates a reason to do so.
+
+---
+
+## Learning Must Be Guided
+
+Users should never face an empty page wondering what to study next.
+
+The platform should construct a learning path from:
 
 ```text
-Requirement ≠ Source ≠ Knowledge ≠ Evidence
+Required Knowledge
+        +
+Knowledge Dependencies
+        +
+User Knowledge State
+        ↓
+Learning Path
 ```
 
 ---
 
-## Low Coupling
+## Learning Means Mastery
 
-System components should communicate through well-defined interfaces.
+Completing a topic does not mean mastering it.
 
-Implementation details should remain isolated whenever possible.
-
-The knowledge domain should not become tightly coupled to a particular storage engine, AI provider or external source.
+Progress should ultimately be measured through demonstrated understanding rather than the amount of content consumed.
 
 ---
 
-## High Cohesion
+## Learning Must Adapt to the User
 
-Each module should have a single, clearly defined responsibility.
-
-Related functionality should remain together.
-
-Boundaries should emerge from validated domain responsibilities rather than from technical fashion.
+The learning experience should adapt to prior knowledge, available time, progress and demonstrated weaknesses.
 
 ---
 
-## Reversible Decisions
+# Value Proposition
 
-Architectural decisions should remain reversible whenever practical.
+Traditional preparation services provide a refined interpretation of a syllabus, study material and a predefined learning plan.
 
-Replacing a framework or technology should require minimal impact on the rest of the system.
+Atanor aims to make that refinement dynamic and traceable.
 
-Domain concepts should not depend unnecessarily on infrastructure-specific representations.
-
----
-
-# Current Architectural Direction
-
-The current project stage has established the following conceptual direction:
+Instead of treating a syllabus as a static table of contents, Atanor aims to construct:
 
 ```text
-Learning / Examination Requirement
-                ↓
-         Scope Discovery
-                ↓
-       Knowledge Blueprint
-                ↓
-       Canonical Knowledge
-                ↓
-        Learning Experience
+Requirement
+    ↓
+Scope Discovery
+    ↓
+Knowledge Blueprint
+    ↓
+Knowledge Assessment
+    ↓
+Source Discovery / Acquisition
+    ↓
+Canonical Knowledge
+    ↓
+Learning Path
 ```
 
-The Knowledge Blueprint is expected to capture, conceptually:
+The resulting study material becomes a generated view of the underlying knowledge model rather than the primary asset itself.
 
-```text
-Knowledge Scope
-├── Coverage
-├── Expected Depth
-├── Evidence
-├── Provenance
-└── Confidence
-```
-
-Canonical knowledge is expected to be reusable across different requirements and curricula.
-
-The exact structure of knowledge entities, assertions, relationships and dependencies is still being validated and is therefore not yet a finalized architectural contract.
+The accumulated corpus improves the efficiency of future requirements because previously validated knowledge can be reused rather than reconstructed.
 
 ---
 
-# Current Architecture
+# Guiding Question
 
-At the current stage of the project, the following architectural decisions have been made:
+Every architectural, functional or technical decision should answer:
 
-* The repository is organized as a monorepo.
-* Backend and frontend evolve independently.
-* Project documentation is maintained alongside the source code.
-* Architecture evolves incrementally.
-* Infrastructure is introduced only when required.
-* Technology decisions are documented separately.
-* Significant architectural changes are recorded through ADRs.
-* Domain modeling precedes persistence design.
-* The conceptual distinction between requirements, scope, knowledge and evidence is part of the current architectural direction.
+> **Does this decision help transform requirements and authoritative knowledge into a better, simpler and more effective learning experience?**
 
-The internal application architecture is not yet finalized.
-
-It will emerge from the validated domain model and the first functional capabilities.
-
----
-
-# Deferred Decisions
-
-The following architectural decisions remain intentionally deferred until sufficient evidence exists:
-
-* Exact internal application structure.
-* Module boundaries.
-* Final Knowledge Blueprint representation.
-* Exact canonical knowledge model.
-* Persistence architecture and database technology.
-* Retrieval architecture.
-* AI integration strategy.
-* Authentication.
-* Deployment model.
-* Scalability strategy.
-* Observability.
-
-In particular, persistence must not be selected merely because a relational model is familiar or because an earlier document hierarchy suggested one.
-
-The persistence model should follow the validated domain model.
-
-Deferring these decisions reduces unnecessary complexity and preserves architectural flexibility.
-
----
-
-# Architecture Decision Records
-
-Significant architectural decisions should be documented through Architecture Decision Records (ADR).
-
-Each ADR should answer, at minimum:
-
-* What decision was made?
-* What problem does it solve?
-* Which alternatives were considered?
-* Why was this solution selected?
-* What are the expected consequences?
-* Which assumptions support the decision?
-
-ADRs complement this document by preserving the historical context behind architectural evolution without turning this document into a detailed project journal.
-
----
-
-# Architecture Evolution
-
-Architecture is expected to evolve continuously throughout the project's lifetime.
-
-This document should remain concise and stable.
-
-Implementation details belong in the codebase.
-
-Validated architectural decisions should be reflected here, while significant decisions and their historical reasoning should be recorded through ADRs.
-
-Unvalidated hypotheses should remain explicitly identified as such until experiments or implementation provide sufficient evidence.
+If the answer is no, it does not belong in Atanor.
