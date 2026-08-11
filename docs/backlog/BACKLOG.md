@@ -7,7 +7,7 @@
 | Project      | Atanor                      |
 | Document     | BACKLOG                     |
 | Status       | 🟢 Active                   |
-| Version      | 0.7                         |
+| Version      | 0.8                         |
 | Last Updated | 2026-08-11                  |
 | Audience     | Contributors and Developers |
 
@@ -31,8 +31,8 @@ Technical implementation details belong in the corresponding commits and Archite
 | ----------- | ----: |
 | Total Tasks |    23 |
 | Pending     |    12 |
-| In Progress |     1 |
-| Completed   |     8 |
+| In Progress |     0 |
+| Completed   |     9 |
 | Cancelled   |     2 |
 | Blocked     |     0 |
 
@@ -109,8 +109,8 @@ The backlog defines the implementation plan of the project, not its technical sp
 
 | ID     | Task                        | Priority | Status |
 | ------ | --------------------------- | :------: | :------: |
-| AT-010 | Configure persistence layer |    🔴    |    🟡   |
-| AT-011 | Define initial domain model |    🔴    |    ⬜   |
+| AT-010 | Configure persistence layer |    🔴    |    ✅   |
+| AT-011 | Define initial domain model |    🔴    |    🟡   |
 | AT-012 | Configure migrations        |    🟡    |    ⬜   |
 
 ### Current Domain-Model Direction
