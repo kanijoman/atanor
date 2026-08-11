@@ -7,7 +7,7 @@
 | Project      | Atanor                      |
 | Document     | BACKLOG                     |
 | Status       | 🟢 Active                   |
-| Version      | 0.6                         |
+| Version      | 0.7                         |
 | Last Updated | 2026-08-11                  |
 | Audience     | Contributors and Developers |
 
@@ -30,7 +30,7 @@ Technical implementation details belong in the corresponding commits and Archite
 | Metric      | Value |
 | ----------- | ----: |
 | Total Tasks |    23 |
-| Pending     |    13 |
+| Pending     |    12 |
 | In Progress |     1 |
 | Completed   |     8 |
 | Cancelled   |     2 |
@@ -190,7 +190,7 @@ The conceptual validation performed before AT-010 established the minimum concep
 2. How a requirement is represented by a blueprint.
 3. How expected knowledge coverage and depth are associated with a blueprint.
 4. How canonical knowledge can be reused across blueprints.
-5. How sources and evidence provide provenance for knowledge.
+5. How sources and evidence provide provenance.
 
 Further concepts such as candidate knowledge, assertions, learning paths and assessments remain outside the initial persistence implementation until concrete requirements justify their persistence model.
 
