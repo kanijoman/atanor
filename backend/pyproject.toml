@@ -2,12 +2,12 @@
 name = "atanor-backend"
 version = "0.1.0"
 description = "Backend for the Atanor platform."
-readme = "../README.md"
 requires-python = ">=3.14"
 dependencies = [
     "fastapi",
     "pydantic-settings>=2.15.0",
     "uvicorn[standard]",
+    "sqlalchemy>=2.0,<3.0",
 ]
 
 [dependency-groups]
