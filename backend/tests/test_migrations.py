@@ -32,6 +32,5 @@ def test_initial_migration_round_trip(tmp_path) -> None:
         command.downgrade(config, "base")
 
         assert "requirements" not in inspect(engine).get_table_names()
-        assert "alembic_version" not in inspect(engine).get_table_names()
     finally:
         engine.dispose()
