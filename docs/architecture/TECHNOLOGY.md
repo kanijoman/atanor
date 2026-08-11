@@ -7,7 +7,7 @@
 | Project      | Atanor     |
 | Document     | Technology |
 | Status       | 🟢 Active  |
-| Version      | 0.3        |
+| Version      | 0.4        |
 | Last Updated | 2026-08-11 |
 | Audience     | Developers |
 
@@ -105,6 +105,7 @@ Dependencies must be declared explicitly in `pyproject.toml`.
 | ---------- | ---------- | ---------------------------- |
 | SQLAlchemy | 🟢 Adopted | Relational persistence layer |
 | SQLite     | 🟢 Adopted | Initial database engine      |
+| Alembic    | 🟢 Adopted | Database schema migrations   |
 
 Atanor uses a relational persistence model for the current knowledge domain.
 
@@ -113,6 +114,8 @@ SQLite is the initial database engine because the current requirements only requ
 SQLAlchemy provides an abstraction between the application domain and the database implementation.
 
 The persistence layer must not make the domain model dependent on SQLAlchemy-specific implementation details.
+
+Alembic provides explicit, versioned database schema migrations. Persistent schema changes must be introduced through reviewed migrations rather than relying on implicit schema mutation.
 
 ---
 
@@ -135,17 +138,7 @@ The adoption of PostgreSQL must be driven by a concrete requirement rather than 
 
 ---
 
-### 4.2 Alembic
-
-**Status:** 🟡 Deferred
-
-Alembic will be introduced when database schema evolution requires explicit migration management.
-
-The initial persistence implementation does not require migration infrastructure.
-
----
-
-### 4.3 Graph Database
+### 4.2 Graph Database
 
 **Status:** 🟡 Deferred
 
@@ -157,7 +150,7 @@ A graph database should only be considered if real query or domain requirements 
 
 ---
 
-### 4.4 Vector Database
+### 4.3 Vector Database
 
 **Status:** 🟡 Deferred
 
@@ -167,7 +160,7 @@ Semantic search, embeddings or retrieval mechanisms may be introduced later if v
 
 ---
 
-### 4.5 Artificial Intelligence Services
+### 4.4 Artificial Intelligence Services
 
 **Status:** 🟡 Deferred
 
@@ -179,7 +172,7 @@ AI capabilities may be introduced later as implementation tools for specific pro
 
 ---
 
-### 4.6 External Crawling or Data Acquisition Services
+### 4.5 External Crawling or Data Acquisition Services
 
 **Status:** 🟡 Deferred
 
@@ -189,7 +182,7 @@ Commercial crawling, scraping or data acquisition services are not part of the c
 
 ---
 
-### 4.7 Containerization
+### 4.6 Containerization
 
 **Status:** 🟡 Deferred
 
@@ -212,6 +205,8 @@ Python 3.14
     ├── Uvicorn
     │
     └── SQLAlchemy
+            │
+            ├── Alembic
             │
             ▼
          SQLite
