@@ -7,7 +7,7 @@
 | Project      | Atanor                      |
 | Document     | BACKLOG                     |
 | Status       | 🟢 Active                   |
-| Version      | 1.0                         |
+| Version      | 1.1                         |
 | Last Updated | 2026-08-11                  |
 | Audience     | Contributors and Developers |
 
@@ -77,6 +77,8 @@ The backlog defines the implementation plan of the project, not its technical sp
 - A single push should normally represent one isolated backlog task.
 - Implemented functionality should be validated by automated tests whenever practical.
 - Quality infrastructure may be brought forward when an active implementation task requires it.
+- User interfaces are implementations of application use cases, not architectural dependencies of the domain.
+- Technology choices for user interfaces should be justified by concrete product requirements rather than introduced speculatively.
 
 ---
 
@@ -139,13 +141,22 @@ AT-012 established Alembic as the controlled schema migration mechanism. The cur
 
 ---
 
-## Epic D · Frontend
+## Epic D · Product Interaction
 
-| ID     | Task                         | Priority | Status |
-| ------ | ---------------------------- | :------: | :------: |
-| AT-013 | Initialize React application |    🔴    |    ⬜   |
-| AT-014 | Configure routing            |    🟡    |    ⬜   |
-| AT-015 | Create application layout    |    🟡    |    ⬜   |
+The first user-facing work is intentionally technology-neutral. Atanor should validate application behavior and user workflows before committing to a permanent UI framework.
+
+| ID     | Task                                      | Priority | Status |
+| ------ | ----------------------------------------- | :------: | :------: |
+| AT-013 | Reorganize product interaction roadmap   |    🔴    |    ⬜   |
+| AT-014 | Define first application use cases        |    🔴    |    ⬜   |
+| AT-015 | Build minimal CLI interface               |    🟡    |    ⬜   |
+| AT-016 | Validate first end-to-end user workflow   |    🔴    |    ⬜   |
+
+### UI Decoupling Direction
+
+User interfaces must depend on application use cases rather than directly on domain persistence details. The concrete interface implementation should remain replaceable so that a CLI, desktop UI, web UI, or future alternative can evolve without coupling the domain model to a specific UI technology.
+
+No permanent commitment to React, Qt, or another UI framework is made at this stage. Such a decision should follow demonstrated product requirements.
 
 ---
 
@@ -153,14 +164,14 @@ AT-012 established Alembic as the controlled schema migration mechanism. The cur
 
 | ID     | Task                         | Priority | Status |
 | ------ | ---------------------------- | :------: | :------: |
-| AT-016 | Configure Ruff              |    🟡    |    ⬜   |
-| AT-017 | Configure Pyright            |    🟡    |    ⬜   |
-| AT-018 | Configure pre-commit hooks  |    🟡    |    ⬜   |
-| AT-019 | Configure testing framework |    🟡    |    ✅   |
+| AT-017 | Configure Ruff              |    🟡    |    ⬜   |
+| AT-018 | Configure Pyright            |    🟡    |    ⬜   |
+| AT-019 | Configure pre-commit hooks  |    🟡    |    ⬜   |
+| AT-020 | Configure testing framework |    🟡    |    ✅   |
 
-### AT-019 Execution Note
+### AT-020 Execution Note
 
-AT-019 was brought forward because AT-010 required automated persistence tests. The task established the minimum project-wide testing foundation required before further persistence behavior is implemented.
+This task was brought forward because AT-010 required automated persistence tests. It established the minimum project-wide testing foundation required before further persistence behavior is implemented.
 
 ---
 
@@ -168,10 +179,11 @@ AT-019 was brought forward because AT-010 required automated persistence tests. 
 
 | ID     | Task                                   | Priority | Status |
 | ------ | -------------------------------------- | :------: | :------: |
-| AT-020 | Connect frontend and backend           |    🔴    |    ⬜   |
-| AT-021 | Implement API client                   |    🟡    |    ⬜   |
-| AT-022 | Display backend status in the frontend |    🟡    |    ⬜   |
+| AT-021 | Integrate interface with application  |    🔴    |    ⬜   |
+| AT-022 | Expose first application workflow      |    🟡    |    ⬜   |
 | AT-023 | Verify end-to-end execution            |    🔴    |    ⬜   |
+
+These tasks deliberately describe observable product behavior rather than prescribing a frontend framework. The concrete UI technology remains a future decision driven by the validated interaction requirements.
 
 ---
 
