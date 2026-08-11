@@ -7,8 +7,8 @@
 | Project      | Atanor                      |
 | Document     | BACKLOG                     |
 | Status       | 🟢 Active                   |
-| Version      | 0.3                         |
-| Last Updated | 2026-08-10                  |
+| Version      | 0.4                         |
+| Last Updated | 2026-08-11                  |
 | Audience     | Contributors and Developers |
 
 ---
@@ -30,7 +30,7 @@ Technical implementation details belong in the corresponding commits and Archite
 | Metric      | Value |
 | ----------- | ----: |
 | Total Tasks |    23 |
-| Pending     |    14 |
+| Pending     |    13 |
 | In Progress |     0 |
 | Completed   |     7 |
 | Cancelled   |     2 |
@@ -75,6 +75,8 @@ The backlog defines the implementation plan of the project, not its technical sp
 - If cancelled work becomes necessary again, a new task must be created with a new identifier.
 - Git history is the project's technical record; the backlog reflects planning and execution status.
 - A single push should normally represent one isolated backlog task.
+- Implemented functionality should be validated by automated tests whenever practical.
+- Quality infrastructure may be brought forward when an active implementation task requires it.
 
 ---
 
@@ -107,8 +109,8 @@ The backlog defines the implementation plan of the project, not its technical sp
 
 | ID     | Task                        | Priority | Status |
 | ------ | --------------------------- | :------: | :------: |
-| AT-010 | Configure persistence layer |    🔴    |    ⬜   |
-| AT-011 | Define initial domain model |    🔴    |    ⬜   |
+| AT-010 | Configure persistence layer |    🔴    |    🟡   |
+| AT-011 | Define initial domain model |    🔴    |    ❌   |
 | AT-012 | Configure migrations        |    🟡    |    ⬜   |
 
 ### Current Domain-Model Direction
@@ -138,9 +140,7 @@ Learning
     Assessment
 ```
 
-This is a domain hypothesis, not yet a finalized persistence design.
-
-AT-010 should therefore be evaluated against the validated domain model rather than assuming that the initial `Document → Chapter → Topic → Epigraph` hierarchy is the final model.
+The initial persistence implementation is intentionally narrower than this full domain hypothesis. It is based on the validated concepts required for the first persistence slice and should evolve only when concrete requirements justify it.
 
 ---
 
@@ -161,7 +161,11 @@ AT-010 should therefore be evaluated against the validated domain model rather t
 | AT-016 | Configure Ruff              |    🟡    |    ⬜   |
 | AT-017 | Configure Pyright            |    🟡    |    ⬜   |
 | AT-018 | Configure pre-commit hooks  |    🟡    |    ⬜   |
-| AT-019 | Configure testing framework |    🟡    |    ⬜   |
+| AT-019 | Configure testing framework |    🟡    |    🟡   |
+
+### AT-019 Execution Note
+
+AT-019 has been brought forward because AT-010 now requires automated persistence tests. The task establishes the minimum project-wide testing foundation before further persistence behavior is implemented.
 
 ---
 
@@ -180,19 +184,15 @@ AT-010 should therefore be evaluated against the validated domain model rather t
 
 The backlog intentionally does not add speculative persistence tasks for the emerging Knowledge Blueprint and canonical knowledge model.
 
-Before implementation of a durable knowledge model, the domain should establish:
+The conceptual validation performed before AT-010 established the minimum concepts required for the initial persistence slice:
 
 1. What constitutes a requirement.
-2. How a requirement defines or references a scope.
-3. How candidate coverage is discovered.
-4. How expected depth is represented.
-5. How knowledge entities and assertions are distinguished.
-6. How evidence and provenance are represented.
-7. How the same knowledge can be reused across multiple curricula.
-8. How uncertainty and confidence are represented.
-9. How learning paths are derived from required knowledge.
+2. How a requirement is represented by a blueprint.
+3. How expected knowledge coverage and depth are associated with a blueprint.
+4. How canonical knowledge can be reused across blueprints.
+5. How sources and evidence provide provenance for knowledge.
 
-Only after these concepts are sufficiently validated should the persistence model be finalized.
+Further concepts such as candidate knowledge, assertions, learning paths and assessments remain outside the initial persistence implementation until concrete requirements justify their persistence model.
 
 ---
 
