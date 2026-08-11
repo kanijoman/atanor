@@ -7,7 +7,7 @@
 | Project      | Atanor                      |
 | Document     | BACKLOG                     |
 | Status       | 🟢 Active                   |
-| Version      | 0.9                         |
+| Version      | 1.0                         |
 | Last Updated | 2026-08-11                  |
 | Audience     | Contributors and Developers |
 
@@ -30,9 +30,9 @@ Technical implementation details belong in the corresponding commits and Archite
 | Metric      | Value |
 | ----------- | ----: |
 | Total Tasks |    23 |
-| Pending     |    11 |
+| Pending     |    10 |
 | In Progress |     0 |
-| Completed   |    10 |
+| Completed   |    11 |
 | Cancelled   |     2 |
 | Blocked     |     0 |
 
@@ -111,7 +111,7 @@ The backlog defines the implementation plan of the project, not its technical sp
 | ------ | --------------------------- | :------: | :------: |
 | AT-010 | Configure persistence layer |    🔴    |    ✅   |
 | AT-011 | Define initial domain model |    🔴    |    ✅   |
-| AT-012 | Configure migrations        |    🟡    |    ⬜   |
+| AT-012 | Configure migrations        |    🟡    |    ✅   |
 
 ### Current Domain-Model Direction
 
@@ -132,6 +132,10 @@ The model deliberately separates the need for knowledge (`Requirement`), its exp
 This is intentionally narrower than the broader domain hypothesis. Concepts such as knowledge assertions, evidence, learning paths, assessments, knowledge hierarchies, and other future extensions remain outside the initial implementation until concrete requirements justify them.
 
 The domain model is expected to evolve organically. New concepts should be introduced as new entities or relationships when required rather than being anticipated as speculative fields or structures in the existing core.
+
+### AT-012 Completion Note
+
+AT-012 established Alembic as the controlled schema migration mechanism. The current persistence schema is represented by an initial migration, and future persistent schema changes must be introduced through explicit, reviewed migrations. The migration lifecycle is covered by automated tests, including upgrade and downgrade validation.
 
 ---
 
