@@ -92,7 +92,42 @@ def test_requirement_update_preserves_creation_time_and_updates_modification_tim
         assert persisted_requirement.created_at == created_at
         assert persisted_requirement.updated_at is not None
         assert persisted_requirement.updated_at > updated_at
-        assert persisted_requirement.updated_at <= datetime.now(UTC)
+    finally:
+        Base.metadata.drop_all(bind=engine)
+        engine.dispose()
+
+
+def test_requirement_timestamps_are_persisted_as_utc(tmp_path) -> None:
+    database_url = f"sqlite:///{tmp_path / 'test.db'}"
+    engine = create_engine(
+        database_url,
+        connect_args={"check_same_thread": False},
+    )
+    session_factory = sessionmaker(bind=engine)
+
+    Base.metadata.create_all(bind=engine)
+
+    try:
+        before_creation = datetime.now(UTC)
+
+        with session_factory() as session:
+            requirement = Requirement(title="UTC timestamp requirement")
+            session.add(requirement)
+            session.commit()
+            requirement_id = requirement.id
+
+        after_creation = datetime.now(UTC)
+
+        with session_factory() as session:
+            persisted_requirement = session.get(Requirement, requirement_id)
+
+        assert persisted_requirement is not None
+        assert persisted_requirement.created_at is not None
+        assert persisted_requirement.updated_at is not None
+        assert persisted_requirement.created_at.tzinfo == UTC
+        assert persisted_requirement.updated_at.tzinfo == UTC
+        assert before_creation <= persisted_requirement.created_at <= after_creation
+        assert before_creation <= persisted_requirement.updated_at <= after_creation
     finally:
         Base.metadata.drop_all(bind=engine)
         engine.dispose()
