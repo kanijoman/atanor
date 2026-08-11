@@ -7,8 +7,8 @@
 | Project      | Atanor                      |
 | Document     | CONVENTIONS                 |
 | Status       | 🟢 Active                   |
-| Version      | 0.3                         |
-| Last Updated | 2026-08-10                  |
+| Version      | 0.4                         |
+| Last Updated | 2026-08-11                  |
 | Audience     | Contributors and Developers |
 
 ---
@@ -116,6 +116,24 @@ The preferred workflow is:
 
 TDD is a development technique rather than a mandatory rule.
 
+## Test Isolation and Reproducibility
+
+Tests must be self-contained and reproducible.
+
+A test must:
+
+- create all state it requires;
+- not assume pre-existing data or database structures;
+- not depend on another test having run before it;
+- be executable in an empty testing environment;
+- be executable independently as well as as part of the full test suite;
+- avoid using development or production data;
+- clean up test-specific state when required by the test environment.
+
+Shared fixtures or test infrastructure should only be introduced when they provide a clear benefit without compromising these properties.
+
+The goal is that a clean checkout with the project's declared test dependencies can execute the complete test suite without requiring manually prepared data or infrastructure.
+
 ---
 
 # Git Workflow
@@ -129,7 +147,13 @@ Commits should:
 - compile or pass the applicable checks;
 - leave the project in a consistent state.
 
-Large changes should be split into multiple commits whenever practical.
+Commit messages must follow this format:
+
+```text
+AT-XXX Change description
+```
+
+where `AT-XXX` is the backlog task associated with the change and the description briefly identifies the logical change performed.
 
 A push should normally correspond to a single isolated backlog task, so that introduced changes remain traceable and potential regressions can be associated with a specific task.
 
