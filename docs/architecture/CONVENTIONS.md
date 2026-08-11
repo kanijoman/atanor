@@ -7,7 +7,7 @@
 | Project      | Atanor                      |
 | Document     | CONVENTIONS                 |
 | Status       | 🟢 Active                   |
-| Version      | 0.4                         |
+| Version      | 0.5                         |
 | Last Updated | 2026-08-11                  |
 | Audience     | Contributors and Developers |
 
@@ -116,6 +116,18 @@ The preferred workflow is:
 
 TDD is a development technique rather than a mandatory rule.
 
+## Functional Test Scope
+
+Tests must validate a concrete functional behavior or flow.
+
+A test should have one primary functional responsibility and should fail for a reason that is meaningful to that behavior.
+
+Tests must not be added solely to increase code coverage. Coverage is a consequence of validating relevant functionality, not a target by itself.
+
+When two behaviors can fail independently and represent different functional contracts, they should be covered by separate tests even if they exercise some of the same implementation code.
+
+The physical organization of tests should remain proportional to the project. Independent tests do not necessarily require separate files; a new test file should be introduced when the growing set of related behaviors makes the separation useful.
+
 ## Test Isolation and Reproducibility
 
 Tests must be self-contained and reproducible.
@@ -133,6 +145,16 @@ A test must:
 Shared fixtures or test infrastructure should only be introduced when they provide a clear benefit without compromising these properties.
 
 The goal is that a clean checkout with the project's declared test dependencies can execute the complete test suite without requiring manually prepared data or infrastructure.
+
+---
+
+# Temporal Data
+
+Timestamps persisted by Atanor represent canonical UTC instants and are independent of the user's timezone.
+
+The persistence layer must store and return timestamps as UTC values. User-local timezone conversion is a presentation concern and belongs to the frontend or another consumer-facing layer.
+
+A timestamp must not be converted to a user's local timezone before persistence.
 
 ---
 
