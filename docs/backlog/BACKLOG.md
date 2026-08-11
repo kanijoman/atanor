@@ -7,7 +7,7 @@
 | Project      | Atanor                      |
 | Document     | BACKLOG                     |
 | Status       | 🟢 Active                   |
-| Version      | 0.8                         |
+| Version      | 0.9                         |
 | Last Updated | 2026-08-11                  |
 | Audience     | Contributors and Developers |
 
@@ -30,9 +30,9 @@ Technical implementation details belong in the corresponding commits and Archite
 | Metric      | Value |
 | ----------- | ----: |
 | Total Tasks |    23 |
-| Pending     |    12 |
+| Pending     |    11 |
 | In Progress |     0 |
-| Completed   |     9 |
+| Completed   |    10 |
 | Cancelled   |     2 |
 | Blocked     |     0 |
 
@@ -85,7 +85,7 @@ The backlog defines the implementation plan of the project, not its technical sp
 ## Epic A · Infrastructure
 
 | ID     | Task                                | Priority | Status |
-| ------ | ----------------------------------- | :------: | :----: |
+| ------ | ----------------------------------- | :------: | :------: |
 | AT-001 | Create initial repository structure |    🔴    |    ✅   |
 | AT-002 | Initialize backend project          |    🔴    |    ✅   |
 | AT-003 | Initialize frontend project         |    🔴    |    ✅   |
@@ -110,37 +110,28 @@ The backlog defines the implementation plan of the project, not its technical sp
 | ID     | Task                        | Priority | Status |
 | ------ | --------------------------- | :------: | :------: |
 | AT-010 | Configure persistence layer |    🔴    |    ✅   |
-| AT-011 | Define initial domain model |    🔴    |    🟡   |
+| AT-011 | Define initial domain model |    🔴    |    ✅   |
 | AT-012 | Configure migrations        |    🟡    |    ⬜   |
 
 ### Current Domain-Model Direction
 
-The conceptual work performed before implementing AT-010 has shown that persistence should not be designed directly from the initial document hierarchy.
+The conceptual work performed before implementing AT-010 and AT-011 established that the initial domain model should be a minimal, extensible foundation rather than a complete representation of the future Atanor knowledge system.
 
-The current domain hypothesis distinguishes, at minimum:
+The current domain core consists of:
 
 ```text
-Curriculum
-    Requirement
-    Scope Definition
-    Knowledge Blueprint
-
-Knowledge
-    Knowledge Entity
-    Knowledge Assertion
-    Relationships
-    Dependencies
-
-Provenance
-    Source
-    Evidence
-
-Learning
-    Learning Path
-    Assessment
+Requirement
+    └── Blueprint
+            └── Knowledge Requirement
+                    └── Knowledge
+                            └── Source(s)
 ```
 
-The initial persistence implementation is intentionally narrower than this full domain hypothesis. It is based on the validated concepts required for the first persistence slice and should evolve only when concrete requirements justify it.
+The model deliberately separates the need for knowledge (`Requirement`), its expected knowledge coverage (`Blueprint` and `KnowledgeRequirement`), reusable canonical knowledge (`Knowledge`), and information provenance (`Source`).
+
+This is intentionally narrower than the broader domain hypothesis. Concepts such as knowledge assertions, evidence, learning paths, assessments, knowledge hierarchies, and other future extensions remain outside the initial implementation until concrete requirements justify them.
+
+The domain model is expected to evolve organically. New concepts should be introduced as new entities or relationships when required rather than being anticipated as speculative fields or structures in the existing core.
 
 ---
 
@@ -184,15 +175,9 @@ AT-019 was brought forward because AT-010 required automated persistence tests. 
 
 The backlog intentionally does not add speculative persistence tasks for the emerging Knowledge Blueprint and canonical knowledge model.
 
-The conceptual validation performed before AT-010 established the minimum concepts required for the initial persistence slice:
+AT-010 and AT-011 established the initial persistence and domain foundations through small, validated increments. The initial domain slice demonstrates that a requirement can define a blueprint, a blueprint can require reusable knowledge, and knowledge can be associated with one or more sources.
 
-1. What constitutes a requirement.
-2. How a requirement is represented by a blueprint.
-3. How expected knowledge coverage and depth are associated with a blueprint.
-4. How canonical knowledge can be reused across blueprints.
-5. How sources and evidence provide provenance.
-
-Further concepts such as candidate knowledge, assertions, learning paths and assessments remain outside the initial persistence implementation until concrete requirements justify their persistence model.
+Further concepts such as knowledge assertions, evidence, learning paths and assessments remain outside the initial implementation until concrete requirements justify their persistence model.
 
 ---
 
