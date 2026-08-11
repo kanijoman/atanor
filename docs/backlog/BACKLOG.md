@@ -7,7 +7,7 @@
 | Project      | Atanor                      |
 | Document     | BACKLOG                     |
 | Status       | 🟢 Active                   |
-| Version      | 0.5                         |
+| Version      | 0.6                         |
 | Last Updated | 2026-08-11                  |
 | Audience     | Contributors and Developers |
 
@@ -32,7 +32,7 @@ Technical implementation details belong in the corresponding commits and Archite
 | Total Tasks |    23 |
 | Pending     |    13 |
 | In Progress |     1 |
-| Completed   |     7 |
+| Completed   |     8 |
 | Cancelled   |     2 |
 | Blocked     |     0 |
 
@@ -161,11 +161,11 @@ The initial persistence implementation is intentionally narrower than this full 
 | AT-016 | Configure Ruff              |    🟡    |    ⬜   |
 | AT-017 | Configure Pyright            |    🟡    |    ⬜   |
 | AT-018 | Configure pre-commit hooks  |    🟡    |    ⬜   |
-| AT-019 | Configure testing framework |    🟡    |    🟡   |
+| AT-019 | Configure testing framework |    🟡    |    ✅   |
 
 ### AT-019 Execution Note
 
-AT-019 has been brought forward because AT-010 now requires automated persistence tests. The task establishes the minimum project-wide testing foundation before further persistence behavior is implemented.
+AT-019 was brought forward because AT-010 required automated persistence tests. The task established the minimum project-wide testing foundation required before further persistence behavior is implemented.
 
 ---
 
