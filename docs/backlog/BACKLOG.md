@@ -30,9 +30,9 @@ Technical implementation details belong in the corresponding commits and Archite
 | Metric      | Value |
 | ----------- | ----: |
 | Total Tasks |    23 |
-| Pending     |    10 |
+| Pending     |     9 |
 | In Progress |     0 |
-| Completed   |    11 |
+| Completed   |    12 |
 | Cancelled   |     2 |
 | Blocked     |     0 |
 
@@ -147,10 +147,14 @@ The first user-facing work is intentionally technology-neutral. Atanor should va
 
 | ID     | Task                                      | Priority | Status |
 | ------ | ----------------------------------------- | :------: | :------: |
-| AT-013 | Reorganize product interaction roadmap   |    🔴    |    ⬜   |
+| AT-013 | Reorganize product interaction roadmap   |    🔴    |    ✅   |
 | AT-014 | Define first application use cases        |    🔴    |    ⬜   |
 | AT-015 | Build minimal CLI interface               |    🟡    |    ⬜   |
 | AT-016 | Validate first end-to-end user workflow   |    🔴    |    ⬜   |
+
+### AT-013 Completion Note
+
+AT-013 reviewed and reorganized the planned user-facing work so that product behavior and application use cases precede concrete UI technology. React, Qt, and other UI frameworks are deliberately deferred until validated requirements justify them. The backlog now treats the UI as a replaceable implementation of application use cases rather than a dependency of the domain.
 
 ### UI Decoupling Direction
 
