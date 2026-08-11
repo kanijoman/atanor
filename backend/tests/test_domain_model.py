@@ -16,9 +16,8 @@ def test_closed_source_requirement_can_define_required_knowledge() -> None:
         title="Article 1 of the Spanish Constitution",
     )
     blueprint = Blueprint().requires(article_one)
-    requirement = requirement.with_source(constitution).with_blueprint(blueprint)
+    requirement = requirement.with_blueprint(blueprint)
 
-    assert requirement.sources == (constitution,)
     assert requirement.blueprint is blueprint
-    assert requirement.blueprint.requirements == (article_one,)
+    assert requirement.blueprint.knowledge_requirements[0].knowledge == article_one
     assert article_one.sources == (constitution,)
