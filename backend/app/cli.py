@@ -1,7 +1,7 @@
 import argparse
 from pathlib import Path
 
-from app.application.source import import_pdf_source
+from app.application.source import get_source, import_pdf_source, list_sources
 from app.persistence.database import SessionLocal
 from app.persistence.source_repository import SqlAlchemySourceRepository
 
@@ -14,15 +14,22 @@ def build_parser() -> argparse.ArgumentParser:
         "import-source", help="Import a local PDF as a source"
     )
     import_source.add_argument("pdf", type=Path, help="Path to the PDF file")
+
+    get_source_parser = subparsers.add_parser(
+        "get-source", help="Get a source by locator"
+    )
+    get_source_parser.add_argument("locator", help="Source locator")
+
+    subparsers.add_parser("list-sources", help="List all sources")
     return parser
 
 
 def main(argv: list[str] | None = None) -> int:
     parser = build_parser()
     args = parser.parse_args(argv)
+    repository = SqlAlchemySourceRepository(SessionLocal)
 
     if args.command == "import-source":
-        repository = SqlAlchemySourceRepository(SessionLocal)
         try:
             source = import_pdf_source(args.pdf, repository)
         except (FileNotFoundError, ValueError) as exc:
@@ -31,6 +38,29 @@ def main(argv: list[str] | None = None) -> int:
         print("Source imported successfully:")
         print(f"  Title: {source.title}")
         print(f"  Locator: {source.locator}")
+        return 0
+
+    if args.command == "get-source":
+        source = get_source(args.locator, repository)
+        if source is None:
+            print(f"Source not found: {args.locator}")
+            return 1
+
+        print("Source:")
+        print(f"  Title: {source.title}")
+        print(f"  Locator: {source.locator}")
+        return 0
+
+    if args.command == "list-sources":
+        sources = list_sources(repository)
+        if not sources:
+            print("No sources found.")
+            return 0
+
+        print("Sources:")
+        for index, source in enumerate(sources, start=1):
+            print(f"  {index}. {source.title}")
+            print(f"     {source.locator}")
         return 0
 
     return 1
