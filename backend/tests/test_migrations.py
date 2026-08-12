@@ -2,7 +2,7 @@ from pathlib import Path
 
 from alembic import command
 from alembic.config import Config
-from sqlalchemy import create_engine, inspect
+from sqlalchemy import Uuid, create_engine, inspect
 
 
 def test_migrations_round_trip(tmp_path) -> None:
@@ -29,15 +29,16 @@ def test_migrations_round_trip(tmp_path) -> None:
             "created_at",
             "updated_at",
         }
-        assert {
-            column["name"] for column in inspector.get_columns("sources")
-        } == {
+        source_columns = inspector.get_columns("sources")
+        assert {column["name"] for column in source_columns} == {
             "id",
             "title",
             "locator",
             "created_at",
             "updated_at",
         }
+        source_id = next(column for column in source_columns if column["name"] == "id")
+        assert isinstance(source_id["type"], Uuid)
 
         command.downgrade(config, "base")
 
