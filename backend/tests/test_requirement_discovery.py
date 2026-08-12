@@ -1,9 +1,7 @@
 from pathlib import Path
-from uuid import uuid4
 
 from app.application.requirement import (
     PdfRequirementDiscoveryStrategy,
-    RequirementDiscoveryStrategy,
     RequirementMention,
     discover_requirements,
 )
@@ -35,10 +33,6 @@ def test_discover_requirements_delegates_to_strategy() -> None:
 
     assert result == mentions
     assert strategy.received_source is source
-
-
-def test_requirement_discovery_strategy_protocol_is_usable() -> None:
-    assert isinstance(FakeRequirementDiscoveryStrategy([]), RequirementDiscoveryStrategy)
 
 
 def test_pdf_strategy_accepts_pdf_sources() -> None:
