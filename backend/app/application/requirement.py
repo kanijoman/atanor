@@ -4,7 +4,6 @@ import re
 from typing import Protocol
 from uuid import UUID
 
-from app.application.pdf import extract_pdf_text
 from app.domain.models import Source
 
 
@@ -62,13 +61,14 @@ def discover_numbered_requirement_mentions(
 
 
 class PdfRequirementDiscoveryStrategy:
-    """Discover requirement mentions from PDF text using basic structure."""
+    """Placeholder strategy for PDF sources.
+
+    PDF integration is intentionally implemented in the later discovery flow.
+    """
 
     def discover(self, source: Source) -> list[RequirementMention]:
         if not source.locator:
             raise ValueError("PDF source must have a locator")
         if Path(source.locator).suffix.lower() != ".pdf":
             raise ValueError("Requirement discovery source must be a PDF")
-
-        text = extract_pdf_text(source)
-        return discover_numbered_requirement_mentions(text, source.id)
+        return []
