@@ -12,21 +12,25 @@ def _pdf_with_pages(*texts: str) -> bytes:
         b"<< /Type /Pages /Kids [3 0 R 6 0 R] /Count 2 >>",
         b"<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 5 0 R >> >> /Contents 4 0 R >>",
         None,
-        b"<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>",
+        None,
         b"<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 8 0 R >> >> /Contents 7 0 R >>",
         None,
-        b"<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>",
+        None,
     ]
 
-    for index, text in enumerate(texts):
+    content_object_numbers = (4, 7)
+    for text, object_number in zip(texts, content_object_numbers):
         stream = f"BT /F1 12 Tf 72 720 Td ({text}) Tj ET".encode()
-        objects[index * 4 + 3] = (
+        objects[object_number - 1] = (
             b"<< /Length "
             + str(len(stream)).encode()
             + b" >>\nstream\n"
             + stream
             + b"\nendstream"
         )
+
+    objects[4] = b"<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>"
+    objects[7] = b"<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>"
 
     output = bytearray(b"%PDF-1.4\n%\xe2\xe3\xcf\xd3\n")
     offsets = [0]
