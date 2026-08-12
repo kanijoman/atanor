@@ -26,6 +26,7 @@ def test_migrations_round_trip(tmp_path) -> None:
             "title",
             "description",
             "context",
+            "source_id",
             "created_at",
             "updated_at",
         }
@@ -40,6 +41,12 @@ def test_migrations_round_trip(tmp_path) -> None:
         source_id = next(column for column in source_columns if column["name"] == "id")
         assert isinstance(source_id["type"], CHAR)
         assert source_id["type"].length == 32
+
+        foreign_keys = inspector.get_foreign_keys("requirements")
+        assert {
+            (foreign_key["referred_table"], tuple(foreign_key["constrained_columns"]))
+            for foreign_key in foreign_keys
+        } == {("sources", ("source_id",))}
 
         command.downgrade(config, "base")
 
