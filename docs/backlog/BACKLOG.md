@@ -7,7 +7,7 @@
 | Project      | Atanor                      |
 | Document     | BACKLOG                     |
 | Status       | 🟢 Active                   |
-| Version      | 1.8                         |
+| Version      | 1.9                         |
 | Last Updated | 2026-08-12                  |
 | Audience     | Contributors and Developers |
 
@@ -30,16 +30,16 @@ Technical implementation details belong in the corresponding commits and Archite
 | Metric      | Value |
 | ----------- | ----: |
 | Total Tasks |    29 |
-| Pending     |     3 |
+| Pending     |     2 |
 | In Progress |     0 |
-| Completed   |    18 |
+| Completed   |    19 |
 | Deferred    |     3 |
 | Cancelled   |     5 |
 | Blocked     |     0 |
 
 **Current Epic:** Epic G · Requirement Discovery
 
-**Next Task:** AT-027 · Persist discovered requirements
+**Next Task:** AT-028 · Expose requirement inspection
 
 > These figures reflect the current task inventory. They should be updated whenever task status changes.
 
@@ -282,7 +282,7 @@ The system should not assume that textual equality implies requirement identity,
 | AT-024 | Define requirement discovery use case          |    🔴    |    ✅   |
 | AT-025 | Extract text from PDF sources                  |    🔴    |    ✅   |
 | AT-026 | Identify and normalize requirement candidates |    🔴    |    ✅   |
-| AT-027 | Persist discovered requirements                |    🔴    |    ⬜   |
+| AT-027 | Persist discovered requirements                |    🔴    |    ✅   |
 | AT-028 | Expose requirement inspection                  |    🟡    |    ⬜   |
 | AT-029 | Validate requirement discovery end-to-end      |    🔴    |    ⬜   |
 
@@ -306,7 +306,9 @@ Implemented a first deterministic candidate-detection pass over extracted text. 
 
 ### AT-027 · Persist Discovered Requirements
 
-Persist requirements discovered through the application workflow, reusing the existing domain model where it is sufficient. Any model changes must be justified by the real requirements discovered during this epic.
+**Status: Completed**
+
+Persisted discovered requirements using the existing domain and SQLAlchemy persistence patterns. Each discovered requirement is stored independently and retains a mandatory `source_id`, preserving end-to-end provenance. The implementation intentionally does not persist requirement mentions separately and does not perform semantic deduplication or identity resolution. A migration adds the source relationship, with automated domain, persistence, migration and application tests.
 
 ### AT-028 · Expose Requirement Inspection
 
@@ -330,6 +332,8 @@ Persistence
 Inspection
 ```
 
+Real-world PDF samples should be introduced here when they provide useful regression coverage, rather than being added speculatively to earlier tasks.
+
 ---
 
 # Domain Model Direction After Requirement Discovery
@@ -345,6 +349,8 @@ Canonical Requirement
 Different source expressions may refer to the same requirement. The source expression, provenance and location must remain traceable even when the canonical requirement is shared.
 
 The implementation should not prematurely introduce a general entity-resolution or semantic-matching subsystem. Real source examples should determine the appropriate level of normalization and identification.
+
+Requirements discovered from sources currently require a `source_id`, making provenance explicit and mandatory. Future requirement creation mechanisms should define their origin explicitly rather than weakening this traceability with an implicit optional source.
 
 ---
 
