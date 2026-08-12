@@ -1,11 +1,13 @@
 from pathlib import Path
-from uuid import UUID
+from uuid import UUID, uuid4
 
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
 from app.cli import main
 from app.persistence.database import Base
+from app.persistence.models.requirement import Requirement
+from app.persistence.models.source import Source
 
 
 def _write_synthetic_pdf(path: Path) -> None:
@@ -73,3 +75,52 @@ def test_import_source_command_returns_error_for_missing_pdf(tmp_path, monkeypat
         assert exc.code == 2
     else:
         raise AssertionError("CLI should reject a missing PDF")
+
+
+def test_list_requirements_command_returns_empty_message(
+    tmp_path, monkeypatch, capsys
+) -> None:
+    _patch_database(monkeypatch, tmp_path / "cli.db")
+
+    assert main(["list-requirements"]) == 0
+
+    output = capsys.readouterr().out
+    assert output == "No requirements found.\n"
+
+
+def test_list_requirements_command_displays_synthetic_requirement(
+    tmp_path, monkeypatch, capsys
+) -> None:
+    database_path = tmp_path / "cli.db"
+    _patch_database(monkeypatch, database_path)
+    engine = create_engine(f"sqlite:///{database_path}")
+    session_factory = sessionmaker(bind=engine)
+    source_id = uuid4()
+
+    try:
+        with session_factory() as session:
+            session.add(
+                Source(
+                    id=source_id,
+                    title="Synthetic Call",
+                    locator="synthetic.pdf",
+                )
+            )
+            session.add(
+                Requirement(
+                    title="Spanish Constitution",
+                    source_id=source_id,
+                )
+            )
+            session.commit()
+            requirement_id = session.query(Requirement).one().id
+
+        assert main(["list-requirements"]) == 0
+
+        output = capsys.readouterr().out
+        assert "Requirements:" in output
+        assert str(requirement_id) in output
+        assert "Spanish Constitution" in output
+        assert f"Source: {source_id}" in output
+    finally:
+        engine.dispose()
