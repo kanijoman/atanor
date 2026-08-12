@@ -7,7 +7,7 @@
 | Project      | Atanor                      |
 | Document     | BACKLOG                     |
 | Status       | 🟢 Active                   |
-| Version      | 1.7                         |
+| Version      | 1.8                         |
 | Last Updated | 2026-08-12                  |
 | Audience     | Contributors and Developers |
 
@@ -30,16 +30,16 @@ Technical implementation details belong in the corresponding commits and Archite
 | Metric      | Value |
 | ----------- | ----: |
 | Total Tasks |    29 |
-| Pending     |     4 |
+| Pending     |     3 |
 | In Progress |     0 |
-| Completed   |    17 |
+| Completed   |    18 |
 | Deferred    |     3 |
 | Cancelled   |     5 |
 | Blocked     |     0 |
 
 **Current Epic:** Epic G · Requirement Discovery
 
-**Next Task:** AT-026 · Identify and normalize requirement candidates
+**Next Task:** AT-027 · Persist discovered requirements
 
 > These figures reflect the current task inventory. They should be updated whenever task status changes.
 
@@ -281,7 +281,7 @@ The system should not assume that textual equality implies requirement identity,
 | ------ | --------------------------------------------- | :------: | :------: |
 | AT-024 | Define requirement discovery use case          |    🔴    |    ✅   |
 | AT-025 | Extract text from PDF sources                  |    🔴    |    ✅   |
-| AT-026 | Identify and normalize requirement candidates |    🔴    |    ⬜   |
+| AT-026 | Identify and normalize requirement candidates |    🔴    |    ✅   |
 | AT-027 | Persist discovered requirements                |    🔴    |    ⬜   |
 | AT-028 | Expose requirement inspection                  |    🟡    |    ⬜   |
 | AT-029 | Validate requirement discovery end-to-end      |    🔴    |    ⬜   |
@@ -300,9 +300,9 @@ Implemented isolated, testable text extraction for supported PDF sources using `
 
 ### AT-026 · Identify and Normalize Requirement Candidates
 
-Identify requirement mentions from extracted content and normalize them into candidate requirements while preserving the original expression and source location.
+**Status: Completed**
 
-The implementation should begin with simple, deterministic rules and remain open to source-specific strategies. Semantic resolution should only be introduced when supported by concrete requirements.
+Implemented a first deterministic candidate-detection pass over extracted text. Numbered lines are identified as requirement mentions while preserving their original expression, source identity and line-based locator. Normalization is deliberately limited to basic whitespace cleanup. No semantic equivalence, canonical requirement resolution, generalized parser framework or persistence model was introduced. This first iteration is intentionally constrained so that real document samples can drive future refinements.
 
 ### AT-027 · Persist Discovered Requirements
 
