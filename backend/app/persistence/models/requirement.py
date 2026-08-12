@@ -1,6 +1,7 @@
 from datetime import UTC, datetime
+from uuid import UUID
 
-from sqlalchemy import Integer, String, Text
+from sqlalchemy import ForeignKey, Integer, String, Text
 from sqlalchemy.orm import Mapped, mapped_column
 
 from app.persistence.database import Base
@@ -14,6 +15,9 @@ class Requirement(Base):
     title: Mapped[str] = mapped_column(String(255), nullable=False)
     description: Mapped[str | None] = mapped_column(Text, nullable=True)
     context: Mapped[str | None] = mapped_column(Text, nullable=True)
+    source_id: Mapped[UUID] = mapped_column(
+        ForeignKey("sources.id"), nullable=False
+    )
     created_at: Mapped[datetime] = mapped_column(
         UTCDateTime, nullable=False, default=lambda: datetime.now(UTC)
     )
