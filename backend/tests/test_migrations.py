@@ -2,7 +2,7 @@ from pathlib import Path
 
 from alembic import command
 from alembic.config import Config
-from sqlalchemy import Uuid, create_engine, inspect
+from sqlalchemy import CHAR, create_engine, inspect
 
 
 def test_migrations_round_trip(tmp_path) -> None:
@@ -38,7 +38,8 @@ def test_migrations_round_trip(tmp_path) -> None:
             "updated_at",
         }
         source_id = next(column for column in source_columns if column["name"] == "id")
-        assert isinstance(source_id["type"], Uuid)
+        assert isinstance(source_id["type"], CHAR)
+        assert source_id["type"].length == 32
 
         command.downgrade(config, "base")
 
