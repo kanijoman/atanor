@@ -7,7 +7,7 @@
 | Project      | Atanor                      |
 | Document     | BACKLOG                     |
 | Status       | 🟢 Active                   |
-| Version      | 1.2                         |
+| Version      | 1.3                         |
 | Last Updated | 2026-08-12                  |
 | Audience     | Contributors and Developers |
 
@@ -30,9 +30,9 @@ Technical implementation details belong in the corresponding commits and Archite
 | Metric      | Value |
 | ----------- | ----: |
 | Total Tasks |    23 |
-| Pending     |     8 |
+| Pending     |     7 |
 | In Progress |     0 |
-| Completed   |    13 |
+| Completed   |    14 |
 | Cancelled   |     2 |
 | Blocked     |     0 |
 
@@ -149,7 +149,7 @@ The first user-facing work is intentionally technology-neutral. Atanor should va
 | ------ | ----------------------------------------- | :------: | :------: |
 | AT-013 | Reorganize product interaction roadmap   |    🔴    |    ✅   |
 | AT-014 | Define first application use cases        |    🔴    |    ✅   |
-| AT-015 | Build minimal CLI interface               |    🟡    |    ⬜   |
+| AT-015 | Build minimal CLI interface               |    🟡    |    ✅   |
 | AT-016 | Validate first end-to-end user workflow   |    🔴    |    ⬜   |
 
 ### AT-013 Completion Note
@@ -159,6 +159,10 @@ AT-013 reviewed and reorganized the planned user-facing work so that product beh
 ### AT-014 Completion Note
 
 AT-014 established the first application use case around the MVP entry point: importing an official examination call from a local PDF and representing it as a persisted `Source`. The implementation keeps the source as a reference to the external document rather than storing the document itself, and separates the application workflow from domain and persistence details. The slice includes PDF input validation, source persistence and retrieval, UTC timestamp handling, an Alembic migration, and automated tests including a synthetic PDF. PDF content extraction, requirement generation, external URLs and source discovery remain future work.
+
+### AT-015 Completion Note
+
+AT-015 added the first technology-neutral user interface adapter: a minimal Python standard-library CLI using `argparse`. The CLI exposes the `import-source` workflow and delegates to the existing application use case and persistence layer without introducing new framework dependencies. It includes automated tests for successful PDF import and invalid input handling. This validates the first practical interaction with Atanor while keeping the UI implementation replaceable.
 
 ### UI Decoupling Direction
 
