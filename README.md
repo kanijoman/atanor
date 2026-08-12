@@ -7,28 +7,98 @@
 | Project      | Atanor               |
 | Document     | README               |
 | Status       | 🟢 Active            |
-| Version      | 0.2                  |
-| Last Updated | 2026-08-07           |
+| Version      | 0.3                  |
+| Last Updated | 2026-08-12           |
 | Audience     | Users and Developers |
 
-> **An AI-powered knowledge platform for public service exam preparation.**
+> **A knowledge-driven platform for public service examination preparation.**
 
-Atanor is an open-source platform designed to help candidates prepare for competitive public service examinations through structured knowledge management, official source analysis and artificial intelligence.
+Atanor is an open-source platform designed to transform examination requirements and authoritative sources into structured, traceable and reusable knowledge that can support effective learning.
 
-The first MVP focuses on the Spanish General State Administration examinations, but the architecture is designed to evolve into a general-purpose knowledge management and learning platform.
+The first MVP focuses on Spanish public administration examinations. The underlying model is intentionally broader so that validated knowledge can eventually be reused across different examinations and other knowledge-intensive learning domains.
 
 ---
 
-# Goals
+# Product Direction
 
-The first MVP aims to provide the following capabilities:
+Atanor aims to solve a problem traditionally addressed by preparation services: turning an official examination requirement into a justified scope of knowledge and, eventually, an effective learning journey.
 
-* Manage official documentation and study material.
-* Organize knowledge into a coherent and reusable domain model.
-* Preserve complete traceability between generated content and official sources.
-* Assist candidates throughout the learning process.
-* Generate explanations, quizzes and study material grounded in verified information.
-* Track learning progress over time.
+The intended product flow is:
+
+```text
+Requirement
+    ↓
+Scope Discovery
+    ↓
+Knowledge Blueprint
+    ↓
+Knowledge Assessment
+    ↓
+Source Discovery / Acquisition
+    ↓
+Canonical Knowledge
+    ↓
+Learning Path
+```
+
+The canonical knowledge corpus is built progressively and on demand. Atanor does not require a complete global corpus before it can serve a new requirement.
+
+---
+
+# Current Status
+
+The initial foundation is complete through **AT-016**.
+
+Atanor currently has a validated first application workflow for PDF sources:
+
+```text
+PDF source
+    ↓
+Import
+    ↓
+Persist
+    ↓
+Retrieve / List
+```
+
+The workflow is implemented through an application layer, exposed through a minimal CLI and covered by isolated automated tests.
+
+The next development stage is **Requirement Discovery**. Its objective is to transform imported authoritative source material into structured requirements without assuming that all sources share the same document structure or terminology.
+
+The immediate target is:
+
+```text
+Source
+    ↓
+Requirement Discovery
+    ↓
+Requirement
+```
+
+Knowledge Blueprint construction and later learning capabilities remain outside the current implementation scope.
+
+---
+
+# Requirement Discovery
+
+Requirement discovery must distinguish the expression found in a source from the canonical requirement it represents.
+
+For example, different source expressions such as:
+
+```text
+Constitución Española
+Constitución
+Constitución de España
+Constitución de 1978
+```
+
+may refer to the same requirement.
+
+The original expression and its source location must remain traceable even when different expressions are associated with the same requirement.
+
+Likewise, document structures may vary between sources. Sources from the same provider may share patterns, while sources from different providers may require different extraction strategies. The domain model must not depend on one specific document layout.
+
+The initial implementation will remain deliberately simple and deterministic. More general semantic matching or parser infrastructure will only be introduced when real sources demonstrate a need for it.
 
 ---
 
@@ -36,11 +106,14 @@ The first MVP aims to provide the following capabilities:
 
 Atanor is developed around a small set of core principles:
 
-* **Knowledge is the core of the platform.**
+* **Knowledge is the core product asset.**
+* **Requirements and source expressions are not the same thing.**
+* **Canonical knowledge must remain reusable independently of a curriculum.**
+* **Every important knowledge claim should remain traceable to supporting evidence.**
 * **Artificial Intelligence is a tool, not the product itself.**
-* **Every generated answer must be traceable to a verifiable source.**
-* **Maintainability always takes precedence over unnecessary complexity.**
-* **Development is iterative, incremental and domain-driven.**
+* **Maintainability takes precedence over unnecessary complexity.**
+* **Infrastructure is introduced only when it solves an existing problem.**
+* **Development is iterative, incremental and pragmatic.**
 
 ---
 
@@ -50,8 +123,6 @@ Atanor follows a pragmatic and incremental development process.
 
 The project introduces infrastructure only when it solves an existing problem. Technologies, frameworks and project structure are incorporated as they become necessary, avoiding speculative design and unnecessary complexity.
 
-This philosophy keeps the repository easy to understand, the Git history meaningful and the architecture adaptable as the project evolves.
-
 Development follows modern software engineering practices, including:
 
 * Clean Code
@@ -60,41 +131,27 @@ Development follows modern software engineering practices, including:
 * Pragmatic design
 * Test-Driven Development whenever it provides clear value
 
----
-
-# Current Status
-
-The project is currently completing the **Foundation Sprint**, during which the development environment, project conventions and architectural principles are being established.
-
-The initial repository structure has been created and the development workflow has been defined before implementing the first application features.
+Each backlog task should represent one isolated logical change, and each push should normally correspond to one backlog task.
 
 ---
 
-# Planned Technology Stack
+# Technology
 
-The initial MVP is expected to be built using:
-
-## Backend
+The currently adopted backend stack is:
 
 * Python 3.14
 * uv
 * FastAPI
-* SQLAlchemy
 * Pydantic
+* Pydantic Settings
+* Uvicorn
+* SQLAlchemy
+* Alembic
+* SQLite
 
-## Frontend
+The project deliberately has no mandatory paid dependency and no requirement for Docker, PostgreSQL, vector databases, graph databases, external AI services or crawling infrastructure at this stage.
 
-* Node.js 24 LTS
-* pnpm
-* React
-* Vite
-
-## Persistence
-
-* SQLite (MVP)
-* PostgreSQL (future iterations)
-
-The technology stack may evolve as the project grows while preserving architectural stability.
+Technology decisions remain subordinate to validated product requirements.
 
 ---
 
@@ -102,36 +159,30 @@ The technology stack may evolve as the project grows while preserving architectu
 
 The main project documentation can be found under the `docs/` directory.
 
-Key documents include:
-
-| Document           | Description                                            |
-| ------------------ | ------------------------------------------------------ |
-| **FOUNDATIONS.md** | Vision, design principles and architectural decisions. |
-| **ROADMAP.md**     | Product roadmap, milestones and long-term planning.    |
-| **BACKLOG.md**     | Current development tasks and implementation progress. |
-| **CONVENTIONS.md** | Development conventions and coding standards.          |
-
----
-
-# Current Progress
-
-Completed:
-
-* ✅ Initial repository created.
-* ✅ Backend project initialized.
-* ✅ Frontend project initialized.
-* ✅ Development conventions established.
-* ✅ Backlog management rules defined.
-
-In progress:
-
-* 🚧 Sprint 1 · Foundation.
+| Document | Description |
+|---|---|
+| **FOUNDATIONS.md** | Product mission, vision and foundational principles. |
+| **ROADMAP.md** | Strategic product evolution and major development stages. |
+| **BACKLOG.md** | Current implementation tasks and execution status. |
+| **ARCHITECTURE.md** | Conceptual and validated technical architecture. |
+| **TECHNOLOGY.md** | Adopted and deferred technology decisions. |
+| **CONVENTIONS.md** | Development conventions and engineering practices. |
+| **MIGRATIONS.md** | Database migration strategy and conventions. |
 
 ---
 
-# License
+# Current Development Sequence
 
-License selection is pending.
+The next active epic is **Requirement Discovery**:
+
+1. Define the requirement discovery use case.
+2. Extract text from supported PDF sources.
+3. Identify and normalize requirement candidates.
+4. Persist discovered requirements.
+5. Expose minimal requirement inspection.
+6. Validate the complete workflow end to end.
+
+The sequence may evolve if real source material exposes new domain constraints, but the project should avoid speculative infrastructure and abstractions.
 
 ---
 
@@ -139,4 +190,4 @@ License selection is pending.
 
 Atanor is not intended to become another conversational chatbot.
 
-Its purpose is to become a knowledge platform capable of understanding, organizing and relating information, allowing users to study more effectively while maintaining complete traceability to official sources and providing reliable, verifiable answers.
+Its purpose is to become a knowledge platform capable of understanding, organizing and relating information, allowing users to study more effectively while maintaining traceability to authoritative sources and making uncertainty explicit.
