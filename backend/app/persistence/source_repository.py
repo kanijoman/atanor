@@ -1,3 +1,5 @@
+from sqlalchemy import select
+
 from app.domain.models import Source as DomainSource
 from app.persistence.models.source import Source
 
@@ -12,8 +14,6 @@ class SqlAlchemySourceRepository:
             session.commit()
 
     def get_by_locator(self, locator: str) -> DomainSource | None:
-        from sqlalchemy import select
-
         with self._session_factory() as session:
             persisted = session.scalar(select(Source).where(Source.locator == locator))
 
@@ -21,3 +21,12 @@ class SqlAlchemySourceRepository:
             return None
 
         return DomainSource(title=persisted.title, locator=persisted.locator)
+
+    def list_all(self) -> list[DomainSource]:
+        with self._session_factory() as session:
+            persisted_sources = session.scalars(select(Source).order_by(Source.id)).all()
+
+        return [
+            DomainSource(title=source.title, locator=source.locator)
+            for source in persisted_sources
+        ]
