@@ -39,7 +39,7 @@ class Blueprint:
 @dataclass(frozen=True)
 class Requirement:
     title: str
-    source_id: UUID | None = None
+    source_id: UUID
     description: str | None = None
     blueprint: Blueprint | None = None
     id: int | None = None
