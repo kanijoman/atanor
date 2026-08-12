@@ -53,6 +53,28 @@ def test_pdf_strategy_accepts_pdf_sources(monkeypatch: pytest.MonkeyPatch) -> No
     ]
 
 
+def test_pdf_strategy_discovers_mentions_from_real_boe_sample() -> None:
+    sample_path = "tests/samples/BOE-A-2024-14098.pdf"
+    source = Source(title="BOE-A-2024-14098.pdf", locator=sample_path)
+
+    result = PdfRequirementDiscoveryStrategy().discover(source)
+
+    assert result
+    assert all(mention.source_id == source.id for mention in result)
+    assert any(
+        "Constitución Española" in mention.expression for mention in result
+    )
+
+
+def test_pdf_strategy_returns_no_mentions_for_scanned_pdf_sample() -> None:
+    sample_path = "tests/samples/OPOS_AYTO_LEON_INFORMATICA_B.pdf"
+    source = Source(title="OPOS_AYTO_LEON_INFORMATICA_B.pdf", locator=sample_path)
+
+    result = PdfRequirementDiscoveryStrategy().discover(source)
+
+    assert result == []
+
+
 def test_pdf_strategy_rejects_non_pdf_sources() -> None:
     source = Source(title="call.docx", locator="/tmp/call.docx")
 
