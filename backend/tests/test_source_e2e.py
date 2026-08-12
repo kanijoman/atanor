@@ -1,4 +1,5 @@
 from pathlib import Path
+from uuid import UUID
 
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
@@ -14,7 +15,7 @@ def _write_synthetic_pdf(path: Path) -> None:
     path.write_bytes(
         b"%PDF-1.4\n"
         b"1 0 obj\n<< /Type /Catalog /Pages 2 0 R >>\nendobj\n"
-        b"2 0 obj\n<< /Type /Pages /Kids [] /Count 0 >>\nendobj\n"
+        b"2 0 obj\n<< /Type /Pages /Kids [] /Count 0 >> /endobj\n"
         b"trailer\n<< /Root 1 0 R >>\n"
         b"%%EOF\n"
     )
@@ -33,17 +34,28 @@ def test_source_import_get_and_list_are_isolated(tmp_path, monkeypatch, capsys) 
     monkeypatch.setattr("app.cli.SessionLocal", session_factory)
 
     assert main(["import-source", str(pdf_path)]) == 0
-    assert "Source imported successfully:" in capsys.readouterr().out
+    import_output = capsys.readouterr().out
+    assert "Source imported successfully:" in import_output
 
-    imported = get_source(str(pdf_path), repository)
+    source_id = UUID(next(
+        line.split(": ", 1)[1]
+        for line in import_output.splitlines()
+        if line.startswith("  ID: ")
+    ))
+    imported = get_source(source_id, repository)
     assert imported is not None
+    assert imported.id == source_id
+    assert imported.locator == str(pdf_path)
 
-    assert main(["get-source", str(pdf_path)]) == 0
-    assert "convocatoria.pdf" in capsys.readouterr().out
+    assert main(["get-source", str(source_id)]) == 0
+    get_output = capsys.readouterr().out
+    assert str(source_id) in get_output
+    assert "convocatoria.pdf" in get_output
 
     assert main(["list-sources"]) == 0
     output = capsys.readouterr().out
     assert "Sources:" in output
+    assert str(source_id) in output
     assert "convocatoria.pdf" in output
 
     assert list_sources(repository) == [imported]
