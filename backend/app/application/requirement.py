@@ -1,8 +1,10 @@
 from dataclasses import dataclass
 from pathlib import Path
+import re
 from typing import Protocol
 from uuid import UUID
 
+from app.application.pdf import extract_pdf_text
 from app.domain.models import Source
 
 
@@ -27,13 +29,46 @@ def discover_requirements(
     return strategy.discover(source)
 
 
-class PdfRequirementDiscoveryStrategy:
-    """Placeholder strategy for PDF sources.
+_REQUIREMENT_MARKER = re.compile(r"^\s*\d+(?:\.\d+)*[.)]\s+(.+?)\s*$")
 
-    PDF content extraction is intentionally implemented in AT-025.
+
+def discover_numbered_requirement_mentions(
+    text: str,
+    source_id: UUID,
+) -> list[RequirementMention]:
+    """Discover requirement mentions from simple numbered headings.
+
+    This intentionally implements only a small deterministic heuristic. More
+    source-specific structures and semantic normalization are handled later.
     """
+    mentions: list[RequirementMention] = []
+
+    for line_number, line in enumerate(text.splitlines(), start=1):
+        match = _REQUIREMENT_MARKER.match(line)
+        if not match:
+            continue
+
+        expression = " ".join(match.group(1).split())
+        if expression:
+            mentions.append(
+                RequirementMention(
+                    expression=expression,
+                    source_id=source_id,
+                    locator=f"line:{line_number}",
+                )
+            )
+
+    return mentions
+
+
+class PdfRequirementDiscoveryStrategy:
+    """Discover requirement mentions from PDF text using basic structure."""
 
     def discover(self, source: Source) -> list[RequirementMention]:
+        if not source.locator:
+            raise ValueError("PDF source must have a locator")
         if Path(source.locator).suffix.lower() != ".pdf":
             raise ValueError("Requirement discovery source must be a PDF")
-        return []
+
+        text = extract_pdf_text(source)
+        return discover_numbered_requirement_mentions(text, source.id)
