@@ -9,6 +9,8 @@ class SourceRepository(Protocol):
 
     def get_by_locator(self, locator: str) -> Source | None: ...
 
+    def list_all(self) -> list[Source]: ...
+
 
 def import_pdf_source(path: str | Path, repository: SourceRepository) -> Source:
     pdf_path = Path(path)
@@ -24,3 +26,7 @@ def import_pdf_source(path: str | Path, repository: SourceRepository) -> Source:
 
 def get_source(locator: str, repository: SourceRepository) -> Source | None:
     return repository.get_by_locator(locator)
+
+
+def list_sources(repository: SourceRepository) -> list[Source]:
+    return repository.list_all()
