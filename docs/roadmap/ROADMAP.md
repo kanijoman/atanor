@@ -7,8 +7,8 @@
 | Project      | Atanor                      |
 | Document     | ROADMAP                     |
 | Status       | 🟢 Active                   |
-| Version      | 0.3                         |
-| Last Updated | 2026-08-10                  |
+| Version      | 0.4                         |
+| Last Updated | 2026-08-12                  |
 | Audience     | Contributors and Developers |
 
 ---
@@ -17,7 +17,7 @@
 
 Atanor aims to become a knowledge-driven learning platform capable of transforming examination requirements and authoritative sources into structured, traceable and adaptive learning experiences.
 
-The initial MVP focuses on preparation for Spanish General State Administration competitive examinations.
+The initial MVP focuses on preparation for Spanish public administration competitive examinations.
 
 The long-term vision is broader: a reusable platform for knowledge-intensive learning domains where reliable sources, structured knowledge and personalized learning are valuable.
 
@@ -29,9 +29,9 @@ Atanor follows an incremental delivery model.
 
 Infrastructure, frameworks and supporting technologies are introduced only when they solve an existing problem.
 
-Every milestone should produce a measurable improvement while keeping the repository simple, maintainable and operational.
+Every meaningful milestone should produce measurable product value while keeping the repository simple, maintainable and operational.
 
-The roadmap describes strategic direction. It does not attempt to enumerate implementation tasks or establish one-to-one correspondence with the backlog.
+The roadmap describes strategic direction. It does not enumerate implementation tasks or establish one-to-one correspondence with the backlog.
 
 ---
 
@@ -45,20 +45,22 @@ Development is guided by:
 - Keep the architecture adaptable.
 - Prioritize product capabilities over technology adoption.
 - Validate important domain assumptions before committing to implementation.
-- Continuously reduce technical debt.
 - Keep the MVP aligned with the needs of the initial examination use case.
+- Let real source material drive generalization instead of designing for hypothetical formats.
 
 ---
 
 # Product Evolution
 
-The roadmap is organized around capabilities rather than technologies.
+The roadmap is organized around product capabilities rather than technologies.
 
-The order below describes the intended evolution of the product. The exact implementation sequence may change as domain knowledge and validation results evolve.
+The order below describes the intended evolution. The exact implementation sequence may change as domain knowledge and validation results evolve.
 
 ---
 
 # Stage 1 · Foundation
+
+**Status: 🟢 Completed**
 
 ## Objective
 
@@ -70,64 +72,110 @@ Establish the technical, organizational and development foundations of Atanor.
 - Development conventions defined.
 - Core documentation established.
 - Development workflow agreed.
-- Backend and frontend foundations initialized.
+- Backend foundation initialized.
 - Initial application executable.
 
 ---
 
-# Stage 2 · Knowledge Foundation
+# Stage 2 · Application & Source Foundation
+
+**Status: 🟢 Completed**
 
 ## Objective
 
-Establish the conceptual and technical foundation required to represent Atanor's knowledge domain.
+Establish the minimal domain, persistence and application capabilities required to introduce authoritative source material into Atanor.
 
 ## Outcome
 
-Atanor should be able to distinguish, at a minimum:
+Atanor now has a validated first vertical workflow:
 
-- examination requirements;
-- knowledge scope;
-- candidate coverage;
-- expected depth;
-- knowledge entities;
-- knowledge assertions;
-- sources and evidence;
-- relationships and dependencies.
+```text
+PDF source
+    ↓
+Import
+    ↓
+Persist
+    ↓
+Retrieve / List
+```
 
-A key goal of this stage is to validate the Knowledge Blueprint concept before committing to a detailed persistence model.
+The workflow is exposed through a minimal CLI and validated with isolated automated tests.
+
+The stage deliberately stopped before requirement extraction, knowledge construction and learning features.
 
 ---
 
-# Stage 3 · Knowledge Construction
+# Stage 3 · Requirement Discovery
+
+**Status: 🔵 Next**
 
 ## Objective
 
-Build the capability to transform requirements and sources into structured knowledge.
+Transform imported authoritative source material into explicit, structured requirements that can become the entry point for subsequent knowledge construction.
+
+## Target Capability
+
+```text
+Source
+    ↓
+Requirement Discovery
+    ↓
+Requirement
+```
+
+Requirement discovery must not assume a universal document structure. Sources from the same provider may share patterns, while sources from different providers may require different extraction strategies.
+
+The process must also distinguish a requirement expression found in a source from the canonical requirement it represents. Different expressions may refer to the same requirement, while the original expression and source location remain traceable.
 
 ## Outcome
 
-Atanor should progressively support:
+Atanor should be able to:
 
-- requirement analysis;
+- extract text from supported PDF sources;
+- identify requirement mentions;
+- normalize requirement candidates;
+- preserve source provenance and location;
+- associate different source expressions with the same requirement when justified;
+- persist and inspect discovered requirements;
+- validate the complete workflow end to end.
+
+The first implementation should remain simple and deterministic. Generalized parser frameworks or semantic matching infrastructure should only be introduced when real sources demonstrate a need for them.
+
+---
+
+# Stage 4 · Knowledge Construction
+
+**Status: ⚪ Future**
+
+## Objective
+
+Build the capability to transform requirements and authoritative sources into structured, reusable knowledge.
+
+## Intended Capabilities
+
 - scope discovery;
-- source identification;
+- Knowledge Blueprint construction;
+- knowledge assessment;
+- source identification and acquisition;
 - extraction of candidate knowledge;
 - coverage refinement;
 - depth estimation;
 - provenance and evidence;
 - canonical knowledge construction.
 
-Public and freely accessible sources and user-provided documents must be sufficient to construct the knowledge base. Commercial material may be used only when explicitly provided by the user.
+This stage should begin only after Requirement Discovery has provided sufficient evidence about the real structure and semantics of requirements.
 
 ---
 
-# Stage 4 · Knowledge Retrieval and Assistance
+# Stage 5 · Knowledge Retrieval and Assistance
+
+**Status: ⚪ Future**
 
 ## Objective
 
 Make structured knowledge usable through search and AI-assisted interaction.
 
-## Potential capabilities
+## Potential Capabilities
 
 - grounded retrieval;
 - source-aware answers;
@@ -140,13 +188,15 @@ AI should operate over structured and traceable knowledge rather than becoming a
 
 ---
 
-# Stage 5 · Learning Platform
+# Stage 6 · Learning Platform
+
+**Status: ⚪ Future**
 
 ## Objective
 
 Transform the knowledge model into an adaptive learning environment.
 
-## Potential capabilities
+## Potential Capabilities
 
 - learning-path generation;
 - personalized study sessions;
@@ -161,13 +211,15 @@ The learning path should be derived from required knowledge, dependencies and th
 
 ---
 
-# Stage 6 · Ecosystem Expansion
+# Stage 7 · Ecosystem Expansion
+
+**Status: ⚪ Future**
 
 ## Objective
 
 Expand Atanor beyond the initial MVP once the core product has been validated.
 
-## Potential capabilities
+## Potential Capabilities
 
 - additional examination domains;
 - external integrations;
@@ -188,7 +240,9 @@ Although the initial product targets Spanish public administration examinations,
 The reusable foundation is:
 
 ```text
-Requirements
+Source
+    ↓
+Requirement
     ↓
 Knowledge Scope
     ↓
