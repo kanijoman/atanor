@@ -17,24 +17,22 @@ depends_on: Union[str, Sequence[str], None] = None
 
 
 def upgrade() -> None:
-    op.add_column(
-        "requirements",
-        sa.Column("source_id", sa.Uuid(), nullable=True),
-    )
-    op.create_foreign_key(
-        "fk_requirements_source_id_sources",
-        "requirements",
-        "sources",
-        ["source_id"],
-        ["id"],
-    )
-    op.alter_column("requirements", "source_id", nullable=False)
+    with op.batch_alter_table("requirements") as batch_op:
+        batch_op.add_column(
+            sa.Column("source_id", sa.Uuid(), nullable=False),
+        )
+        batch_op.create_foreign_key(
+            "fk_requirements_source_id_sources",
+            "sources",
+            ["source_id"],
+            ["id"],
+        )
 
 
 def downgrade() -> None:
-    op.drop_constraint(
-        "fk_requirements_source_id_sources",
-        "requirements",
-        type_="foreignkey",
-    )
-    op.drop_column("requirements", "source_id")
+    with op.batch_alter_table("requirements") as batch_op:
+        batch_op.drop_constraint(
+            "fk_requirements_source_id_sources",
+            type_="foreignkey",
+        )
+        batch_op.drop_column("source_id")
