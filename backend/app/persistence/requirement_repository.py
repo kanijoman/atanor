@@ -41,6 +41,22 @@ class SqlAlchemyRequirementRepository:
             source_id=persisted.source_id,
         )
 
+    def list_all(self) -> list[DomainRequirement]:
+        with self._session_factory() as session:
+            requirements = session.scalars(
+                select(Requirement).order_by(Requirement.id)
+            ).all()
+
+        return [
+            DomainRequirement(
+                id=requirement.id,
+                title=requirement.title,
+                description=requirement.description,
+                source_id=requirement.source_id,
+            )
+            for requirement in requirements
+        ]
+
     def list_by_source(self, source_id) -> list[DomainRequirement]:
         with self._session_factory() as session:
             requirements = session.scalars(
