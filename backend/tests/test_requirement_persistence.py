@@ -1,10 +1,12 @@
 from datetime import UTC, datetime
+from uuid import uuid4
 
 from sqlalchemy import create_engine, select
 from sqlalchemy.orm import sessionmaker
 
 from app.persistence.database import Base
 from app.persistence.models.requirement import Requirement
+from app.persistence.models.source import Source
 
 
 def test_requirement_can_be_persisted_and_retrieved(tmp_path) -> None:
@@ -18,11 +20,20 @@ def test_requirement_can_be_persisted_and_retrieved(tmp_path) -> None:
     Base.metadata.create_all(bind=engine)
 
     try:
+        source_id = uuid4()
         with session_factory() as session:
+            session.add(
+                Source(
+                    id=source_id,
+                    title="Call PDF",
+                    locator="call.pdf",
+                )
+            )
             requirement = Requirement(
                 title="Spanish Constitution Article 1",
                 description="The first article of the Spanish Constitution.",
                 context="Public administration examination",
+                source_id=source_id,
             )
             session.add(requirement)
             session.commit()
@@ -41,6 +52,7 @@ def test_requirement_can_be_persisted_and_retrieved(tmp_path) -> None:
             == "The first article of the Spanish Constitution."
         )
         assert persisted_requirement.context == "Public administration examination"
+        assert persisted_requirement.source_id == source_id
         assert persisted_requirement.created_at is not None
         assert persisted_requirement.updated_at is not None
     finally:
@@ -61,11 +73,14 @@ def test_requirement_update_preserves_creation_time_and_updates_modification_tim
     Base.metadata.create_all(bind=engine)
 
     try:
+        source_id = uuid4()
         with session_factory() as session:
+            session.add(Source(id=source_id, title="Call PDF", locator="call.pdf"))
             requirement = Requirement(
                 title="Spanish Constitution Article 1",
                 description="The first article of the Spanish Constitution.",
                 context="Public administration examination",
+                source_id=source_id,
             )
             session.add(requirement)
             session.commit()
@@ -108,10 +123,15 @@ def test_requirement_timestamps_are_persisted_as_utc(tmp_path) -> None:
     Base.metadata.create_all(bind=engine)
 
     try:
+        source_id = uuid4()
         before_creation = datetime.now(UTC)
 
         with session_factory() as session:
-            requirement = Requirement(title="UTC timestamp requirement")
+            session.add(Source(id=source_id, title="Call PDF", locator="call.pdf"))
+            requirement = Requirement(
+                title="UTC timestamp requirement",
+                source_id=source_id,
+            )
             session.add(requirement)
             session.commit()
             requirement_id = requirement.id
