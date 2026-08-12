@@ -15,15 +15,26 @@ class InMemorySourceRepository:
         return self.sources.get(locator)
 
 
-def test_import_pdf_source_creates_source(tmp_path) -> None:
+def _write_synthetic_pdf(path) -> None:
+    path.write_bytes(
+        b"%PDF-1.4\n"
+        b"1 0 obj\n<< /Type /Catalog /Pages 2 0 R >>\nendobj\n"
+        b"2 0 obj\n<< /Type /Pages /Kids [] /Count 0 >>\nendobj\n"
+        b"trailer\n<< /Root 1 0 R >>\n"
+        b"%%EOF\n"
+    )
+
+
+def test_import_pdf_source_creates_source_from_synthetic_pdf(tmp_path) -> None:
     pdf_path = tmp_path / "official-call.pdf"
-    pdf_path.write_bytes(b"%PDF-test")
+    _write_synthetic_pdf(pdf_path)
     repository = InMemorySourceRepository()
 
     source = import_pdf_source(pdf_path, repository)
 
     assert source == Source(title="official-call.pdf", locator=str(pdf_path))
     assert repository.get_by_locator(str(pdf_path)) == source
+    assert pdf_path.read_bytes().startswith(b"%PDF-")
 
 
 def test_import_pdf_source_rejects_missing_file(tmp_path) -> None:
@@ -44,7 +55,7 @@ def test_import_pdf_source_rejects_non_pdf_file(tmp_path) -> None:
 
 def test_get_source_returns_persisted_source(tmp_path) -> None:
     pdf_path = tmp_path / "official-call.pdf"
-    pdf_path.write_bytes(b"%PDF-test")
+    _write_synthetic_pdf(pdf_path)
     repository = InMemorySourceRepository()
     source = import_pdf_source(pdf_path, repository)
 
