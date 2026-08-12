@@ -15,7 +15,7 @@ def _write_synthetic_pdf(path: Path) -> None:
     path.write_bytes(
         b"%PDF-1.4\n"
         b"1 0 obj\n<< /Type /Catalog /Pages 2 0 R >>\nendobj\n"
-        b"2 0 obj\n<< /Type /Pages /Kids [] /Count 0 >> /endobj\n"
+        b"2 0 obj\n<< /Type /Pages /Kids [] /Count 0 >>\nendobj\n"
         b"trailer\n<< /Root 1 0 R >>\n"
         b"%%EOF\n"
     )
@@ -37,11 +37,13 @@ def test_source_import_get_and_list_are_isolated(tmp_path, monkeypatch, capsys) 
     import_output = capsys.readouterr().out
     assert "Source imported successfully:" in import_output
 
-    source_id = UUID(next(
-        line.split(": ", 1)[1]
-        for line in import_output.splitlines()
-        if line.startswith("  ID: ")
-    ))
+    source_id = UUID(
+        next(
+            line.split(": ", 1)[1]
+            for line in import_output.splitlines()
+            if line.startswith("  ID: ")
+        )
+    )
     imported = get_source(source_id, repository)
     assert imported is not None
     assert imported.id == source_id
