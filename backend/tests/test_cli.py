@@ -1,6 +1,11 @@
 from pathlib import Path
 
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
+
 from app.cli import main
+from app.persistence.database import Base
+from app.persistence.models.source import Source  # noqa: F401
 
 
 def _write_synthetic_pdf(path: Path) -> None:
@@ -13,11 +18,16 @@ def _write_synthetic_pdf(path: Path) -> None:
     )
 
 
+def _patch_database(monkeypatch, database_path: Path) -> None:
+    engine = create_engine(f"sqlite:///{database_path}")
+    Base.metadata.create_all(engine)
+    monkeypatch.setattr("app.cli.SessionLocal", sessionmaker(bind=engine))
+
+
 def test_import_source_command_imports_pdf(tmp_path, monkeypatch, capsys) -> None:
     pdf_path = tmp_path / "call.pdf"
     _write_synthetic_pdf(pdf_path)
-    database_path = tmp_path / "cli.db"
-    monkeypatch.setenv("DATABASE_URL", f"sqlite:///{database_path}")
+    _patch_database(monkeypatch, tmp_path / "cli.db")
 
     assert main(["import-source", str(pdf_path)]) == 0
 
@@ -28,8 +38,7 @@ def test_import_source_command_imports_pdf(tmp_path, monkeypatch, capsys) -> Non
 
 
 def test_import_source_command_returns_error_for_missing_pdf(tmp_path, monkeypatch) -> None:
-    database_path = tmp_path / "cli.db"
-    monkeypatch.setenv("DATABASE_URL", f"sqlite:///{database_path}")
+    _patch_database(monkeypatch, tmp_path / "cli.db")
 
     try:
         main(["import-source", str(tmp_path / "missing.pdf")])
