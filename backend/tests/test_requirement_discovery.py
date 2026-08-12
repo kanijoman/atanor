@@ -1,4 +1,4 @@
-from pathlib import Path
+import pytest
 
 from app.application.requirement import (
     PdfRequirementDiscoveryStrategy,
@@ -35,10 +35,22 @@ def test_discover_requirements_delegates_to_strategy() -> None:
     assert strategy.received_source is source
 
 
-def test_pdf_strategy_accepts_pdf_sources() -> None:
-    source = Source(title="call.pdf", locator=str(Path("/tmp/call.pdf")))
+def test_pdf_strategy_accepts_pdf_sources(monkeypatch: pytest.MonkeyPatch) -> None:
+    source = Source(title="call.pdf", locator="/tmp/call.pdf")
+    monkeypatch.setattr(
+        "app.application.requirement.extract_pdf_text",
+        lambda _: "1. Constitución Española",
+    )
 
-    assert PdfRequirementDiscoveryStrategy().discover(source) == []
+    result = PdfRequirementDiscoveryStrategy().discover(source)
+
+    assert result == [
+        RequirementMention(
+            expression="Constitución Española",
+            source_id=source.id,
+            locator="line:1",
+        )
+    ]
 
 
 def test_pdf_strategy_rejects_non_pdf_sources() -> None:
