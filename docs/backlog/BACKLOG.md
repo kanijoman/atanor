@@ -7,7 +7,7 @@
 | Project      | Atanor                      |
 | Document     | BACKLOG                     |
 | Status       | 🟢 Active                   |
-| Version      | 1.6                         |
+| Version      | 1.7                         |
 | Last Updated | 2026-08-12                  |
 | Audience     | Contributors and Developers |
 
@@ -30,16 +30,16 @@ Technical implementation details belong in the corresponding commits and Archite
 | Metric      | Value |
 | ----------- | ----: |
 | Total Tasks |    29 |
-| Pending     |     5 |
+| Pending     |     4 |
 | In Progress |     0 |
-| Completed   |    16 |
+| Completed   |    17 |
 | Deferred    |     3 |
 | Cancelled   |     5 |
 | Blocked     |     0 |
 
 **Current Epic:** Epic G · Requirement Discovery
 
-**Next Task:** AT-025 · Extract text from PDF sources
+**Next Task:** AT-026 · Identify and normalize requirement candidates
 
 > These figures reflect the current task inventory. They should be updated whenever task status changes.
 
@@ -280,7 +280,7 @@ The system should not assume that textual equality implies requirement identity,
 | ID | Task | Priority | Status |
 | ------ | --------------------------------------------- | :------: | :------: |
 | AT-024 | Define requirement discovery use case          |    🔴    |    ✅   |
-| AT-025 | Extract text from PDF sources                  |    🔴    |    ⬜   |
+| AT-025 | Extract text from PDF sources                  |    🔴    |    ✅   |
 | AT-026 | Identify and normalize requirement candidates |    🔴    |    ⬜   |
 | AT-027 | Persist discovered requirements                |    🔴    |    ⬜   |
 | AT-028 | Expose requirement inspection                  |    🟡    |    ⬜   |
@@ -294,7 +294,9 @@ Defined and implemented the application-level workflow that transforms a source 
 
 ### AT-025 · Extract Text from PDF Sources
 
-Provide isolated, testable extraction of textual content from supported PDF sources. This task should not attempt requirement interpretation.
+**Status: Completed**
+
+Implemented isolated, testable text extraction for supported PDF sources using `pypdf`. The extractor validates the source locator, file existence and PDF type, then extracts page content in document order. Tests use self-contained synthetic PDFs and cover multi-page ordering and invalid input. Real-world PDF samples are intentionally deferred until concrete source variations provide useful regression cases.
 
 ### AT-026 · Identify and Normalize Requirement Candidates
 
