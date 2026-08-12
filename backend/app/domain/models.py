@@ -39,12 +39,16 @@ class Blueprint:
 @dataclass(frozen=True)
 class Requirement:
     title: str
+    source_id: UUID
     description: str | None = None
     blueprint: Blueprint | None = None
+    id: int | None = None
 
     def with_blueprint(self, blueprint: Blueprint) -> "Requirement":
         return Requirement(
             title=self.title,
+            source_id=self.source_id,
             description=self.description,
             blueprint=blueprint,
+            id=self.id,
         )
