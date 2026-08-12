@@ -1,5 +1,6 @@
 from pathlib import Path
 from typing import Protocol
+from uuid import UUID
 
 from app.domain.models import Source
 
@@ -7,7 +8,7 @@ from app.domain.models import Source
 class SourceRepository(Protocol):
     def save(self, source: Source) -> None: ...
 
-    def get_by_locator(self, locator: str) -> Source | None: ...
+    def get_by_id(self, source_id: UUID) -> Source | None: ...
 
     def list_all(self) -> list[Source]: ...
 
@@ -24,8 +25,8 @@ def import_pdf_source(path: str | Path, repository: SourceRepository) -> Source:
     return source
 
 
-def get_source(locator: str, repository: SourceRepository) -> Source | None:
-    return repository.get_by_locator(locator)
+def get_source(source_id: UUID, repository: SourceRepository) -> Source | None:
+    return repository.get_by_id(source_id)
 
 
 def list_sources(repository: SourceRepository) -> list[Source]:
