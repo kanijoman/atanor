@@ -4,7 +4,7 @@ import re
 from typing import Protocol
 from uuid import UUID
 
-from app.domain.models import Source
+from app.domain.models import Requirement, Source
 
 
 @dataclass(frozen=True)
@@ -20,12 +20,32 @@ class RequirementDiscoveryStrategy(Protocol):
     def discover(self, source: Source) -> list[RequirementMention]: ...
 
 
+class RequirementRepository(Protocol):
+    def save(self, requirement: Requirement) -> Requirement: ...
+
+
 def discover_requirements(
     source: Source,
     strategy: RequirementDiscoveryStrategy,
 ) -> list[RequirementMention]:
     """Discover requirement mentions from a source using the supplied strategy."""
     return strategy.discover(source)
+
+
+def persist_requirement_mentions(
+    mentions: list[RequirementMention],
+    repository: RequirementRepository,
+) -> list[Requirement]:
+    """Persist each discovered mention as an independent requirement."""
+    return [
+        repository.save(
+            Requirement(
+                title=mention.expression,
+                source_id=mention.source_id,
+            )
+        )
+        for mention in mentions
+    ]
 
 
 _REQUIREMENT_MARKER = re.compile(r"^\s*\d+(?:\.\d+)*[.)]\s+(.+?)\s*$")
