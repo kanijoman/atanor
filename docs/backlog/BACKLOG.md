@@ -7,8 +7,8 @@
 | Project      | Atanor                      |
 | Document     | BACKLOG                     |
 | Status       | 🟢 Active                   |
-| Version      | 1.1                         |
-| Last Updated | 2026-08-11                  |
+| Version      | 1.2                         |
+| Last Updated | 2026-08-12                  |
 | Audience     | Contributors and Developers |
 
 ---
@@ -30,9 +30,9 @@ Technical implementation details belong in the corresponding commits and Archite
 | Metric      | Value |
 | ----------- | ----: |
 | Total Tasks |    23 |
-| Pending     |     9 |
+| Pending     |     8 |
 | In Progress |     0 |
-| Completed   |    12 |
+| Completed   |    13 |
 | Cancelled   |     2 |
 | Blocked     |     0 |
 
@@ -148,13 +148,17 @@ The first user-facing work is intentionally technology-neutral. Atanor should va
 | ID     | Task                                      | Priority | Status |
 | ------ | ----------------------------------------- | :------: | :------: |
 | AT-013 | Reorganize product interaction roadmap   |    🔴    |    ✅   |
-| AT-014 | Define first application use cases        |    🔴    |    ⬜   |
+| AT-014 | Define first application use cases        |    🔴    |    ✅   |
 | AT-015 | Build minimal CLI interface               |    🟡    |    ⬜   |
 | AT-016 | Validate first end-to-end user workflow   |    🔴    |    ⬜   |
 
 ### AT-013 Completion Note
 
 AT-013 reviewed and reorganized the planned user-facing work so that product behavior and application use cases precede concrete UI technology. React, Qt, and other UI frameworks are deliberately deferred until validated requirements justify them. The backlog now treats the UI as a replaceable implementation of application use cases rather than a dependency of the domain.
+
+### AT-014 Completion Note
+
+AT-014 established the first application use case around the MVP entry point: importing an official examination call from a local PDF and representing it as a persisted `Source`. The implementation keeps the source as a reference to the external document rather than storing the document itself, and separates the application workflow from domain and persistence details. The slice includes PDF input validation, source persistence and retrieval, UTC timestamp handling, an Alembic migration, and automated tests including a synthetic PDF. PDF content extraction, requirement generation, external URLs and source discovery remain future work.
 
 ### UI Decoupling Direction
 
