@@ -7,7 +7,7 @@
 | Project      | Atanor                      |
 | Document     | BACKLOG                     |
 | Status       | 🟢 Active                   |
-| Version      | 1.5                         |
+| Version      | 1.6                         |
 | Last Updated | 2026-08-12                  |
 | Audience     | Contributors and Developers |
 
@@ -30,14 +30,16 @@ Technical implementation details belong in the corresponding commits and Archite
 | Metric      | Value |
 | ----------- | ----: |
 | Total Tasks |    29 |
-| Pending     |     6 |
+| Pending     |     5 |
 | In Progress |     0 |
-| Completed   |    15 |
+| Completed   |    16 |
 | Deferred    |     3 |
 | Cancelled   |     5 |
 | Blocked     |     0 |
 
 **Current Epic:** Epic G · Requirement Discovery
+
+**Next Task:** AT-025 · Extract text from PDF sources
 
 > These figures reflect the current task inventory. They should be updated whenever task status changes.
 
@@ -228,7 +230,7 @@ The identifiers remain recorded to preserve planning history and are never reuse
 
 # Epic G · Requirement Discovery
 
-**Status: 🔵 Next**
+**Status: 🔵 Active**
 
 ## Objective
 
@@ -277,16 +279,18 @@ The system should not assume that textual equality implies requirement identity,
 
 | ID | Task | Priority | Status |
 | ------ | --------------------------------------------- | :------: | :------: |
-| AT-024 | Define requirement discovery use case        |    🔴    |    ⬜   |
-| AT-025 | Extract text from PDF sources                |    🔴    |    ⬜   |
+| AT-024 | Define requirement discovery use case          |    🔴    |    ✅   |
+| AT-025 | Extract text from PDF sources                  |    🔴    |    ⬜   |
 | AT-026 | Identify and normalize requirement candidates |    🔴    |    ⬜   |
-| AT-027 | Persist discovered requirements              |    🔴    |    ⬜   |
-| AT-028 | Expose requirement inspection                |    🟡    |    ⬜   |
-| AT-029 | Validate requirement discovery end-to-end    |    🔴    |    ⬜   |
+| AT-027 | Persist discovered requirements                |    🔴    |    ⬜   |
+| AT-028 | Expose requirement inspection                  |    🟡    |    ⬜   |
+| AT-029 | Validate requirement discovery end-to-end      |    🔴    |    ⬜   |
 
 ### AT-024 · Define Requirement Discovery Use Case
 
-Define the application-level workflow that transforms a source into requirement candidates while keeping extraction strategy separate from the canonical domain concept.
+**Status: Completed**
+
+Defined and implemented the application-level workflow that transforms a source into requirement mentions while keeping extraction strategy separate from the canonical domain concept. Requirement mentions remain application-level data and are not persisted or promoted to domain entities at this stage. The initial PDF strategy validates supported PDF sources and deliberately defers content extraction to AT-025.
 
 ### AT-025 · Extract Text from PDF Sources
 
