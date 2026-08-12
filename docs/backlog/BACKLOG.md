@@ -7,7 +7,7 @@
 | Project      | Atanor                      |
 | Document     | BACKLOG                     |
 | Status       | 🟢 Active                   |
-| Version      | 1.4                         |
+| Version      | 1.5                         |
 | Last Updated | 2026-08-12                  |
 | Audience     | Contributors and Developers |
 
@@ -29,14 +29,15 @@ Technical implementation details belong in the corresponding commits and Archite
 
 | Metric      | Value |
 | ----------- | ----: |
-| Total Tasks |    23 |
+| Total Tasks |    29 |
 | Pending     |     6 |
 | In Progress |     0 |
 | Completed   |    15 |
-| Cancelled   |     2 |
+| Deferred    |     3 |
+| Cancelled   |     5 |
 | Blocked     |     0 |
 
-**Current Sprint:** Sprint 1 · Foundation
+**Current Epic:** Epic G · Requirement Discovery
 
 > These figures reflect the current task inventory. They should be updated whenever task status changes.
 
@@ -48,6 +49,7 @@ Technical implementation details belong in the corresponding commits and Archite
 - 🟡 In Progress
 - ✅ Completed
 - ❌ Cancelled
+- ⏸ Deferred
 - ⛔ Blocked
 
 ---
@@ -72,7 +74,7 @@ The backlog defines the implementation plan of the project, not its technical sp
 - Additional work discovered during implementation must be evaluated as new work.
 - Tasks may be cancelled if they no longer provide value or are considered premature.
 - Cancelled task identifiers are never reused.
-- If cancelled work becomes necessary again, a new task must be created with a new identifier.
+- Deferred tasks retain their identifiers and are not part of the active implementation sequence.
 - Git history is the project's technical record; the backlog reflects planning and execution status.
 - A single push should normally represent one isolated backlog task.
 - Implemented functionality should be validated by automated tests whenever practical.
@@ -82,7 +84,9 @@ The backlog defines the implementation plan of the project, not its technical sp
 
 ---
 
-# Sprint 1 · Foundation
+# Completed Foundation
+
+The initial foundation and source workflow are complete through **AT-016**.
 
 ## Epic A · Infrastructure
 
@@ -93,6 +97,8 @@ The backlog defines the implementation plan of the project, not its technical sp
 | AT-003 | Initialize frontend project         |    🔴    |    ✅   |
 | AT-004 | Configure initial Docker Compose    |    🔴    |    ❌   |
 | AT-005 | Configure environment variables     |    🔴    |    ❌   |
+
+AT-004 was cancelled because containerized infrastructure is not currently required. AT-005 was cancelled when configuration requirements were simplified and consolidated into the backend configuration work.
 
 ---
 
@@ -143,11 +149,11 @@ AT-012 established Alembic as the controlled schema migration mechanism. The cur
 
 ## Epic D · Product Interaction
 
-The first user-facing work is intentionally technology-neutral. Atanor should validate application behavior and user workflows before committing to a permanent UI framework.
+The first user-facing work was intentionally technology-neutral. Atanor validated application behavior and user workflows before committing to a permanent UI framework.
 
 | ID     | Task                                      | Priority | Status |
 | ------ | ----------------------------------------- | :------: | :------: |
-| AT-013 | Reorganize product interaction roadmap   |    🔴    |    ✅   |
+| AT-013 | Reorganize product interaction roadmap    |    🔴    |    ✅   |
 | AT-014 | Define first application use cases        |    🔴    |    ✅   |
 | AT-015 | Build minimal CLI interface               |    🟡    |    ✅   |
 | AT-016 | Validate first end-to-end user workflow   |    🔴    |    ✅   |
@@ -176,40 +182,183 @@ No permanent commitment to React, Qt, or another UI framework is made at this st
 
 ---
 
-## Epic E · Quality
+# Deferred Development Quality Tooling
+
+The following tasks remain recorded but are intentionally deferred. They are not part of the active implementation sequence and should only be brought forward when a concrete development need justifies them.
 
 | ID     | Task                         | Priority | Status |
 | ------ | ---------------------------- | :------: | :------: |
-| AT-017 | Configure Ruff              |    🟡    |    ⬜   |
-| AT-018 | Configure Pyright            |    🟡    |    ⬜   |
-| AT-019 | Configure pre-commit hooks  |    🟡    |    ⬜   |
-| AT-020 | Configure testing framework |    🟡    |    ✅   |
+| AT-017 | Configure Ruff               |    🟡    |    ⏸   |
+| AT-018 | Configure Pyright            |    🟡    |    ⏸   |
+| AT-019 | Configure pre-commit hooks   |    🟡    |    ⏸   |
 
-### AT-020 Execution Note
-
-This task was brought forward because AT-010 required automated persistence tests. It established the minimum project-wide testing foundation required before further persistence behavior is implemented.
+These identifiers are retained and will not be reused.
 
 ---
 
-## Epic F · First Running System
+## AT-020 · Testing Framework
+
+AT-020 was brought forward because AT-010 required automated persistence tests. It established the minimum project-wide testing foundation required before further persistence behavior was implemented.
+
+| ID     | Task                         | Priority | Status |
+| ------ | ---------------------------- | :------: | :------: |
+| AT-020 | Configure testing framework |    🟡    |    ✅   |
+
+---
+
+# Superseded Application Workflow Tasks
+
+The following tasks were part of the original First Running System plan. The application workflow was brought forward and implemented through AT-015 and AT-016, so these tasks no longer provide independent value.
 
 | ID     | Task                                   | Priority | Status |
 | ------ | -------------------------------------- | :------: | :------: |
-| AT-021 | Integrate interface with application  |    🔴    |    ⬜   |
-| AT-022 | Expose first application workflow      |    🟡    |    ⬜   |
-| AT-023 | Verify end-to-end execution            |    🔴    |    ⬜   |
+| AT-021 | Integrate interface with application   |    🔴    |    ❌   |
+| AT-022 | Expose first application workflow      |    🟡    |    ❌   |
+| AT-023 | Verify end-to-end execution            |    🔴    |    ❌   |
 
-These tasks deliberately describe observable product behavior rather than prescribing a frontend framework. The concrete UI technology remains a future decision driven by the validated interaction requirements.
+### Cancellation Reason
+
+- **AT-021** was superseded by the application/interface integration delivered through AT-015.
+- **AT-022** was superseded by the first exposed application workflow delivered through AT-015.
+- **AT-023** was superseded by the end-to-end validation delivered through AT-016.
+
+The identifiers remain recorded to preserve planning history and are never reused.
 
 ---
 
-# Domain Model Validation Before Persistence
+# Epic G · Requirement Discovery
 
-The backlog intentionally does not add speculative persistence tasks for the emerging Knowledge Blueprint and canonical knowledge model.
+**Status: 🔵 Next**
 
-AT-010 and AT-011 established the initial persistence and domain foundations through small, validated increments. The initial domain slice demonstrates that a requirement can define a blueprint, a blueprint can require reusable knowledge, and knowledge can be associated with one or more sources.
+## Objective
 
-Further concepts such as knowledge assertions, evidence, learning paths and assessments remain outside the initial implementation until concrete requirements justify their persistence model.
+Transform an imported authoritative source into explicit, structured requirements that can be evaluated and used as the entry point for subsequent knowledge construction.
+
+The epic intentionally stops at:
+
+```text
+Source
+  ↓
+Requirement Discovery
+  ↓
+Requirement
+```
+
+Knowledge Blueprints, canonical knowledge construction, retrieval and learning paths remain outside its scope.
+
+## Core Constraints
+
+### Source structures are not universal
+
+Different sources may use different document structures. Sources originating from the same provider may share a useful pattern, while sources from different providers may not.
+
+Requirement discovery should therefore allow source- or format-specific extraction strategies without making any single document structure intrinsic to the domain model.
+
+The initial implementation should remain simple and deterministic. Generalized parser frameworks should only be introduced when real sources demonstrate a need for them.
+
+### Requirement expressions are not canonical requirements
+
+A source may express the same requirement in different ways, for example:
+
+```text
+Constitución Española
+Constitución
+Constitución de España
+Constitución de 1978
+```
+
+Requirement discovery must distinguish the original expression found in the source from the normalized requirement it represents.
+
+The original expression and its source location must remain traceable even when multiple expressions are associated with the same canonical requirement.
+
+The system should not assume that textual equality implies requirement identity, nor should it introduce general semantic matching infrastructure before real use cases justify it.
+
+## Tasks
+
+| ID | Task | Priority | Status |
+| ------ | --------------------------------------------- | :------: | :------: |
+| AT-024 | Define requirement discovery use case        |    🔴    |    ⬜   |
+| AT-025 | Extract text from PDF sources                |    🔴    |    ⬜   |
+| AT-026 | Identify and normalize requirement candidates |    🔴    |    ⬜   |
+| AT-027 | Persist discovered requirements              |    🔴    |    ⬜   |
+| AT-028 | Expose requirement inspection                |    🟡    |    ⬜   |
+| AT-029 | Validate requirement discovery end-to-end    |    🔴    |    ⬜   |
+
+### AT-024 · Define Requirement Discovery Use Case
+
+Define the application-level workflow that transforms a source into requirement candidates while keeping extraction strategy separate from the canonical domain concept.
+
+### AT-025 · Extract Text from PDF Sources
+
+Provide isolated, testable extraction of textual content from supported PDF sources. This task should not attempt requirement interpretation.
+
+### AT-026 · Identify and Normalize Requirement Candidates
+
+Identify requirement mentions from extracted content and normalize them into candidate requirements while preserving the original expression and source location.
+
+The implementation should begin with simple, deterministic rules and remain open to source-specific strategies. Semantic resolution should only be introduced when supported by concrete requirements.
+
+### AT-027 · Persist Discovered Requirements
+
+Persist requirements discovered through the application workflow, reusing the existing domain model where it is sufficient. Any model changes must be justified by the real requirements discovered during this epic.
+
+### AT-028 · Expose Requirement Inspection
+
+Provide a minimal interface, initially through the existing CLI/application mechanisms, to inspect discovered requirements and their relationship to their source expressions.
+
+### AT-029 · Validate Requirement Discovery End-to-End
+
+Validate the complete isolated workflow using a representative self-contained PDF fixture:
+
+```text
+PDF
+  ↓
+Source
+  ↓
+Text extraction
+  ↓
+Requirement discovery
+  ↓
+Persistence
+  ↓
+Inspection
+```
+
+---
+
+# Domain Model Direction After Requirement Discovery
+
+Requirement Discovery should preserve the distinction between:
+
+```text
+Source expression / mention
+        ↓
+Canonical Requirement
+```
+
+Different source expressions may refer to the same requirement. The source expression, provenance and location must remain traceable even when the canonical requirement is shared.
+
+The implementation should not prematurely introduce a general entity-resolution or semantic-matching subsystem. Real source examples should determine the appropriate level of normalization and identification.
+
+---
+
+# Future Direction
+
+Requirement Discovery should provide the input required for the next conceptual stage:
+
+```text
+Requirement
+    ↓
+Scope Discovery
+    ↓
+Knowledge Blueprint
+    ↓
+Knowledge Assessment
+    ↓
+Canonical Knowledge
+```
+
+These stages are intentionally not decomposed into implementation tasks until Requirement Discovery provides sufficient evidence about the domain and its real inputs.
 
 ---
 
@@ -217,6 +366,6 @@ Further concepts such as knowledge assertions, evidence, learning paths and asse
 
 This backlog evolves together with the project.
 
-Tasks may be added, cancelled or reprioritized as development progresses, provided such changes remain aligned with the roadmap, foundations and development conventions.
+Tasks may be added, cancelled, deferred or reprioritized as development progresses, provided such changes remain aligned with the roadmap, foundations and development conventions.
 
 The objective is to maintain a backlog that is concise, accurate and focused on delivering incremental value.
