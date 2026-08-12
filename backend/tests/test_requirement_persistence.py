@@ -4,9 +4,11 @@ from uuid import uuid4
 from sqlalchemy import create_engine, select
 from sqlalchemy.orm import sessionmaker
 
+from app.domain.models import Requirement as DomainRequirement
 from app.persistence.database import Base
 from app.persistence.models.requirement import Requirement
 from app.persistence.models.source import Source
+from app.persistence.requirement_repository import SqlAlchemyRequirementRepository
 
 
 def test_requirement_can_be_persisted_and_retrieved(tmp_path) -> None:
@@ -55,6 +57,54 @@ def test_requirement_can_be_persisted_and_retrieved(tmp_path) -> None:
         assert persisted_requirement.source_id == source_id
         assert persisted_requirement.created_at is not None
         assert persisted_requirement.updated_at is not None
+    finally:
+        Base.metadata.drop_all(bind=engine)
+        engine.dispose()
+
+
+def test_requirement_repository_list_all_returns_empty_list_for_empty_database(
+    tmp_path,
+) -> None:
+    engine = create_engine(f"sqlite:///{tmp_path / 'test.db'}")
+    session_factory = sessionmaker(bind=engine)
+    Base.metadata.create_all(bind=engine)
+
+    try:
+        repository = SqlAlchemyRequirementRepository(session_factory)
+
+        assert repository.list_all() == []
+    finally:
+        Base.metadata.drop_all(bind=engine)
+        engine.dispose()
+
+
+def test_requirement_repository_list_all_returns_requirements_in_id_order(
+    tmp_path,
+) -> None:
+    engine = create_engine(f"sqlite:///{tmp_path / 'test.db'}")
+    session_factory = sessionmaker(bind=engine)
+    Base.metadata.create_all(bind=engine)
+
+    try:
+        source_id = uuid4()
+        repository = SqlAlchemyRequirementRepository(session_factory)
+        repository.save(
+            DomainRequirement(title="First requirement", source_id=source_id)
+        )
+        repository.save(
+            DomainRequirement(title="Second requirement", source_id=source_id)
+        )
+
+        requirements = repository.list_all()
+
+        assert [requirement.title for requirement in requirements] == [
+            "First requirement",
+            "Second requirement",
+        ]
+        assert [requirement.source_id for requirement in requirements] == [
+            source_id,
+            source_id,
+        ]
     finally:
         Base.metadata.drop_all(bind=engine)
         engine.dispose()
