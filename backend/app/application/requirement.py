@@ -23,6 +23,10 @@ class RequirementDiscoveryStrategy(Protocol):
 class RequirementRepository(Protocol):
     def save(self, requirement: Requirement) -> Requirement: ...
 
+    def get_by_id(self, requirement_id: int) -> Requirement | None: ...
+
+    def list_all(self) -> list[Requirement]: ...
+
 
 def discover_requirements(
     source: Source,
@@ -46,6 +50,17 @@ def persist_requirement_mentions(
         )
         for mention in mentions
     ]
+
+
+def get_requirement(
+    requirement_id: int,
+    repository: RequirementRepository,
+) -> Requirement | None:
+    return repository.get_by_id(requirement_id)
+
+
+def list_requirements(repository: RequirementRepository) -> list[Requirement]:
+    return repository.list_all()
 
 
 _REQUIREMENT_MARKER = re.compile(r"^\s*\d+(?:\.\d+)*[.)]\s+(.+?)\s*$")
