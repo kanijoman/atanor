@@ -2,13 +2,13 @@
 
 # Document Information
 
-| Field        | Value                       |
-| ------------ | --------------------------- |
-| Project      | Atanor                      |
-| Document     | BACKLOG                     |
-| Status       | 🟢 Active                   |
-| Version      | 2.2                         |
-| Last Updated | 2026-08-13                  |
+| Field        | Value |
+| ------------ | ----- |
+| Project      | Atanor |
+| Document     | BACKLOG |
+| Status       | 🟢 Active |
+| Version      | 2.3 |
+| Last Updated | 2026-08-13 |
 | Audience     | Contributors and Developers |
 
 ---
@@ -17,17 +17,17 @@
 
 | Metric      | Value |
 | ----------- | ----: |
-| Total Tasks |    32 |
+| Total Tasks |    33 |
 | Pending     |     0 |
-| In Progress |     0 |
+| In Progress |     1 |
 | Completed   |    24 |
 | Deferred    |     3 |
 | Cancelled   |     5 |
 | Blocked     |     0 |
 
-**Current Epic:** Epic H · Structured Requirement Discovery
+**Current Epic:** Epic I · Requirement Scope & Knowledge Needs
 
-**Next Task:** None currently defined
+**Current Task:** AT-033 · Define Requirement Scope and Knowledge Need
 
 ---
 
@@ -214,7 +214,107 @@ The Ayuntamiento de León scanned PDF remains unsupported and continues to serve
 
 ---
 
-# Domain Model Direction After Requirement Discovery
+# Epic I · Requirement Scope & Knowledge Needs
+
+**Status: 🟡 In Progress**
+
+## Objective
+
+Establish and validate the domain model required to express the knowledge coverage demanded by a requirement within a specific examination context, independently of whether the required knowledge already exists in Atanor.
+
+The milestone focuses on the conceptual relationship between:
+
+```text
+Requirement
+    │
+    │ appears in
+    ▼
+Examination Context
+    │
+    │ defines
+    ▼
+Requirement Scope
+    │
+    │ expresses
+    ▼
+Knowledge Needs
+    │
+    │ compared with
+    ▼
+Knowledge Corpus
+    │
+    ▼
+Coverage
+```
+
+The distinction between required knowledge and available knowledge must remain explicit. A Knowledge Need may exist even when the corresponding knowledge is not yet present in Atanor.
+
+## Core Constraints
+
+- A requirement may have multiple contextual scopes.
+- A scope belongs to a requirement in a specific examination context.
+- Different examination contexts may define different scopes for the same requirement.
+- A scope may express different levels of required depth or granularity.
+- A Knowledge Need represents required knowledge independently of its current availability.
+- The same knowledge may satisfy multiple Knowledge Needs.
+- Knowledge availability must not alter the Requirement Scope.
+- Coverage is initially a derived result rather than an independent persisted entity.
+- Do not introduce automatic semantic resolution, OCR, AI-generated scopes, automatic source discovery, or canonical Knowledge construction in this milestone.
+- Do not commit to a definitive persistence model for Knowledge Scope before the domain concepts are validated.
+
+## Tasks
+
+| ID | Task | Priority | Status |
+| --- | --- | :---: | :---: |
+| AT-033 | Define Requirement Scope and Knowledge Need | 🔴 | 🟡 |
+
+### AT-033 · Define Requirement Scope and Knowledge Need
+
+**Status: In Progress**
+
+Establish the conceptual model, domain invariants and validation cases required to represent the knowledge coverage demanded by a requirement within an examination context.
+
+The task must validate the following representative cases:
+
+1. The same requirement with the same scope.
+2. The same requirement with different scopes.
+3. The same knowledge with different required depths.
+4. A Knowledge Need for which no corresponding knowledge currently exists.
+
+The task should establish the distinction between Requirement Scope, Knowledge Need and current knowledge availability without prematurely defining the definitive `Knowledge` persistence model.
+
+## Explicitly Outside This Epic
+
+- Automatic semantic resolution of requirements.
+- Automatic scope generation.
+- OCR.
+- AI-generated scopes.
+- Construction of the canonical Knowledge model.
+- Automatic source discovery.
+- Knowledge acquisition.
+- User assessment.
+- Question generation.
+- Coverage optimization.
+- Definitive Knowledge persistence design.
+
+## Completion Criterion
+
+The epic is complete when Atanor can unambiguously represent:
+
+> Given a requirement in an examination context, what knowledge coverage is required, independently of whether that knowledge currently exists in Atanor?
+
+The validated domain model and its automated tests must precede durable Requirement Scope or Knowledge persistence work.
+
+## Anticipated Follow-up Work
+
+The following work is intentionally not yet committed to the active backlog and must be defined from the validated outcome of AT-033:
+
+- Requirement Scope persistence.
+- Knowledge coverage evaluation.
+
+---
+
+# Domain Model Direction
 
 Requirement Discovery preserves the distinction between:
 
@@ -226,12 +326,24 @@ Candidate / structured requirement
 Canonical Requirement (future)
 ```
 
-Different source expressions may refer to the same requirement. Source expression, provenance and location must remain traceable even when the canonical requirement is shared.
+Epic I extends this direction with the distinction between a requirement's contextual scope and the knowledge required by that scope:
 
-Requirements discovered from sources currently require a `source_id`, making provenance explicit and mandatory. Semantic entity resolution remains a future capability and should only be introduced when real source examples demonstrate that deterministic normalization is insufficient.
+```text
+Requirement
+        ↓
+Requirement Scope
+        ↓
+Knowledge Need
+        ↓
+Available Knowledge
+        ↓
+Derived Coverage
+```
+
+The canonical Knowledge model remains intentionally undefined until the requirement, scope and knowledge-need concepts have been sufficiently validated.
 
 ---
 
 # Active Backlog Summary
 
-There are currently no active implementation tasks defined after AT-032. The next epic/task should be defined from the evidence gathered during the completed structured discovery work rather than extending the current parser speculatively.
+AT-033 is currently the only active implementation task. No additional persistence or knowledge-construction tasks are committed until its domain validation is complete.
