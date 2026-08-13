@@ -7,7 +7,7 @@
 | Project      | Atanor                      |
 | Document     | CONVENTIONS                 |
 | Status       | 🟢 Active                   |
-| Version      | 0.5                         |
+| Version      | 0.6                         |
 | Last Updated | 2026-08-13                  |
 | Audience     | Contributors and Developers |
 
@@ -39,6 +39,36 @@ When multiple valid solutions exist, choose the one that minimizes unnecessary c
 
 ---
 
+# User Need over Architectural Prediction
+
+Atanor's architecture must provide a solid and flexible foundation, but development must be driven by validated user needs rather than anticipated future requirements.
+
+Architectural decisions should support product evolution rather than dictate it. The project should prefer solving demonstrated problems over designing for hypothetical ones.
+
+When a new requirement invalidates an existing abstraction, the model should be refactored rather than preserving obsolete structures for the sake of architectural continuity.
+
+A domain model is a tool for expressing the current understanding of the product, not a commitment to a permanent representation of the domain.
+
+The preferred evolution loop is:
+
+```text
+Validated user need
+        ↓
+Minimal implementation
+        ↓
+Real validation
+        ↓
+Learning
+        ↓
+Refinement or refactoring
+        ↓
+New validated need
+```
+
+This principle does not justify careless design. The project should still establish clear boundaries, maintainable code and appropriate tests. Those foundations should remain proportional, flexible and as reversible as reasonably possible.
+
+---
+
 # Language
 
 To maximize accessibility and encourage external contributions, the project adopts English as its official project language.
@@ -67,6 +97,8 @@ This **Just Enough Infrastructure** philosophy prevents unnecessary complexity, 
 
 Domain modeling follows the same principle: do not introduce abstractions merely because they might be useful later.
 
+The preferred development strategy is to prioritize thin, end-to-end product slices that can be validated with real user inputs over building broad infrastructure or a complete domain model in advance.
+
 Every task should leave the project objectively better than before.
 
 ---
@@ -86,7 +118,7 @@ Whenever applicable:
 
 Design decisions should favor maintainability over premature optimization.
 
-Domain concepts should be modeled according to validated product needs rather than being derived prematurely from implementation technology.
+Domain concepts should be modeled according to validated product needs rather than being derived prematurely from implementation technology or anticipated future features.
 
 ---
 
@@ -99,6 +131,8 @@ Theoretical purity should never take precedence over practical value.
 When a simpler solution adequately solves the problem, it should be preferred over a more sophisticated alternative.
 
 At the same time, simplicity must not be achieved by hiding important domain distinctions, such as the difference between a requirement, a source and the knowledge supported by that source.
+
+A previously valid abstraction may be changed or removed when real product development demonstrates that it no longer represents the problem adequately.
 
 ---
 
