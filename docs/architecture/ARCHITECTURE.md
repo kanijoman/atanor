@@ -2,42 +2,32 @@
 
 # Document Information
 
-| Field        | Value                       |
-| ------------ | --------------------------- |
-| Project      | Atanor                      |
-| Document     | ARCHITECTURE                |
-| Status       | 🟢 Active                   |
-| Version      | 0.6                         |
-| Last Updated | 2026-08-13                  |
-| Audience     | Contributors and Developers |
+| Field | Value |
+|---|---|
+| Project | Atanor |
+| Document | ARCHITECTURE |
+| Status | 🟢 Active |
+| Version | 0.7 |
+| Last Updated | 2026-08-13 |
+| Audience | Contributors and Developers |
 
 ---
 
 # Purpose
 
-This document describes the conceptual and validated technical architecture of Atanor.
-
-The architecture exists to support the product objective of transforming requirements and authoritative sources into structured, traceable and reusable knowledge.
-
-The architecture should remain as simple as possible while preserving important domain distinctions.
-
----
+This document describes the conceptual and validated technical architecture of Atanor. The architecture supports transforming requirements and authoritative sources into structured, traceable and reusable knowledge while keeping domain concepts independent from implementation technology.
 
 # Architectural Principles
 
 - Domain concepts must not depend on interface technology.
-- Application use cases orchestrate domain behavior and persistence without exposing persistence details to interfaces.
-- Sources and their representations are distinct from the requirements and knowledge they support.
+- Application use cases orchestrate domain behavior and persistence.
+- Sources and their representations are distinct from requirements and knowledge.
 - External document structures must not become intrinsic domain structures.
-- Requirement expressions found in sources must remain distinguishable from canonical requirements.
-- Persistence technology is an implementation detail of the domain model.
-- New abstractions should be introduced when validated requirements justify them, not for hypothetical future formats or capabilities.
-
----
+- Requirement expressions remain distinguishable from canonical requirements.
+- Persistence technology is an implementation detail.
+- New abstractions require validated product needs.
 
 # Current Validated Architecture
-
-The source-to-requirement workflow is now validated for supported PDF sources:
 
 ```text
 PDF Source
@@ -48,55 +38,34 @@ Persist Source
     ↓
 Text Extraction
     ↓
-Structured Requirement Discovery
+Requirement Discovery
     ↓
 Requirement Mention
     ↓
 Requirement
     ↓
-Persist / Inspect
+Requirement Scope
+    ↓
+Knowledge Need
+    ↓
+Coverage
 ```
 
-The workflow has been validated against real PDF samples from different sources, including BOE and Junta de Castilla y León documents.
-
-The current CLI is an adapter for application use cases rather than part of the domain architecture.
-
----
+The source workflow has been validated against real BOE and Junta de Castilla y León samples. Requirement Scope, Knowledge Need and initial Coverage have been validated through domain and persistence tests.
 
 # Architectural Layers
 
 ## Interface Layer
 
-Provides user- or system-facing adapters for application use cases.
-
-The current implementation uses a minimal standard-library CLI. A future web, desktop or other interface may replace or complement it without changing the domain model.
-
-Interfaces should not directly manipulate persistence entities or database sessions when an application use case can provide the required behavior.
-
----
+Provides adapters for application use cases. The current implementation uses a minimal standard-library CLI. A future interface may replace or complement it without changing the domain model.
 
 ## Application Layer
 
-Contains use cases that orchestrate application behavior.
-
-The application layer is responsible for coordinating:
-
-- input validation relevant to the use case;
-- domain operations;
-- persistence operations;
-- transaction boundaries where required;
-- application-level output;
-- document text extraction and structured requirement discovery.
-
-Source- and format-specific parsing rules belong here or in dedicated application/integration components, not in domain concepts.
-
----
+Contains use cases that coordinate validation, domain operations, persistence, transactions and document processing. Source- and format-specific parsing belongs here or in dedicated integration components, not in domain concepts.
 
 ## Domain Layer
 
-Contains the business concepts and relationships that represent Atanor's knowledge domain.
-
-The current model is intentionally minimal. It includes concepts such as:
+The current validated model is:
 
 ```text
 Source
@@ -104,29 +73,45 @@ Source
 Requirement Mention
     ↓
 Requirement
+    ↓
+Requirement Scope
+    ↓
+Knowledge Need
+    ↓
+Knowledge
+    ↓
+Coverage
 ```
 
-The distinction between a discovered source expression and a persisted requirement is intentional. Requirement provenance is mandatory through `source_id`.
+### Requirement
 
-The model is expected to evolve as real product requirements are validated.
+Represents a requirement in the application domain. Provenance remains explicit through its source relationship.
 
-Concepts such as evidence, knowledge assertions, learning paths, assessments and richer knowledge hierarchies remain future extensions until concrete requirements justify them.
+### Requirement Scope
 
----
+Represents the knowledge coverage required by a requirement in a specific contextual examination setting. A requirement may have multiple scopes.
+
+### Knowledge Need
+
+Represents a unit of knowledge coverage required by a scope. It is valid even when corresponding Knowledge does not exist.
+
+### Knowledge
+
+Represents reusable knowledge that may satisfy one or more Knowledge Needs. The definitive canonical Knowledge model remains intentionally limited until concrete requirements justify further design.
+
+### Coverage
+
+Represents the result of comparing a Knowledge Need with available Knowledge. The initial model supports only `COVERED` and `MISSING`. Coverage is derived and is not an independent persisted entity. Adding Knowledge may change Coverage without changing the Requirement Scope or Knowledge Need.
+
+Semantic matching, partial coverage and depth-aware coverage are not currently implemented.
 
 ## Persistence Layer
 
-Provides storage implementations for the domain and application layers.
-
-The current implementation uses SQLAlchemy with SQLite and Alembic migrations.
-
-The persistence layer must not make domain concepts dependent on SQLAlchemy or SQLite-specific behavior.
-
----
+The persistence layer uses SQLAlchemy with SQLite and Alembic. Persistence must not make domain concepts dependent on SQLAlchemy or SQLite-specific behavior. Requirement scopes and knowledge needs are persisted as part of the requirement aggregate.
 
 # Source and Requirement Discovery
 
-Requirement Discovery is a validated application capability rather than a universal document parser:
+Requirement Discovery is a validated capability rather than a universal document parser.
 
 ```text
 Source
@@ -138,126 +123,46 @@ Requirement Mention
 Requirement
 ```
 
-## Source Structure Is Not Domain Structure
+Real samples demonstrate different document structures. The current implementation recognizes only the minimum deterministic structures justified by those samples. `Tema` identifiers and other structured identifiers are preserved as text and are not assigned semantic meaning.
 
-A source may be a PDF from the BOE, a document from another public authority, or a user-provided document. Real samples have demonstrated that different sources can use different structures.
+Scanned PDFs remain outside the supported extraction boundary; OCR is future work.
 
-The current implementation recognizes the minimum deterministic structures justified by the validated samples. These include numbered entries under a `Programa` context and `Tema` entries such as:
+Requirement expression is not requirement identity. Semantic entity resolution is not currently implemented.
 
-```text
-Tema 1.– ...
-Tema IV.– ...
-Tema A.– ...
-```
+# Requirement Scope Boundary
 
-The identifier is preserved as text. It is not converted to a number or interpreted semantically.
-
-Sources from the same provider may share a pattern, but no universal document structure should be assumed. A provider- or document-specific strategy may become appropriate if additional real samples justify it, but no such abstraction is currently part of the architecture.
-
-Scanned PDFs are currently outside the supported extraction boundary; OCR is a future capability.
-
-## Requirement Expression Is Not Requirement Identity
-
-A source may contain expressions such as:
+The current validated progression is:
 
 ```text
-Constitución Española
-Constitución
-Constitución de España
-Constitución de 1978
-```
-
-These expressions may refer to the same canonical requirement.
-
-Architecturally, the distinction is:
-
-```text
-Source
-    ↓
-Requirement Expression / Mention
-    ↓
-Canonical Requirement
-```
-
-The original expression, provenance and source location must remain traceable even when several expressions are eventually associated with the same requirement.
-
-The current implementation does not perform semantic entity resolution. It should not introduce a general semantic resolution subsystem until real requirements justify it.
-
----
-
-# Requirement Discovery Boundary
-
-Requirement Discovery is intentionally limited to identifying and representing requirements.
-
-It does not yet construct the complete knowledge scope.
-
-The intended conceptual progression is:
-
-```text
-Source
-    ↓
 Requirement
     ↓
-Scope Discovery
+Requirement Scope
     ↓
-Knowledge Blueprint
+Knowledge Need
     ↓
-Knowledge Assessment
-    ↓
-Candidate Knowledge
-    ↓
-Evidence & Validation
-    ↓
-Canonical Knowledge
-    ↓
-Learning Path
+Coverage
 ```
 
-Each step should be introduced only when the preceding capability provides sufficient evidence about the domain.
+This layer deliberately does not construct the complete knowledge corpus. The following remain outside the current architecture:
 
----
+- semantic scope discovery;
+- automatic interpretation of requirement meaning;
+- OCR;
+- semantic knowledge matching;
+- partial or depth-aware coverage calculation;
+- complete canonical Knowledge construction;
+- learning paths and assessments.
 
-# Persistence and Identity
-
-Domain entity identity is independent of external document locators.
-
-For sources, the persisted entity has its own identity while the external document locator identifies where the source originated. A local file path is therefore not used as the source's canonical identity.
-
-Requirements currently require `source_id`, making provenance explicit and mandatory. A textual expression in a document is evidence about a requirement, not necessarily the identity of that requirement.
-
----
+A richer Knowledge Blueprint may become useful later if future requirements need confidence, evidence requirements, alternative interpretations or unresolved inference. It is not currently required as an independent domain entity.
 
 # Evolution Strategy
 
-Atanor uses an evidence-driven architectural evolution strategy.
+Atanor uses evidence-driven architectural evolution. Deferred capabilities include advanced source discovery, semantic requirement resolution, OCR, richer Knowledge Blueprint semantics, canonical Knowledge construction, richer evidence models, semantic coverage, graph or vector persistence, external AI services, web UI and multi-user infrastructure.
 
-The architecture deliberately supports future growth without implementing future infrastructure prematurely.
-
-Examples of currently deferred capabilities include:
-
-- advanced source discovery;
-- semantic requirement resolution;
-- OCR for scanned documents;
-- Knowledge Blueprint construction;
-- richer evidence models;
-- graph or vector persistence;
-- external AI services;
-- web UI;
-- multi-user infrastructure.
-
-These capabilities may become appropriate later, but each should be introduced in response to a concrete product requirement.
-
----
+Each capability should be introduced only in response to a concrete product requirement.
 
 # Architectural Decision Rule
 
-When several technically valid solutions exist, prefer the solution that:
-
-1. preserves the important domain distinction;
-2. introduces the least unnecessary complexity;
-3. can be validated with the current requirements;
-4. keeps future replacement possible without speculative abstraction.
-
-The guiding question is:
+When several technically valid solutions exist, prefer the solution that preserves important domain distinctions, introduces the least unnecessary complexity, can be validated with current requirements and keeps future replacement possible without speculative abstraction.
 
 > **Does this architectural decision help Atanor transform requirements and authoritative sources into better, simpler and more traceable knowledge?**
