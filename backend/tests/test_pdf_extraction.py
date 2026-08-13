@@ -2,7 +2,7 @@ from pathlib import Path
 
 import pytest
 
-from app.application.pdf import extract_pdf_text
+from app.application.pdf_extraction import extract_pdf_text
 from app.domain.models import Source
 
 
