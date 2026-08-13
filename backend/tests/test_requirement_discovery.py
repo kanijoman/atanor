@@ -99,6 +99,18 @@ def test_pdf_strategy_discovers_mentions_from_real_boe_sample() -> None:
     assert any("Constitución Española" in mention.expression for mention in result)
 
 
+def test_pdf_strategy_discovers_tema_items_from_real_jcyl_sample() -> None:
+    sample_path = "tests/samples/Programa_Archiveros_0.pdf"
+    source = Source(title="Programa_Archiveros_0.pdf", locator=sample_path)
+
+    result = PdfRequirementDiscoveryStrategy().discover(source)
+
+    assert result
+    assert all(mention.source_id == source.id for mention in result)
+    assert result[0].expression.startswith("Tema 1")
+    assert any(mention.expression.startswith("Tema 2") for mention in result)
+
+
 def test_pdf_strategy_returns_no_mentions_for_scanned_pdf_sample() -> None:
     sample_path = "tests/samples/OPOS_AYTO_LEON_INFORMATICA_B.pdf"
     source = Source(title="OPOS_AYTO_LEON_INFORMATICA_B.pdf", locator=sample_path)
