@@ -7,7 +7,7 @@
 | Project      | Atanor |
 | Document     | BACKLOG |
 | Status       | 🟢 Active |
-| Version      | 2.4 |
+| Version      | 2.5 |
 | Last Updated | 2026-08-13 |
 | Audience     | Contributors and Developers |
 
@@ -17,17 +17,17 @@
 
 | Metric      | Value |
 | ----------- | ----: |
-| Total Tasks |    34 |
+| Total Tasks |    35 |
 | Pending     |     0 |
 | In Progress |     1 |
-| Completed   |    25 |
+| Completed   |    26 |
 | Deferred    |     3 |
 | Cancelled   |     5 |
 | Blocked     |     0 |
 
 **Current Epic:** Epic I · Requirement Scope & Knowledge Needs
 
-**Current Task:** AT-034 · Persist Requirement Scope and Knowledge Needs
+**Current Task:** AT-035 · Evaluate Knowledge Coverage
 
 ---
 
@@ -115,7 +115,7 @@ These identifiers are retained and will not be reused.
 ## Superseded Application Workflow Tasks
 
 | ID | Task | Priority | Status |
-| --- | --- | :---: | :---: |
+| --- | --- | :---: | :--- |
 | AT-021 | Integrate interface with application | 🔴 | ❌ |
 | AT-022 | Expose first application workflow | 🟡 | ❌ |
 | AT-023 | Verify end-to-end execution | 🔴 | ❌ |
@@ -267,7 +267,8 @@ The distinction between required knowledge and available knowledge must remain e
 | ID | Task | Priority | Status |
 | --- | --- | :---: | :---: |
 | AT-033 | Define Requirement Scope and Knowledge Need | 🔴 | ✅ |
-| AT-034 | Persist Requirement Scope and Knowledge Needs | 🔴 | 🟡 |
+| AT-034 | Persist Requirement Scope and Knowledge Needs | 🔴 | ✅ |
+| AT-035 | Evaluate Knowledge Coverage | 🔴 | 🟡 |
 
 ### AT-033 · Define Requirement Scope and Knowledge Need
 
@@ -281,25 +282,43 @@ No SQLAlchemy or Alembic changes were introduced in AT-033. Persistence is addre
 
 ### AT-034 · Persist Requirement Scope and Knowledge Needs
 
+**Status: Completed**
+
+Implemented and validated SQLAlchemy persistence and Alembic migration support for the AT-033 model without reintroducing the superseded `Blueprint` / `KnowledgeRequirement` abstraction.
+
+The persistence model now supports a `Requirement` with zero or more contextual `RequirementScope` instances, each with zero or more `KnowledgeNeed` instances. Repository save/retrieval reconstructs the validated domain aggregate, while a Knowledge Need may remain unassociated with available Knowledge.
+
+The former `Requirement.context` persistence field was removed as a parallel scope representation. Migration upgrade/downgrade was validated successfully. Repository tests cover empty scopes, multiple contextual scopes, nested knowledge needs, missing available Knowledge, and round-trip behavior using the available real sample documents. The complete test suite contains 57 passing tests.
+
+The current repository intentionally maps `KnowledgeNeed` to `knowledge_id=None` because the definitive persistence model for `Knowledge` has not yet been established. This is an explicit boundary, not an incomplete compatibility model.
+
+### AT-035 · Evaluate Knowledge Coverage
+
 **Status: In Progress**
 
-Persist the validated AT-033 domain model through SQLAlchemy and Alembic without reintroducing the superseded `Blueprint` / `KnowledgeRequirement` model.
+Define and validate how Atanor determines the coverage of a `KnowledgeNeed` from the Knowledge currently available in the corpus.
 
-The task must establish persistence for:
+The task begins as a domain-analysis and behavior task. It must establish the minimum rules and tests needed to distinguish at least:
 
-1. A `Requirement` with zero or more `RequirementScope` instances.
-2. A `RequirementScope` associated with its parent `Requirement`.
-3. A `RequirementScope` preserving its contextual information.
-4. A `RequirementScope` containing zero or more `KnowledgeNeed` instances.
-5. A `KnowledgeNeed` preserving its topic and required depth.
-6. A `KnowledgeNeed` existing without available `Knowledge`.
-7. A `KnowledgeNeed` optionally associated with available `Knowledge` once the persistence representation of `Knowledge` has been established.
-8. Repository save/retrieval reconstructing the validated domain model.
-9. Migration upgrade and downgrade preserving schema integrity.
+1. `covered` — available Knowledge satisfies the required need.
+2. `partial` — available Knowledge satisfies only part of the required scope or depth.
+3. `missing` — no available Knowledge satisfies the need.
 
-The existing `Requirement.context` persistence field must not remain as a parallel representation of scope context. Its removal or migration must be handled as part of the new persistence model.
+The task must preserve the distinction between requirement scope, knowledge need, available knowledge, and derived coverage. Coverage should remain a derived result rather than a persisted entity.
 
-AT-034 must begin from the current persistence and test model. No definitive `Coverage` persistence is introduced by this task.
+The task must also determine the minimum relationship required between `KnowledgeNeed` and `Knowledge` to evaluate coverage, without prematurely expanding the definitive Knowledge model.
+
+Representative cases should include:
+
+- A Knowledge Need with no available Knowledge.
+- A Knowledge Need fully satisfied by one Knowledge item.
+- A Knowledge Need satisfied by multiple Knowledge items.
+- Available Knowledge covering only a lower required depth.
+- The same Knowledge satisfying needs belonging to different scopes.
+
+Where the current Knowledge model is insufficient to express one of these cases, AT-035 should first establish the smallest domain extension required and validate it with tests before introducing persistence changes.
+
+No automatic semantic matching, embeddings, AI-based similarity, OCR, source discovery, or coverage optimization is part of this task.
 
 ## Explicitly Outside This Epic
 
@@ -356,4 +375,4 @@ The canonical Knowledge model remains intentionally minimal and is not expanded 
 
 # Active Backlog Summary
 
-AT-034 is currently the only active implementation task. AT-033 has been completed after validating the new domain model and refactoring away the superseded knowledge-requirement abstraction. Coverage evaluation and other knowledge-construction work remain uncommitted until the persistence model is validated.
+AT-034 is completed after validating SQLAlchemy/Alembic persistence, repository round-trips and real sample contexts. **AT-035 is now the only active implementation task.** It will establish the minimum domain behavior required to evaluate derived Knowledge coverage without prematurely committing to a definitive Knowledge persistence model.
