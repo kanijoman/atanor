@@ -7,7 +7,7 @@
 | Project      | Atanor               |
 | Document     | README               |
 | Status       | 🟢 Active            |
-| Version      | 0.4                  |
+| Version      | 0.5                  |
 | Last Updated | 2026-08-13           |
 | Audience     | Users and Developers |
 
@@ -21,33 +21,31 @@ The first MVP focuses on Spanish public administration examinations. The underly
 
 # Product Direction
 
-Atanor aims to solve a problem traditionally addressed by preparation services: turning an official examination requirement into a justified scope of knowledge and, eventually, an effective learning journey.
+Atanor aims to solve a problem traditionally addressed by preparation services: turning an official examination requirement into a justified knowledge scope and, eventually, an effective learning journey.
 
-The intended product flow is:
+The current conceptual flow is:
 
 ```text
 Requirement
     ↓
-Scope Discovery
+Requirement Scope
     ↓
-Knowledge Blueprint
+Knowledge Need
     ↓
-Knowledge Assessment
+Coverage
     ↓
-Source Discovery / Acquisition
-    ↓
-Canonical Knowledge
+Knowledge
     ↓
 Learning Path
 ```
 
-The canonical knowledge corpus is built progressively and on demand. Atanor does not require a complete global corpus before it can serve a new requirement.
+The current model deliberately separates what an examination context requires from whether the corresponding knowledge already exists. Knowledge construction and learning capabilities will be introduced incrementally as real requirements justify them.
 
 ---
 
 # Current Status
 
-The initial foundation and source workflow are complete through **AT-016**. Requirement Discovery has subsequently been implemented and validated through **AT-032**.
+The initial foundation and source workflow are complete. Requirement Discovery was validated through **AT-032**, and Requirement Scope, Knowledge Need and initial Coverage modeling were completed through **AT-035**.
 
 Atanor currently has a validated vertical workflow for supported PDF sources:
 
@@ -62,30 +60,41 @@ Text extraction
     ↓
 Structured requirement discovery
     ↓
-Requirement mentions
+Requirement mention
     ↓
 Requirement
     ↓
-Persist / Inspect
+Requirement Scope
+    ↓
+Knowledge Need
+    ↓
+Coverage
 ```
 
-The workflow is implemented through an application layer, exposed through a minimal CLI and covered by automated tests. The discovery workflow has been validated against real PDF samples from different sources, including BOE and Junta de Castilla y León documents.
+The discovery and domain workflow is covered by automated tests and has been exercised with real PDF samples from different sources, including BOE and Junta de Castilla y León documents.
 
 The current discovery implementation is intentionally deterministic and structure-aware. It does not claim to be a universal parser, semantic requirement resolver or OCR system. A scanned PDF sample from Ayuntamiento de León is retained as a regression case for the current absence of OCR support.
 
 ---
 
-# Requirement Discovery
+# Current Domain Model
 
-Requirement discovery distinguishes the expression found in a source from the requirement it may represent.
+Atanor currently distinguishes:
 
-The original expression, source and location remain traceable. Semantic equivalence between different expressions is deliberately outside the current implementation scope.
+- **Requirement** — the requirement represented in the application domain;
+- **Requirement Scope** — the contextual knowledge coverage required by a requirement in a specific examination context;
+- **Knowledge Need** — a unit of knowledge coverage required by a scope, independently of whether corresponding knowledge already exists;
+- **Knowledge** — reusable knowledge that may satisfy one or more needs;
+- **Coverage** — the result of comparing a knowledge need with available knowledge.
 
-Document structures may vary between sources. Real samples have already demonstrated different structural conventions, including numbered entries and `Tema` entries. The current implementation preserves structured expressions without assigning semantic meaning to their numbering, allowing textual identifiers such as Arabic numbers, Roman numerals or letters.
+The initial coverage model is intentionally limited to:
 
-The implementation uses the minimum deterministic structure necessary for the currently validated source formats. A future organism- or document-specific strategy may become appropriate if additional real samples provide sufficient evidence, but no such abstraction is currently required.
+```text
+COVERED
+MISSING
+```
 
-More general semantic matching, generalized parser infrastructure and OCR will only be introduced when real product requirements demonstrate a need for them.
+A need may therefore exist without available knowledge. Richer states such as partial coverage or semantic matching remain future possibilities and are not assumed by the current model.
 
 ---
 
@@ -94,31 +103,13 @@ More general semantic matching, generalized parser infrastructure and OCR will o
 Atanor is developed around a small set of core principles:
 
 * **Knowledge is the core product asset.**
-* **Requirements and source expressions are not the same thing.**
+* **Requirements, scopes, needs and knowledge are distinct concepts.**
 * **Canonical knowledge must remain reusable independently of a curriculum.**
-* **Every important knowledge claim should remain traceable to supporting evidence.**
+* **Important knowledge claims should remain traceable to supporting evidence.**
 * **Artificial Intelligence is a tool, not the product itself.**
 * **Maintainability takes precedence over unnecessary complexity.**
 * **Infrastructure is introduced only when it solves an existing problem.**
 * **Development is iterative, incremental and pragmatic.**
-
----
-
-# Development Philosophy
-
-Atanor follows a pragmatic and incremental development process.
-
-The project introduces infrastructure only when it solves an existing problem. Technologies, frameworks and project structure are incorporated as they become necessary, avoiding speculative design and unnecessary complexity.
-
-Development follows modern software engineering practices, including:
-
-* Clean Code
-* SOLID principles
-* DRY
-* Pragmatic design
-* Test-Driven Development whenever it provides clear value
-
-Each backlog task should represent one isolated logical change, and each push should normally correspond to one backlog task.
 
 ---
 
@@ -160,9 +151,11 @@ The main project documentation can be found under the `docs/` directory.
 
 # Current Development Sequence
 
-Requirement Discovery is complete through **AT-032**. The next development step has not yet been fixed. It will be defined after evaluating the next workflow from discovered requirements toward knowledge scope and construction.
+Requirement Discovery is complete through **AT-032**. Requirement Scope & Coverage is complete through **AT-035**.
 
-The next stage of the roadmap is **Knowledge Construction**, but implementation should first validate what information and intermediate concepts are actually required to transform a real requirement into a justified knowledge scope. The project should continue to let real source material and domain evidence drive generalization.
+The next implementation task has intentionally not been fixed yet. The project is currently reevaluating the documentation and product direction before defining the next development step.
+
+The next strategic capability is expected to involve **Knowledge Construction**, but its first implementation should be defined from the validated Requirement Scope and Knowledge Need model rather than assuming a complete Blueprint or corpus architecture in advance.
 
 ---
 
