@@ -7,7 +7,7 @@
 | Project      | Atanor                      |
 | Document     | BACKLOG                     |
 | Status       | 🟢 Active                   |
-| Version      | 2.1                         |
+| Version      | 2.2                         |
 | Last Updated | 2026-08-13                  |
 | Audience     | Contributors and Developers |
 
@@ -18,16 +18,16 @@
 | Metric      | Value |
 | ----------- | ----: |
 | Total Tasks |    32 |
-| Pending     |     2 |
+| Pending     |     0 |
 | In Progress |     0 |
-| Completed   |    22 |
+| Completed   |    24 |
 | Deferred    |     3 |
 | Cancelled   |     5 |
 | Blocked     |     0 |
 
 **Current Epic:** Epic H · Structured Requirement Discovery
 
-**Next Task:** AT-031 · Extract requirements from a known structured section
+**Next Task:** None currently defined
 
 ---
 
@@ -159,7 +159,7 @@ AT-029 is deliberately limited to workflow validation. Extraction precision, sem
 
 # Epic H · Structured Requirement Discovery
 
-**Status: 🔵 Active**
+**Status: 🟢 Completed**
 
 ## Objective
 
@@ -183,8 +183,8 @@ The BOE sample is the first structural reference, not a universal specification.
 | ID | Task | Priority | Status |
 | --- | --- | :---: | :---: |
 | AT-030 | Define structured requirement sections | 🔴 | ✅ |
-| AT-031 | Extract requirements from a known structured section | 🔴 | ⬜ |
-| AT-032 | Validate discovery against multiple real source structures | 🟡 | ⬜ |
+| AT-031 | Extract requirements from a known structured section | 🔴 | ✅ |
+| AT-032 | Validate discovery against multiple real source structures | 🟡 | ✅ |
 
 ### AT-030 · Define Structured Requirement Sections
 
@@ -193,6 +193,24 @@ The BOE sample is the first structural reference, not a universal specification.
 Introduced the first source-specific structured context using the `Programa` section observed in the real BOE sample. Numbered candidates are considered only while inside that context. Matching is case-insensitive and supports the observed numbered-heading variants.
 
 The implementation deliberately does not treat `Programa` as a universal document concept. Other structures such as `Temario` may require a different strategy in the future. No semantic analysis or generalized parser framework was introduced.
+
+### AT-031 · Extract Requirements from a Known Structured Section
+
+**Status: Completed**
+
+Connected structured discovery with the application-level requirement workflow. Discovered `RequirementMention` instances can be converted into persisted `Requirement` entities while preserving the mandatory `source_id` provenance.
+
+The task deliberately does not introduce semantic canonicalization, deduplication, or additional document structures.
+
+### AT-032 · Validate Discovery Against Multiple Real Source Structures
+
+**Status: Completed**
+
+Validated structured discovery against multiple real convocatorias, including the BOE sample and a Junta de Castilla y León BOCyL sample. The latter uses `Tema` entries and demonstrated that structured numbering cannot safely be assumed to be Arabic numeric identifiers. The implementation therefore preserves the original structured expression and treats the `Tema` identifier as textual, allowing formats such as Arabic numbers, Roman numerals or letters without assigning semantic meaning to them.
+
+The samples also provide evidence that document structure may vary by issuing body or document format. An organism-specific abstraction remains a possible future evolution, but current evidence is insufficient to justify introducing one. No such abstraction has been added.
+
+The Ayuntamiento de León scanned PDF remains unsupported and continues to serve as a regression sample for the absence of an extractable text layer.
 
 ---
 
@@ -216,9 +234,4 @@ Requirements discovered from sources currently require a `source_id`, making pro
 
 # Active Backlog Summary
 
-| ID | Task | Priority | Status |
-| --- | --- | :---: | :---: |
-| AT-031 | Extract requirements from a known structured section | 🔴 | ⬜ |
-| AT-032 | Validate discovery against multiple real source structures | 🟡 | ⬜ |
-
-The next implementation step is **AT-031**. Its scope should remain limited to converting candidates from the known structured context into application-level requirement mentions and, where justified by the existing workflow, persisting them. It should not introduce semantic canonicalization or support additional document structures unless concrete evidence requires it.
+There are currently no active implementation tasks defined after AT-032. The next epic/task should be defined from the evidence gathered during the completed structured discovery work rather than extending the current parser speculatively.
