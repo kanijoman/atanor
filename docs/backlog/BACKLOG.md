@@ -7,7 +7,7 @@
 | Project      | Atanor |
 | Document     | BACKLOG |
 | Status       | 🟢 Active |
-| Version      | 2.5 |
+| Version      | 2.6 |
 | Last Updated | 2026-08-13 |
 | Audience     | Contributors and Developers |
 
@@ -19,15 +19,15 @@
 | ----------- | ----: |
 | Total Tasks |    35 |
 | Pending     |     0 |
-| In Progress |     1 |
-| Completed   |    26 |
+| In Progress |     0 |
+| Completed   |    27 |
 | Deferred    |     3 |
 | Cancelled   |     5 |
 | Blocked     |     0 |
 
 **Current Epic:** Epic I · Requirement Scope & Knowledge Needs
 
-**Current Task:** AT-035 · Evaluate Knowledge Coverage
+**Current Task:** None — Epic I completed
 
 ---
 
@@ -216,7 +216,7 @@ The Ayuntamiento de León scanned PDF remains unsupported and continues to serve
 
 # Epic I · Requirement Scope & Knowledge Needs
 
-**Status: 🟡 In Progress**
+**Status: 🟢 Completed**
 
 ## Objective
 
@@ -268,7 +268,7 @@ The distinction between required knowledge and available knowledge must remain e
 | --- | --- | :---: | :---: |
 | AT-033 | Define Requirement Scope and Knowledge Need | 🔴 | ✅ |
 | AT-034 | Persist Requirement Scope and Knowledge Needs | 🔴 | ✅ |
-| AT-035 | Evaluate Knowledge Coverage | 🔴 | 🟡 |
+| AT-035 | Evaluate Knowledge Coverage | 🔴 | ✅ |
 
 ### AT-033 · Define Requirement Scope and Knowledge Need
 
@@ -294,31 +294,15 @@ The current repository intentionally maps `KnowledgeNeed` to `knowledge_id=None`
 
 ### AT-035 · Evaluate Knowledge Coverage
 
-**Status: In Progress**
+**Status: Completed**
 
-Define and validate how Atanor determines the coverage of a `KnowledgeNeed` from the Knowledge currently available in the corpus.
+Implemented the initial binary Knowledge coverage evaluation as a domain-level derived result. `CoverageStatus` currently distinguishes only `COVERED` and `MISSING`: a `KnowledgeNeed` is covered when it has associated Knowledge and missing when it does not.
 
-The task begins as a domain-analysis and behavior task. It must establish the minimum rules and tests needed to distinguish at least:
+Coverage is intentionally not persisted and does not modify `RequirementScope` or `KnowledgeNeed`. Required depth is retained as part of the need but does not yet alter the binary coverage result. This is an explicit first-stage rule suitable for closed domains such as the Spanish Constitution and remains intentionally conservative for open domains.
 
-1. `covered` — available Knowledge satisfies the required need.
-2. `partial` — available Knowledge satisfies only part of the required scope or depth.
-3. `missing` — no available Knowledge satisfies the need.
+The coverage behavior is isolated in `app.domain.coverage`, keeping this conceptual concern separate from the core domain entities. Tests validate missing and covered needs, reuse of the same Knowledge across needs, and scopes containing both covered and missing needs. The complete test suite contains 61 passing tests.
 
-The task must preserve the distinction between requirement scope, knowledge need, available knowledge, and derived coverage. Coverage should remain a derived result rather than a persisted entity.
-
-The task must also determine the minimum relationship required between `KnowledgeNeed` and `Knowledge` to evaluate coverage, without prematurely expanding the definitive Knowledge model.
-
-Representative cases should include:
-
-- A Knowledge Need with no available Knowledge.
-- A Knowledge Need fully satisfied by one Knowledge item.
-- A Knowledge Need satisfied by multiple Knowledge items.
-- Available Knowledge covering only a lower required depth.
-- The same Knowledge satisfying needs belonging to different scopes.
-
-Where the current Knowledge model is insufficient to express one of these cases, AT-035 should first establish the smallest domain extension required and validate it with tests before introducing persistence changes.
-
-No automatic semantic matching, embeddings, AI-based similarity, OCR, source discovery, or coverage optimization is part of this task.
+`PARTIAL` coverage, semantic matching, depth-aware coverage, embeddings, and other richer evaluation strategies remain future work and should only be introduced when concrete domain evidence justifies them.
 
 ## Explicitly Outside This Epic
 
@@ -339,7 +323,7 @@ The epic is complete when Atanor can persist and reconstruct the validated requi
 
 ## Future Work
 
-Knowledge coverage evaluation remains a future task and must be defined after the persistence model is validated.
+Richer coverage evaluation, including `PARTIAL` and depth-aware semantics, should be introduced only when concrete open-domain use cases demonstrate the need.
 
 ---
 
@@ -375,4 +359,4 @@ The canonical Knowledge model remains intentionally minimal and is not expanded 
 
 # Active Backlog Summary
 
-AT-034 is completed after validating SQLAlchemy/Alembic persistence, repository round-trips and real sample contexts. **AT-035 is now the only active implementation task.** It will establish the minimum domain behavior required to evaluate derived Knowledge coverage without prematurely committing to a definitive Knowledge persistence model.
+Epic I is completed after validating the Requirement Scope and Knowledge Need domain model, its SQLAlchemy/Alembic persistence, repository round-trips against the available real samples, and binary Knowledge coverage evaluation. The backlog currently has no active implementation task; the next task should be defined from the next concrete product requirement rather than speculated in advance.
