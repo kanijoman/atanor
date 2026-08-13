@@ -7,8 +7,8 @@
 | Project      | Atanor                      |
 | Document     | ROADMAP                     |
 | Status       | 🟢 Active                   |
-| Version      | 0.4                         |
-| Last Updated | 2026-08-12                  |
+| Version      | 0.5                         |
+| Last Updated | 2026-08-13                  |
 | Audience     | Contributors and Developers |
 
 ---
@@ -87,7 +87,7 @@ Establish the minimal domain, persistence and application capabilities required 
 
 ## Outcome
 
-Atanor now has a validated first vertical workflow:
+Atanor established a validated source workflow:
 
 ```text
 PDF source
@@ -107,45 +107,50 @@ The stage deliberately stopped before requirement extraction, knowledge construc
 
 # Stage 3 · Requirement Discovery
 
-**Status: 🔵 Next**
+**Status: 🟢 Completed**
 
 ## Objective
 
 Transform imported authoritative source material into explicit, structured requirements that can become the entry point for subsequent knowledge construction.
 
-## Target Capability
+## Validated Capability
 
 ```text
 Source
     ↓
-Requirement Discovery
+Document Structure Detection
+    ↓
+Requirement Mention
     ↓
 Requirement
 ```
 
-Requirement discovery must not assume a universal document structure. Sources from the same provider may share patterns, while sources from different providers may require different extraction strategies.
+Requirement discovery does not assume a universal document structure. Real samples from BOE and Junta de Castilla y León demonstrated different structural conventions, including numbered entries and `Tema` entries.
 
-The process must also distinguish a requirement expression found in a source from the canonical requirement it represents. Different expressions may refer to the same requirement, while the original expression and source location remain traceable.
+The current implementation preserves source expressions, source identifiers and document locations. Structured identifiers are treated as text rather than being assigned semantic meaning.
 
 ## Outcome
 
-Atanor should be able to:
+Atanor can now:
 
 - extract text from supported PDF sources;
-- identify requirement mentions;
-- normalize requirement candidates;
+- identify requirement mentions using deterministic structural rules;
 - preserve source provenance and location;
-- associate different source expressions with the same requirement when justified;
 - persist and inspect discovered requirements;
-- validate the complete workflow end to end.
+- validate the complete workflow end to end against real source material;
+- keep unsupported scanned PDFs outside the current workflow boundary.
 
-The first implementation should remain simple and deterministic. Generalized parser frameworks or semantic matching infrastructure should only be introduced when real sources demonstrate a need for them.
+The implementation deliberately does not claim semantic requirement resolution, universal document parsing or OCR support.
+
+A real Ayuntamiento de León PDF without an extractable text layer remains a regression sample for the current absence of OCR support.
+
+The architecture also remains open to future provider- or document-specific discovery strategies, but no such abstraction has been introduced without sufficient evidence.
 
 ---
 
 # Stage 4 · Knowledge Construction
 
-**Status: ⚪ Future**
+**Status: 🔵 Next**
 
 ## Objective
 
@@ -163,7 +168,7 @@ Build the capability to transform requirements and authoritative sources into st
 - provenance and evidence;
 - canonical knowledge construction.
 
-This stage should begin only after Requirement Discovery has provided sufficient evidence about the real structure and semantics of requirements.
+The first implementation step should validate the transition from a real persisted requirement to a justified knowledge scope before introducing the complete Blueprint model.
 
 ---
 
