@@ -11,6 +11,13 @@ def test_program_context_is_detected_case_insensitively() -> None:
     assert context.name == "programa"
 
 
+def test_numbered_program_heading_is_detected() -> None:
+    context = find_program_context(["Bases", "11.\u2003Programa."])
+
+    assert context is not None
+    assert context.name == "programa"
+
+
 def test_numbered_candidates_are_ignored_outside_program_context() -> None:
     text = """1. Requisitos de los aspirantes
 2. Desarrollo del proceso
