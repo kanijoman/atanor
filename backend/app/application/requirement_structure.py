@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+import re
 
 
 @dataclass(frozen=True)
@@ -6,6 +7,14 @@ class StructuredRequirementContext:
     """A source-specific context in which numbered lines may be requirements."""
 
     name: str
+
+
+@dataclass(frozen=True)
+class StructuredRequirementCandidate:
+    """A numbered candidate found inside a structured context."""
+
+    expression: str
+    line_number: int
 
 
 def find_program_context(lines: list[str]) -> StructuredRequirementContext | None:
@@ -16,25 +25,21 @@ def find_program_context(lines: list[str]) -> StructuredRequirementContext | Non
     """
     for line in lines:
         if line.strip().casefold() == "programa":
-            return StructuredRequirementContext(name="program")
+            return StructuredRequirementContext(name="programa")
     return None
 
 
-def discover_numbered_mentions_in_context(
+def discover_numbered_candidates_in_context(
     text: str,
-    source_id,
-) -> list:
-    """Discover numbered mentions only inside the known program context."""
-    from app.application.requirement import RequirementMention
-    import re
-
+) -> list[StructuredRequirementCandidate]:
+    """Discover numbered candidates only inside the known program context."""
     lines = text.splitlines()
     context = find_program_context(lines)
     if context is None:
         return []
 
     marker = re.compile(r"^\s*\d+(?:\.\d+)*[.)]\s+(.+?)\s*$")
-    mentions: list[RequirementMention] = []
+    candidates: list[StructuredRequirementCandidate] = []
     in_context = False
 
     for line_number, line in enumerate(lines, start=1):
@@ -50,12 +55,11 @@ def discover_numbered_mentions_in_context(
 
         expression = " ".join(match.group(1).split())
         if expression:
-            mentions.append(
-                RequirementMention(
+            candidates.append(
+                StructuredRequirementCandidate(
                     expression=expression,
-                    source_id=source_id,
-                    locator=f"line:{line_number}",
+                    line_number=line_number,
                 )
             )
 
-    return mentions
+    return candidates
