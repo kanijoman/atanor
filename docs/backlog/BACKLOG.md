@@ -7,7 +7,7 @@
 | Project      | Atanor |
 | Document     | BACKLOG |
 | Status       | 🟢 Active |
-| Version      | 2.6 |
+| Version      | 2.7 |
 | Last Updated | 2026-08-13 |
 | Audience     | Contributors and Developers |
 
@@ -17,17 +17,17 @@
 
 | Metric      | Value |
 | ----------- | ----: |
-| Total Tasks |    35 |
+| Total Tasks |    36 |
 | Pending     |     0 |
 | In Progress |     0 |
-| Completed   |    27 |
+| Completed   |    28 |
 | Deferred    |     3 |
 | Cancelled   |     5 |
 | Blocked     |     0 |
 
-**Current Epic:** Epic I · Requirement Scope & Knowledge Needs
+**Current Epic:** Documentation Re-evaluation
 
-**Current Task:** None — Epic I completed
+**Current Task:** None — documentation re-evaluation completed
 
 ---
 
@@ -69,7 +69,7 @@ AT-004 was cancelled because containerized infrastructure is not currently requi
 | ID | Task | Priority | Status |
 | --- | --- | :---: | :---: |
 | AT-006 | Initialize FastAPI application | 🔴 | ✅ |
-| AT-007 | Implement configuration system | 🔴 | ✅ |
+| AT-007 | Configure configuration system | 🔴 | ✅ |
 | AT-008 | Configure logging | 🟡 | ✅ |
 | AT-009 | Implement health endpoint | 🟡 | ✅ |
 
@@ -327,6 +327,34 @@ Richer coverage evaluation, including `PARTIAL` and depth-aware semantics, shoul
 
 ---
 
+# Epic J · Documentation Re-evaluation
+
+**Status: 🟢 Completed**
+
+## Objective
+
+Reconcile the project documentation with the validated domain, architecture and roadmap after Epic I, while keeping the documentation structure proportional to the project's current needs.
+
+## Tasks
+
+| ID | Task | Priority | Status |
+| --- | --- | :---: | :---: |
+| AT-036 | Re-evaluate and update project documentation | 🟡 | ✅ |
+
+### AT-036 · Re-evaluate and Update Project Documentation
+
+**Status: Completed**
+
+Updated the README, Foundations, Architecture and Roadmap documents to reflect the validated `Requirement → Requirement Scope → Knowledge Need → Coverage` model and the completion of Epic I.
+
+The development conventions document was moved conceptually out of the architecture area into `docs/conventions/CONVENTIONS.md`, because its responsibility is project-wide development practice rather than architecture. The previous architecture path now contains only a short redirect marker pending final repository cleanup.
+
+No documentation was split merely because of length. Existing documents remain manageable and represent distinct responsibilities. Technology and migration documentation remain separate because their lifecycles and purposes are distinct.
+
+The next strategic stage is now Knowledge Construction, but no implementation task has been created yet. The next task should be defined only after reevaluating the concrete product requirement that will drive Knowledge Construction.
+
+---
+
 # Domain Model Direction
 
 Requirement Discovery preserves the distinction between:
@@ -339,7 +367,7 @@ Candidate / structured requirement
 Canonical Requirement (future)
 ```
 
-Epic I extends this direction with the distinction between a requirement's contextual scope and the knowledge required by that scope:
+Epic I extends this direction with:
 
 ```text
 Requirement
@@ -359,4 +387,4 @@ The canonical Knowledge model remains intentionally minimal and is not expanded 
 
 # Active Backlog Summary
 
-Epic I is completed after validating the Requirement Scope and Knowledge Need domain model, its SQLAlchemy/Alembic persistence, repository round-trips against the available real samples, and binary Knowledge coverage evaluation. The backlog currently has no active implementation task; the next task should be defined from the next concrete product requirement rather than speculated in advance.
+Epic I and the documentation re-evaluation are completed. The backlog currently has no active implementation task. The next task should be defined from the next concrete product requirement rather than speculated in advance.
