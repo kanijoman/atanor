@@ -7,7 +7,7 @@
 | Project      | Atanor |
 | Document     | BACKLOG |
 | Status       | 🟢 Active |
-| Version      | 2.3 |
+| Version      | 2.4 |
 | Last Updated | 2026-08-13 |
 | Audience     | Contributors and Developers |
 
@@ -17,17 +17,17 @@
 
 | Metric      | Value |
 | ----------- | ----: |
-| Total Tasks |    33 |
+| Total Tasks |    34 |
 | Pending     |     0 |
 | In Progress |     1 |
-| Completed   |    24 |
+| Completed   |    25 |
 | Deferred    |     3 |
 | Cancelled   |     5 |
 | Blocked     |     0 |
 
 **Current Epic:** Epic I · Requirement Scope & Knowledge Needs
 
-**Current Task:** AT-033 · Define Requirement Scope and Knowledge Need
+**Current Task:** AT-034 · Persist Requirement Scope and Knowledge Needs
 
 ---
 
@@ -220,9 +220,9 @@ The Ayuntamiento de León scanned PDF remains unsupported and continues to serve
 
 ## Objective
 
-Establish and validate the domain model required to express the knowledge coverage demanded by a requirement within a specific examination context, independently of whether the required knowledge already exists in Atanor.
+Establish and validate the domain and persistence model required to express the knowledge coverage demanded by a requirement within a specific examination context, independently of whether the required knowledge already exists in Atanor.
 
-The milestone focuses on the conceptual relationship between:
+The epic focuses on the conceptual relationship between:
 
 ```text
 Requirement
@@ -259,29 +259,47 @@ The distinction between required knowledge and available knowledge must remain e
 - The same knowledge may satisfy multiple Knowledge Needs.
 - Knowledge availability must not alter the Requirement Scope.
 - Coverage is initially a derived result rather than an independent persisted entity.
-- Do not introduce automatic semantic resolution, OCR, AI-generated scopes, automatic source discovery, or canonical Knowledge construction in this milestone.
-- Do not commit to a definitive persistence model for Knowledge Scope before the domain concepts are validated.
+- The persistence model must follow the validated domain model rather than preserve superseded abstractions.
+- Do not introduce automatic semantic resolution, OCR, AI-generated scopes, automatic source discovery, or canonical Knowledge construction in this epic.
 
 ## Tasks
 
 | ID | Task | Priority | Status |
 | --- | --- | :---: | :---: |
-| AT-033 | Define Requirement Scope and Knowledge Need | 🔴 | 🟡 |
+| AT-033 | Define Requirement Scope and Knowledge Need | 🔴 | ✅ |
+| AT-034 | Persist Requirement Scope and Knowledge Needs | 🔴 | 🟡 |
 
 ### AT-033 · Define Requirement Scope and Knowledge Need
 
+**Status: Completed**
+
+Validated the new domain model and its invariants using the representative cases defined for the epic. The model now distinguishes `RequirementScope` from `KnowledgeNeed` and keeps knowledge availability optional.
+
+The previous `Blueprint` / `KnowledgeRequirement` abstraction was removed rather than retained as a parallel compatibility model. The full test suite passes after the refactor, confirming that the new domain model is compatible with the existing application behavior.
+
+No SQLAlchemy or Alembic changes were introduced in AT-033. Persistence is addressed by AT-034 only after the domain model has been validated.
+
+### AT-034 · Persist Requirement Scope and Knowledge Needs
+
 **Status: In Progress**
 
-Establish the conceptual model, domain invariants and validation cases required to represent the knowledge coverage demanded by a requirement within an examination context.
+Persist the validated AT-033 domain model through SQLAlchemy and Alembic without reintroducing the superseded `Blueprint` / `KnowledgeRequirement` model.
 
-The task must validate the following representative cases:
+The task must establish persistence for:
 
-1. The same requirement with the same scope.
-2. The same requirement with different scopes.
-3. The same knowledge with different required depths.
-4. A Knowledge Need for which no corresponding knowledge currently exists.
+1. A `Requirement` with zero or more `RequirementScope` instances.
+2. A `RequirementScope` associated with its parent `Requirement`.
+3. A `RequirementScope` preserving its contextual information.
+4. A `RequirementScope` containing zero or more `KnowledgeNeed` instances.
+5. A `KnowledgeNeed` preserving its topic and required depth.
+6. A `KnowledgeNeed` existing without available `Knowledge`.
+7. A `KnowledgeNeed` optionally associated with available `Knowledge` once the persistence representation of `Knowledge` has been established.
+8. Repository save/retrieval reconstructing the validated domain model.
+9. Migration upgrade and downgrade preserving schema integrity.
 
-The task should establish the distinction between Requirement Scope, Knowledge Need and current knowledge availability without prematurely defining the definitive `Knowledge` persistence model.
+The existing `Requirement.context` persistence field must not remain as a parallel representation of scope context. Its removal or migration must be handled as part of the new persistence model.
+
+AT-034 must begin from the current persistence and test model. No definitive `Coverage` persistence is introduced by this task.
 
 ## Explicitly Outside This Epic
 
@@ -289,28 +307,20 @@ The task should establish the distinction between Requirement Scope, Knowledge N
 - Automatic scope generation.
 - OCR.
 - AI-generated scopes.
-- Construction of the canonical Knowledge model.
 - Automatic source discovery.
 - Knowledge acquisition.
 - User assessment.
 - Question generation.
 - Coverage optimization.
-- Definitive Knowledge persistence design.
+- Persisted coverage as an independent entity.
 
 ## Completion Criterion
 
-The epic is complete when Atanor can unambiguously represent:
+The epic is complete when Atanor can persist and reconstruct the validated requirement scope and knowledge-need model without requiring the corresponding knowledge to exist, while preserving the domain distinction between requirement scope, knowledge need and available knowledge.
 
-> Given a requirement in an examination context, what knowledge coverage is required, independently of whether that knowledge currently exists in Atanor?
+## Future Work
 
-The validated domain model and its automated tests must precede durable Requirement Scope or Knowledge persistence work.
-
-## Anticipated Follow-up Work
-
-The following work is intentionally not yet committed to the active backlog and must be defined from the validated outcome of AT-033:
-
-- Requirement Scope persistence.
-- Knowledge coverage evaluation.
+Knowledge coverage evaluation remains a future task and must be defined after the persistence model is validated.
 
 ---
 
@@ -340,10 +350,10 @@ Available Knowledge
 Derived Coverage
 ```
 
-The canonical Knowledge model remains intentionally undefined until the requirement, scope and knowledge-need concepts have been sufficiently validated.
+The canonical Knowledge model remains intentionally minimal and is not expanded beyond what concrete persistence requirements justify.
 
 ---
 
 # Active Backlog Summary
 
-AT-033 is currently the only active implementation task. No additional persistence or knowledge-construction tasks are committed until its domain validation is complete.
+AT-034 is currently the only active implementation task. AT-033 has been completed after validating the new domain model and refactoring away the superseded knowledge-requirement abstraction. Coverage evaluation and other knowledge-construction work remain uncommitted until the persistence model is validated.
