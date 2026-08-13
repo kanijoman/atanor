@@ -7,7 +7,7 @@
 | Project      | Atanor                      |
 | Document     | ROADMAP                     |
 | Status       | 🟢 Active                   |
-| Version      | 0.5                         |
+| Version      | 0.6                         |
 | Last Updated | 2026-08-13                  |
 | Audience     | Contributors and Developers |
 
@@ -17,77 +17,35 @@
 
 Atanor aims to become a knowledge-driven learning platform capable of transforming examination requirements and authoritative sources into structured, traceable and adaptive learning experiences.
 
-The initial MVP focuses on preparation for Spanish public administration competitive examinations.
-
-The long-term vision is broader: a reusable platform for knowledge-intensive learning domains where reliable sources, structured knowledge and personalized learning are valuable.
+The initial MVP focuses on Spanish public administration competitive examinations.
 
 ---
 
 # Development Strategy
 
-Atanor follows an incremental delivery model.
-
-Infrastructure, frameworks and supporting technologies are introduced only when they solve an existing problem.
-
-Every meaningful milestone should produce measurable product value while keeping the repository simple, maintainable and operational.
+Atanor follows an incremental delivery model. Infrastructure and supporting technologies are introduced only when they solve an existing problem.
 
 The roadmap describes strategic direction. It does not enumerate implementation tasks or establish one-to-one correspondence with the backlog.
 
----
-
-# Roadmap Principles
-
-Development is guided by:
-
-- Deliver working software at every meaningful milestone.
-- Introduce infrastructure only when necessary.
-- Prefer small, atomic and traceable changes.
-- Keep the architecture adaptable.
-- Prioritize product capabilities over technology adoption.
-- Validate important domain assumptions before committing to implementation.
-- Keep the MVP aligned with the needs of the initial examination use case.
-- Let real source material drive generalization instead of designing for hypothetical formats.
+Development is guided by working software, small traceable changes, evidence-driven domain decisions, MVP alignment and real source material rather than hypothetical formats.
 
 ---
 
 # Product Evolution
 
-The roadmap is organized around product capabilities rather than technologies.
-
-The order below describes the intended evolution. The exact implementation sequence may change as domain knowledge and validation results evolve.
-
----
-
-# Stage 1 · Foundation
+## Stage 1 · Foundation
 
 **Status: 🟢 Completed**
 
-## Objective
+Established the technical, organizational and development foundations of Atanor.
 
-Establish the technical, organizational and development foundations of Atanor.
-
-## Outcome
-
-- Repository structure established.
-- Development conventions defined.
-- Core documentation established.
-- Development workflow agreed.
-- Backend foundation initialized.
-- Initial application executable.
-
----
-
-# Stage 2 · Application & Source Foundation
+## Stage 2 · Application & Source Foundation
 
 **Status: 🟢 Completed**
 
-## Objective
+Established the minimal source, persistence and application capabilities required to introduce authoritative source material.
 
-Establish the minimal domain, persistence and application capabilities required to introduce authoritative source material into Atanor.
-
-## Outcome
-
-Atanor established a validated source workflow:
+Validated workflow:
 
 ```text
 PDF source
@@ -99,21 +57,11 @@ Persist
 Retrieve / List
 ```
 
-The workflow is exposed through a minimal CLI and validated with isolated automated tests.
-
-The stage deliberately stopped before requirement extraction, knowledge construction and learning features.
-
----
-
-# Stage 3 · Requirement Discovery
+## Stage 3 · Requirement Discovery
 
 **Status: 🟢 Completed**
 
-## Objective
-
-Transform imported authoritative source material into explicit, structured requirements that can become the entry point for subsequent knowledge construction.
-
-## Validated Capability
+Validated deterministic extraction of structured requirement mentions from supported PDF formats.
 
 ```text
 Source
@@ -125,116 +73,65 @@ Requirement Mention
 Requirement
 ```
 
-Requirement discovery does not assume a universal document structure. Real samples from BOE and Junta de Castilla y León demonstrated different structural conventions, including numbered entries and `Tema` entries.
+Real BOE and Junta de Castilla y León samples demonstrated different structures. Scanned PDFs remain outside the current extraction boundary.
 
-The current implementation preserves source expressions, source identifiers and document locations. Structured identifiers are treated as text rather than being assigned semantic meaning.
+## Stage 4 · Requirement Scope & Coverage
 
-## Outcome
+**Status: 🟢 Completed**
 
-Atanor can now:
+Validated the contextual knowledge layer between requirements and available knowledge.
 
-- extract text from supported PDF sources;
-- identify requirement mentions using deterministic structural rules;
-- preserve source provenance and location;
-- persist and inspect discovered requirements;
-- validate the complete workflow end to end against real source material;
-- keep unsupported scanned PDFs outside the current workflow boundary.
+```text
+Requirement
+    ↓
+Requirement Scope
+    ↓
+Knowledge Need
+    ↓
+Coverage
+```
 
-The implementation deliberately does not claim semantic requirement resolution, universal document parsing or OCR support.
+The model supports multiple contextual scopes, required depth and Knowledge Needs that may remain unfulfilled. Initial coverage is deliberately limited to `COVERED` and `MISSING`.
 
-A real Ayuntamiento de León PDF without an extractable text layer remains a regression sample for the current absence of OCR support.
+Coverage is an assessment result rather than a persistent domain entity at this stage.
 
-The architecture also remains open to future provider- or document-specific discovery strategies, but no such abstraction has been introduced without sufficient evidence.
+The stage is covered by domain, persistence and real-sample regression tests.
 
----
-
-# Stage 4 · Knowledge Construction
+## Stage 5 · Knowledge Construction
 
 **Status: 🔵 Next**
 
-## Objective
+Build the capability to transform Knowledge Needs into validated, reusable canonical Knowledge.
 
-Build the capability to transform requirements and authoritative sources into structured, reusable knowledge.
+Potential capabilities include:
 
-## Intended Capabilities
+- identify suitable knowledge sources;
+- acquire or ingest source material;
+- extract candidate knowledge;
+- validate knowledge against evidence;
+- establish provenance;
+- construct reusable canonical Knowledge;
+- reuse existing Knowledge where it satisfies a need.
 
-- scope discovery;
-- Knowledge Blueprint construction;
-- knowledge assessment;
-- source identification and acquisition;
-- extraction of candidate knowledge;
-- coverage refinement;
-- depth estimation;
-- provenance and evidence;
-- canonical knowledge construction.
+The first implementation step should be derived from the validated Requirement Scope and Knowledge Need model. A complete Knowledge Blueprint or sophisticated semantic matching layer should not be assumed before concrete requirements justify it.
 
-The first implementation step should validate the transition from a real persisted requirement to a justified knowledge scope before introducing the complete Blueprint model.
-
----
-
-# Stage 5 · Knowledge Retrieval and Assistance
+## Stage 6 · Knowledge Retrieval and Assistance
 
 **Status: ⚪ Future**
 
-## Objective
+Make structured knowledge usable through search and AI-assisted interaction, including grounded retrieval, source citation, explanations and uncertainty reporting.
 
-Make structured knowledge usable through search and AI-assisted interaction.
-
-## Potential Capabilities
-
-- grounded retrieval;
-- source-aware answers;
-- source citation;
-- explanations;
-- knowledge exploration;
-- gap and uncertainty reporting.
-
-AI should operate over structured and traceable knowledge rather than becoming an opaque substitute for it.
-
----
-
-# Stage 6 · Learning Platform
+## Stage 7 · Learning Platform
 
 **Status: ⚪ Future**
 
-## Objective
+Transform the knowledge model into an adaptive learning environment, including learning paths, study sessions, questions, assessment, progress tracking and revision planning.
 
-Transform the knowledge model into an adaptive learning environment.
-
-## Potential Capabilities
-
-- learning-path generation;
-- personalized study sessions;
-- question generation;
-- assessment;
-- progress tracking;
-- weakness detection;
-- revision planning;
-- spaced repetition.
-
-The learning path should be derived from required knowledge, dependencies and the learner's current state.
-
----
-
-# Stage 7 · Ecosystem Expansion
+## Stage 8 · Ecosystem Expansion
 
 **Status: ⚪ Future**
 
-## Objective
-
-Expand Atanor beyond the initial MVP once the core product has been validated.
-
-## Potential Capabilities
-
-- additional examination domains;
-- external integrations;
-- advanced analytics;
-- collaboration;
-- plugin architecture;
-- additional knowledge sources;
-- broader learning use cases.
-
-The exact scope should depend on product validation and user feedback.
+Expand beyond the initial MVP once the core product has been validated. Possible directions include additional examination domains, integrations, analytics, collaboration and broader learning use cases.
 
 ---
 
@@ -249,7 +146,9 @@ Source
     ↓
 Requirement
     ↓
-Knowledge Scope
+Requirement Scope
+    ↓
+Knowledge Need
     ↓
 Evidence
     ↓
@@ -258,14 +157,10 @@ Canonical Knowledge
 Learning
 ```
 
-The product should not be architected around a single examination structure when a more general domain model is justified.
-
 ---
 
 # Living Document
 
-This roadmap defines strategic direction.
+This roadmap defines strategic direction. Implementation detail belongs in the backlog and relevant technical documentation.
 
-Implementation detail belongs in the backlog and in the relevant technical documentation.
-
-The roadmap may evolve when new evidence invalidates assumptions or when product validation changes priorities.
+The roadmap may evolve when new evidence invalidates assumptions or product validation changes priorities.
