@@ -32,4 +32,5 @@ class Requirement(Base):
         back_populates="requirement",
         cascade="all, delete-orphan",
         passive_deletes=True,
+        lazy="selectin",
     )
