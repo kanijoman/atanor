@@ -35,11 +35,11 @@ def test_discover_requirements_delegates_to_strategy() -> None:
     assert strategy.received_source is source
 
 
-def test_pdf_strategy_accepts_pdf_sources(monkeypatch: pytest.MonkeyPatch) -> None:
+def test_pdf_strategy_discovers_numbered_items_inside_program_context(monkeypatch: pytest.MonkeyPatch) -> None:
     source = Source(title="call.pdf", locator="/tmp/call.pdf")
     monkeypatch.setattr(
         "app.application.requirement.extract_pdf_text",
-        lambda _: "1. Constitución Española",
+        lambda _: "1. Requisitos\nPROGRAMA\n1. Constitución Española",
     )
 
     result = PdfRequirementDiscoveryStrategy().discover(source)
@@ -48,9 +48,19 @@ def test_pdf_strategy_accepts_pdf_sources(monkeypatch: pytest.MonkeyPatch) -> No
         RequirementMention(
             expression="Constitución Española",
             source_id=source.id,
-            locator="line:1",
+            locator="line:3",
         )
     ]
+
+
+def test_pdf_strategy_ignores_numbered_items_outside_program_context(monkeypatch: pytest.MonkeyPatch) -> None:
+    source = Source(title="call.pdf", locator="/tmp/call.pdf")
+    monkeypatch.setattr(
+        "app.application.requirement.extract_pdf_text",
+        lambda _: "1. Requisitos\n2. Desarrollo\n",
+    )
+
+    assert PdfRequirementDiscoveryStrategy().discover(source) == []
 
 
 def test_pdf_strategy_discovers_mentions_from_real_boe_sample() -> None:
