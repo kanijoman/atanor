@@ -4,27 +4,30 @@ import re
 
 @dataclass(frozen=True)
 class StructuredRequirementContext:
-    """A source-specific context in which numbered lines may be requirements."""
+    """A source-specific context in which requirement items may be found."""
 
     name: str
 
 
 @dataclass(frozen=True)
 class StructuredRequirementCandidate:
-    """A numbered candidate found inside a structured context."""
+    """A candidate found inside a structured context."""
 
     expression: str
     line_number: int
 
 
 _PROGRAM_CONTEXT_MARKER = re.compile(
-    r"^\s*(?:\d+(?:\.\d+)*[.)]\s*)?programa\.?\s*$",
+    r"^\s*(?:\d+(?:\.\d+)*[.)]\s*)?programa(?:\s+que\b.*)?\.?\s*$",
     re.IGNORECASE,
 )
 
+_NUMBERED_MARKER = re.compile(r"^\s*\d+(?:\.\d+)*[.)]\s+(.+?)\s*$")
+_TEMA_MARKER = re.compile(r"^\s*Tema\s+\d+\s*[.\u2013-]\s*(.+?)\s*$", re.IGNORECASE)
+
 
 def find_program_context(lines: list[str]) -> StructuredRequirementContext | None:
-    """Find the simple program context used by the initial BOE strategy."""
+    """Find the supported program context in a source document."""
     for line in lines:
         if _PROGRAM_CONTEXT_MARKER.match(line):
             return StructuredRequirementContext(name="programa")
@@ -34,13 +37,11 @@ def find_program_context(lines: list[str]) -> StructuredRequirementContext | Non
 def discover_numbered_candidates_in_context(
     text: str,
 ) -> list[StructuredRequirementCandidate]:
-    """Discover numbered candidates only inside the known program context."""
+    """Discover supported requirement candidates inside the program context."""
     lines = text.splitlines()
-    context = find_program_context(lines)
-    if context is None:
+    if find_program_context(lines) is None:
         return []
 
-    marker = re.compile(r"^\s*\d+(?:\.\d+)*[.)]\s+(.+?)\s*$")
     candidates: list[StructuredRequirementCandidate] = []
     in_context = False
 
@@ -51,7 +52,7 @@ def discover_numbered_candidates_in_context(
         if not in_context:
             continue
 
-        match = marker.match(line)
+        match = _NUMBERED_MARKER.match(line) or _TEMA_MARKER.match(line)
         if not match:
             continue
 
