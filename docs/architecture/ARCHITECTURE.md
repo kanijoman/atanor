@@ -7,8 +7,8 @@
 | Project      | Atanor                      |
 | Document     | ARCHITECTURE                |
 | Status       | 🟢 Active                   |
-| Version      | 0.5                         |
-| Last Updated | 2026-08-12                  |
+| Version      | 0.6                         |
+| Last Updated | 2026-08-13                  |
 | Audience     | Contributors and Developers |
 
 ---
@@ -37,33 +37,29 @@ The architecture should remain as simple as possible while preserving important 
 
 # Current Validated Architecture
 
-The first application workflow has validated the following dependency direction:
+The source-to-requirement workflow is now validated for supported PDF sources:
 
 ```text
-Interface
+PDF Source
     ↓
-Application
+Import
     ↓
-Domain
+Persist Source
     ↓
-Persistence
+Text Extraction
+    ↓
+Structured Requirement Discovery
+    ↓
+Requirement Mention
+    ↓
+Requirement
+    ↓
+Persist / Inspect
 ```
 
-The current source workflow is:
+The workflow has been validated against real PDF samples from different sources, including BOE and Junta de Castilla y León documents.
 
-```text
-PDF input
-    ↓
-Interface / CLI
-    ↓
-Source application use case
-    ↓
-Domain model
-    ↓
-Persistence
-```
-
-The interface is replaceable. The current CLI is an adapter for application use cases rather than part of the domain architecture.
+The current CLI is an adapter for application use cases rather than part of the domain architecture.
 
 ---
 
@@ -89,9 +85,10 @@ The application layer is responsible for coordinating:
 - domain operations;
 - persistence operations;
 - transaction boundaries where required;
-- application-level output.
+- application-level output;
+- document text extraction and structured requirement discovery.
 
-It should not encode source-specific parsing rules as domain concepts.
+Source- and format-specific parsing rules belong here or in dedicated application/integration components, not in domain concepts.
 
 ---
 
@@ -102,12 +99,14 @@ Contains the business concepts and relationships that represent Atanor's knowled
 The current model is intentionally minimal. It includes concepts such as:
 
 ```text
+Source
+    ↓
+Requirement Mention
+    ↓
 Requirement
-    └── Blueprint
-            └── Knowledge Requirement
-                    └── Knowledge
-                            └── Source(s)
 ```
+
+The distinction between a discovered source expression and a persisted requirement is intentional. Requirement provenance is mandatory through `source_id`.
 
 The model is expected to evolve as real product requirements are validated.
 
@@ -127,27 +126,35 @@ The persistence layer must not make domain concepts dependent on SQLAlchemy or S
 
 # Source and Requirement Discovery
 
-The next active capability extends the validated source workflow:
+Requirement Discovery is a validated application capability rather than a universal document parser:
 
 ```text
 Source
     ↓
-Requirement Discovery
+Document Structure Detection
+    ↓
+Requirement Mention
     ↓
 Requirement
 ```
 
-This introduces two important distinctions.
-
 ## Source Structure Is Not Domain Structure
 
-A source may be a PDF from an official journal, a document from another public authority, or a user-provided document. Different providers may use different structures.
+A source may be a PDF from the BOE, a document from another public authority, or a user-provided document. Real samples have demonstrated that different sources can use different structures.
 
-Sources from the same provider may share a pattern, but no universal document structure should be assumed.
+The current implementation recognizes the minimum deterministic structures justified by the validated samples. These include numbered entries under a `Programa` context and `Tema` entries such as:
 
-Requirement discovery may therefore use source- or format-specific extraction strategies. Such strategies belong to the application/integration side of the architecture, while their output converges on the same domain concepts.
+```text
+Tema 1.– ...
+Tema IV.– ...
+Tema A.– ...
+```
 
-The first implementation should remain deliberately simple. A generalized parser or plugin architecture should only be introduced when real sources justify it.
+The identifier is preserved as text. It is not converted to a number or interpreted semantically.
+
+Sources from the same provider may share a pattern, but no universal document structure should be assumed. A provider- or document-specific strategy may become appropriate if additional real samples justify it, but no such abstraction is currently part of the architecture.
+
+Scanned PDFs are currently outside the supported extraction boundary; OCR is a future capability.
 
 ## Requirement Expression Is Not Requirement Identity
 
@@ -172,9 +179,9 @@ Requirement Expression / Mention
 Canonical Requirement
 ```
 
-The original expression, provenance and source location must remain traceable even when several expressions are associated with the same requirement.
+The original expression, provenance and source location must remain traceable even when several expressions are eventually associated with the same requirement.
 
-The architecture must not assume that textual equality implies requirement identity. Conversely, it should not introduce a general semantic entity-resolution subsystem until real requirements justify it.
+The current implementation does not perform semantic entity resolution. It should not introduce a general semantic resolution subsystem until real requirements justify it.
 
 ---
 
@@ -216,7 +223,7 @@ Domain entity identity is independent of external document locators.
 
 For sources, the persisted entity has its own identity while the external document locator identifies where the source originated. A local file path is therefore not used as the source's canonical identity.
 
-The same principle should apply to future requirements: a textual expression in a document is evidence about a requirement, not necessarily the identity of that requirement.
+Requirements currently require `source_id`, making provenance explicit and mandatory. A textual expression in a document is evidence about a requirement, not necessarily the identity of that requirement.
 
 ---
 
@@ -230,6 +237,7 @@ Examples of currently deferred capabilities include:
 
 - advanced source discovery;
 - semantic requirement resolution;
+- OCR for scanned documents;
 - Knowledge Blueprint construction;
 - richer evidence models;
 - graph or vector persistence;
