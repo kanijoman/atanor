@@ -9,8 +9,8 @@
 | Project      | Atanor                      |
 | Document     | FOUNDATIONS                 |
 | Status       | 🟢 Active                   |
-| Version      | 0.4                         |
-| Last Updated | 2026-08-10                  |
+| Version      | 0.5                         |
+| Last Updated | 2026-08-13                  |
 | Audience     | Contributors and Developers |
 
 ---
@@ -19,19 +19,9 @@
 
 Atanor was created to solve a specific problem in knowledge-intensive learning, initially public service examinations.
 
-A competitive examination does not normally provide everything a candidate needs to learn. Its requirements often define a subject or source without specifying the complete knowledge coverage, the appropriate level of detail, or the best explanatory sources.
+An examination requirement often identifies an area or source without specifying the complete knowledge coverage, the appropriate level of detail, or the best explanatory sources.
 
-The difficult part is therefore not only finding information.
-
-It is determining:
-
-- what knowledge is required;
-- how deeply it must be understood;
-- which sources should support it;
-- how different sources relate to each other;
-- how the required knowledge should be organized into a coherent learning journey.
-
-That refinement is a major part of the value traditionally provided by academic preparation services.
+The difficult part is therefore not only finding information. It is determining what knowledge is required, how deeply it must be understood, which sources should support it and how the resulting knowledge should be organized into a coherent learning journey.
 
 Atanor aims to make that process systematic, traceable and maintainable without depending structurally on proprietary study material.
 
@@ -47,18 +37,11 @@ Users should spend their time understanding, practicing and consolidating knowle
 
 # Vision
 
-A user should be able to provide an official syllabus, examination notice, regulation, or other relevant documents and obtain a justified learning scope and a coherent learning journey.
+A user should be able to provide an official syllabus, examination notice, regulation, or other relevant document and obtain a justified learning scope and, eventually, a coherent learning journey.
 
-Atanor should construct and refine the required knowledge using:
+Atanor should construct and refine the required knowledge using public and freely accessible sources, authoritative sources, documents provided by the user and knowledge already accumulated and validated in the canonical corpus.
 
-- public and freely accessible sources;
-- authoritative sources;
-- documents provided by the user;
-- knowledge already accumulated and validated in the canonical corpus.
-
-Paid third-party material must never be a structural dependency of the platform.
-
-The platform should make uncertainty explicit rather than presenting unsupported assumptions as facts.
+Paid third-party material must never be a structural dependency of the platform. The platform should make uncertainty explicit rather than presenting unsupported assumptions as facts.
 
 ---
 
@@ -68,41 +51,27 @@ A requirement such as:
 
 > "Operating Systems"
 
-does not, by itself, determine:
+does not, by itself, determine which concepts must be covered, how they should be decomposed, how much detail is appropriate or which sources should be used.
 
-- which concepts must be covered;
-- how those concepts should be decomposed;
-- how much detail is appropriate;
-- which sources should be used;
-- which parts are explicitly required and which are inferred from the domain.
-
-Atanor therefore needs an intermediate process between a requirement and canonical knowledge.
-
-Conceptually:
+The current validated intermediate model is deliberately smaller than the long-term vision:
 
 ```text
 Requirement
     ↓
-Scope Discovery
+Requirement Scope
     ↓
-Knowledge Blueprint
+Knowledge Need
     ↓
-Knowledge Assessment
+Coverage
     ↓
-Source Discovery / Acquisition
-    ↓
-Knowledge Candidates
-    ↓
-Evidence & Validation
-    ↓
-Canonical Knowledge
-    ↓
-Learning Path
+Knowledge
 ```
 
-This flow is iterative rather than strictly linear.
+A Requirement Scope expresses the contextual knowledge coverage required by a requirement. A Knowledge Need represents a unit of that required coverage and remains valid even when corresponding Knowledge is not yet available.
 
-The Knowledge Blueprint defines the proposed coverage, expected depth, evidence needs and confidence. It also acts as the specification used to evaluate existing knowledge and determine whether new acquisition or refinement is necessary.
+The initial Coverage model is deliberately limited to `COVERED` and `MISSING`.
+
+This model is a validated foundation for future knowledge construction. It does not assume that a complete Knowledge Blueprint, semantic matching system or global corpus already exists.
 
 ---
 
@@ -110,37 +79,28 @@ The Knowledge Blueprint defines the proposed coverage, expected depth, evidence 
 
 Atanor does not assume the existence of a complete corpus before the system can operate.
 
-The canonical knowledge corpus is a **cumulative asset built progressively and on demand**.
+The canonical knowledge corpus is a cumulative asset built progressively and on demand.
 
-When a new requirement is introduced, Atanor should first evaluate whether the existing canonical knowledge is sufficient. If it is, the system should reuse it. If it is incomplete or insufficient for the current requirement, Atanor may acquire additional source material, extract candidate knowledge, validate it and extend the corpus.
+When a new requirement is introduced, Atanor should eventually evaluate whether existing canonical knowledge is sufficient. If it is incomplete or insufficient for the current requirement, Atanor may acquire additional source material, extract candidate knowledge, validate it and extend the corpus.
 
 Conceptually:
 
 ```text
-Requirement
-     ↓
-Knowledge Blueprint
-     ↓
-Existing Canonical Knowledge
-     │
-     ├── Sufficient ───────→ Reuse
-     │
-     ├── Insufficient ─────→ Extend / Revalidate
-     │
-     └── Missing ──────────→ Acquire
-                                  ↓
-                         Candidate Knowledge
+Requirement Scope
+       ↓
+Knowledge Need
+       ↓
+Existing Knowledge
+       │
+       ├── Covered ───────→ Reuse
+       └── Missing ───────→ Construct / Acquire
                                   ↓
                          Evidence & Validation
                                   ↓
                          Canonical Knowledge
 ```
 
-The corpus is therefore **demand-driven rather than continuously maintained for its own sake**.
-
-Atanor does not need to proactively re-evaluate the entire corpus on a permanent schedule. Knowledge is re-evaluated when a real requirement provides a reason to do so, such as a new curriculum, a different expected depth, insufficient evidence, or a relevant source change discovered during use.
-
-This keeps acquisition and maintenance aligned with actual product needs.
+The corpus is therefore demand-driven rather than continuously maintained for its own sake.
 
 ---
 
@@ -179,149 +139,57 @@ Documents are sources of knowledge, not necessarily the knowledge model itself.
 
 The canonical corpus should be reusable independently of any particular curriculum.
 
----
-
 ## Requirements Do Not Define the Whole Knowledge Model
 
-A requirement identifies an expected area or source of knowledge.
+A requirement identifies an expected area or source of knowledge. It does not necessarily define its complete coverage or depth.
 
-It does not necessarily define its complete coverage or depth.
-
-Atanor must therefore distinguish:
+Atanor therefore distinguishes:
 
 ```text
 Requirement
     ↓
-Scope
+Requirement Scope
+    ↓
+Knowledge Need
     ↓
 Coverage + Depth
     ↓
 Knowledge
 ```
 
----
-
 ## Knowledge Is Independent of Curriculum
 
-Canonical knowledge must not belong to a single examination or syllabus.
+Canonical knowledge must not belong to a single examination or syllabus. The same knowledge may be required by multiple curricula, topics or learning paths.
 
-The same knowledge may be required by multiple curricula, topics or learning paths.
+## Scope and Needs Are Independent of Availability
 
-Curriculum defines which knowledge is relevant in a particular context.
+A Requirement Scope describes what is required in context. A Knowledge Need describes required coverage regardless of whether the corresponding knowledge exists.
 
----
-
-## The Blueprint Defines the Required Knowledge Scope
-
-The Knowledge Blueprint is the bridge between an external requirement and the reusable knowledge corpus.
-
-It should conceptually capture:
-
-- candidate coverage;
-- expected depth;
-- evidence requirements;
-- provenance;
-- confidence;
-- unresolved gaps.
-
-The Blueprint is not merely a table of contents. It is also the specification against which existing knowledge is assessed.
-
----
+Adding Knowledge may change Coverage without changing the requirement context or its needs.
 
 ## Knowledge Is Built on Demand
 
-Atanor should not require a complete knowledge corpus before serving users.
-
-Real requirements drive knowledge construction.
-
-A new requirement may:
-
-- reuse existing knowledge;
-- expose a gap in existing knowledge;
-- require deeper treatment;
-- trigger source discovery;
-- require revalidation of existing knowledge.
-
-This creates a cumulative knowledge asset without imposing permanent, global maintenance as a product requirement.
-
----
+Real requirements should drive knowledge construction. A new requirement may reuse existing knowledge, expose a gap, require deeper treatment, trigger source discovery or require revalidation.
 
 ## Sources and Knowledge Are Different
 
-The source that establishes that something must be learned does not necessarily need to be the source that best explains it.
-
-Atanor should distinguish:
-
-- curricular evidence;
-- authoritative knowledge sources;
-- explanatory or academic sources;
-- user-provided material.
-
-A source can therefore contribute to scope discovery, knowledge construction, or both.
-
----
+The source that establishes that something must be learned does not necessarily need to be the source that best explains it. Atanor should distinguish curricular evidence, authoritative knowledge sources, explanatory sources and user-provided material.
 
 ## Knowledge Must Be Verifiable
 
-Knowledge should maintain traceability to the sources or evidence that support it.
-
-The system should distinguish between:
-
-- directly supported facts;
-- user-provided requirements;
-- inferred or proposed coverage;
-- insufficiently supported knowledge;
-- unresolved or unknown information.
-
-Uncertainty must not be silently converted into certainty.
-
----
+Knowledge should maintain traceability to the sources or evidence that support it. The system should distinguish directly supported facts, user-provided requirements, inferred or proposed coverage and unresolved information.
 
 ## Knowledge Is Modular
 
-Knowledge should be represented as reusable and interconnected units rather than static manuals.
-
-A knowledge unit may participate in multiple curricula, explanations, questions and learning paths.
-
----
-
-## Knowledge Evolves Through Use
-
-Authoritative sources change, requirements change and the required depth of knowledge changes.
-
-Atanor should be able to update knowledge while preserving provenance and historical context where necessary.
-
-However, continuous global re-evaluation is not a product requirement.
-
-Knowledge should normally be re-evaluated when a concrete requirement creates a reason to do so.
-
----
+Knowledge should be represented as reusable and interconnected units rather than static manuals. A knowledge unit may participate in multiple curricula, explanations, questions and learning paths.
 
 ## Learning Must Be Guided
 
-Users should never face an empty page wondering what to study next.
-
-The platform should construct a learning path from:
-
-```text
-Required Knowledge
-        +
-Knowledge Dependencies
-        +
-User Knowledge State
-        ↓
-Learning Path
-```
-
----
+Users should never face an empty page wondering what to study next. The platform should eventually construct a learning path from required knowledge, dependencies and the learner's current state.
 
 ## Learning Means Mastery
 
-Completing a topic does not mean mastering it.
-
-Progress should ultimately be measured through demonstrated understanding rather than the amount of content consumed.
-
----
+Completing a topic does not mean mastering it. Progress should ultimately be measured through demonstrated understanding rather than the amount of content consumed.
 
 ## Learning Must Adapt to the User
 
@@ -335,27 +203,19 @@ Traditional preparation services provide a refined interpretation of a syllabus,
 
 Atanor aims to make that refinement dynamic and traceable.
 
-Instead of treating a syllabus as a static table of contents, Atanor aims to construct:
+The current validated foundation is:
 
 ```text
 Requirement
     ↓
-Scope Discovery
+Requirement Scope
     ↓
-Knowledge Blueprint
+Knowledge Need
     ↓
-Knowledge Assessment
-    ↓
-Source Discovery / Acquisition
-    ↓
-Canonical Knowledge
-    ↓
-Learning Path
+Coverage
 ```
 
-The resulting study material becomes a generated view of the underlying knowledge model rather than the primary asset itself.
-
-The accumulated corpus improves the efficiency of future requirements because previously validated knowledge can be reused rather than reconstructed.
+Future capabilities may extend this toward knowledge construction, evidence and validation, canonical knowledge and learning paths. Those capabilities should be introduced only when concrete product requirements justify them.
 
 ---
 
