@@ -28,7 +28,7 @@ class SqlAlchemyRequirementRepository:
                             KnowledgeNeed(
                                 topic=knowledge_need.topic,
                                 depth=knowledge_need.depth,
-                                knowledge_id=knowledge_need.knowledge_id,
+                                knowledge_id=None,
                             )
                             for knowledge_need in scope.knowledge_needs
                         ],
@@ -80,7 +80,7 @@ class SqlAlchemyRequirementRepository:
                         DomainKnowledgeNeed(
                             topic=knowledge_need.topic,
                             depth=knowledge_need.depth,
-                            knowledge_id=knowledge_need.knowledge_id,
+                            knowledge=None,
                         )
                         for knowledge_need in scope.knowledge_needs
                     ),
