@@ -7,8 +7,8 @@
 | Project      | Atanor               |
 | Document     | README               |
 | Status       | 🟢 Active            |
-| Version      | 0.3                  |
-| Last Updated | 2026-08-12           |
+| Version      | 0.4                  |
+| Last Updated | 2026-08-13           |
 | Audience     | Users and Developers |
 
 > **A knowledge-driven platform for public service examination preparation.**
@@ -47,9 +47,9 @@ The canonical knowledge corpus is built progressively and on demand. Atanor does
 
 # Current Status
 
-The initial foundation is complete through **AT-016**.
+The initial foundation and source workflow are complete through **AT-016**. Requirement Discovery has subsequently been implemented and validated through **AT-032**.
 
-Atanor currently has a validated first application workflow for PDF sources:
+Atanor currently has a validated vertical workflow for supported PDF sources:
 
 ```text
 PDF source
@@ -58,47 +58,34 @@ Import
     ↓
 Persist
     ↓
-Retrieve / List
-```
-
-The workflow is implemented through an application layer, exposed through a minimal CLI and covered by isolated automated tests.
-
-The next development stage is **Requirement Discovery**. Its objective is to transform imported authoritative source material into structured requirements without assuming that all sources share the same document structure or terminology.
-
-The immediate target is:
-
-```text
-Source
+Text extraction
     ↓
-Requirement Discovery
+Structured requirement discovery
+    ↓
+Requirement mentions
     ↓
 Requirement
+    ↓
+Persist / Inspect
 ```
 
-Knowledge Blueprint construction and later learning capabilities remain outside the current implementation scope.
+The workflow is implemented through an application layer, exposed through a minimal CLI and covered by automated tests. The discovery workflow has been validated against real PDF samples from different sources, including BOE and Junta de Castilla y León documents.
+
+The current discovery implementation is intentionally deterministic and structure-aware. It does not claim to be a universal parser, semantic requirement resolver or OCR system. A scanned PDF sample from Ayuntamiento de León is retained as a regression case for the current absence of OCR support.
 
 ---
 
 # Requirement Discovery
 
-Requirement discovery must distinguish the expression found in a source from the canonical requirement it represents.
+Requirement discovery distinguishes the expression found in a source from the requirement it may represent.
 
-For example, different source expressions such as:
+The original expression, source and location remain traceable. Semantic equivalence between different expressions is deliberately outside the current implementation scope.
 
-```text
-Constitución Española
-Constitución
-Constitución de España
-Constitución de 1978
-```
+Document structures may vary between sources. Real samples have already demonstrated different structural conventions, including numbered entries and `Tema` entries. The current implementation preserves structured expressions without assigning semantic meaning to their numbering, allowing textual identifiers such as Arabic numbers, Roman numerals or letters.
 
-may refer to the same requirement.
+The implementation uses the minimum deterministic structure necessary for the currently validated source formats. A future organism- or document-specific strategy may become appropriate if additional real samples provide sufficient evidence, but no such abstraction is currently required.
 
-The original expression and its source location must remain traceable even when different expressions are associated with the same requirement.
-
-Likewise, document structures may vary between sources. Sources from the same provider may share patterns, while sources from different providers may require different extraction strategies. The domain model must not depend on one specific document layout.
-
-The initial implementation will remain deliberately simple and deterministic. More general semantic matching or parser infrastructure will only be introduced when real sources demonstrate a need for it.
+More general semantic matching, generalized parser infrastructure and OCR will only be introduced when real product requirements demonstrate a need for them.
 
 ---
 
@@ -173,16 +160,9 @@ The main project documentation can be found under the `docs/` directory.
 
 # Current Development Sequence
 
-The next active epic is **Requirement Discovery**:
+Requirement Discovery is complete through **AT-032**. The next development step has not yet been fixed. It will be defined after evaluating the next workflow from discovered requirements toward knowledge scope and construction.
 
-1. Define the requirement discovery use case.
-2. Extract text from supported PDF sources.
-3. Identify and normalize requirement candidates.
-4. Persist discovered requirements.
-5. Expose minimal requirement inspection.
-6. Validate the complete workflow end to end.
-
-The sequence may evolve if real source material exposes new domain constraints, but the project should avoid speculative infrastructure and abstractions.
+The next stage of the roadmap is **Knowledge Construction**, but implementation should first validate what information and intermediate concepts are actually required to transform a real requirement into a justified knowledge scope. The project should continue to let real source material and domain evidence drive generalization.
 
 ---
 
