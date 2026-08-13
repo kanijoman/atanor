@@ -2,6 +2,7 @@ from uuid import uuid4
 
 import pytest
 
+from app.domain.coverage import CoverageStatus, evaluate_coverage
 from app.domain.models import Knowledge, KnowledgeNeed, Requirement, RequirementScope, Source
 
 
@@ -76,14 +77,14 @@ def test_scope_ids_are_unique() -> None:
 def test_knowledge_need_without_knowledge_is_missing() -> None:
     need = KnowledgeNeed(topic="Article 1", depth=1)
 
-    assert need.knowledge is None
+    assert evaluate_coverage(need) == CoverageStatus.MISSING
 
 
 def test_knowledge_need_with_knowledge_is_covered() -> None:
     knowledge = Knowledge(title="Spanish Constitution - Article 1")
     need = KnowledgeNeed(topic="Article 1", depth=1, knowledge=knowledge)
 
-    assert need.knowledge is not None
+    assert evaluate_coverage(need) == CoverageStatus.COVERED
 
 
 def test_same_knowledge_can_cover_multiple_needs() -> None:
@@ -92,8 +93,8 @@ def test_same_knowledge_can_cover_multiple_needs() -> None:
     first = KnowledgeNeed(topic="Processes", depth=2, knowledge=knowledge)
     second = KnowledgeNeed(topic="Processes", depth=4, knowledge=knowledge)
 
-    assert first.knowledge is knowledge
-    assert second.knowledge is knowledge
+    assert evaluate_coverage(first) == CoverageStatus.COVERED
+    assert evaluate_coverage(second) == CoverageStatus.COVERED
 
 
 def test_scope_can_contain_covered_and_missing_needs() -> None:
@@ -105,8 +106,8 @@ def test_scope_can_contain_covered_and_missing_needs() -> None:
         knowledge_needs=(covered_need, missing_need),
     )
 
-    assert scope.knowledge_needs[0].knowledge is knowledge
-    assert scope.knowledge_needs[1].knowledge is None
+    assert evaluate_coverage(scope.knowledge_needs[0]) == CoverageStatus.COVERED
+    assert evaluate_coverage(scope.knowledge_needs[1]) == CoverageStatus.MISSING
 
 
 @pytest.mark.parametrize("depth", [0, -1])
