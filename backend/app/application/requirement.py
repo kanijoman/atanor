@@ -1,5 +1,6 @@
 from dataclasses import dataclass
 from pathlib import Path
+import re
 from typing import Protocol
 from uuid import UUID
 
@@ -11,6 +12,7 @@ from app.domain.models import Requirement, Source
 @dataclass(frozen=True)
 class RequirementMention:
     """A requirement expression discovered in a source."""
+
     expression: str
     source_id: UUID
     locator: str | None = None
@@ -42,8 +44,35 @@ def list_requirements(repository: RequirementRepository) -> list[Requirement]:
     return repository.list_all()
 
 
+_REQUIREMENT_MARKER = re.compile(r"^\s*\d+(?:\.\d+)*[.)]\s+(.+?)\s*$")
+
+
+def discover_numbered_requirement_mentions(text: str, source_id: UUID) -> list[RequirementMention]:
+    """Discover numbered requirement mentions without structural filtering.
+
+    Kept as the low-level numbered-line detector. Structured discovery is
+    provided separately by ``requirement_structure``.
+    """
+    mentions: list[RequirementMention] = []
+    for line_number, line in enumerate(text.splitlines(), start=1):
+        match = _REQUIREMENT_MARKER.match(line)
+        if not match:
+            continue
+        expression = " ".join(match.group(1).split())
+        if expression:
+            mentions.append(
+                RequirementMention(
+                    expression=expression,
+                    source_id=source_id,
+                    locator=f"line:{line_number}",
+                )
+            )
+    return mentions
+
+
 class PdfRequirementDiscoveryStrategy:
     """Discover requirement mentions from textual PDF content."""
+
     def discover(self, source: Source) -> list[RequirementMention]:
         if not source.locator:
             raise ValueError("PDF source must have a locator")
