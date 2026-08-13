@@ -18,11 +18,7 @@ class StructuredRequirementCandidate:
 
 
 def find_program_context(lines: list[str]) -> StructuredRequirementContext | None:
-    """Find the simple program context used by the initial BOE strategy.
-
-    This is intentionally source-specific and does not make 'Programa' a
-    domain-level requirement concept.
-    """
+    """Find the simple program context used by the initial BOE strategy."""
     for line in lines:
         if line.strip().casefold() == "programa":
             return StructuredRequirementContext(name="programa")
