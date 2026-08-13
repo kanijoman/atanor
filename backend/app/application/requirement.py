@@ -33,7 +33,20 @@ def discover_requirements(source: Source, strategy: RequirementDiscoveryStrategy
 
 
 def persist_requirement_mentions(mentions: list[RequirementMention], repository: RequirementRepository) -> list[Requirement]:
-    return [repository.save(Requirement(title=mention.expression, source_id=mention.source_id)) for mention in mentions]
+    return [
+        repository.save(Requirement(title=mention.expression, source_id=mention.source_id))
+        for mention in mentions
+    ]
+
+
+def discover_and_persist_requirements(
+    source: Source,
+    strategy: RequirementDiscoveryStrategy,
+    repository: RequirementRepository,
+) -> list[Requirement]:
+    """Discover requirements from a source and persist the discovered mentions."""
+    mentions = discover_requirements(source, strategy)
+    return persist_requirement_mentions(mentions, repository)
 
 
 def get_requirement(requirement_id: int, repository: RequirementRepository) -> Requirement | None:
@@ -48,11 +61,7 @@ _REQUIREMENT_MARKER = re.compile(r"^\s*\d+(?:\.\d+)*[.)]\s+(.+?)\s*$")
 
 
 def discover_numbered_requirement_mentions(text: str, source_id: UUID) -> list[RequirementMention]:
-    """Discover numbered requirement mentions without structural filtering.
-
-    Kept as the low-level numbered-line detector. Structured discovery is
-    provided separately by ``requirement_structure``.
-    """
+    """Discover numbered requirement mentions without structural filtering."""
     mentions: list[RequirementMention] = []
     for line_number, line in enumerate(text.splitlines(), start=1):
         match = _REQUIREMENT_MARKER.match(line)
