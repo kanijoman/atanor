@@ -23,7 +23,10 @@ _PROGRAM_CONTEXT_MARKER = re.compile(
 )
 
 _NUMBERED_MARKER = re.compile(r"^\s*\d+(?:\.\d+)*[.)]\s+(.+?)\s*$")
-_TEMA_MARKER = re.compile(r"^\s*Tema\s+\d+\s*[.\u2013-]\s*(.+?)\s*$", re.IGNORECASE)
+_TEMA_MARKER = re.compile(
+    r"^\s*Tema\s+(?P<identifier>[A-Za-z0-9]+)\s*[.\u2013-]\s*(?P<expression>.+?)\s*$",
+    re.IGNORECASE,
+)
 
 
 def find_program_context(lines: list[str]) -> StructuredRequirementContext | None:
@@ -52,11 +55,16 @@ def discover_numbered_candidates_in_context(
         if not in_context:
             continue
 
-        match = _NUMBERED_MARKER.match(line) or _TEMA_MARKER.match(line)
-        if not match:
+        numbered_match = _NUMBERED_MARKER.match(line)
+        tema_match = _TEMA_MARKER.match(line)
+
+        if numbered_match:
+            expression = " ".join(numbered_match.group(1).split())
+        elif tema_match:
+            expression = " ".join(line.strip().split())
+        else:
             continue
 
-        expression = " ".join(match.group(1).split())
         if expression:
             candidates.append(
                 StructuredRequirementCandidate(
