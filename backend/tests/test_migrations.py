@@ -19,17 +19,19 @@ def test_migrations_round_trip(tmp_path) -> None:
         assert "alembic_version" in inspector.get_table_names()
         assert "requirements" in inspector.get_table_names()
         assert "sources" in inspector.get_table_names()
-        assert {
-            column["name"] for column in inspector.get_columns("requirements")
-        } == {
+        assert "requirement_scopes" in inspector.get_table_names()
+        assert "knowledge_needs" in inspector.get_table_names()
+
+        requirement_columns = inspector.get_columns("requirements")
+        assert {column["name"] for column in requirement_columns} == {
             "id",
             "title",
             "description",
-            "context",
             "source_id",
             "created_at",
             "updated_at",
         }
+
         source_columns = inspector.get_columns("sources")
         assert {column["name"] for column in source_columns} == {
             "id",
@@ -42,15 +44,46 @@ def test_migrations_round_trip(tmp_path) -> None:
         assert isinstance(source_id["type"], CHAR)
         assert source_id["type"].length == 32
 
-        foreign_keys = inspector.get_foreign_keys("requirements")
+        scope_columns = inspector.get_columns("requirement_scopes")
+        assert {column["name"] for column in scope_columns} == {
+            "id",
+            "requirement_id",
+            "context",
+        }
+
+        knowledge_need_columns = inspector.get_columns("knowledge_needs")
+        assert {column["name"] for column in knowledge_need_columns} == {
+            "id",
+            "scope_id",
+            "topic",
+            "depth",
+        }
+
+        requirement_foreign_keys = inspector.get_foreign_keys("requirements")
         assert {
             (foreign_key["referred_table"], tuple(foreign_key["constrained_columns"]))
-            for foreign_key in foreign_keys
+            for foreign_key in requirement_foreign_keys
         } == {("sources", ("source_id",))}
+
+        scope_foreign_keys = inspector.get_foreign_keys("requirement_scopes")
+        assert {
+            (foreign_key["referred_table"], tuple(foreign_key["constrained_columns"]))
+            for foreign_key in scope_foreign_keys
+        } == {("requirements", ("requirement_id",))}
+        assert scope_foreign_keys[0]["options"]["ondelete"] == "CASCADE"
+
+        knowledge_need_foreign_keys = inspector.get_foreign_keys("knowledge_needs")
+        assert {
+            (foreign_key["referred_table"], tuple(foreign_key["constrained_columns"]))
+            for foreign_key in knowledge_need_foreign_keys
+        } == {("requirement_scopes", ("scope_id",))}
+        assert knowledge_need_foreign_keys[0]["options"]["ondelete"] == "CASCADE"
 
         command.downgrade(config, "base")
 
         assert "requirements" not in inspect(engine).get_table_names()
         assert "sources" not in inspect(engine).get_table_names()
+        assert "requirement_scopes" not in inspect(engine).get_table_names()
+        assert "knowledge_needs" not in inspect(engine).get_table_names()
     finally:
         engine.dispose()
