@@ -4,7 +4,7 @@ import re
 from typing import Protocol
 from uuid import UUID
 
-from app.application.pdf import extract_pdf_text
+from app.application.pdf_extraction import extract_pdf_text
 from app.domain.models import Requirement, Source
 
 
