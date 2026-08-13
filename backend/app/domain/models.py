@@ -17,26 +17,6 @@ class Knowledge:
 
 
 @dataclass(frozen=True)
-class KnowledgeRequirement:
-    knowledge: Knowledge
-
-
-@dataclass(frozen=True)
-class Blueprint:
-    knowledge_requirements: tuple[KnowledgeRequirement, ...] = field(
-        default_factory=tuple
-    )
-
-    def requires(self, knowledge: Knowledge) -> "Blueprint":
-        return Blueprint(
-            knowledge_requirements=(
-                *self.knowledge_requirements,
-                KnowledgeRequirement(knowledge=knowledge),
-            )
-        )
-
-
-@dataclass(frozen=True)
 class KnowledgeNeed:
     topic: str
     depth: int
@@ -71,26 +51,14 @@ class Requirement:
     title: str
     source_id: UUID
     description: str | None = None
-    blueprint: Blueprint | None = None
     scopes: tuple[RequirementScope, ...] = field(default_factory=tuple)
     id: int | None = None
-
-    def with_blueprint(self, blueprint: Blueprint) -> "Requirement":
-        return Requirement(
-            title=self.title,
-            source_id=self.source_id,
-            description=self.description,
-            blueprint=blueprint,
-            scopes=self.scopes,
-            id=self.id,
-        )
 
     def with_scope(self, scope: RequirementScope) -> "Requirement":
         return Requirement(
             title=self.title,
             source_id=self.source_id,
             description=self.description,
-            blueprint=self.blueprint,
             scopes=(*self.scopes, scope),
             id=self.id,
         )
