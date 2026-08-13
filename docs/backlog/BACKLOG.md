@@ -7,8 +7,8 @@
 | Project      | Atanor                      |
 | Document     | BACKLOG                     |
 | Status       | 🟢 Active                   |
-| Version      | 1.9                         |
-| Last Updated | 2026-08-12                  |
+| Version      | 2.0                         |
+| Last Updated | 2026-08-13                  |
 | Audience     | Contributors and Developers |
 
 ---
@@ -29,17 +29,17 @@ Technical implementation details belong in the corresponding commits and Archite
 
 | Metric      | Value |
 | ----------- | ----: |
-| Total Tasks |    29 |
-| Pending     |     2 |
+| Total Tasks |    32 |
+| Pending     |     3 |
 | In Progress |     0 |
-| Completed   |    19 |
+| Completed   |    21 |
 | Deferred    |     3 |
 | Cancelled   |     5 |
 | Blocked     |     0 |
 
-**Current Epic:** Epic G · Requirement Discovery
+**Current Epic:** Epic H · Structured Requirement Discovery
 
-**Next Task:** AT-028 · Expose requirement inspection
+**Next Task:** AT-030 · Define structured requirement sections
 
 > These figures reflect the current task inventory. They should be updated whenever task status changes.
 
@@ -230,23 +230,23 @@ The identifiers remain recorded to preserve planning history and are never reuse
 
 # Epic G · Requirement Discovery
 
-**Status: 🔵 Active**
+**Status: 🟢 Completed**
 
 ## Objective
 
-Transform an imported authoritative source into explicit, structured requirements that can be evaluated and used as the entry point for subsequent knowledge construction.
+Transform an imported authoritative source into explicit, structured requirement candidates that can be evaluated and used as the entry point for subsequent knowledge construction.
 
-The epic intentionally stops at:
+The epic intentionally stops at validating the workflow:
 
 ```text
 Source
   ↓
 Requirement Discovery
   ↓
-Requirement
+Requirement candidates
 ```
 
-Knowledge Blueprints, canonical knowledge construction, retrieval and learning paths remain outside its scope.
+It does not claim semantic requirement resolution or complete extraction of all requirements from arbitrary convocatorias.
 
 ## Core Constraints
 
@@ -256,7 +256,7 @@ Different sources may use different document structures. Sources originating fro
 
 Requirement discovery should therefore allow source- or format-specific extraction strategies without making any single document structure intrinsic to the domain model.
 
-The initial implementation should remain simple and deterministic. Generalized parser frameworks should only be introduced when real sources demonstrate a need for them.
+The initial implementation remains simple and deterministic. Generalized parser frameworks should only be introduced when real sources demonstrate a need for them.
 
 ### Requirement expressions are not canonical requirements
 
@@ -271,9 +271,7 @@ Constitución de 1978
 
 Requirement discovery must distinguish the original expression found in the source from the normalized requirement it represents.
 
-The original expression and its source location must remain traceable even when multiple expressions are associated with the same canonical requirement.
-
-The system should not assume that textual equality implies requirement identity, nor should it introduce general semantic matching infrastructure before real use cases justify it.
+The original expression and its source location remain traceable. General semantic equivalence and canonical resolution are intentionally outside this epic.
 
 ## Tasks
 
@@ -283,82 +281,111 @@ The system should not assume that textual equality implies requirement identity,
 | AT-025 | Extract text from PDF sources                  |    🔴    |    ✅   |
 | AT-026 | Identify and normalize requirement candidates |    🔴    |    ✅   |
 | AT-027 | Persist discovered requirements                |    🔴    |    ✅   |
-| AT-028 | Expose requirement inspection                  |    🟡    |    ⬜   |
-| AT-029 | Validate requirement discovery end-to-end      |    🔴    |    ⬜   |
+| AT-028 | Expose requirement inspection                  |    🟡    |    ✅   |
+| AT-029 | Validate requirement discovery end-to-end      |    🔴    |    ✅   |
 
 ### AT-024 · Define Requirement Discovery Use Case
 
 **Status: Completed**
 
-Defined and implemented the application-level workflow that transforms a source into requirement mentions while keeping extraction strategy separate from the canonical domain concept. Requirement mentions remain application-level data and are not persisted or promoted to domain entities at this stage. The initial PDF strategy validates supported PDF sources and deliberately defers content extraction to AT-025.
+Defined and implemented the application-level workflow that transforms a source into requirement mentions while keeping extraction strategy separate from the canonical domain concept. Requirement mentions remain application-level data and are not persisted separately at this stage.
 
 ### AT-025 · Extract Text from PDF Sources
 
 **Status: Completed**
 
-Implemented isolated, testable text extraction for supported PDF sources using `pypdf`. The extractor validates the source locator, file existence and PDF type, then extracts page content in document order. Tests use self-contained synthetic PDFs and cover multi-page ordering and invalid input. Real-world PDF samples are intentionally deferred until concrete source variations provide useful regression cases.
+Implemented isolated, testable text extraction for supported PDF sources using `pypdf`. The extractor validates the source locator, file existence and PDF type, then extracts page content in document order. Tests use self-contained synthetic PDFs and cover multi-page ordering and invalid input.
 
 ### AT-026 · Identify and Normalize Requirement Candidates
 
 **Status: Completed**
 
-Implemented a first deterministic candidate-detection pass over extracted text. Numbered lines are identified as requirement mentions while preserving their original expression, source identity and line-based locator. Normalization is deliberately limited to basic whitespace cleanup. No semantic equivalence, canonical requirement resolution, generalized parser framework or persistence model was introduced. This first iteration is intentionally constrained so that real document samples can drive future refinements.
+Implemented a first deterministic candidate-detection pass over extracted text. Numbered lines are identified as requirement mentions while preserving their original expression, source identity and line-based locator. Normalization is deliberately limited to basic whitespace cleanup. No semantic equivalence, canonical requirement resolution, generalized parser framework or persistence model was introduced.
 
 ### AT-027 · Persist Discovered Requirements
 
 **Status: Completed**
 
-Persisted discovered requirements using the existing domain and SQLAlchemy persistence patterns. Each discovered requirement is stored independently and retains a mandatory `source_id`, preserving end-to-end provenance. The implementation intentionally does not persist requirement mentions separately and does not perform semantic deduplication or identity resolution. A migration adds the source relationship, with automated domain, persistence, migration and application tests.
+Persisted discovered requirements using the existing domain and SQLAlchemy persistence patterns. Each discovered requirement retains a mandatory `source_id`, preserving end-to-end provenance. The implementation intentionally does not persist requirement mentions separately and does not perform semantic deduplication or identity resolution.
 
 ### AT-028 · Expose Requirement Inspection
 
-Provide a minimal interface, initially through the existing CLI/application mechanisms, to inspect discovered requirements and their relationship to their source expressions.
+**Status: Completed**
+
+Added minimal CLI inspection for discovered requirements, including the empty-result case and persisted synthetic requirements. The CLI delegates to the application and persistence layers without coupling the domain to the interface.
 
 ### AT-029 · Validate Requirement Discovery End-to-End
 
-Validate the complete isolated workflow using a representative self-contained PDF fixture:
+**Status: Completed**
 
-```text
-PDF
-  ↓
-Source
-  ↓
-Text extraction
-  ↓
-Requirement discovery
-  ↓
-Persistence
-  ↓
-Inspection
-```
+Validated the complete PDF discovery workflow against real samples. A text-based BOE PDF successfully passed through PDF extraction and candidate discovery, producing 440 numbered candidates. This confirms the technical workflow but also demonstrates that the initial numbered-line heuristic is intentionally broad and must not yet be treated as a semantic requirement extractor. A real Ayuntamiento de León PDF without an extractable text layer was also added as a regression sample and remains unsupported until a future text-acquisition mechanism such as OCR is justified.
 
-Real-world PDF samples should be introduced here when they provide useful regression coverage, rather than being added speculatively to earlier tasks.
+AT-029 deliberately stops at workflow validation. Improving extraction precision, resolving semantic equivalence, parsing provider-specific structures, and supporting scanned PDFs are future work rather than completion criteria for this task.
+
+---
+
+# Epic H · Structured Requirement Discovery
+
+**Status: 🔵 Active**
+
+## Objective
+
+Improve requirement discovery from the broad candidate extraction validated in Epic G by using the document structure and context of real convocatorias.
+
+The immediate goal is not semantic entity resolution. It is to distinguish likely knowledge-bearing sections from general administrative text and to preserve the structure needed for later requirement modeling.
+
+The epic starts from evidence gathered in AT-029: a real BOE document can be extracted end to end, but a simple numbered-line detector produced 440 candidates across the full document.
+
+## Core Constraints
+
+- Do not assume that all convocatorias share one document structure.
+- Prefer explicit, deterministic structural signals over speculative NLP or semantic infrastructure.
+- Provider-specific strategies are acceptable when justified by real samples.
+- Preserve source expressions and provenance.
+- Do not introduce canonical requirement resolution merely because equivalent expressions exist; that remains a separate concern until concrete examples require it.
+- Keep scanned-PDF/OCR support outside the immediate scope unless a concrete next task demonstrates that it blocks the product workflow.
+
+## Initial Tasks
+
+| ID | Task | Priority | Status |
+| ------ | --------------------------------------------- | :------: | :------: |
+| AT-030 | Define structured requirement sections        |    🔴    |    ⬜   |
+| AT-031 | Extract requirements from a known structured section |    🔴    |    ⬜   |
+| AT-032 | Validate discovery against multiple real source structures |    🟡    |    ⬜   |
+
+These tasks are intentionally small. Further decomposition should be driven by the evidence obtained from the real samples rather than by anticipating every possible convocatoria format.
 
 ---
 
 # Domain Model Direction After Requirement Discovery
 
-Requirement Discovery should preserve the distinction between:
+Requirement Discovery preserves the distinction between:
 
 ```text
 Source expression / mention
         ↓
-Canonical Requirement
+Candidate / structured requirement
+        ↓
+Canonical Requirement (future)
 ```
 
-Different source expressions may refer to the same requirement. The source expression, provenance and location must remain traceable even when the canonical requirement is shared.
-
-The implementation should not prematurely introduce a general entity-resolution or semantic-matching subsystem. Real source examples should determine the appropriate level of normalization and identification.
+Different source expressions may refer to the same requirement. Source expression, provenance and location must remain traceable even when the canonical requirement is shared.
 
 Requirements discovered from sources currently require a `source_id`, making provenance explicit and mandatory. Future requirement creation mechanisms should define their origin explicitly rather than weakening this traceability with an implicit optional source.
+
+Semantic entity resolution should remain a future capability and should only be introduced when real source examples demonstrate that deterministic normalization is insufficient.
 
 ---
 
 # Future Direction
 
-Requirement Discovery should provide the input required for the next conceptual stage:
+The next stages remain intentionally evidence-driven:
 
 ```text
+Source
+    ↓
+Structured Requirement Discovery
+    ↓
 Requirement
     ↓
 Scope Discovery
@@ -370,7 +397,7 @@ Knowledge Assessment
 Canonical Knowledge
 ```
 
-These stages are intentionally not decomposed into implementation tasks until Requirement Discovery provides sufficient evidence about the domain and its real inputs.
+The implementation should continue to move one validated slice at a time. No permanent UI framework, OCR subsystem, generalized parser framework or semantic matching infrastructure should be introduced without a concrete product need.
 
 ---
 
