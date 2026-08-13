@@ -37,11 +37,42 @@ class Blueprint:
 
 
 @dataclass(frozen=True)
+class KnowledgeNeed:
+    topic: str
+    depth: int
+    knowledge: Knowledge | None = None
+    id: UUID = field(default_factory=uuid4)
+
+    def __post_init__(self) -> None:
+        if self.depth <= 0:
+            raise ValueError("Knowledge need depth must be positive")
+
+    @property
+    def knowledge_id(self) -> UUID | None:
+        return None if self.knowledge is None else getattr(self.knowledge, "id", None)
+
+
+@dataclass(frozen=True)
+class RequirementScope:
+    context: str
+    knowledge_needs: tuple[KnowledgeNeed, ...] = field(default_factory=tuple)
+    id: UUID = field(default_factory=uuid4)
+
+    def requires(self, knowledge_need: KnowledgeNeed) -> "RequirementScope":
+        return RequirementScope(
+            context=self.context,
+            knowledge_needs=(*self.knowledge_needs, knowledge_need),
+            id=self.id,
+        )
+
+
+@dataclass(frozen=True)
 class Requirement:
     title: str
     source_id: UUID
     description: str | None = None
     blueprint: Blueprint | None = None
+    scopes: tuple[RequirementScope, ...] = field(default_factory=tuple)
     id: int | None = None
 
     def with_blueprint(self, blueprint: Blueprint) -> "Requirement":
@@ -50,5 +81,16 @@ class Requirement:
             source_id=self.source_id,
             description=self.description,
             blueprint=blueprint,
+            scopes=self.scopes,
+            id=self.id,
+        )
+
+    def with_scope(self, scope: RequirementScope) -> "Requirement":
+        return Requirement(
+            title=self.title,
+            source_id=self.source_id,
+            description=self.description,
+            blueprint=self.blueprint,
+            scopes=(*self.scopes, scope),
             id=self.id,
         )
