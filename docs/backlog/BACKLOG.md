@@ -7,7 +7,7 @@
 | Project | Atanor |
 | Document | BACKLOG |
 | Status | 🟢 Active |
-| Version | 3.3 |
+| Version | 3.4 |
 | Last Updated | 2026-08-14 |
 | Audience | Contributors and Developers |
 
@@ -18,8 +18,8 @@
 | Metric | Value |
 | --- | ---: |
 | Total Tasks | 41 |
-| Pending | 1 |
-| In Progress | 0 |
+| Pending | 0 |
+| In Progress | 1 |
 | Completed | 32 |
 | Deferred | 3 |
 | Cancelled | 5 |
@@ -27,7 +27,7 @@
 
 **Current Epic:** Epic K · MVP Requirement Workflow
 
-**Next Task:** AT-041 — Expose the User-Oriented Requirement Workflow
+**Current Task:** AT-041 — Validate the First Candidate Product Experience
 
 ---
 
@@ -47,6 +47,9 @@
 - Technology choices for user interfaces should be justified by concrete product requirements rather than introduced speculatively.
 - Development should be driven by concrete user needs and validated MVP workflows rather than by speculative architecture.
 - The domain and persistence model should remain flexible and minimal; new abstractions require concrete evidence.
+- During the current early product stage, each task should be treated as a mini-MVP: a small, self-contained increment that provides value or produces actionable product knowledge.
+- Future tasks are hypotheses, not commitments. Detailed future work should be defined only when evidence from the preceding iteration justifies it.
+- Parallel development should be introduced only when the product direction is sufficiently stable to make independent work valuable.
 
 ---
 
@@ -153,7 +156,7 @@ The BOE, BOCyL and Ayuntamiento de León samples demonstrated that source struct
 Objective: represent knowledge coverage required by a requirement in a contextual scope independently of whether corresponding knowledge exists.
 
 | ID | Task | Priority | Status |
- | --- | --- | :---: | :---: |
+| --- | --- | :---: | :---: |
 | AT-033 | Define Requirement Scope and Knowledge Need | 🔴 | ✅ |
 | AT-034 | Persist Requirement Scope and Knowledge Needs | 🔴 | ✅ |
 | AT-035 | Evaluate Knowledge Coverage | 🔴 | ✅ |
@@ -176,7 +179,14 @@ Updated README, Foundations, Architecture and Roadmap documentation to reflect t
 
 **Status: 🟢 Active**
 
-Objective: build the first product-oriented vertical slice of Atanor around a concrete user need: transform a supported convocatoria PDF into useful study requirements without transferring semantic validation work to the user. The product should resolve discovered requirements automatically where possible and surface only genuine discrepancies or unresolved cases for internal expert curation.
+Objective: iteratively discover and validate the smallest useful candidate experience. At this stage the backlog intentionally avoids predicting the complete product journey. Each task is a mini-MVP whose outcome determines the next hypothesis.
+
+Atanor has two conceptual user profiles:
+
+- **Candidate:** the primary product user and the focus of the MVP.
+- **Curator:** the internal/expert role that may resolve ambiguities, fill knowledge gaps or validate information when automation cannot do so reliably.
+
+Curator functionality is not a parallel MVP. Dedicated curator tooling should be introduced only when it is demonstrated to be necessary to provide, validate or scale the candidate experience.
 
 ### AT-037 · Validate the First MVP Requirement Workflow
 
@@ -263,34 +273,47 @@ AT-040 was validated with **82 passing tests**. The final implementation introdu
 
 The task exposed no debt requiring a standalone cleanup task before continuing MVP work.
 
-### AT-041 · Expose the User-Oriented Requirement Workflow
+### AT-041 · Validate the First Candidate Product Experience
 
-**Status: Pending**
+**Status: In Progress**
 
-**Goal:** make the AT-040 user-oriented requirement set reachable through an existing application interface so that the first MVP vertical slice can be exercised as a real product workflow rather than only through application-level tests.
+**Goal:** validate the first genuinely useful candidate interaction rather than prematurely selecting a complete UI, API or future workflow. The task is a product experiment: determine the minimum interaction through which a candidate can provide a supported convocatoria and obtain a useful answer to the question **"What do I need to study?"**.
+
+#### AT-041 Product Hypothesis
+
+A candidate should be able to provide a real convocatoria and receive a clear, useful and sufficiently reliable representation of the study requirements derived from it, without being asked to understand or validate Atanor's internal discovery, resolution or curation process.
 
 #### AT-041 Scope
 
-- Expose the `get_study_requirements()` use case through the smallest existing application interface that provides a meaningful end-to-end validation path.
-- Reuse the existing application/domain contracts rather than introducing a new UI architecture.
-- Present the resulting requirements in a user-oriented form without exposing discovery, resolution or curation internals.
-- Preserve source provenance where it is useful for inspection.
-- Add flow tests covering the interface boundary and the underlying use case.
-- Validate the workflow against at least one supported real convocatoria sample.
+- Define the candidate who participates in this first product validation.
+- Define the minimum input required from that candidate.
+- Define the minimum result that could constitute a useful first product outcome.
+- Define what information makes that result useful and trustworthy.
+- Define the product behavior that is deliberately outside the experiment.
+- Select the smallest interface capable of exercising the experiment meaningfully only after the product interaction is defined.
+- Use manual/internal curation when necessary during development; do not build dedicated curator functionality unless the experiment demonstrates that it is required.
+- Validate the result using at least one realistic convocatoria and explicit product-value criteria.
 
-#### Explicitly Outside AT-041
+#### AT-041 Explicitly Outside
 
-- Frontend framework selection or implementation beyond what is strictly necessary to expose the use case.
-- User authentication or subscription management.
-- Study planning or progress tracking.
-- Knowledge generation.
-- OCR or scanned-PDF support.
-- Expert curation UI.
-- Advanced semantic resolution.
+- Designing the complete Candidate Journey.
+- Defining the final product UI or frontend architecture.
+- Building a dedicated curator application.
+- Making the candidate responsible for semantic validation.
+- Study planning, progress tracking, tests or adaptive learning.
+- OCR or scanned-PDF support unless the experiment proves it necessary.
+- Advanced ML/NLP, confidence scoring or semantic matching unless the experiment demonstrates that the current approach cannot provide sufficient value.
+- Predicting or scheduling detailed future tasks beyond what the experiment's evidence justifies.
+
+#### AT-041 Validation Model
+
+During development, the candidate result may be inspected by the product developer or another expert to identify omissions, false positives, ambiguities and usability problems. This is a **development validation mechanism**, not part of the intended mature candidate experience.
+
+The mature product should instead provide the candidate with a sufficiently reliable result directly. Candidate validation of Atanor's semantic decisions is not considered part of the target product experience.
 
 #### AT-041 Completion Criterion
 
-A user can invoke the existing application interface with a supported convocatoria and receive the study requirements produced by AT-040 without needing to understand or validate Atanor's discovery and resolution process. The complete boundary is covered by automated tests and remains independent of the underlying domain implementation.
+AT-041 is complete when we have a working, minimal candidate-facing interaction and enough evidence to determine whether the resulting answer to **"What do I need to study?"** provides real value. The implementation should be the smallest practical mechanism capable of producing that evidence. The outcome of AT-041 will determine the next mini-MVP rather than committing the project to a predefined AT-042 implementation.
 
 ---
 
@@ -343,7 +366,7 @@ Available Knowledge
 Derived Coverage
 ```
 
-Requirement discovery preserves source expressions and provenance. Automatic resolution is now an application-level step. The user-oriented requirement set is a minimal application output and does not yet justify a separate domain entity. The next MVP step is to expose that output through an application interface. The Knowledge model should evolve only when that concrete workflow requires it.
+Requirement discovery preserves source expressions and provenance. Automatic resolution is now an application-level step. The user-oriented requirement set is a minimal application output and does not yet justify a separate domain entity. Further domain changes should be driven by the candidate experiment and its evidence.
 
 ---
 
@@ -351,4 +374,4 @@ Requirement discovery preserves source expressions and provenance. Automatic res
 
 The foundation, requirement discovery, structured discovery, requirement scope/knowledge-need modeling, coverage evaluation, documentation re-evaluation, first real-sample workflow, automatic requirement resolution and user-oriented requirement projection are complete. **AT-040 is complete with 82 passing tests.**
 
-The next implementation step is **AT-041 — Expose the User-Oriented Requirement Workflow**. This is the next MVP-oriented vertical slice: make the first useful product output reachable through an existing application interface without exposing Atanor's internal discovery, resolution or curation mechanics.
+The active work is **AT-041 — Validate the First Candidate Product Experience**. It is intentionally defined as a mini-MVP experiment. No subsequent implementation task is committed until the evidence produced by AT-041 justifies the next step.
