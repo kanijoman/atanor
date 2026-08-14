@@ -19,6 +19,11 @@ SAMPLE_NAMES = (
     "Programa_Archiveros_0.pdf",
 )
 
+TEXT_SAMPLES = (
+    "BOE-A-2024-14098.pdf",
+    "Programa_Archiveros_0.pdf",
+)
+
 
 def test_requirement_resolution_flow_starts_from_a_source_candidate() -> None:
     samples_dir = Path(__file__).parent / "samples"
@@ -82,8 +87,8 @@ def test_requirement_resolution_flow_identifies_ambiguous_candidate() -> None:
     assert resolution.candidate is candidate
 
 
-@pytest.mark.parametrize("sample_name", SAMPLE_NAMES)
-def test_discovery_and_resolution_are_integrated_for_supported_pdf_samples(
+@pytest.mark.parametrize("sample_name", TEXT_SAMPLES)
+def test_discovery_and_resolution_are_integrated_for_supported_text_pdf_samples(
     sample_name: str,
 ) -> None:
     samples_dir = Path(__file__).parent / "samples"
@@ -97,12 +102,19 @@ def test_discovery_and_resolution_are_integrated_for_supported_pdf_samples(
     mentions = PdfRequirementDiscoveryStrategy().discover(source)
     assert mentions
 
+    # The fixture requirements represent already validated knowledge entries.
+    # The test verifies that discovery can cross the application boundary into
+    # automatic resolution without requiring user validation.
     requirements = tuple(
         Requirement(title=mention.expression, source_id=source_id)
         for mention in mentions
     )
 
-    resolutions = discover_and_resolve_requirements(source, PdfRequirementDiscoveryStrategy(), requirements)
+    resolutions = discover_and_resolve_requirements(
+        source,
+        PdfRequirementDiscoveryStrategy(),
+        requirements,
+    )
 
     assert len(resolutions) == len(mentions)
     assert all(
@@ -113,6 +125,20 @@ def test_discovery_and_resolution_are_integrated_for_supported_pdf_samples(
         resolution.candidate.source_id == source_id
         for resolution in resolutions
     )
+
+
+def test_scanned_pdf_remains_an_explicitly_unsupported_discovery_input() -> None:
+    samples_dir = Path(__file__).parent / "samples"
+    source_id = uuid4()
+    source = Source(
+        id=source_id,
+        title="OPOS_AYTO_LEON_INFORMATICA_B.pdf",
+        locator=str(samples_dir / "OPOS_AYTO_LEON_INFORMATICA_B.pdf"),
+    )
+
+    mentions = PdfRequirementDiscoveryStrategy().discover(source)
+
+    assert mentions == ()
 
 
 def test_discovery_and_resolution_keep_unresolved_candidates_for_internal_curation() -> None:
