@@ -2,7 +2,7 @@ import argparse
 from pathlib import Path
 from uuid import UUID
 
-from app.application.requirement import get_requirement, list_requirements
+from app.application.requirements import get_requirement, list_requirements
 from app.application.source import get_source, import_pdf_source, list_sources
 from app.persistence.database import SessionLocal
 from app.persistence.requirement_repository import SqlAlchemyRequirementRepository
