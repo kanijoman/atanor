@@ -7,6 +7,11 @@ from uuid import UUID
 from app.application.pdf_extraction import extract_pdf_text
 from app.application.requirement_structure import discover_numbered_candidates_in_context
 from app.domain.models import Requirement, Source
+from app.domain.requirement_resolution import (
+    RequirementCandidate,
+    RequirementResolution,
+    resolve_requirement,
+)
 
 
 @dataclass(frozen=True)
@@ -47,6 +52,25 @@ def discover_and_persist_requirements(
     """Discover requirements from a source and persist the discovered mentions."""
     mentions = discover_requirements(source, strategy)
     return persist_requirement_mentions(mentions, repository)
+
+
+def discover_and_resolve_requirements(
+    source: Source,
+    strategy: RequirementDiscoveryStrategy,
+    requirements: tuple[Requirement, ...],
+) -> list[RequirementResolution]:
+    """Discover requirement mentions from a source and resolve them automatically."""
+    mentions = discover_requirements(source, strategy)
+    return [
+        resolve_requirement(
+            RequirementCandidate(
+                title=mention.expression,
+                source_id=mention.source_id,
+            ),
+            requirements,
+        )
+        for mention in mentions
+    ]
 
 
 def get_requirement(requirement_id: int, repository: RequirementRepository) -> Requirement | None:
