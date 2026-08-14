@@ -7,7 +7,7 @@
 | Project | Atanor |
 | Document | BACKLOG |
 | Status | 🟢 Active |
-| Version | 2.9 |
+| Version | 3.0 |
 | Last Updated | 2026-08-14 |
 | Audience | Contributors and Developers |
 
@@ -27,7 +27,7 @@
 
 **Current Epic:** Epic K · MVP Requirement Workflow
 
-**Current Task:** AT-038 — Review and Validate Discovered Requirements
+**Current Task:** AT-038 — Automatic Requirement Resolution
 
 ---
 
@@ -153,7 +153,7 @@ The BOE, BOCyL and Ayuntamiento de León samples demonstrated that source struct
 Objective: represent knowledge coverage required by a requirement in a contextual scope independently of whether corresponding knowledge exists.
 
 | ID | Task | Priority | Status |
-| --- | --- | :---: | :---: |
+ | --- | --- | :---: | :---: |
 | AT-033 | Define Requirement Scope and Knowledge Need | 🔴 | ✅ |
 | AT-034 | Persist Requirement Scope and Knowledge Needs | 🔴 | ✅ |
 | AT-035 | Evaluate Knowledge Coverage | 🔴 | ✅ |
@@ -176,9 +176,7 @@ Updated README, Foundations, Architecture and Roadmap documentation to reflect t
 
 **Status: 🟢 Active**
 
-## Objective
-
-Build the first product-oriented vertical slice of Atanor around a concrete user need: transform a supported convocatoria PDF into useful, inspectable and eventually user-validated requirements. The epic deliberately prioritizes a demonstrable MVP over speculative knowledge architecture.
+Objective: build the first product-oriented vertical slice of Atanor around a concrete user need: transform a supported convocatoria PDF into useful study requirements without transferring semantic validation work to the user. The product should resolve discovered requirements automatically where possible and surface only genuine discrepancies or unresolved cases for internal expert curation.
 
 ### AT-037 · Validate the First MVP Requirement Workflow
 
@@ -202,58 +200,65 @@ Requirement retrieval
 
 The BOE and BOCyL samples validate text-based workflows with different document structures. The Ayuntamiento de León scanned sample validates the explicit unsupported-text-layer behavior. Source provenance is preserved and the resulting Requirements survive persistence and retrieval.
 
-AT-037 added integration coverage for the complete workflow. The complete test suite now contains **64 passing tests**.
+AT-037 added integration coverage for the complete workflow. The complete test suite contains **64 passing tests**.
 
 No OCR, semantic NLP, AI, generalized provider parser architecture or automatic scope/knowledge generation was introduced. These remain deferred until concrete product evidence requires them.
 
-### AT-038 · Review and Validate Discovered Requirements
+### AT-038 · Automatic Requirement Resolution
 
 **Status: Pending**
 
-**Goal:** make discovered requirements useful to a user by introducing the first validation step between automated discovery and subsequent knowledge work.
+**Goal:** transform discovered requirement candidates into reliable Requirements without requiring the user to determine whether Atanor's output is relevant or correctly identified.
 
-The initial workflow should allow a user or application-level client to inspect discovered Requirements associated with a Source and explicitly validate their usefulness before Atanor treats them as trusted input for later stages.
+Atanor should attempt to resolve discovered candidates automatically against the knowledge and requirement concepts already available to the system. The normal product path is automatic resolution. Expert intervention is an internal exception-handling and curation mechanism for genuine discrepancies or unresolved cases, not a user-facing validation workflow.
 
-Initial behavior should be deliberately simple:
+Initial conceptual flow:
 
 ```text
 Imported convocatoria
         ↓
-Discovered requirements
+Discovered candidates
         ↓
-User inspection
+Automatic resolution
         ↓
-Accept / reject / correct
-        ↓
-Validated requirements
+   ┌────┼──────────┐
+   ↓    ↓          ↓
+RESOLVED  DISCREPANCY  UNRESOLVED
+   ↓         ↓             ↓
+continue   expert       curation
+              \          /
+               ↓        ↓
+             resolved result
 ```
 
-The task should first define the smallest domain/application contract needed to express this validation. Persistence and UI changes should follow that contract rather than precede it.
+The first implementation should remain deliberately small. It should establish the minimum contract required to distinguish confidently resolved candidates from cases that require further attention, without prematurely introducing semantic AI/NLP, complex confidence models or a permanent administration UI.
 
 ### AT-038 Scope
 
-- Inspect Requirements belonging to an imported Source.
-- Represent the minimum validation outcome needed by the workflow.
-- Allow an explicitly rejected or corrected discovery result to be distinguished from an unreviewed result.
-- Preserve the original source expression/provenance.
-- Validate the behavior with automated tests.
-- Prefer an application/use-case implementation that can later be exposed through CLI, API or UI without changing the domain semantics.
+- Define the minimum domain/application contract for automatic requirement resolution.
+- Resolve candidates against known concepts where a deterministic resolution is sufficiently reliable.
+- Preserve the original source expression and provenance.
+- Represent unresolved or discrepant candidates without exposing the internal process as a required user workflow.
+- Make expert review possible as an internal curation path when automatic resolution is insufficient.
+- Ensure a successful curation decision can improve future automatic resolution rather than repeatedly resolving identical candidates.
+- Validate the behavior with automated tests, starting from concrete resolution cases.
 
 ### Explicitly Outside AT-038
 
-- Semantic canonicalization across convocatorias.
-- Automatic scope generation.
+- User-facing requirement validation or approval workflows.
+- Semantic AI/NLP or LLM-based resolution.
+- A sophisticated statistical confidence/scoring system.
+- OCR.
+- Automatic scope generation beyond what concrete resolution cases require.
 - Automatic Knowledge Need generation.
 - Knowledge construction or acquisition.
-- OCR.
-- AI/NLP-based validation.
-- Selection of a permanent UI framework.
+- Permanent administration UI.
 - Generalized provider parsing.
 - Rich coverage semantics.
 
 ### AT-038 Completion Criterion
 
-A discovered requirement can be inspected and explicitly validated by a user-facing application workflow, with its provenance preserved and its validation state covered by automated tests. The design must remain small enough that future evidence can replace or extend it without requiring a broad architectural rewrite.
+A discovered requirement candidate can be automatically resolved when the current knowledge is sufficient, while unresolved or conflicting cases are represented for internal expert curation. The original provenance is preserved, the automated path is covered by tests, and the design permits later improvements to resolution mechanisms without changing the user-facing product contract.
 
 ---
 
@@ -297,12 +302,12 @@ Available Knowledge
 Derived Coverage
 ```
 
-Requirement discovery preserves source expressions and provenance. Canonical semantic resolution remains future work. The Knowledge model should evolve only when a concrete MVP workflow requires it.
+Requirement discovery preserves source expressions and provenance. Automatic semantic resolution is now the next MVP concern. The Knowledge model should evolve only when a concrete workflow requires it.
 
 ---
 
 # Active Backlog Summary
 
-The foundation, requirement discovery, structured discovery, requirement scope/knowledge-need modeling, coverage evaluation and documentation re-evaluation are complete. AT-037 has now validated the first real MVP requirement vertical slice with 64 passing tests.
+The foundation, requirement discovery, structured discovery, requirement scope/knowledge-need modeling, coverage evaluation, documentation re-evaluation and first real-sample requirement workflow are complete. AT-037 validated the first MVP requirement vertical slice with 64 passing tests.
 
-The next implementation step is **AT-038 — Review and Validate Discovered Requirements**. This moves Atanor from merely producing Requirements to allowing a user to inspect and explicitly validate the automated result, which is the next necessary step before relying on those Requirements for subsequent knowledge construction.
+The next implementation step is **AT-038 — Automatic Requirement Resolution**. This moves Atanor from merely producing discovered Requirements to automatically determining what those requirements represent, while keeping expert curation as an internal fallback for discrepancies and unresolved cases. The user remains outside this validation process and should ultimately receive the resulting study requirements directly.
