@@ -2,32 +2,32 @@
 
 # Document Information
 
-| Field        | Value |
-| ------------ | ----- |
-| Project      | Atanor |
-| Document     | BACKLOG |
-| Status       | 🟢 Active |
-| Version      | 2.8 |
+| Field | Value |
+| --- | --- |
+| Project | Atanor |
+| Document | BACKLOG |
+| Status | 🟢 Active |
+| Version | 2.9 |
 | Last Updated | 2026-08-14 |
-| Audience     | Contributors and Developers |
+| Audience | Contributors and Developers |
 
 ---
 
 # Backlog Status
 
-| Metric      | Value |
-| ----------- | ----: |
-| Total Tasks |    37 |
-| Pending     |     0 |
-| In Progress |     0 |
-| Completed   |    28 |
-| Deferred    |     3 |
-| Cancelled   |     5 |
-| Blocked     |     0 |
+| Metric | Value |
+| --- | ---: |
+| Total Tasks | 38 |
+| Pending | 1 |
+| In Progress | 0 |
+| Completed | 29 |
+| Deferred | 3 |
+| Cancelled | 5 |
+| Blocked | 0 |
 
 **Current Epic:** Epic K · MVP Requirement Workflow
 
-**Current Task:** AT-037 — Validate the first MVP requirement workflow
+**Current Task:** AT-038 — Review and Validate Discovered Requirements
 
 ---
 
@@ -45,6 +45,8 @@
 - Implemented functionality should be validated by automated tests whenever practical.
 - User interfaces are implementations of application use cases, not architectural dependencies of the domain.
 - Technology choices for user interfaces should be justified by concrete product requirements rather than introduced speculatively.
+- Development should be driven by concrete user needs and validated MVP workflows rather than by speculative architecture.
+- The domain and persistence model should remain flexible and minimal; new abstractions require concrete evidence.
 
 ---
 
@@ -62,7 +64,7 @@ The initial foundation and source workflow are complete through **AT-016**.
 | AT-004 | Configure initial Docker Compose | 🔴 | ❌ |
 | AT-005 | Configure environment variables | 🔴 | ❌ |
 
-AT-004 was cancelled because containerized infrastructure is not currently required. AT-005 was cancelled when configuration requirements were simplified and consolidated into the backend configuration work.
+AT-004 was cancelled because containerized infrastructure is not currently required. AT-005 was cancelled when configuration requirements were simplified and consolidated into backend configuration.
 
 ## Epic B · Backend
 
@@ -81,7 +83,7 @@ AT-004 was cancelled because containerized infrastructure is not currently requi
 | AT-011 | Define initial domain model | 🔴 | ✅ |
 | AT-012 | Configure migrations | 🟡 | ✅ |
 
-The initial domain model remains intentionally minimal and extensible. It separates `Requirement`, knowledge coverage concepts, reusable `Knowledge`, and provenance through `Source`. New concepts are introduced only when concrete requirements justify them.
+The domain model is intentionally minimal and extensible. New concepts are introduced only when concrete requirements justify them.
 
 ## Epic D · Product Interaction
 
@@ -92,7 +94,7 @@ The initial domain model remains intentionally minimal and extensible. It separa
 | AT-015 | Build minimal CLI interface | 🟡 | ✅ |
 | AT-016 | Validate first end-to-end user workflow | 🔴 | ✅ |
 
-User interfaces remain replaceable implementations of application use cases. No permanent commitment to React, Qt, or another UI framework is made until concrete product requirements justify it.
+User interfaces remain replaceable implementations of application use cases.
 
 ---
 
@@ -103,24 +105,9 @@ User interfaces remain replaceable implementations of application use cases. No 
 | AT-017 | Configure Ruff | 🟡 | ⏸ |
 | AT-018 | Configure Pyright | 🟡 | ⏸ |
 | AT-019 | Configure pre-commit hooks | 🟡 | ⏸ |
-
-These identifiers are retained and will not be reused.
-
-## AT-020 · Testing Framework
-
-| ID | Task | Priority | Status |
-| --- | --- | :---: | :---: |
 | AT-020 | Configure testing framework | 🟡 | ✅ |
 
-## Superseded Application Workflow Tasks
-
-| ID | Task | Priority | Status |
-| --- | --- | :---: | :--- |
-| AT-021 | Integrate interface with application | 🔴 | ❌ |
-| AT-022 | Expose first application workflow | 🟡 | ❌ |
-| AT-023 | Verify end-to-end execution | 🔴 | ❌ |
-
-These tasks were superseded by the workflow implemented through AT-015 and AT-016.
+AT-021 to AT-023 were cancelled/superseded by the workflow implemented through AT-015 and AT-016. Cancelled identifiers are retained and never reused.
 
 ---
 
@@ -128,15 +115,7 @@ These tasks were superseded by the workflow implemented through AT-015 and AT-01
 
 **Status: 🟢 Completed**
 
-## Objective
-
-Transform an imported authoritative source into explicit requirement candidates while preserving provenance. The epic intentionally stops at validating the technical workflow and does not claim semantic requirement resolution or complete extraction from arbitrary convocatorias.
-
-## Core Constraints
-
-Different sources may use different document structures. A pattern observed in one BOE document is not a universal document rule. Requirement expressions such as `Constitución Española`, `Constitución`, and `Constitución de 1978` may refer to the same conceptual requirement; semantic equivalence and canonical resolution remain future concerns.
-
-## Tasks
+Objective: transform imported authoritative sources into explicit requirement candidates while preserving provenance. Semantic resolution and arbitrary-document completeness remain outside scope.
 
 | ID | Task | Priority | Status |
 | --- | --- | :---: | :---: |
@@ -147,13 +126,7 @@ Different sources may use different document structures. A pattern observed in o
 | AT-028 | Expose requirement inspection | 🟡 | ✅ |
 | AT-029 | Validate requirement discovery end-to-end | 🔴 | ✅ |
 
-### AT-029 · Validate Requirement Discovery End-to-End
-
-**Status: Completed**
-
-Validated the complete PDF discovery workflow against real samples. A text-based BOE PDF passed through extraction and candidate discovery, producing 440 numbered candidates. This validates the workflow but demonstrates that the initial numbered-line heuristic is intentionally broad and is not yet a semantic requirement extractor. A real Ayuntamiento de León PDF without an extractable text layer was also added as a regression sample and remains unsupported until a future text-acquisition mechanism such as OCR is justified.
-
-AT-029 is deliberately limited to workflow validation. Extraction precision, semantic equivalence, provider-specific parsing and scanned-PDF support are future work.
+AT-029 established the initial PDF workflow and confirmed that scanned PDFs without an extractable text layer remain unsupported.
 
 ---
 
@@ -161,24 +134,7 @@ AT-029 is deliberately limited to workflow validation. Extraction precision, sem
 
 **Status: 🟢 Completed**
 
-## Objective
-
-Improve requirement discovery from the broad candidate extraction validated in Epic G by using document structure and context from real convocatorias.
-
-The BOE sample is the first structural reference, not a universal specification. Another BOE call, or a call from another provider, may use different organization or terminology.
-
-## Core Constraints
-
-- Do not assume that all convocatorias share one document structure.
-- Treat observed structures as source-specific evidence, not domain rules.
-- Prefer explicit deterministic structural signals over speculative NLP or semantic infrastructure.
-- Provider-specific strategies are acceptable when justified by real samples.
-- Preserve source expressions and provenance.
-- Do not introduce canonical requirement resolution merely because equivalent expressions exist.
-- Keep scanned-PDF/OCR support outside the immediate scope unless a concrete task demonstrates that it blocks the workflow.
-- Use the minimum implementation necessary; future semantic analysis remains an option, not a current dependency.
-
-## Tasks
+Objective: improve discovery using deterministic document structure and real convocatoria evidence without assuming a universal provider format.
 
 | ID | Task | Priority | Status |
 | --- | --- | :---: | :---: |
@@ -186,31 +142,7 @@ The BOE sample is the first structural reference, not a universal specification.
 | AT-031 | Extract requirements from a known structured section | 🔴 | ✅ |
 | AT-032 | Validate discovery against multiple real source structures | 🟡 | ✅ |
 
-### AT-030 · Define Structured Requirement Sections
-
-**Status: Completed**
-
-Introduced the first source-specific structured context using the `Programa` section observed in the real BOE sample. Numbered candidates are considered only while inside that context. Matching is case-insensitive and supports the observed numbered-heading variants.
-
-The implementation deliberately does not treat `Programa` as a universal document concept. Other structures such as `Temario` may require a different strategy in the future. No semantic analysis or generalized parser framework was introduced.
-
-### AT-031 · Extract Requirements from a Known Structured Section
-
-**Status: Completed**
-
-Connected structured discovery with the application-level requirement workflow. Discovered `RequirementMention` instances can be converted into persisted `Requirement` entities while preserving the mandatory `source_id` provenance.
-
-The task deliberately does not introduce semantic canonicalization, deduplication, or additional document structures.
-
-### AT-032 · Validate Discovery Against Multiple Real Source Structures
-
-**Status: Completed**
-
-Validated structured discovery against multiple real convocatorias, including the BOE sample and a Junta de Castilla y León BOCyL sample. The latter uses `Tema` entries and demonstrated that structured numbering cannot safely be assumed to be Arabic numeric identifiers. The implementation therefore preserves the original structured expression and treats the `Tema` identifier as textual, allowing formats such as Arabic numbers, Roman numerals or letters without assigning semantic meaning to them.
-
-The samples also provide evidence that document structure may vary by issuing body or document format. An organism-specific abstraction remains a possible future evolution, but current evidence is insufficient to justify introducing one. No such abstraction has been added.
-
-The Ayuntamiento de León scanned PDF remains unsupported and continues to serve as a regression sample for the absence of an extractable text layer.
+The BOE, BOCyL and Ayuntamiento de León samples demonstrated that source structures differ and that scanned-PDF/OCR support should remain deferred until required by a concrete workflow.
 
 ---
 
@@ -218,51 +150,7 @@ The Ayuntamiento de León scanned PDF remains unsupported and continues to serve
 
 **Status: 🟢 Completed**
 
-## Objective
-
-Establish and validate the domain and persistence model required to express the knowledge coverage demanded by a requirement within a specific examination context, independently of whether the required knowledge already exists in Atanor.
-
-The epic focuses on the conceptual relationship between:
-
-```text
-Requirement
-    │
-    │ appears in
-    ▼
-Examination Context
-    │
-    │ defines
-    ▼
-Requirement Scope
-    │
-    │ expresses
-    ▼
-Knowledge Needs
-    │
-    │ compared with
-    ▼
-Knowledge Corpus
-    │
-    ▼
-Coverage
-```
-
-The distinction between required knowledge and available knowledge must remain explicit. A Knowledge Need may exist even when the corresponding knowledge is not yet present in Atanor.
-
-## Core Constraints
-
-- A requirement may have multiple contextual scopes.
-- A scope belongs to a requirement in a specific examination context.
-- Different examination contexts may define different scopes for the same requirement.
-- A scope may express different levels of required depth or granularity.
-- A Knowledge Need represents required knowledge independently of its current availability.
-- The same knowledge may satisfy multiple Knowledge Needs.
-- Knowledge availability must not alter the Requirement Scope.
-- Coverage is initially a derived result rather than an independent persisted entity.
-- The persistence model must follow the validated domain model rather than preserve superseded abstractions.
-- Do not introduce automatic semantic resolution, OCR, AI-generated scopes, automatic source discovery, or canonical Knowledge construction in this epic.
-
-## Tasks
+Objective: represent knowledge coverage required by a requirement in a contextual scope independently of whether corresponding knowledge exists.
 
 | ID | Task | Priority | Status |
 | --- | --- | :---: | :---: |
@@ -270,60 +158,7 @@ The distinction between required knowledge and available knowledge must remain e
 | AT-034 | Persist Requirement Scope and Knowledge Needs | 🔴 | ✅ |
 | AT-035 | Evaluate Knowledge Coverage | 🔴 | ✅ |
 
-### AT-033 · Define Requirement Scope and Knowledge Need
-
-**Status: Completed**
-
-Validated the new domain model and its invariants using the representative cases defined for the epic. The model now distinguishes `RequirementScope` from `KnowledgeNeed` and keeps knowledge availability optional.
-
-The previous `Blueprint` / `KnowledgeRequirement` abstraction was removed rather than retained as a parallel compatibility model. The full test suite passes after the refactor, confirming that the new domain model is compatible with the existing application behavior.
-
-No SQLAlchemy or Alembic changes were introduced in AT-033. Persistence is addressed by AT-034 only after the domain model has been validated.
-
-### AT-034 · Persist Requirement Scope and Knowledge Needs
-
-**Status: Completed**
-
-Implemented and validated SQLAlchemy persistence and Alembic migration support for the AT-033 model without reintroducing the superseded `Blueprint` / `KnowledgeRequirement` abstraction.
-
-The persistence model now supports a `Requirement` with zero or more contextual `RequirementScope` instances, each with zero or more `KnowledgeNeed` instances. Repository save/retrieval reconstructs the validated domain aggregate, while a Knowledge Need may remain unassociated with available Knowledge.
-
-The former `Requirement.context` persistence field was removed as a parallel scope representation. Migration upgrade/downgrade was validated successfully. Repository tests cover empty scopes, multiple contextual scopes, nested knowledge needs, missing available Knowledge, and round-trip behavior using the available real sample documents. The complete test suite contains 57 passing tests.
-
-The current repository intentionally maps `KnowledgeNeed` to `knowledge_id=None` because the definitive persistence model for `Knowledge` has not yet been established. This is an explicit boundary, not an incomplete compatibility model.
-
-### AT-035 · Evaluate Knowledge Coverage
-
-**Status: Completed**
-
-Implemented the initial binary Knowledge coverage evaluation as a domain-level derived result. `CoverageStatus` currently distinguishes only `COVERED` and `MISSING`: a `KnowledgeNeed` is covered when it has associated Knowledge and missing when it does not.
-
-Coverage is intentionally not persisted and does not modify `RequirementScope` or `KnowledgeNeed`. Required depth is retained as part of the need but does not yet alter the binary coverage result. This is an explicit first-stage rule suitable for closed domains such as the Spanish Constitution and remains intentionally conservative for open domains.
-
-The coverage behavior is isolated in `app.domain.coverage`, keeping this conceptual concern separate from the core domain entities. Tests validate missing and covered needs, reuse of the same Knowledge across needs, and scopes containing both covered and missing needs. The complete test suite contains 61 passing tests.
-
-`PARTIAL` coverage, semantic matching, depth-aware coverage, embeddings, and other richer evaluation strategies remain future work and should only be introduced when concrete domain evidence justifies them.
-
-## Explicitly Outside This Epic
-
-- Automatic semantic resolution of requirements.
-- Automatic scope generation.
-- OCR.
-- AI-generated scopes.
-- Automatic source discovery.
-- Knowledge acquisition.
-- User assessment.
-- Question generation.
-- Coverage optimization.
-- Persisted coverage as an independent entity.
-
-## Completion Criterion
-
-The epic is complete when Atanor can persist and reconstruct the validated requirement scope and knowledge-need model without requiring the corresponding knowledge to exist, while preserving the domain distinction between requirement scope, knowledge need and available knowledge.
-
-## Future Work
-
-Richer coverage evaluation, including `PARTIAL` and depth-aware semantics, should be introduced only when concrete open-domain use cases demonstrate the need.
+The validated model distinguishes `RequirementScope`, `KnowledgeNeed`, available `Knowledge`, and derived `Coverage`. Coverage currently uses only `COVERED` and `MISSING`; richer semantics remain deferred until justified by concrete use cases. The superseded `Blueprint` / `KnowledgeRequirement` model was removed rather than retained in parallel.
 
 ---
 
@@ -331,47 +166,25 @@ Richer coverage evaluation, including `PARTIAL` and depth-aware semantics, shoul
 
 **Status: 🟢 Completed**
 
-## Objective
+## AT-036 · Re-evaluate and Update Project Documentation
 
-Reconcile the project documentation with the validated domain, architecture and roadmap after Epic I, while keeping the documentation structure proportional to the project's current needs.
-
-## Tasks
-
-| ID | Task | Priority | Status |
-| --- | --- | :---: | :---: |
-| AT-036 | Re-evaluate and update project documentation | 🟡 | ✅ |
-
-### AT-036 · Re-evaluate and Update Project Documentation
-
-**Status: Completed**
-
-Updated the README, Foundations, Architecture and Roadmap documents to reflect the validated `Requirement → Requirement Scope → Knowledge Need → Coverage` model and the completion of Epic I.
-
-The development conventions document was moved conceptually out of the architecture area into `docs/conventions/CONVENTIONS.md`, because its responsibility is project-wide development practice rather than architecture. The previous architecture path now contains only a short redirect marker pending final repository cleanup.
-
-No documentation was split merely because of length. Existing documents remain manageable and represent distinct responsibilities. Technology and migration documentation remain separate because their lifecycles and purposes are distinct.
-
-The next strategic stage is now Knowledge Construction, but no implementation task has been created yet. The next task should be defined only after reevaluating the concrete product requirement that will drive Knowledge Construction.
+Updated README, Foundations, Architecture and Roadmap documentation to reflect the validated model and MVP-oriented development strategy. Development conventions were separated from architecture because they represent project-wide practices. No documentation split was introduced without a concrete maintainability benefit.
 
 ---
 
 # Epic K · MVP Requirement Workflow
 
-**Status: 🔵 Next**
+**Status: 🟢 Active**
 
 ## Objective
 
-Validate the first product-oriented vertical slice of Atanor: transform a supported real convocatoria PDF into persisted, inspectable requirements using the existing source import, text extraction and structured requirement discovery capabilities.
+Build the first product-oriented vertical slice of Atanor around a concrete user need: transform a supported convocatoria PDF into useful, inspectable and eventually user-validated requirements. The epic deliberately prioritizes a demonstrable MVP over speculative knowledge architecture.
 
-This epic intentionally prioritizes a useful, demonstrable MVP workflow over extending the knowledge architecture. The objective is to prove that the existing domain can be exercised from a real user input through to a useful result.
+### AT-037 · Validate the First MVP Requirement Workflow
 
-## AT-037 · Validate the First MVP Requirement Workflow
+**Status: Completed**
 
-**Status: Pending**
-
-### Goal
-
-Given a supported convocatoria PDF, Atanor should be able to:
+Validated the complete workflow against real samples:
 
 ```text
 PDF convocatoria
@@ -384,87 +197,112 @@ Structured requirement discovery
       ↓
 Requirement persistence
       ↓
-Requirement inspection
+Requirement retrieval
 ```
 
-The task should reuse the existing application services rather than introduce a second discovery pipeline. The current code already provides PDF extraction, structured discovery and requirement persistence/inspection primitives; AT-037 should validate and, only where necessary, connect these pieces into one coherent workflow.
+The BOE and BOCyL samples validate text-based workflows with different document structures. The Ayuntamiento de León scanned sample validates the explicit unsupported-text-layer behavior. Source provenance is preserved and the resulting Requirements survive persistence and retrieval.
 
-### Validation Scope
+AT-037 added integration coverage for the complete workflow. The complete test suite now contains **64 passing tests**.
 
-- Validate the workflow with the available text-based BOE and BOCyL samples.
-- Keep the Ayuntamiento de León scanned PDF as an explicit unsupported case and verify that its limitation is handled predictably.
-- Preserve source provenance from the imported PDF to each persisted Requirement.
-- Verify that the resulting requirements can be retrieved after persistence.
-- Add error/edge-case tests only where they arise naturally from the workflow.
-- Prefer deterministic, source-structure-aware behavior over semantic NLP or AI.
+No OCR, semantic NLP, AI, generalized provider parser architecture or automatic scope/knowledge generation was introduced. These remain deferred until concrete product evidence requires them.
 
-### Explicitly Outside AT-037
+### AT-038 · Review and Validate Discovered Requirements
 
-- Semantic canonicalization of requirements.
-- Automatic Requirement Scope generation.
+**Status: Pending**
+
+**Goal:** make discovered requirements useful to a user by introducing the first validation step between automated discovery and subsequent knowledge work.
+
+The initial workflow should allow a user or application-level client to inspect discovered Requirements associated with a Source and explicitly validate their usefulness before Atanor treats them as trusted input for later stages.
+
+Initial behavior should be deliberately simple:
+
+```text
+Imported convocatoria
+        ↓
+Discovered requirements
+        ↓
+User inspection
+        ↓
+Accept / reject / correct
+        ↓
+Validated requirements
+```
+
+The task should first define the smallest domain/application contract needed to express this validation. Persistence and UI changes should follow that contract rather than precede it.
+
+### AT-038 Scope
+
+- Inspect Requirements belonging to an imported Source.
+- Represent the minimum validation outcome needed by the workflow.
+- Allow an explicitly rejected or corrected discovery result to be distinguished from an unreviewed result.
+- Preserve the original source expression/provenance.
+- Validate the behavior with automated tests.
+- Prefer an application/use-case implementation that can later be exposed through CLI, API or UI without changing the domain semantics.
+
+### Explicitly Outside AT-038
+
+- Semantic canonicalization across convocatorias.
+- Automatic scope generation.
 - Automatic Knowledge Need generation.
 - Knowledge construction or acquisition.
 - OCR.
-- New UI frameworks.
-- Generalized parsing architecture for arbitrary providers.
-- Pyright, Ruff, pre-commit or CI work unless an actual blocker is discovered.
+- AI/NLP-based validation.
+- Selection of a permanent UI framework.
+- Generalized provider parsing.
+- Rich coverage semantics.
 
-### Completion Criterion
+### AT-038 Completion Criterion
 
-AT-037 is complete when a real supported convocatoria can be imported and processed through a single validated application workflow that produces persisted Requirements with preserved provenance, with the behavior covered by automated tests and the known scanned-PDF limitation remaining explicit.
+A discovered requirement can be inspected and explicitly validated by a user-facing application workflow, with its provenance preserved and its validation state covered by automated tests. The design must remain small enough that future evidence can replace or extend it without requiring a broad architectural rewrite.
 
 ---
 
 # Known Technical Debt & Deferred Concerns
 
-These items are tracked deliberately but do not currently block MVP-oriented work. They should be promoted to implementation tasks only when their cost, risk or product value justifies it.
+These items are tracked deliberately but do not currently block MVP-oriented work. They become implementation tasks only when their cost, risk or product value justifies them.
 
 | ID | Concern | Current Decision | Trigger for Re-evaluation |
 | --- | --- | --- | --- |
 | TD-001 | Static type checking | Keep AT-018 deferred. | Type-related regressions or increasing cross-layer complexity. |
 | TD-002 | Automated linting / pre-commit | Keep AT-017 and AT-019 deferred. | Growing codebase, CI adoption or additional contributors. |
 | TD-003 | Requirement/Source identifier consistency | `Requirement` currently uses `int`, while `Source` uses `UUID`. | A concrete persistence/API requirement or broader identity refactor. |
-| TD-004 | `RequirementScope` builder identity semantics | Review whether creating a modified scope must preserve or replace persistent identity. | The builder is used in a workflow that mutates/replaces persisted scopes. |
-| TD-005 | Error and edge-case coverage | Expand incrementally alongside new product workflows. | A concrete failure mode is discovered or a workflow becomes user-facing. |
-| TD-006 | CLI inspection completeness | Existing CLI is sufficient for current development validation. | CLI becomes a primary user/developer workflow or manual inspection becomes a bottleneck. |
-| TD-007 | Scanned PDF / OCR support | Explicitly unsupported; Ayuntamiento de León sample remains a regression case. | A real MVP workflow requires scanned convocatorias. |
-| TD-008 | Richer Knowledge Coverage | Keep `COVERED/MISSING`; defer `PARTIAL`, depth-aware and semantic matching. | An open-domain use case demonstrates that binary coverage is insufficient. |
+| TD-004 | `RequirementScope` builder identity semantics | Review whether modifying a persisted scope must preserve or replace its identity. | The builder is used in a workflow that mutates/replaces persisted scopes. |
+| TD-005 | Error and edge-case coverage | Expand incrementally alongside product workflows. | A concrete failure mode is discovered or a workflow becomes user-facing. |
+| TD-006 | CLI inspection completeness | Existing CLI is sufficient for current development validation. | CLI becomes a primary user workflow or manual inspection becomes a bottleneck. |
+| TD-007 | Scanned PDF / OCR support | Explicitly unsupported; Ayuntamiento de León remains a regression case. | A real MVP workflow requires scanned convocatorias. |
+| TD-008 | Richer Knowledge Coverage | Keep `COVERED/MISSING`; defer `PARTIAL`, depth-aware and semantic matching. | An open-domain use case demonstrates binary coverage is insufficient. |
 | TD-009 | Generalized provider-specific parsing | Current strategies are driven by observed real samples. | More source formats require repeated structural adaptations. |
 
-These concerns are not commitments to future implementation. They are checkpoints that prevent known trade-offs from being forgotten while preserving the project's current evidence-driven development strategy.
+AT-037 did not introduce a new debt item. Its real-sample validation strengthens the evidence behind TD-007 and TD-009, but neither currently justifies implementation. No debt item is being promoted prematurely.
 
 ---
 
 # Domain Model Direction
 
-Requirement Discovery preserves the distinction between:
+The current direction remains intentionally minimal:
 
 ```text
-Source expression / mention
-        ↓
-Candidate / structured requirement
-        ↓
-Canonical Requirement (future)
-```
-
-Epic I extends this direction with:
-
-```text
+Source
+  ↓
+Requirement discovery
+  ↓
 Requirement
-        ↓
+  ↓
 Requirement Scope
-        ↓
+  ↓
 Knowledge Need
-        ↓
+  ↓
 Available Knowledge
-        ↓
+  ↓
 Derived Coverage
 ```
 
-The canonical Knowledge model remains intentionally minimal and is not expanded beyond what concrete persistence requirements justify.
+Requirement discovery preserves source expressions and provenance. Canonical semantic resolution remains future work. The Knowledge model should evolve only when a concrete MVP workflow requires it.
 
 ---
 
 # Active Backlog Summary
 
-Epic I and the documentation re-evaluation are completed. The next implementation task is **AT-037**, focused on validating the first MVP-oriented requirement workflow using the existing source, extraction, discovery and persistence capabilities.
+The foundation, requirement discovery, structured discovery, requirement scope/knowledge-need modeling, coverage evaluation and documentation re-evaluation are complete. AT-037 has now validated the first real MVP requirement vertical slice with 64 passing tests.
+
+The next implementation step is **AT-038 — Review and Validate Discovered Requirements**. This moves Atanor from merely producing Requirements to allowing a user to inspect and explicitly validate the automated result, which is the next necessary step before relying on those Requirements for subsequent knowledge construction.
