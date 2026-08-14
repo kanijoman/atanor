@@ -7,7 +7,7 @@
 | Project | Atanor |
 | Document | BACKLOG |
 | Status | 🟢 Active |
-| Version | 3.2 |
+| Version | 3.3 |
 | Last Updated | 2026-08-14 |
 | Audience | Contributors and Developers |
 
@@ -17,17 +17,17 @@
 
 | Metric | Value |
 | --- | ---: |
-| Total Tasks | 40 |
-| Pending | 0 |
-| In Progress | 1 |
-| Completed | 31 |
+| Total Tasks | 41 |
+| Pending | 1 |
+| In Progress | 0 |
+| Completed | 32 |
 | Deferred | 3 |
 | Cancelled | 5 |
 | Blocked | 0 |
 
 **Current Epic:** Epic K · MVP Requirement Workflow
 
-**Current Task:** AT-040 — Produce a User-Usable Requirement Set
+**Next Task:** AT-041 — Expose the User-Oriented Requirement Workflow
 
 ---
 
@@ -232,7 +232,7 @@ A supported convocatoria can flow from imported source through requirement disco
 
 ### AT-040 · Produce a User-Usable Requirement Set
 
-**Status: In Progress**
+**Status: Completed**
 
 **Goal:** turn the internal discovery/resolution result into the first genuinely useful product output: a user can provide a supported convocatoria and Atanor returns the set of requirements that the user needs to study, without exposing discovery, resolution or curation mechanics.
 
@@ -259,6 +259,39 @@ A supported convocatoria can flow from imported source through requirement disco
 
 Given a supported convocatoria, Atanor produces a user-oriented set of study requirements from the automatically resolved workflow, while unresolved/discrepant cases remain internal and the user is not asked to validate Atanor's extraction or matching decisions. The flow is covered by automated tests and can be inspected end-to-end through an existing application interface or the minimum interface required by the task.
 
+AT-040 was validated with **82 passing tests**. The final implementation introduced `StudyRequirementSet` as a minimal application-level output and reused the existing `Requirement` model rather than introducing a speculative `StudyRequirement` domain entity. The requirement repository contract was extended with `list_by_source()` and kept as a single shared protocol rather than duplicating it in the workflow module.
+
+The task exposed no debt requiring a standalone cleanup task before continuing MVP work.
+
+### AT-041 · Expose the User-Oriented Requirement Workflow
+
+**Status: Pending**
+
+**Goal:** make the AT-040 user-oriented requirement set reachable through an existing application interface so that the first MVP vertical slice can be exercised as a real product workflow rather than only through application-level tests.
+
+#### AT-041 Scope
+
+- Expose the `get_study_requirements()` use case through the smallest existing application interface that provides a meaningful end-to-end validation path.
+- Reuse the existing application/domain contracts rather than introducing a new UI architecture.
+- Present the resulting requirements in a user-oriented form without exposing discovery, resolution or curation internals.
+- Preserve source provenance where it is useful for inspection.
+- Add flow tests covering the interface boundary and the underlying use case.
+- Validate the workflow against at least one supported real convocatoria sample.
+
+#### Explicitly Outside AT-041
+
+- Frontend framework selection or implementation beyond what is strictly necessary to expose the use case.
+- User authentication or subscription management.
+- Study planning or progress tracking.
+- Knowledge generation.
+- OCR or scanned-PDF support.
+- Expert curation UI.
+- Advanced semantic resolution.
+
+#### AT-041 Completion Criterion
+
+A user can invoke the existing application interface with a supported convocatoria and receive the study requirements produced by AT-040 without needing to understand or validate Atanor's discovery and resolution process. The complete boundary is covered by automated tests and remains independent of the underlying domain implementation.
+
 ---
 
 # Known Technical Debt & Deferred Concerns
@@ -276,12 +309,11 @@ These items are tracked deliberately but do not currently block MVP-oriented wor
 | TD-007 | Scanned PDF / OCR support | Explicitly unsupported; Ayuntamiento de León remains a regression case. | A real MVP workflow requires scanned convocatorias. |
 | TD-008 | Richer Knowledge Coverage | Keep `COVERED/MISSING`; defer `PARTIAL`, depth-aware and semantic matching. | An open-domain use case demonstrates binary coverage is insufficient. |
 | TD-009 | Generalized provider-specific parsing | Current strategies are driven by observed real samples. | More source formats require repeated structural adaptations. |
-| TD-010 | Resolution result persistence | AT-039 produces in-memory resolutions; the workflow does not yet persist resolution decisions or unresolved cases as durable application state. | The user-oriented output or internal curation workflow requires repeatability, auditability or asynchronous processing. |
-| TD-011 | Resolution algorithm sophistication | Current matching is intentionally deterministic and minimal. | Real samples or the user-oriented output demonstrate unacceptable unresolved/ambiguous rates. |
+| TD-010 | Resolution result persistence | AT-039 produced in-memory resolutions; AT-040 still derives the user-oriented set during the application call. Durable resolution decisions are not yet stored. | Repeatability, auditability, asynchronous processing or internal curation becomes a concrete requirement. |
+| TD-011 | Resolution algorithm sophistication | Current matching is intentionally deterministic and minimal. | Real user-oriented output demonstrates unacceptable unresolved/ambiguous rates. |
 | TD-012 | Application workflow contract | Discovery, requirement operations and workflow orchestration are now separated, but their APIs are still small and may evolve rapidly during MVP work. | Repeated consumers, external API exposure or increasing workflow complexity. |
-| TD-013 | User-facing requirement output | AT-039 ends at `RequirementResolution`; there is not yet a dedicated product representation of the final study requirement set. | AT-040 implementation; this is the immediate product gap rather than a blocker. |
 
-**Debt triage after AT-039:** no debt item requires a standalone cleanup task before AT-040. TD-010 and TD-013 are directly relevant to the next MVP step and should be resolved only to the extent required by AT-040. TD-011 should remain deferred until real output quality demonstrates a need for more sophisticated matching. The refactor performed in AT-039 addresses the structural coupling that was becoming a maintainability concern without creating a separate debt backlog item.
+**Debt triage after AT-040:** no item requires a standalone debt-resolution task before AT-041. TD-010 remains intentionally deferred because durable resolution state has no demonstrated MVP requirement yet. TD-011 remains deferred until real output quality provides evidence that deterministic matching is insufficient. TD-012 should be monitored as the workflow crosses an application-interface boundary in AT-041. The repository-contract duplication identified during AT-040 was resolved within the task and does not remain as debt.
 
 ---
 
@@ -311,12 +343,12 @@ Available Knowledge
 Derived Coverage
 ```
 
-Requirement discovery preserves source expressions and provenance. Automatic resolution is now an application-level step. The next MVP step is to expose the resulting requirements as something directly useful to the user. The Knowledge model should evolve only when that concrete workflow requires it.
+Requirement discovery preserves source expressions and provenance. Automatic resolution is now an application-level step. The user-oriented requirement set is a minimal application output and does not yet justify a separate domain entity. The next MVP step is to expose that output through an application interface. The Knowledge model should evolve only when that concrete workflow requires it.
 
 ---
 
 # Active Backlog Summary
 
-The foundation, requirement discovery, structured discovery, requirement scope/knowledge-need modeling, coverage evaluation, documentation re-evaluation, first real-sample workflow and automatic requirement resolution are complete. **AT-039 is complete with 75 passing tests.**
+The foundation, requirement discovery, structured discovery, requirement scope/knowledge-need modeling, coverage evaluation, documentation re-evaluation, first real-sample workflow, automatic requirement resolution and user-oriented requirement projection are complete. **AT-040 is complete with 82 passing tests.**
 
-The active implementation step is **AT-040 — Produce a User-Usable Requirement Set**. This is the next MVP-oriented vertical slice: turn the internal discovery/resolution result into the first product output that answers the user's core need — what they need to study — without asking them to validate Atanor's technical decisions.
+The next implementation step is **AT-041 — Expose the User-Oriented Requirement Workflow**. This is the next MVP-oriented vertical slice: make the first useful product output reachable through an existing application interface without exposing Atanor's internal discovery, resolution or curation mechanics.
