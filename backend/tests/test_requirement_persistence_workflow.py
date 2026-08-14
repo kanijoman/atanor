@@ -1,6 +1,7 @@
 from uuid import uuid4
 
-from app.application.requirement import RequirementMention, persist_requirement_mentions
+from app.application.requirement_discovery import RequirementMention
+from app.application.requirements import persist_requirement_mentions
 from app.domain.models import Requirement
 
 
