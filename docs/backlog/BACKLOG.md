@@ -7,8 +7,8 @@
 | Project      | Atanor |
 | Document     | BACKLOG |
 | Status       | 🟢 Active |
-| Version      | 2.7 |
-| Last Updated | 2026-08-13 |
+| Version      | 2.8 |
+| Last Updated | 2026-08-14 |
 | Audience     | Contributors and Developers |
 
 ---
@@ -17,7 +17,7 @@
 
 | Metric      | Value |
 | ----------- | ----: |
-| Total Tasks |    36 |
+| Total Tasks |    37 |
 | Pending     |     0 |
 | In Progress |     0 |
 | Completed   |    28 |
@@ -25,9 +25,9 @@
 | Cancelled   |     5 |
 | Blocked     |     0 |
 
-**Current Epic:** Documentation Re-evaluation
+**Current Epic:** Epic K · MVP Requirement Workflow
 
-**Current Task:** None — documentation re-evaluation completed
+**Current Task:** AT-037 — Validate the first MVP requirement workflow
 
 ---
 
@@ -355,6 +355,86 @@ The next strategic stage is now Knowledge Construction, but no implementation ta
 
 ---
 
+# Epic K · MVP Requirement Workflow
+
+**Status: 🔵 Next**
+
+## Objective
+
+Validate the first product-oriented vertical slice of Atanor: transform a supported real convocatoria PDF into persisted, inspectable requirements using the existing source import, text extraction and structured requirement discovery capabilities.
+
+This epic intentionally prioritizes a useful, demonstrable MVP workflow over extending the knowledge architecture. The objective is to prove that the existing domain can be exercised from a real user input through to a useful result.
+
+## AT-037 · Validate the First MVP Requirement Workflow
+
+**Status: Pending**
+
+### Goal
+
+Given a supported convocatoria PDF, Atanor should be able to:
+
+```text
+PDF convocatoria
+      ↓
+Source import
+      ↓
+Text extraction
+      ↓
+Structured requirement discovery
+      ↓
+Requirement persistence
+      ↓
+Requirement inspection
+```
+
+The task should reuse the existing application services rather than introduce a second discovery pipeline. The current code already provides PDF extraction, structured discovery and requirement persistence/inspection primitives; AT-037 should validate and, only where necessary, connect these pieces into one coherent workflow.
+
+### Validation Scope
+
+- Validate the workflow with the available text-based BOE and BOCyL samples.
+- Keep the Ayuntamiento de León scanned PDF as an explicit unsupported case and verify that its limitation is handled predictably.
+- Preserve source provenance from the imported PDF to each persisted Requirement.
+- Verify that the resulting requirements can be retrieved after persistence.
+- Add error/edge-case tests only where they arise naturally from the workflow.
+- Prefer deterministic, source-structure-aware behavior over semantic NLP or AI.
+
+### Explicitly Outside AT-037
+
+- Semantic canonicalization of requirements.
+- Automatic Requirement Scope generation.
+- Automatic Knowledge Need generation.
+- Knowledge construction or acquisition.
+- OCR.
+- New UI frameworks.
+- Generalized parsing architecture for arbitrary providers.
+- Pyright, Ruff, pre-commit or CI work unless an actual blocker is discovered.
+
+### Completion Criterion
+
+AT-037 is complete when a real supported convocatoria can be imported and processed through a single validated application workflow that produces persisted Requirements with preserved provenance, with the behavior covered by automated tests and the known scanned-PDF limitation remaining explicit.
+
+---
+
+# Known Technical Debt & Deferred Concerns
+
+These items are tracked deliberately but do not currently block MVP-oriented work. They should be promoted to implementation tasks only when their cost, risk or product value justifies it.
+
+| ID | Concern | Current Decision | Trigger for Re-evaluation |
+| --- | --- | --- | --- |
+| TD-001 | Static type checking | Keep AT-018 deferred. | Type-related regressions or increasing cross-layer complexity. |
+| TD-002 | Automated linting / pre-commit | Keep AT-017 and AT-019 deferred. | Growing codebase, CI adoption or additional contributors. |
+| TD-003 | Requirement/Source identifier consistency | `Requirement` currently uses `int`, while `Source` uses `UUID`. | A concrete persistence/API requirement or broader identity refactor. |
+| TD-004 | `RequirementScope` builder identity semantics | Review whether creating a modified scope must preserve or replace persistent identity. | The builder is used in a workflow that mutates/replaces persisted scopes. |
+| TD-005 | Error and edge-case coverage | Expand incrementally alongside new product workflows. | A concrete failure mode is discovered or a workflow becomes user-facing. |
+| TD-006 | CLI inspection completeness | Existing CLI is sufficient for current development validation. | CLI becomes a primary user/developer workflow or manual inspection becomes a bottleneck. |
+| TD-007 | Scanned PDF / OCR support | Explicitly unsupported; Ayuntamiento de León sample remains a regression case. | A real MVP workflow requires scanned convocatorias. |
+| TD-008 | Richer Knowledge Coverage | Keep `COVERED/MISSING`; defer `PARTIAL`, depth-aware and semantic matching. | An open-domain use case demonstrates that binary coverage is insufficient. |
+| TD-009 | Generalized provider-specific parsing | Current strategies are driven by observed real samples. | More source formats require repeated structural adaptations. |
+
+These concerns are not commitments to future implementation. They are checkpoints that prevent known trade-offs from being forgotten while preserving the project's current evidence-driven development strategy.
+
+---
+
 # Domain Model Direction
 
 Requirement Discovery preserves the distinction between:
@@ -387,4 +467,4 @@ The canonical Knowledge model remains intentionally minimal and is not expanded 
 
 # Active Backlog Summary
 
-Epic I and the documentation re-evaluation are completed. The backlog currently has no active implementation task. The next task should be defined from the next concrete product requirement rather than speculated in advance.
+Epic I and the documentation re-evaluation are completed. The next implementation task is **AT-037**, focused on validating the first MVP-oriented requirement workflow using the existing source, extraction, discovery and persistence capabilities.
