@@ -7,7 +7,7 @@
 | Project | Atanor |
 | Document | BACKLOG |
 | Status | 🟢 Active |
-| Version | 3.0 |
+| Version | 3.1 |
 | Last Updated | 2026-08-14 |
 | Audience | Contributors and Developers |
 
@@ -17,17 +17,17 @@
 
 | Metric | Value |
 | --- | ---: |
-| Total Tasks | 38 |
+| Total Tasks | 39 |
 | Pending | 1 |
-| In Progress | 0 |
-| Completed | 29 |
+| In Progress | 1 |
+| Completed | 30 |
 | Deferred | 3 |
 | Cancelled | 5 |
 | Blocked | 0 |
 
 **Current Epic:** Epic K · MVP Requirement Workflow
 
-**Current Task:** AT-038 — Automatic Requirement Resolution
+**Current Task:** AT-039 — Integrate Requirement Discovery with Automatic Resolution
 
 ---
 
@@ -118,7 +118,7 @@ AT-021 to AT-023 were cancelled/superseded by the workflow implemented through A
 Objective: transform imported authoritative sources into explicit requirement candidates while preserving provenance. Semantic resolution and arbitrary-document completeness remain outside scope.
 
 | ID | Task | Priority | Status |
-| --- | --- | :---: | :---: |
+ | --- | --- | :---: | :---: |
 | AT-024 | Define requirement discovery use case | 🔴 | ✅ |
 | AT-025 | Extract text from PDF sources | 🔴 | ✅ |
 | AT-026 | Identify and normalize requirement candidates | 🔴 | ✅ |
@@ -137,7 +137,7 @@ AT-029 established the initial PDF workflow and confirmed that scanned PDFs with
 Objective: improve discovery using deterministic document structure and real convocatoria evidence without assuming a universal provider format.
 
 | ID | Task | Priority | Status |
-| --- | --- | :---: | :---: |
+ | --- | --- | :---: | :---: |
 | AT-030 | Define structured requirement sections | 🔴 | ✅ |
 | AT-031 | Extract requirements from a known structured section | 🔴 | ✅ |
 | AT-032 | Validate discovery against multiple real source structures | 🟡 | ✅ |
@@ -200,65 +200,74 @@ Requirement retrieval
 
 The BOE and BOCyL samples validate text-based workflows with different document structures. The Ayuntamiento de León scanned sample validates the explicit unsupported-text-layer behavior. Source provenance is preserved and the resulting Requirements survive persistence and retrieval.
 
-AT-037 added integration coverage for the complete workflow. The complete test suite contains **64 passing tests**.
-
-No OCR, semantic NLP, AI, generalized provider parser architecture or automatic scope/knowledge generation was introduced. These remain deferred until concrete product evidence requires them.
+AT-037 added integration coverage for the complete workflow and established the sample-based flow tests used to identify subsequent product gaps.
 
 ### AT-038 · Automatic Requirement Resolution
 
-**Status: Pending**
+**Status: Completed**
 
 **Goal:** transform discovered requirement candidates into reliable Requirements without requiring the user to determine whether Atanor's output is relevant or correctly identified.
 
-Atanor should attempt to resolve discovered candidates automatically against the knowledge and requirement concepts already available to the system. The normal product path is automatic resolution. Expert intervention is an internal exception-handling and curation mechanism for genuine discrepancies or unresolved cases, not a user-facing validation workflow.
+AT-038 established the minimum automatic resolution contract. A candidate is resolved only when exactly one deterministic match is available; no match or multiple matches produce `UNRESOLVED`. The candidate's original source provenance is preserved.
 
-Initial conceptual flow:
+The implementation deliberately does not introduce semantic AI/NLP, confidence scoring, OCR, user-facing validation or a permanent curation UI. Expert curation remains an internal future mechanism for genuine unresolved or discrepant cases.
+
+Automated tests cover both component behavior and product-oriented resolution flows using the available real samples. The suite now contains **71 passing tests**.
+
+### AT-039 · Integrate Requirement Discovery with Automatic Resolution
+
+**Status: In Progress**
+
+**Goal:** connect the existing requirement-discovery workflow with the automatic-resolution contract so that Atanor can process discovered candidates as a continuous product flow rather than exposing separate technical capabilities.
+
+The task is intentionally focused on integration, not on improving the resolution algorithm. The existing discovery pipeline should produce candidates with provenance, and the resolution step should consume those candidates and produce resolved or unresolved outcomes without requiring user validation.
+
+Target flow:
 
 ```text
-Imported convocatoria
-        ↓
-Discovered candidates
-        ↓
+Convocatoria PDF
+      ↓
+Source import
+      ↓
+Text extraction
+      ↓
+Requirement discovery
+      ↓
+Requirement candidates
+      ↓
 Automatic resolution
-        ↓
-   ┌────┼──────────┐
-   ↓    ↓          ↓
-RESOLVED  DISCREPANCY  UNRESOLVED
-   ↓         ↓             ↓
-continue   expert       curation
-              \          /
-               ↓        ↓
-             resolved result
+      ↓
+┌───────────────┬────────────────┐
+│               │                │
+RESOLVED     UNRESOLVED      DISCREPANCY
+│               │                │
+continue       internal        internal
+               curation        curation
 ```
 
-The first implementation should remain deliberately small. It should establish the minimum contract required to distinguish confidently resolved candidates from cases that require further attention, without prematurely introducing semantic AI/NLP, complex confidence models or a permanent administration UI.
+### AT-039 Scope
 
-### AT-038 Scope
+- Connect discovered requirement candidates to the automatic resolver.
+- Preserve candidate source provenance through the integrated flow.
+- Define the minimum application-level orchestration required by the workflow.
+- Add integration/flow tests covering successful and unresolved paths.
+- Use the existing BOE, BOCyL and Ayuntamiento de León samples where the current extraction capabilities permit.
+- Make the current unsupported scanned-PDF behavior explicit rather than solving OCR prematurely.
 
-- Define the minimum domain/application contract for automatic requirement resolution.
-- Resolve candidates against known concepts where a deterministic resolution is sufficiently reliable.
-- Preserve the original source expression and provenance.
-- Represent unresolved or discrepant candidates without exposing the internal process as a required user workflow.
-- Make expert review possible as an internal curation path when automatic resolution is insufficient.
-- Ensure a successful curation decision can improve future automatic resolution rather than repeatedly resolving identical candidates.
-- Validate the behavior with automated tests, starting from concrete resolution cases.
+### Explicitly Outside AT-039
 
-### Explicitly Outside AT-038
-
-- User-facing requirement validation or approval workflows.
-- Semantic AI/NLP or LLM-based resolution.
-- A sophisticated statistical confidence/scoring system.
+- Improving PDF extraction quality.
 - OCR.
-- Automatic scope generation beyond what concrete resolution cases require.
-- Automatic Knowledge Need generation.
-- Knowledge construction or acquisition.
-- Permanent administration UI.
-- Generalized provider parsing.
-- Rich coverage semantics.
+- Semantic NLP, LLM or fuzzy matching.
+- Confidence/scoring systems.
+- Automatic scope or Knowledge Need generation.
+- Expert administration UI.
+- Persistent curation history.
+- Knowledge acquisition or content generation.
 
-### AT-038 Completion Criterion
+### AT-039 Completion Criterion
 
-A discovered requirement candidate can be automatically resolved when the current knowledge is sufficient, while unresolved or conflicting cases are represented for internal expert curation. The original provenance is preserved, the automated path is covered by tests, and the design permits later improvements to resolution mechanisms without changing the user-facing product contract.
+A supported convocatoria can flow from imported source through requirement discovery into automatic resolution without requiring a user-facing validation step. Resolved candidates continue through the workflow, unresolved candidates are represented for later internal curation, provenance remains intact, and the complete behavior is covered by automated flow tests.
 
 ---
 
@@ -278,7 +287,7 @@ These items are tracked deliberately but do not currently block MVP-oriented wor
 | TD-008 | Richer Knowledge Coverage | Keep `COVERED/MISSING`; defer `PARTIAL`, depth-aware and semantic matching. | An open-domain use case demonstrates binary coverage is insufficient. |
 | TD-009 | Generalized provider-specific parsing | Current strategies are driven by observed real samples. | More source formats require repeated structural adaptations. |
 
-AT-037 did not introduce a new debt item. Its real-sample validation strengthens the evidence behind TD-007 and TD-009, but neither currently justifies implementation. No debt item is being promoted prematurely.
+AT-038 did not introduce a new debt item. The resolution contract instead provides a concrete boundary for future semantic-resolution improvements.
 
 ---
 
@@ -291,7 +300,11 @@ Source
   ↓
 Requirement discovery
   ↓
-Requirement
+Requirement candidate
+  ↓
+Automatic resolution
+  ↓
+Requirement / unresolved case
   ↓
 Requirement Scope
   ↓
@@ -302,12 +315,12 @@ Available Knowledge
 Derived Coverage
 ```
 
-Requirement discovery preserves source expressions and provenance. Automatic semantic resolution is now the next MVP concern. The Knowledge model should evolve only when a concrete workflow requires it.
+Requirement discovery preserves source expressions and provenance. Automatic resolution now forms the next application-level step. The Knowledge model should evolve only when a concrete workflow requires it.
 
 ---
 
 # Active Backlog Summary
 
-The foundation, requirement discovery, structured discovery, requirement scope/knowledge-need modeling, coverage evaluation, documentation re-evaluation and first real-sample requirement workflow are complete. AT-037 validated the first MVP requirement vertical slice with 64 passing tests.
+The foundation, requirement discovery, structured discovery, requirement scope/knowledge-need modeling, coverage evaluation, documentation re-evaluation, first real-sample workflow and automatic requirement resolution contract are complete. AT-038 is validated with **71 passing tests**.
 
-The next implementation step is **AT-038 — Automatic Requirement Resolution**. This moves Atanor from merely producing discovered Requirements to automatically determining what those requirements represent, while keeping expert curation as an internal fallback for discrepancies and unresolved cases. The user remains outside this validation process and should ultimately receive the resulting study requirements directly.
+The active implementation step is **AT-039 — Integrate Requirement Discovery with Automatic Resolution**. This connects the existing source/discovery workflow to automatic resolution so that Atanor begins behaving as a product pipeline rather than as a collection of independently validated capabilities. The user remains outside the validation process and should ultimately receive the resulting study requirements directly.
