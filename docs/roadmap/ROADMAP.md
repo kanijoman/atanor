@@ -7,8 +7,8 @@
 | Project      | Atanor                      |
 | Document     | ROADMAP                     |
 | Status       | 🟢 Active                   |
-| Version      | 0.6                         |
-| Last Updated | 2026-08-13                  |
+| Version      | 0.7                         |
+| Last Updated | 2026-08-14                  |
 | Audience     | Contributors and Developers |
 
 ---
@@ -28,6 +28,26 @@ Atanor follows an incremental delivery model. Infrastructure and supporting tech
 The roadmap describes strategic direction. It does not enumerate implementation tasks or establish one-to-one correspondence with the backlog.
 
 Development is guided by working software, small traceable changes, evidence-driven domain decisions, MVP alignment and real source material rather than hypothetical formats.
+
+From the first user-visible MVP workflow onward, **product validation is the primary driver of development**. Technical quality remains fundamental, but technical decisions are justified by the user value, product capability or demonstrated engineering risk they address.
+
+The preferred evolution loop is:
+
+```text
+User need
+    ↓
+Product behavior
+    ↓
+Minimal technical support
+    ↓
+Real validation
+    ↓
+Learning
+    ↓
+Refinement
+```
+
+The roadmap therefore evolves from validated product capabilities rather than from a predetermined architectural target.
 
 ---
 
@@ -97,11 +117,37 @@ Coverage is an assessment result rather than a persistent domain entity at this 
 
 The stage is covered by domain, persistence and real-sample regression tests.
 
-## Stage 5 · Knowledge Construction
+## Stage 5 · First User-Validated MVP Workflow
 
-**Status: 🔵 Next**
+**Status: 🟢 In Progress**
 
-Build the capability to transform Knowledge Needs into validated, reusable canonical Knowledge.
+Turn the validated requirement-processing capabilities into an observable product experience and use the resulting user feedback to determine what Atanor needs next.
+
+Current validated capability:
+
+```text
+Convocatoria
+    ↓
+Source
+    ↓
+Requirement Discovery
+    ↓
+Automatic Resolution
+    ↓
+User-Oriented Study Requirements
+```
+
+AT-041 is the next step: expose this output through the smallest meaningful application interface so that a real user can inspect and evaluate it.
+
+The goal of this stage is **not** to complete the architecture or the learning platform. It is to establish whether Atanor's first user-visible output is useful and to let that evidence drive subsequent product and technical decisions.
+
+Potential next capabilities after validation may include improving requirement quality, adding contextual information, identifying missing knowledge, constructing knowledge or beginning study interactions. Their priority must be determined by observed user needs rather than assumed in advance.
+
+## Stage 6 · Knowledge Construction
+
+**Status: ⚪ Future**
+
+Build the capability to transform validated Knowledge Needs into reusable canonical Knowledge when product validation demonstrates that this is the next valuable step.
 
 Potential capabilities include:
 
@@ -113,21 +159,21 @@ Potential capabilities include:
 - construct reusable canonical Knowledge;
 - reuse existing Knowledge where it satisfies a need.
 
-The first implementation step should be derived from the validated Requirement Scope and Knowledge Need model. A complete Knowledge Blueprint or sophisticated semantic matching layer should not be assumed before concrete requirements justify it.
+These capabilities remain intentionally provisional. The first implementation step should be derived from the user workflow validated in Stage 5 rather than from the complete Knowledge model anticipated today.
 
-## Stage 6 · Knowledge Retrieval and Assistance
-
-**Status: ⚪ Future**
-
-Make structured knowledge usable through search and AI-assisted interaction, including grounded retrieval, source citation, explanations and uncertainty reporting.
-
-## Stage 7 · Learning Platform
+## Stage 7 · Knowledge Retrieval and Assistance
 
 **Status: ⚪ Future**
 
-Transform the knowledge model into an adaptive learning environment, including learning paths, study sessions, questions, assessment, progress tracking and revision planning.
+Make structured knowledge usable through search and AI-assisted interaction, including grounded retrieval, source citation, explanations and uncertainty reporting, when these capabilities address validated user needs.
 
-## Stage 8 · Ecosystem Expansion
+## Stage 8 · Learning Platform
+
+**Status: ⚪ Future**
+
+Transform validated knowledge capabilities into an adaptive learning environment, including learning paths, study sessions, questions, assessment, progress tracking and revision planning as product evidence establishes their priority.
+
+## Stage 9 · Ecosystem Expansion
 
 **Status: ⚪ Future**
 
@@ -139,7 +185,7 @@ Expand beyond the initial MVP once the core product has been validated. Possible
 
 Although the initial product targets Spanish public administration examinations, the underlying model should remain sufficiently general to support other knowledge-intensive domains.
 
-The reusable foundation is:
+The reusable conceptual direction is:
 
 ```text
 Source
@@ -156,6 +202,8 @@ Canonical Knowledge
     ↓
 Learning
 ```
+
+This is a strategic direction rather than a fixed implementation contract. Concrete product validation may change the order, boundaries or representation of these capabilities.
 
 ---
 
