@@ -7,8 +7,8 @@
 | Project      | Atanor               |
 | Document     | README               |
 | Status       | 🟢 Active            |
-| Version      | 0.5                  |
-| Last Updated | 2026-08-13           |
+| Version      | 0.6                  |
+| Last Updated | 2026-08-14           |
 | Audience     | Users and Developers |
 
 > **A knowledge-driven platform for public service examination preparation.**
@@ -23,31 +23,33 @@ The first MVP focuses on Spanish public administration examinations. The underly
 
 Atanor aims to solve a problem traditionally addressed by preparation services: turning an official examination requirement into a justified knowledge scope and, eventually, an effective learning journey.
 
-The current conceptual flow is:
+The current validated product direction starts with a narrower promise: **a user provides a supported convocatoria and Atanor determines what the user needs to study without requiring the user to validate Atanor's discovery or resolution decisions.**
+
+The current validated flow is:
 
 ```text
-Requirement
+Convocatoria
     ↓
-Requirement Scope
+Source
     ↓
-Knowledge Need
+Requirement Discovery
     ↓
-Coverage
+Automatic Resolution
     ↓
-Knowledge
-    ↓
-Learning Path
+User-Oriented Study Requirements
 ```
 
-The current model deliberately separates what an examination context requires from whether the corresponding knowledge already exists. Knowledge construction and learning capabilities will be introduced incrementally as real requirements justify them.
+This is the first product-oriented vertical slice. The next step is to expose this result through a minimal application interface and validate whether it is genuinely useful to a real user.
+
+The broader knowledge and learning model remains a direction rather than a fixed implementation sequence.
 
 ---
 
 # Current Status
 
-The initial foundation and source workflow are complete. Requirement Discovery was validated through **AT-032**, and Requirement Scope, Knowledge Need and initial Coverage modeling were completed through **AT-035**.
+The foundation, source workflow, requirement discovery, requirement resolution and user-oriented requirement projection are complete through **AT-040**.
 
-Atanor currently has a validated vertical workflow for supported PDF sources:
+Atanor currently has a validated application workflow for supported PDF sources:
 
 ```text
 PDF source
@@ -60,20 +62,16 @@ Text extraction
     ↓
 Structured requirement discovery
     ↓
-Requirement mention
+Automatic resolution
     ↓
-Requirement
-    ↓
-Requirement Scope
-    ↓
-Knowledge Need
-    ↓
-Coverage
+User-oriented study requirements
 ```
 
-The discovery and domain workflow is covered by automated tests and has been exercised with real PDF samples from different sources, including BOE and Junta de Castilla y León documents.
+The workflow is covered by automated tests and has been exercised with real PDF samples from different sources, including BOE and Junta de Castilla y León documents.
 
-The current discovery implementation is intentionally deterministic and structure-aware. It does not claim to be a universal parser, semantic requirement resolver or OCR system. A scanned PDF sample from Ayuntamiento de León is retained as a regression case for the current absence of OCR support.
+The discovery implementation is intentionally deterministic and structure-aware. It does not claim to be a universal parser, semantic requirement resolver or OCR system. A scanned PDF sample from Ayuntamiento de León is retained as a regression case for the current absence of OCR support.
+
+AT-041 is the next step: expose the current result through the smallest meaningful application interface so that product value can be evaluated directly rather than only through automated tests.
 
 ---
 
@@ -96,13 +94,17 @@ MISSING
 
 A need may therefore exist without available knowledge. Richer states such as partial coverage or semantic matching remain future possibilities and are not assumed by the current model.
 
+The `StudyRequirementSet` introduced at the application layer is deliberately a product-oriented output rather than a new domain entity. It currently reuses `Requirement` directly.
+
 ---
 
 # Project Principles
 
 Atanor is developed around a small set of core principles:
 
-* **Knowledge is the core product asset.**
+* **Product validation drives development.**
+* **Technical decisions must support a concrete user need, product capability or demonstrated engineering risk.**
+* **Architecture enables product evolution; it does not dictate the roadmap.**
 * **Requirements, scopes, needs and knowledge are distinct concepts.**
 * **Canonical knowledge must remain reusable independently of a curriculum.**
 * **Important knowledge claims should remain traceable to supporting evidence.**
@@ -110,6 +112,8 @@ Atanor is developed around a small set of core principles:
 * **Maintainability takes precedence over unnecessary complexity.**
 * **Infrastructure is introduced only when it solves an existing problem.**
 * **Development is iterative, incremental and pragmatic.**
+
+Technical quality remains fundamental: product-driven development does not mean accepting fragile or unmaintainable implementations. The goal is to build the minimum sound technical foundation needed to validate and evolve the product safely.
 
 ---
 
@@ -151,11 +155,11 @@ The main project documentation can be found under the `docs/` directory.
 
 # Current Development Sequence
 
-Requirement Discovery is complete through **AT-032**. Requirement Scope & Coverage is complete through **AT-035**.
+The first user-oriented requirement output is complete through **AT-040**.
 
-The next implementation task has intentionally not been fixed yet. The project is currently reevaluating the documentation and product direction before defining the next development step.
+**AT-041 — Expose the User-Oriented Requirement Workflow** is the next implementation task. Its purpose is to make the current capability reachable through a minimal application interface and validate it from the user's perspective.
 
-The next strategic capability is expected to involve **Knowledge Construction**, but its first implementation should be defined from the validated Requirement Scope and Knowledge Need model rather than assuming a complete Blueprint or corpus architecture in advance.
+The next product direction after AT-041 will be determined from that validation. Knowledge Construction remains a strategic possibility, but it is no longer assumed to be the immediate next capability: product evidence should determine whether the next priority is improving requirement quality, adding contextual information, constructing knowledge, or beginning study interactions.
 
 ---
 
