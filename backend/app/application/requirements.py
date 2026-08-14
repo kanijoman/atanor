@@ -2,16 +2,17 @@ from typing import Protocol
 
 from app.application.requirement_discovery import (
     RequirementDiscoveryStrategy,
+    RequirementMention,
     discover_requirements,
 )
 from app.domain.models import Requirement, Source
-from app.application.requirement_discovery import RequirementMention
 
 
 class RequirementRepository(Protocol):
     def save(self, requirement: Requirement) -> Requirement: ...
     def get_by_id(self, requirement_id: int) -> Requirement | None: ...
     def list_all(self) -> list[Requirement]: ...
+    def list_by_source(self, source_id) -> list[Requirement]: ...
 
 
 def persist_requirement_mentions(
