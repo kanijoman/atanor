@@ -1,3 +1,5 @@
+from dataclasses import dataclass
+
 from app.application.requirement_discovery import (
     RequirementDiscoveryStrategy,
     discover_requirements,
@@ -6,8 +8,20 @@ from app.domain.models import Requirement, Source
 from app.domain.requirement_resolution import (
     RequirementCandidate,
     RequirementResolution,
+    RequirementResolutionStatus,
     resolve_requirement,
 )
+
+
+@dataclass(frozen=True)
+class StudyRequirementSet:
+    source: Source
+    requirements: tuple[Requirement, ...]
+
+
+class RequirementRepository:
+    def list_by_source(self, source_id):
+        raise NotImplementedError
 
 
 def discover_and_resolve_requirements(
@@ -27,3 +41,28 @@ def discover_and_resolve_requirements(
         )
         for mention in mentions
     ]
+
+
+def get_study_requirements(
+    source: Source,
+    repository: RequirementRepository,
+    strategy: RequirementDiscoveryStrategy | None = None,
+) -> StudyRequirementSet:
+    """Return requirements that the user should study for a source."""
+    if strategy is None:
+        from app.application.requirement_discovery import PdfRequirementDiscoveryStrategy
+
+        strategy = PdfRequirementDiscoveryStrategy()
+
+    requirements = tuple(repository.list_by_source(source.id))
+    resolutions = discover_and_resolve_requirements(source, strategy, requirements)
+    resolved_requirements = tuple(
+        resolution.requirement
+        for resolution in resolutions
+        if resolution.status is RequirementResolutionStatus.RESOLVED
+        and resolution.requirement is not None
+    )
+    return StudyRequirementSet(
+        source=source,
+        requirements=resolved_requirements,
+    )
