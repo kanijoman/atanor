@@ -1,9 +1,11 @@
 from dataclasses import dataclass
 
 from app.application.requirement_discovery import (
+    PdfRequirementDiscoveryStrategy,
     RequirementDiscoveryStrategy,
     discover_requirements,
 )
+from app.application.requirements import RequirementRepository
 from app.domain.models import Requirement, Source
 from app.domain.requirement_resolution import (
     RequirementCandidate,
@@ -17,11 +19,6 @@ from app.domain.requirement_resolution import (
 class StudyRequirementSet:
     source: Source
     requirements: tuple[Requirement, ...]
-
-
-class RequirementRepository:
-    def list_by_source(self, source_id):
-        raise NotImplementedError
 
 
 def discover_and_resolve_requirements(
@@ -50,8 +47,6 @@ def get_study_requirements(
 ) -> StudyRequirementSet:
     """Return requirements that the user should study for a source."""
     if strategy is None:
-        from app.application.requirement_discovery import PdfRequirementDiscoveryStrategy
-
         strategy = PdfRequirementDiscoveryStrategy()
 
     requirements = tuple(repository.list_by_source(source.id))
