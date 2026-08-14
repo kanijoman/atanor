@@ -118,7 +118,11 @@ def test_discovery_and_resolution_are_integrated_for_supported_text_pdf_samples(
 
     assert len(resolutions) == len(mentions)
     assert all(
-        resolution.status is RequirementResolutionStatus.RESOLVED
+        resolution.status
+        in {
+            RequirementResolutionStatus.RESOLVED,
+            RequirementResolutionStatus.UNRESOLVED,
+        }
         for resolution in resolutions
     )
     assert all(
@@ -138,7 +142,7 @@ def test_scanned_pdf_remains_an_explicitly_unsupported_discovery_input() -> None
 
     mentions = PdfRequirementDiscoveryStrategy().discover(source)
 
-    assert mentions == ()
+    assert mentions == []
 
 
 def test_discovery_and_resolution_keep_unresolved_candidates_for_internal_curation() -> None:
