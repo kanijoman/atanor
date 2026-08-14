@@ -7,8 +7,8 @@
 | Project      | Atanor                      |
 | Document     | CONVENTIONS                 |
 | Status       | 🟢 Active                   |
-| Version      | 0.6                         |
-| Last Updated | 2026-08-13                  |
+| Version      | 0.7                         |
+| Last Updated | 2026-08-14                  |
 | Audience     | Contributors and Developers |
 
 ---
@@ -34,38 +34,45 @@ Development should always be guided by:
 - Validate important domain assumptions before encoding them into software.
 - Maintain a clean and understandable Git history.
 - Favor consistency over personal preferences.
+- Prefer measurable product progress over architectural progress that has no demonstrated user value.
 
-When multiple valid solutions exist, choose the one that minimizes unnecessary complexity.
+When multiple valid solutions exist, choose the one that minimizes unnecessary complexity while providing the greatest concrete product value.
 
 ---
 
-# User Need over Architectural Prediction
+# Product Value over Architectural Prediction
 
-Atanor's architecture must provide a solid and flexible foundation, but development must be driven by validated user needs rather than anticipated future requirements.
+Atanor's architecture must provide a solid and flexible foundation, but **product validation is the primary driver of development**.
 
-Architectural decisions should support product evolution rather than dictate it. The project should prefer solving demonstrated problems over designing for hypothetical ones.
+Technical decisions must support a concrete user need, improve the user experience, enable a required product capability, or provide a necessary technical foundation for an already validated product direction. Technical work must not become an end in itself.
+
+Architecture should enable product evolution rather than dictate it. The project should prefer solving demonstrated user problems over designing for hypothetical future requirements.
 
 When a new requirement invalidates an existing abstraction, the model should be refactored rather than preserving obsolete structures for the sake of architectural continuity.
 
 A domain model is a tool for expressing the current understanding of the product, not a commitment to a permanent representation of the domain.
 
-The preferred evolution loop is:
+From the first user-visible MVP workflow onward, the preferred development loop is:
 
 ```text
-Validated user need
+Concrete user need
         ↓
-Minimal implementation
+Product behavior
         ↓
-Real validation
+Minimal technical implementation
+        ↓
+Real user / product validation
         ↓
 Learning
         ↓
 Refinement or refactoring
         ↓
-New validated need
+Next validated need
 ```
 
-This principle does not justify careless design. The project should still establish clear boundaries, maintainable code and appropriate tests. Those foundations should remain proportional, flexible and as reversible as reasonably possible.
+Technical quality remains fundamental. Clean boundaries, maintainable code, appropriate tests and sound engineering practices provide the support required to evolve the product safely. However, when deciding between technical improvements, the preferred option is the one that most directly enables or improves a validated product need, provided the resulting design remains maintainable.
+
+A technical task that cannot be connected to a concrete current product need should normally be deferred unless it addresses a demonstrated reliability, security, correctness or maintainability risk.
 
 ---
 
@@ -99,7 +106,34 @@ Domain modeling follows the same principle: do not introduce abstractions merely
 
 The preferred development strategy is to prioritize thin, end-to-end product slices that can be validated with real user inputs over building broad infrastructure or a complete domain model in advance.
 
-Every task should leave the project objectively better than before.
+Every task should leave the project objectively better than before. For product-facing work, “better” should primarily mean that the user can accomplish something useful that they could not accomplish before, or that an existing user workflow becomes materially better.
+
+---
+
+# Product Validation
+
+From the first user-visible MVP workflow onward, product validation is a first-class development concern.
+
+Technical validation asks:
+
+> Does Atanor implement the intended behavior correctly?
+
+Product validation asks:
+
+> Can a user use that behavior and obtain something useful from it?
+
+Both are required, but product validation determines the direction of subsequent development.
+
+Whenever practical, a product-oriented task should identify:
+
+- the user problem being addressed;
+- the user-visible capability or experience being improved;
+- the evidence that will validate the result;
+- the technical implementation required to support that behavior.
+
+A task should not be considered successful solely because its automated tests pass when the intended product behavior has not been meaningfully validated.
+
+Product validation does not require a complete UI. A CLI, API or other minimal interface is sufficient when it allows the actual user-facing behavior to be evaluated meaningfully.
 
 ---
 
@@ -224,6 +258,8 @@ Implementation details belong in the corresponding commits and technical documen
 Tasks should remain focused on a single responsibility and should not expand their scope during implementation.
 
 If implementation reveals additional necessary work, that work should be evaluated and, where appropriate, created as a separate task rather than silently expanding the current task.
+
+Tasks should state the concrete product or user value they are intended to deliver whenever the task is product-facing.
 
 ---
 
