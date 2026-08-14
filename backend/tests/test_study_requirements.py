@@ -3,14 +3,8 @@ from uuid import uuid4
 
 import pytest
 
+from app.application.requirement_workflow import get_study_requirements
 from app.domain.models import Requirement, Source
-from app.domain.requirement_resolution import (
-    RequirementCandidate,
-    RequirementResolutionStatus,
-    RequirementResolution,
-)
-from app.application.requirement_workflow import discover_and_resolve_requirements
-from app.application.requirement_discovery import PdfRequirementDiscoveryStrategy
 
 
 SAMPLE_NAMES = (
@@ -24,151 +18,85 @@ def samples_dir() -> Path:
     return Path(__file__).parent / "samples"
 
 
-def test_study_requirement_set_contains_resolved_requirements_without_internal_resolution_state() -> None:
-    source_id = uuid4()
-    requirement = Requirement(
-        title="Operating Systems",
-        description="Knowledge required by the examination context.",
-        source_id=source_id,
-    )
-    resolution = RequirementResolution(
-        candidate=RequirementCandidate(
-            title=requirement.title,
-            source_id=source_id,
-        ),
-        status=RequirementResolutionStatus.RESOLVED,
-        requirement=requirement,
+def test_get_study_requirements_returns_resolved_requirements() -> None:
+    source = Source(
+        id=uuid4(),
+        title="Call PDF",
+        locator="call.pdf",
     )
 
-    resolved_requirements = tuple(
-        result.requirement
-        for result in (resolution,)
-        if result.status is RequirementResolutionStatus.RESOLVED
-        and result.requirement is not None
+    result = get_study_requirements(source)
+
+    assert result.source == source
+    assert all(isinstance(requirement, Requirement) for requirement in result.requirements)
+
+
+def test_get_study_requirements_does_not_expose_resolution_details() -> None:
+    source = Source(
+        id=uuid4(),
+        title="Call PDF",
+        locator="call.pdf",
     )
 
-    assert resolved_requirements == (requirement,)
-    assert resolved_requirements[0].title == "Operating Systems"
-    assert not hasattr(resolved_requirements[0], "status")
+    result = get_study_requirements(source)
+
+    assert not hasattr(result, "resolutions")
+    assert not hasattr(result, "candidates")
+    assert not hasattr(result, "mentions")
 
 
-def test_unresolved_requirements_are_excluded_from_user_output() -> None:
-    source_id = uuid4()
-    resolved = Requirement(
-        title="Operating Systems",
-        source_id=source_id,
-    )
-    unresolved_candidate = RequirementCandidate(
-        title="Unknown requirement",
-        source_id=source_id,
+def test_get_study_requirements_excludes_unresolved_candidates() -> None:
+    source = Source(
+        id=uuid4(),
+        title="Call PDF",
+        locator="call.pdf",
     )
 
-    resolutions = (
-        RequirementResolution(
-            candidate=RequirementCandidate(
-                title=resolved.title,
-                source_id=source_id,
-            ),
-            status=RequirementResolutionStatus.RESOLVED,
-            requirement=resolved,
-        ),
-        RequirementResolution(
-            candidate=unresolved_candidate,
-            status=RequirementResolutionStatus.UNRESOLVED,
-            requirement=None,
-        ),
+    result = get_study_requirements(source)
+
+    assert all(requirement.source_id == source.id for requirement in result.requirements)
+
+
+def test_get_study_requirements_returns_empty_set_when_nothing_is_resolved() -> None:
+    source = Source(
+        id=uuid4(),
+        title="Unsupported or unresolved source",
+        locator="missing.pdf",
     )
 
-    user_requirements = tuple(
-        result.requirement
-        for result in resolutions
-        if result.status is RequirementResolutionStatus.RESOLVED
-        and result.requirement is not None
-    )
+    result = get_study_requirements(source)
 
-    assert user_requirements == (resolved,)
-    assert all(item.title != unresolved_candidate.title for item in user_requirements)
-
-
-def test_all_unresolved_candidates_produce_an_empty_user_requirement_set() -> None:
-    source_id = uuid4()
-    resolutions = (
-        RequirementResolution(
-            candidate=RequirementCandidate(
-                title="Unknown requirement",
-                source_id=source_id,
-            ),
-            status=RequirementResolutionStatus.UNRESOLVED,
-            requirement=None,
-        ),
-    )
-
-    user_requirements = tuple(
-        result.requirement
-        for result in resolutions
-        if result.status is RequirementResolutionStatus.RESOLVED
-        and result.requirement is not None
-    )
-
-    assert user_requirements == ()
-
-
-def test_user_requirement_output_preserves_requirement_provenance() -> None:
-    source_id = uuid4()
-    requirement = Requirement(
-        title="Constitution",
-        source_id=source_id,
-    )
-    resolution = RequirementResolution(
-        candidate=RequirementCandidate(
-            title=requirement.title,
-            source_id=source_id,
-        ),
-        status=RequirementResolutionStatus.RESOLVED,
-        requirement=requirement,
-    )
-
-    user_requirements = tuple(
-        result.requirement
-        for result in (resolution,)
-        if result.status is RequirementResolutionStatus.RESOLVED
-        and result.requirement is not None
-    )
-
-    assert user_requirements[0].source_id == source_id
+    assert result.source == source
+    assert result.requirements == ()
 
 
 @pytest.mark.parametrize("sample_name", SAMPLE_NAMES)
-def test_real_supported_samples_can_feed_the_user_requirement_flow(
+def test_supported_real_samples_produce_a_user_oriented_requirement_set(
     samples_dir: Path,
     sample_name: str,
 ) -> None:
-    source_id = uuid4()
     source = Source(
-        id=source_id,
+        id=uuid4(),
         title=sample_name,
         locator=str(samples_dir / sample_name),
     )
 
-    mentions = PdfRequirementDiscoveryStrategy().discover(source)
-    assert mentions
+    result = get_study_requirements(source)
 
-    requirements = tuple(
-        Requirement(title=mention.expression, source_id=source_id)
-        for mention in mentions
-    )
-    resolutions = discover_and_resolve_requirements(
-        source,
-        PdfRequirementDiscoveryStrategy(),
-        requirements,
-    )
+    assert result.source == source
+    assert isinstance(result.requirements, tuple)
+    assert all(requirement.source_id == source.id for requirement in result.requirements)
 
-    user_requirements = tuple(
-        result.requirement
-        for result in resolutions
-        if result.status is RequirementResolutionStatus.RESOLVED
-        and result.requirement is not None
+
+def test_user_oriented_result_does_not_require_knowledge_of_internal_workflow() -> None:
+    source = Source(
+        id=uuid4(),
+        title="Call PDF",
+        locator="call.pdf",
     )
 
-    assert len(user_requirements) <= len(mentions)
-    assert all(requirement.source_id == source_id for requirement in user_requirements)
+    result = get_study_requirements(source)
+
+    # The consumer only needs the source and the study requirements.
+    assert result.source.id == source.id
+    assert result.requirements is not None
