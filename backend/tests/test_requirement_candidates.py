@@ -1,6 +1,6 @@
 from uuid import UUID, uuid4
 
-from app.application.requirement import (
+from app.application.requirement_discovery import (
     RequirementMention,
     discover_numbered_requirement_mentions,
 )
