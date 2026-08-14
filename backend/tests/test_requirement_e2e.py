@@ -4,8 +4,8 @@ import pytest
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
-from app.application.requirement import (
-    PdfRequirementDiscoveryStrategy,
+from app.application.requirement_discovery import PdfRequirementDiscoveryStrategy
+from app.application.requirements import (
     discover_and_persist_requirements,
     list_requirements,
 )
