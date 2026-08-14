@@ -1,6 +1,6 @@
 from uuid import uuid4
 
-from app.domain.models.requirement import Requirement
+from app.domain.models import Requirement
 from app.domain.requirement_resolution import (
     RequirementCandidate,
     RequirementResolutionStatus,
@@ -16,22 +16,21 @@ def test_requirement_candidate_can_be_resolved_against_known_requirement() -> No
         source_id=source_id,
     )
     candidate = RequirementCandidate(
-        expression="Spanish Constitution Article 1",
+        title="Spanish Constitution Article 1",
         source_id=source_id,
     )
 
     resolution = resolve_requirement(candidate, (known_requirement,))
 
     assert resolution.status is RequirementResolutionStatus.RESOLVED
-    assert resolution.requirement_id == known_requirement.id
-    assert resolution.expression == candidate.expression
-    assert resolution.source_id == source_id
+    assert resolution.requirement is known_requirement
+    assert resolution.candidate == candidate
 
 
 def test_requirement_candidate_is_unresolved_when_no_known_requirement_matches() -> None:
     source_id = uuid4()
     candidate = RequirementCandidate(
-        expression="Spanish Constitution Article 2",
+        title="Spanish Constitution Article 2",
         source_id=source_id,
     )
     known_requirement = Requirement(
@@ -42,16 +41,15 @@ def test_requirement_candidate_is_unresolved_when_no_known_requirement_matches()
     resolution = resolve_requirement(candidate, (known_requirement,))
 
     assert resolution.status is RequirementResolutionStatus.UNRESOLVED
-    assert resolution.requirement_id is None
-    assert resolution.expression == candidate.expression
-    assert resolution.source_id == source_id
+    assert resolution.requirement is None
+    assert resolution.candidate == candidate
 
 
 def test_requirement_resolution_preserves_source_provenance() -> None:
     candidate_source_id = uuid4()
     known_source_id = uuid4()
     candidate = RequirementCandidate(
-        expression="Spanish Constitution Article 1",
+        title="Spanish Constitution Article 1",
         source_id=candidate_source_id,
     )
     known_requirement = Requirement(
@@ -62,14 +60,14 @@ def test_requirement_resolution_preserves_source_provenance() -> None:
     resolution = resolve_requirement(candidate, (known_requirement,))
 
     assert resolution.status is RequirementResolutionStatus.RESOLVED
-    assert resolution.requirement_id == known_requirement.id
-    assert resolution.source_id == candidate_source_id
+    assert resolution.requirement is known_requirement
+    assert resolution.candidate.source_id == candidate_source_id
 
 
 def test_requirement_candidate_is_unresolved_when_multiple_known_requirements_match() -> None:
     source_id = uuid4()
     candidate = RequirementCandidate(
-        expression="Operating Systems",
+        title="Operating Systems",
         source_id=source_id,
     )
     first = Requirement(title="Operating Systems", source_id=source_id)
@@ -78,6 +76,5 @@ def test_requirement_candidate_is_unresolved_when_multiple_known_requirements_ma
     resolution = resolve_requirement(candidate, (first, second))
 
     assert resolution.status is RequirementResolutionStatus.UNRESOLVED
-    assert resolution.requirement_id is None
-    assert resolution.expression == candidate.expression
-    assert resolution.source_id == source_id
+    assert resolution.requirement is None
+    assert resolution.candidate == candidate
