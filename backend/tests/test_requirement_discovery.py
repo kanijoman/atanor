@@ -1,11 +1,11 @@
 import pytest
 
-from app.application.requirement import (
+from app.application.requirement_discovery import (
     PdfRequirementDiscoveryStrategy,
     RequirementMention,
-    discover_and_persist_requirements,
     discover_requirements,
 )
+from app.application.requirements import discover_and_persist_requirements
 from app.domain.models import Requirement, Source
 
 
@@ -74,7 +74,7 @@ def test_discover_and_persist_requirements_returns_empty_when_no_mentions() -> N
 
 def test_pdf_strategy_discovers_numbered_items_inside_program_context(monkeypatch: pytest.MonkeyPatch) -> None:
     source = Source(title="call.pdf", locator="/tmp/call.pdf")
-    monkeypatch.setattr("app.application.requirement.extract_pdf_text", lambda _: "1. Requisitos\nPROGRAMA\n1. Constitución Española")
+    monkeypatch.setattr("app.application.requirement_discovery.extract_pdf_text", lambda _: "1. Requisitos\nPROGRAMA\n1. Constitución Española")
 
     result = PdfRequirementDiscoveryStrategy().discover(source)
 
@@ -83,7 +83,7 @@ def test_pdf_strategy_discovers_numbered_items_inside_program_context(monkeypatc
 
 def test_pdf_strategy_ignores_numbered_items_outside_program_context(monkeypatch: pytest.MonkeyPatch) -> None:
     source = Source(title="call.pdf", locator="/tmp/call.pdf")
-    monkeypatch.setattr("app.application.requirement.extract_pdf_text", lambda _: "1. Requisitos\n2. Desarrollo\n")
+    monkeypatch.setattr("app.application.requirement_discovery.extract_pdf_text", lambda _: "1. Requisitos\n2. Desarrollo\n")
 
     assert PdfRequirementDiscoveryStrategy().discover(source) == []
 
