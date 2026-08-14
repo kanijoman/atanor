@@ -7,7 +7,7 @@
 | Project      | Atanor                      |
 | Document     | CONVENTIONS                 |
 | Status       | 🟢 Active                   |
-| Version      | 0.7                         |
+| Version      | 0.8                         |
 | Last Updated | 2026-08-14                  |
 | Audience     | Contributors and Developers |
 
@@ -73,6 +73,59 @@ Next validated need
 Technical quality remains fundamental. Clean boundaries, maintainable code, appropriate tests and sound engineering practices provide the support required to evolve the product safely. However, when deciding between technical improvements, the preferred option is the one that most directly enables or improves a validated product need, provided the resulting design remains maintainable.
 
 A technical task that cannot be connected to a concrete current product need should normally be deferred unless it addresses a demonstrated reliability, security, correctness or maintainability risk.
+
+---
+
+# Mini-MVP Iteration Model
+
+Atanor is currently in an early product-discovery stage. Development therefore follows a **mini-MVP iteration model** rather than a detailed long-range implementation plan.
+
+Each task should represent a small, self-contained increment that provides at least one of the following:
+
+- a new user-visible capability;
+- a materially improved user workflow;
+- validated product knowledge that determines the next iteration;
+- a technical capability that is demonstrably necessary for the current product experiment.
+
+The preferred cycle is:
+
+```text
+Hypothesis
+    ↓
+Mini-MVP
+    ↓
+Validation
+    ↓
+Learning
+    ↓
+Refinement / Refactoring
+    ↓
+Next hypothesis
+```
+
+The backlog must not attempt to predict the complete implementation path while the product remains insufficiently validated. Future tasks are hypotheses, not commitments. Detailed future work should be defined only when evidence from the preceding iteration justifies it.
+
+A task may therefore lead to continuation, refinement, decomposition, cancellation or an entirely different next task. This is expected behavior, not planning failure.
+
+For the current single-developer stage, this iterative approach is preferred over parallelizing speculative work. As the product matures and its direction becomes sufficiently stable, the project may introduce more parallel work and more detailed task planning when doing so provides clear value.
+
+---
+
+# Product Users
+
+Atanor conceptually has two distinct user profiles:
+
+### Candidate
+
+The candidate is the primary product user and the focus of the MVP. The candidate should receive useful results from Atanor without being required to understand or validate Atanor's internal reasoning, knowledge model or curation process.
+
+### Curator
+
+The curator is responsible for maintaining and improving the knowledge required by Atanor. Curator intervention may be necessary during product development to resolve ambiguities, fill knowledge gaps or validate information. Ideally, these activities should increasingly be supported or automated by appropriate deterministic, NLP or ML techniques.
+
+The existence of the curator profile does **not** imply that a dedicated curator interface should be developed. Curator functionality should be introduced only when it is demonstrated to be necessary to provide, validate or scale the candidate experience.
+
+Human validation performed during development is a product-development mechanism, not part of the intended candidate experience. In the mature product, the candidate should not be expected to act as Atanor's semantic validator.
 
 ---
 
@@ -260,6 +313,8 @@ Tasks should remain focused on a single responsibility and should not expand the
 If implementation reveals additional necessary work, that work should be evaluated and, where appropriate, created as a separate task rather than silently expanding the current task.
 
 Tasks should state the concrete product or user value they are intended to deliver whenever the task is product-facing.
+
+The backlog should remain intentionally short and evidence-driven during the early product stage. It should describe the current hypothesis and immediate work rather than attempt to specify the entire future product.
 
 ---
 
