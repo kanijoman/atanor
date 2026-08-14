@@ -3,8 +3,8 @@ from uuid import uuid4
 
 import pytest
 
-from app.application.requirement import PdfRequirementDiscoveryStrategy
-from app.application.requirement import discover_and_resolve_requirements
+from app.application.requirement_discovery import PdfRequirementDiscoveryStrategy
+from app.application.requirement_workflow import discover_and_resolve_requirements
 from app.domain.models import Requirement, Source
 from app.domain.requirement_resolution import (
     RequirementCandidate,
@@ -102,9 +102,6 @@ def test_discovery_and_resolution_are_integrated_for_supported_text_pdf_samples(
     mentions = PdfRequirementDiscoveryStrategy().discover(source)
     assert mentions
 
-    # The fixture requirements represent already validated knowledge entries.
-    # The test verifies that discovery can cross the application boundary into
-    # automatic resolution without requiring user validation.
     requirements = tuple(
         Requirement(title=mention.expression, source_id=source_id)
         for mention in mentions
