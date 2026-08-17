@@ -1,14 +1,13 @@
 from dataclasses import dataclass
 
 from app.application.requirement_workflow import StudyRequirementSet
-from app.domain.knowledge_coverage import CoverageStatus, evaluate_coverage
 from app.domain.models import KnowledgeNeed, Requirement
 
 
 @dataclass(frozen=True)
 class RequirementCoverage:
     requirement: Requirement
-    status: CoverageStatus
+    covered: bool
 
 
 @dataclass(frozen=True)
@@ -29,26 +28,19 @@ class StudyCoverage:
 
 
 def get_study_coverage(study_requirements: StudyRequirementSet) -> StudyCoverage:
-    """Evaluate knowledge coverage for study requirements."""
+    """Evaluate available knowledge for each study requirement."""
     covered: list[RequirementCoverage] = []
     missing: list[RequirementCoverage] = []
 
     for requirement in study_requirements.requirements:
         knowledge_needs = _knowledge_needs(requirement)
-        if not knowledge_needs:
-            missing.append(
-                RequirementCoverage(requirement, CoverageStatus.MISSING)
-            )
-            continue
-
-        statuses = [evaluate_coverage(need) for need in knowledge_needs]
-        status = (
-            CoverageStatus.COVERED
-            if all(item is CoverageStatus.COVERED for item in statuses)
-            else CoverageStatus.MISSING
+        is_covered = bool(knowledge_needs) and all(
+            knowledge_need.knowledge is not None
+            for knowledge_need in knowledge_needs
         )
-        coverage = RequirementCoverage(requirement, status)
-        if status is CoverageStatus.COVERED:
+        coverage = RequirementCoverage(requirement=requirement, covered=is_covered)
+
+        if is_covered:
             covered.append(coverage)
         else:
             missing.append(coverage)
