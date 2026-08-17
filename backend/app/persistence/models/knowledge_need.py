@@ -1,3 +1,5 @@
+from uuid import UUID
+
 from sqlalchemy import ForeignKey, Integer, String, Uuid
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
@@ -14,7 +16,7 @@ class KnowledgeNeed(Base):
     )
     topic: Mapped[str] = mapped_column(String(255), nullable=False)
     depth: Mapped[int] = mapped_column(Integer, nullable=False)
-    knowledge_id: Mapped[object | None] = mapped_column(
+    knowledge_id: Mapped[UUID | None] = mapped_column(
         Uuid(), ForeignKey("knowledge.id"), nullable=True
     )
 
