@@ -15,7 +15,9 @@ from app.persistence.requirement_repository import SqlAlchemyRequirementReposito
 from app.persistence.source_repository import SqlAlchemySourceRepository
 
 
-def test_boe_produces_study_requirements_from_known_knowledge(tmp_path: Path) -> None:
+def test_boe_produces_resolved_study_requirements_from_known_knowledge(
+    tmp_path: Path,
+) -> None:
     database_path = tmp_path / "e2e.db"
     engine = create_engine(f"sqlite:///{database_path}")
     Base.metadata.create_all(engine)
@@ -47,11 +49,11 @@ def test_boe_produces_study_requirements_from_known_knowledge(tmp_path: Path) ->
     assert mentions
     assert known_requirements
     assert result.requirements
-    assert len(result.requirements) == len(known_requirements)
-    assert [requirement.title for requirement in result.requirements] == [
-        requirement.title for requirement in known_requirements
-    ]
+    assert len(result.requirements) < len(known_requirements)
     assert all(
         requirement.source_id == source.id
         for requirement in result.requirements
     )
+    assert {
+        requirement.title for requirement in result.requirements
+    }.issubset({requirement.title for requirement in known_requirements})
