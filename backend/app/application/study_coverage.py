@@ -1,7 +1,11 @@
 from dataclasses import dataclass
 
-from app.application.requirement_workflow import StudyRequirementSet
-from app.domain.models import KnowledgeNeed, Requirement
+from app.application.requirement_workflow import (
+    StudyRequirementSet,
+    get_study_requirements,
+)
+from app.application.requirements import RequirementRepository
+from app.domain.models import KnowledgeNeed, Requirement, Source
 
 
 @dataclass(frozen=True)
@@ -13,42 +17,51 @@ class RequirementCoverage:
 @dataclass(frozen=True)
 class StudyCoverage:
     study_requirements: StudyRequirementSet
-    covered: tuple[RequirementCoverage, ...]
-    missing: tuple[RequirementCoverage, ...]
+    items: tuple[RequirementCoverage, ...]
 
     @property
     def total(self) -> int:
-        return len(self.covered) + len(self.missing)
+        return len(self.items)
+
+    @property
+    def covered(self) -> int:
+        return sum(item.covered for item in self.items)
+
+    @property
+    def missing(self) -> int:
+        return self.total - self.covered
 
     @property
     def coverage_percentage(self) -> float:
         if self.total == 0:
             return 0.0
-        return len(self.covered) / self.total * 100
+        return self.covered / self.total * 100
 
 
-def get_study_coverage(study_requirements: StudyRequirementSet) -> StudyCoverage:
-    """Evaluate available knowledge for each study requirement."""
-    covered: list[RequirementCoverage] = []
-    missing: list[RequirementCoverage] = []
-
-    for requirement in study_requirements.requirements:
-        knowledge_needs = _knowledge_needs(requirement)
-        is_covered = bool(knowledge_needs) and all(
-            knowledge_need.knowledge is not None
-            for knowledge_need in knowledge_needs
+def get_study_coverage(
+    source: Source,
+    repository: RequirementRepository,
+) -> StudyCoverage:
+    """Evaluate available knowledge for the requirements of a source."""
+    study_requirements = get_study_requirements(source, repository)
+    items = tuple(
+        RequirementCoverage(
+            requirement=requirement,
+            covered=_is_covered(requirement),
         )
-        coverage = RequirementCoverage(requirement=requirement, covered=is_covered)
-
-        if is_covered:
-            covered.append(coverage)
-        else:
-            missing.append(coverage)
-
+        for requirement in study_requirements.requirements
+    )
     return StudyCoverage(
         study_requirements=study_requirements,
-        covered=tuple(covered),
-        missing=tuple(missing),
+        items=items,
+    )
+
+
+def _is_covered(requirement: Requirement) -> bool:
+    knowledge_needs = _knowledge_needs(requirement)
+    return bool(knowledge_needs) and all(
+        knowledge_need.knowledge is not None
+        for knowledge_need in knowledge_needs
     )
 
 
