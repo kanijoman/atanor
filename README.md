@@ -7,8 +7,8 @@
 | Project      | Atanor               |
 | Document     | README               |
 | Status       | 🟢 Active            |
-| Version      | 0.6                  |
-| Last Updated | 2026-08-14           |
+| Version      | 0.7                  |
+| Last Updated | 2026-08-17           |
 | Audience     | Users and Developers |
 
 > **A knowledge-driven platform for public service examination preparation.**
@@ -25,7 +25,7 @@ Atanor aims to solve a problem traditionally addressed by preparation services: 
 
 The current validated product direction starts with a narrower promise: **a user provides a supported convocatoria and Atanor determines what the user needs to study without requiring the user to validate Atanor's discovery or resolution decisions.**
 
-The current validated flow is:
+The validated requirement flow is:
 
 ```text
 Convocatoria
@@ -39,17 +39,17 @@ Automatic Resolution
 User-Oriented Study Requirements
 ```
 
-This is the first product-oriented vertical slice. The next step is to expose this result through a minimal application interface and validate whether it is genuinely useful to a real user.
+AT-043 extended the product exploration beyond requirement discovery. Atanor can now acquire text from an authoritative BOE source and apply a deterministic relevance strategy to a `KnowledgeNeed` without requiring the candidate to provide the missing knowledge.
 
-The broader knowledge and learning model remains a direction rather than a fixed implementation sequence.
+This does **not** mean that arbitrary source text is considered validated knowledge. External documents are treated as raw material; acquisition, relevant-content extraction and validated knowledge remain distinct steps.
 
 ---
 
 # Current Status
 
-The foundation, source workflow, requirement discovery, requirement resolution and user-oriented requirement projection are complete through **AT-040**.
+The foundation, source workflow, requirement discovery, requirement resolution, user-oriented requirement projection and the first autonomous knowledge-acquisition experiment are complete through **AT-043**.
 
-Atanor currently has a validated application workflow for supported PDF sources:
+Atanor currently has two validated experimental flows:
 
 ```text
 PDF source
@@ -67,11 +67,89 @@ Automatic resolution
 User-oriented study requirements
 ```
 
-The workflow is covered by automated tests and has been exercised with real PDF samples from different sources, including BOE and Junta de Castilla y León documents.
+and:
 
-The discovery implementation is intentionally deterministic and structure-aware. It does not claim to be a universal parser, semantic requirement resolver or OCR system. A scanned PDF sample from Ayuntamiento de León is retained as a regression case for the current absence of OCR support.
+```text
+Knowledge Need
+    ↓
+External source acquisition
+    ↓
+Raw extracted content
+    ↓
+Deterministic relevance extraction
+    ↓
+Candidate Knowledge
+```
 
-AT-041 is the next step: expose the current result through the smallest meaningful application interface so that product value can be evaluated directly rather than only through automated tests.
+The second flow was validated experimentally against a real BOE sample. From approximately 328,000 extracted characters, the deterministic strategy selected approximately 2,000 characters containing multiple relevant formulations of the Constitution Española topic. The result demonstrates that autonomous acquisition and basic relevance filtering are viable, but it is not yet sufficient to claim semantic knowledge extraction.
+
+The BOE experiment also demonstrated that source documents may contain substantially more information than the study programme itself, including administrative, eligibility and procedural information. Such information may become valuable product functionality, but it is intentionally outside the current MVP scope.
+
+Different BOE and other official-document templates must not be assumed to share a universal structure. The current deterministic strategy is therefore an experiment, not a general-purpose BOE parser.
+
+---
+
+# Product Development Principle: Atanor Must Provide Knowledge
+
+A core product constraint has now been established:
+
+> **Atanor must provide the knowledge required by the candidate; it must not make the candidate responsible for finding and supplying that knowledge.**
+
+A candidate may eventually benefit from curator intervention when automation cannot reliably resolve a gap, but candidate-supplied knowledge is not the intended default workflow.
+
+This principle guides future Knowledge Construction work. Atanor may use authoritative sources, deterministic extraction, AI or other mechanisms, but it must distinguish between:
+
+```text
+Source material
+    ↓
+Acquired information
+    ↓
+Relevant information
+    ↓
+Validated knowledge
+```
+
+Atanor must not claim `COVERED` merely because a source contains a textual match. Saying **"I don't know"** is preferable to presenting invented, incomplete or insufficiently supported knowledge as fact.
+
+---
+
+# Experiments and Tests
+
+Atanor now deliberately distinguishes **experiments** from **tests**.
+
+### Experiments
+
+Experiments are exploratory tools used to inspect, measure and understand product behavior. They may print output, compare strategies, process real documents and evolve rapidly. They are not product contracts.
+
+They live under:
+
+```text
+backend/experiments/
+```
+
+For example, AT-043 introduced `inspect_boe_knowledge.py` to inspect the actual content produced by the deterministic BOE knowledge-extraction strategy.
+
+### Tests
+
+Tests define behavior that Atanor has already decided to preserve. They should remain deterministic, self-contained and agnostic of exploratory implementation details.
+
+The intended development loop is:
+
+```text
+Experiment
+    ↓
+Observation
+    ↓
+Product insight
+    ↓
+Requirement / decision
+    ↓
+Test
+    ↓
+Implementation
+```
+
+This separation allows Atanor to investigate uncertain product questions without prematurely turning hypotheses into permanent technical contracts.
 
 ---
 
@@ -108,6 +186,10 @@ Atanor is developed around a small set of core principles:
 * **Requirements, scopes, needs and knowledge are distinct concepts.**
 * **Canonical knowledge must remain reusable independently of a curriculum.**
 * **Important knowledge claims should remain traceable to supporting evidence.**
+* **Atanor must provide knowledge rather than delegating knowledge acquisition to the candidate.**
+* **Uncertainty must be explicit; unsupported knowledge is preferable to fabricated certainty.**
+* **External sources are evidence and raw material, not automatically validated knowledge.**
+* **Experiments are used to discover product behavior; tests protect behavior once it is decided.**
 * **Artificial Intelligence is a tool, not the product itself.**
 * **Maintainability takes precedence over unnecessary complexity.**
 * **Infrastructure is introduced only when it solves an existing problem.**
@@ -155,11 +237,11 @@ The main project documentation can be found under the `docs/` directory.
 
 # Current Development Sequence
 
-The first user-oriented requirement output is complete through **AT-040**.
+AT-043 demonstrated that Atanor can begin constructing knowledge autonomously from an authoritative external source, but also established that raw source extraction is not equivalent to validated knowledge.
 
-**AT-041 — Expose the User-Oriented Requirement Workflow** is the next implementation task. Its purpose is to make the current capability reachable through a minimal application interface and validate it from the user's perspective.
+The next product direction should therefore focus on improving the reliability and generality of the transition from **source material → relevant information → knowledge**, while avoiding assumptions about a single document template. The next mini-MVP should be selected from evidence produced by experiments rather than from a predetermined technical roadmap.
 
-The next product direction after AT-041 will be determined from that validation. Knowledge Construction remains a strategic possibility, but it is no longer assumed to be the immediate next capability: product evidence should determine whether the next priority is improving requirement quality, adding contextual information, constructing knowledge, or beginning study interactions.
+Potential future directions include document-structure discovery, more robust relevance extraction, source diversification and semantic knowledge construction. None is currently a commitment.
 
 ---
 
