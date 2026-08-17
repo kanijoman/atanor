@@ -1,6 +1,7 @@
 from sqlalchemy import select
 
 from app.domain.models import (
+    Knowledge as DomainKnowledge,
     KnowledgeNeed as DomainKnowledgeNeed,
     Requirement as DomainRequirement,
     RequirementScope as DomainRequirementScope,
@@ -81,7 +82,7 @@ class SqlAlchemyRequirementRepository:
                             knowledge=(
                                 None
                                 if knowledge_need.knowledge is None
-                                else DomainKnowledgeNeedKnowledge(
+                                else DomainKnowledge(
                                     id=knowledge_need.knowledge.id,
                                     title=knowledge_need.knowledge.title,
                                     description=knowledge_need.knowledge.description,
