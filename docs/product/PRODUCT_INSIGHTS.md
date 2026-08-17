@@ -35,6 +35,16 @@ Atanor may eventually distinguish study requirements from other structured infor
 
 The BOE validation experiment demonstrated that the current discovery strategy can produce both useful study-related candidates and unrelated structured candidates. This should not be treated as an extraction defect until a product requirement establishes which categories Atanor must provide to the candidate.
 
+## Knowledge honesty
+
+Atanor must be explicit about the availability and limitations of its knowledge.
+
+> **Atanor must never present unknown, partial, or uncertain knowledge as complete and reliable.**
+
+During the current product-discovery phase, the minimum distinction is whether knowledge is available or unavailable for a `KnowledgeNeed`. More detailed states such as partial coverage, uncertainty, or freshness should only be introduced when a concrete product need justifies them.
+
+A truthful "I don't know" is a valid and preferable product outcome when Atanor lacks sufficient knowledge to support a candidate reliably.
+
 ## Working principle
 
 During the current product-discovery phase:
