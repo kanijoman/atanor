@@ -1,7 +1,8 @@
-from sqlalchemy import ForeignKey, Integer, String
+from sqlalchemy import ForeignKey, Integer, String, Uuid
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.persistence.database import Base
+from app.persistence.models.knowledge import Knowledge
 
 
 class KnowledgeNeed(Base):
@@ -13,6 +14,9 @@ class KnowledgeNeed(Base):
     )
     topic: Mapped[str] = mapped_column(String(255), nullable=False)
     depth: Mapped[int] = mapped_column(Integer, nullable=False)
-    knowledge_id: Mapped[int | None] = mapped_column(nullable=True)
+    knowledge_id: Mapped[object | None] = mapped_column(
+        Uuid(), ForeignKey("knowledge.id"), nullable=True
+    )
 
     scope: Mapped["RequirementScope"] = relationship(back_populates="knowledge_needs")
+    knowledge: Mapped[Knowledge | None] = relationship(lazy="joined")
