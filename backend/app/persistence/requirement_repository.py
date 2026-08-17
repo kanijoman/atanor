@@ -28,7 +28,7 @@ class SqlAlchemyRequirementRepository:
                             KnowledgeNeed(
                                 topic=knowledge_need.topic,
                                 depth=knowledge_need.depth,
-                                knowledge_id=None,
+                                knowledge_id=knowledge_need.knowledge_id,
                             )
                             for knowledge_need in scope.knowledge_needs
                         ],
@@ -39,7 +39,6 @@ class SqlAlchemyRequirementRepository:
             session.add(persisted)
             session.commit()
             session.refresh(persisted)
-
             return self._to_domain(persisted)
 
     def get_by_id(self, requirement_id: int) -> DomainRequirement | None:
@@ -47,7 +46,6 @@ class SqlAlchemyRequirementRepository:
             persisted = session.get(Requirement, requirement_id)
             if persisted is None:
                 return None
-
             return self._to_domain(persisted)
 
     def list_all(self) -> list[DomainRequirement]:
@@ -80,7 +78,15 @@ class SqlAlchemyRequirementRepository:
                         DomainKnowledgeNeed(
                             topic=knowledge_need.topic,
                             depth=knowledge_need.depth,
-                            knowledge=None,
+                            knowledge=(
+                                None
+                                if knowledge_need.knowledge is None
+                                else DomainKnowledgeNeedKnowledge(
+                                    id=knowledge_need.knowledge.id,
+                                    title=knowledge_need.knowledge.title,
+                                    description=knowledge_need.knowledge.description,
+                                )
+                            ),
                         )
                         for knowledge_need in scope.knowledge_needs
                     ),
