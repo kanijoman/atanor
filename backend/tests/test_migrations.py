@@ -21,6 +21,7 @@ def test_migrations_round_trip(tmp_path) -> None:
         assert "sources" in inspector.get_table_names()
         assert "requirement_scopes" in inspector.get_table_names()
         assert "knowledge_needs" in inspector.get_table_names()
+        assert "knowledge" in inspector.get_table_names()
 
         requirement_columns = inspector.get_columns("requirements")
         assert {column["name"] for column in requirement_columns} == {
@@ -51,12 +52,20 @@ def test_migrations_round_trip(tmp_path) -> None:
             "context",
         }
 
+        knowledge_columns = inspector.get_columns("knowledge")
+        assert {column["name"] for column in knowledge_columns} == {
+            "id",
+            "title",
+            "description",
+        }
+
         knowledge_need_columns = inspector.get_columns("knowledge_needs")
         assert {column["name"] for column in knowledge_need_columns} == {
             "id",
             "scope_id",
             "topic",
             "depth",
+            "knowledge_id",
         }
 
         requirement_foreign_keys = inspector.get_foreign_keys("requirements")
@@ -76,8 +85,15 @@ def test_migrations_round_trip(tmp_path) -> None:
         assert {
             (foreign_key["referred_table"], tuple(foreign_key["constrained_columns"]))
             for foreign_key in knowledge_need_foreign_keys
-        } == {("requirement_scopes", ("scope_id",))}
-        assert knowledge_need_foreign_keys[0]["options"]["ondelete"] == "CASCADE"
+        } == {
+            ("requirement_scopes", ("scope_id",)),
+            ("knowledge", ("knowledge_id",)),
+        }
+        assert next(
+            foreign_key
+            for foreign_key in knowledge_need_foreign_keys
+            if foreign_key["referred_table"] == "requirement_scopes"
+        )["options"]["ondelete"] == "CASCADE"
 
         command.downgrade(config, "base")
 
@@ -85,5 +101,6 @@ def test_migrations_round_trip(tmp_path) -> None:
         assert "sources" not in inspect(engine).get_table_names()
         assert "requirement_scopes" not in inspect(engine).get_table_names()
         assert "knowledge_needs" not in inspect(engine).get_table_names()
+        assert "knowledge" not in inspect(engine).get_table_names()
     finally:
         engine.dispose()
