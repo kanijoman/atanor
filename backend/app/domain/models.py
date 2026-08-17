@@ -14,6 +14,7 @@ class Knowledge:
     title: str
     description: str | None = None
     sources: tuple[Source, ...] = field(default_factory=tuple)
+    id: UUID = field(default_factory=uuid4)
 
 
 @dataclass(frozen=True)
@@ -29,7 +30,7 @@ class KnowledgeNeed:
 
     @property
     def knowledge_id(self) -> UUID | None:
-        return None if self.knowledge is None else getattr(self.knowledge, "id", None)
+        return None if self.knowledge is None else self.knowledge.id
 
 
 @dataclass(frozen=True)
