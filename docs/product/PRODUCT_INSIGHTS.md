@@ -26,6 +26,14 @@ During the current product-discovery phase, the minimum distinction is whether k
 
 A truthful "I don't know" is a valid and preferable product outcome when Atanor lacks sufficient knowledge to support a candidate reliably.
 
+### Knowledge ownership
+
+Atanor is responsible for providing the knowledge required by the candidate. The candidate must **never** be responsible for obtaining missing information and supplying it to Atanor as part of the normal study workflow.
+
+Knowledge gaps are therefore a product responsibility, not a candidate task. Atanor should attempt to resolve them through its own acquisition mechanisms. When automatic acquisition is insufficient, a curator may provide or validate source material so that Atanor can ingest and incorporate the required knowledge.
+
+This principle does not prescribe a particular acquisition technology. Search, public-source retrieval, document ingestion, AI-assisted extraction, or other mechanisms may be evaluated pragmatically as the product evolves.
+
 ## Validated discoveries
 
 ### AT-041 — Candidate entry point
@@ -57,11 +65,40 @@ At this point Atanor can:
 1. ingest a textual PDF convocatoria;
 2. identify candidate study requirements;
 3. represent knowledge needs for those requirements;
-4. represent whether knowledge is currently available for a need.
+4. represent whether knowledge is currently available for a need;
+5. evaluate study coverage from the knowledge currently represented by Atanor.
 
-The current system does **not** yet provide the candidate with a complete study experience. In particular, knowledge availability is currently a domain capability rather than a candidate-facing result.
+The current system does **not** yet provide the candidate with a complete study experience, nor does it yet acquire missing knowledge automatically. Knowledge coverage is currently a validated domain capability rather than a complete candidate-facing knowledge supply workflow.
 
-This boundary is intentional. The next mini-MVP must begin from a concrete candidate need rather than from an anticipated technical extension of the knowledge model.
+This boundary is intentional. The next mini-MVP, **AT-043 — Knowledge Acquisition Prototype**, will test whether Atanor can begin building its own knowledge from an external source without requiring the candidate to provide that information.
+
+## AT-043 — Knowledge Acquisition Prototype
+
+### Hypothesis
+
+> **Atanor can acquire a first useful piece of knowledge for a `KnowledgeNeed` through its own acquisition mechanism, making the resulting knowledge available for study coverage without requiring the candidate to supply it.**
+
+### Scope
+
+The experiment should remain deliberately small: one concrete knowledge need, one acquisition path, one external source, and enough extraction to create usable `Knowledge`.
+
+The acquisition mechanism is an implementation detail of the experiment. The product hypothesis does not require a particular technology such as scraping, search, AI, or RAG.
+
+### Success criterion
+
+Atanor can take a concrete `KnowledgeNeed`, acquire appropriate source material without candidate intervention, transform it into knowledge represented by the existing model, and demonstrate that the knowledge changes the corresponding coverage result.
+
+### Out of scope
+
+- complete knowledge corpus management;
+- general-purpose knowledge CRUD/UI;
+- a complete curator workflow;
+- mandatory use of AI/LLMs;
+- embeddings or RAG;
+- sophisticated source ranking;
+- complete provenance, freshness, or quality scoring.
+
+These may become future capabilities if the experiment provides evidence that they are necessary.
 
 ## Potential future capabilities
 
@@ -70,9 +107,10 @@ These items have emerged from experiments but are intentionally not scheduled un
 - distinguish study-programme content from other convocatoria information;
 - identify candidate eligibility and application requirements before study planning;
 - represent partial, uncertain, outdated, or insufficient knowledge;
-- automatically populate or validate knowledge using NLP/ML techniques;
+- automatically acquire, populate, or validate knowledge using external sources and/or NLP/ML techniques;
 - curator workflows for resolving ambiguity and filling knowledge gaps;
-- richer knowledge provenance, freshness, and quality information.
+- richer knowledge provenance, freshness, and quality information;
+- automatic refresh and maintenance of acquired knowledge.
 
 These are product opportunities, not implementation commitments.
 
@@ -81,5 +119,3 @@ These are product opportunities, not implementation commitments.
 During the current product-discovery phase:
 
 > **Product insight is recorded; implementation is deferred until a concrete mini-MVP hypothesis requires it.**
-
-This prevents exploratory findings from prematurely expanding the backlog or constraining the architecture.
