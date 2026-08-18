@@ -7,8 +7,8 @@
 | Project      | Atanor                      |
 | Document     | CONVENTIONS                 |
 | Status       | 🟢 Active                   |
-| Version      | 0.8                         |
-| Last Updated | 2026-08-14                  |
+| Version      | 0.9                         |
+| Last Updated | 2026-08-18                  |
 | Audience     | Contributors and Developers |
 
 ---
@@ -37,6 +37,45 @@ Development should always be guided by:
 - Prefer measurable product progress over architectural progress that has no demonstrated user value.
 
 When multiple valid solutions exist, choose the one that minimizes unnecessary complexity while providing the greatest concrete product value.
+
+---
+
+# Evidence-Driven Iteration
+
+Atanor is developed by progressively reducing uncertainty rather than by predicting the complete future implementation.
+
+A capability should normally be implemented because one of the following has demonstrated its need:
+
+- a concrete user or product problem;
+- an observed failure or limitation in a real product experiment;
+- a regression that must be prevented;
+- a demonstrated reliability, correctness, security or maintainability risk.
+
+Do not implement a capability merely because it might be useful for hypothetical future documents, users or workflows.
+
+When an experiment exposes a limitation, the preferred response is to address the **smallest demonstrated problem** that is necessary to continue product validation. Do not generalize the solution beyond the evidence available at that point.
+
+The development loop is therefore:
+
+```text
+Hypothesis
+    ↓
+Minimal experiment / mini-MVP
+    ↓
+Real inputs and validation
+    ↓
+Observed limitation
+    ↓
+Smallest justified refinement
+    ↓
+Regression validation
+    ↓
+Next experiment
+```
+
+This principle applies especially to parsers, extractors, heuristics and other areas where the variability of real-world input is not yet sufficiently understood. The objective is not to build a perfect or universal solution early, but to build a solution that is good enough to support the next meaningful product experiment.
+
+A previously implemented capability should not be made more sophisticated without evidence that the additional complexity provides concrete value. Conversely, a known regression or a concrete limitation blocking the next product experiment justifies refinement even when the broader problem is not yet fully solved.
 
 ---
 
