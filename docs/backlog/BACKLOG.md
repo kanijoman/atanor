@@ -7,7 +7,7 @@
 | Project | Atanor |
 | Document | BACKLOG |
 | Status | 🟢 Active |
-| Version | 3.6 |
+| Version | 3.7 |
 | Last Updated | 2026-08-18 |
 | Audience | Contributors and Developers |
 
@@ -190,16 +190,29 @@ AT-044 is closed. No further structural sophistication is planned unless a regre
 
 ### AT-045 · Contextual Hierarchy Inference for Extracted Document Markers — 🔴 Pending
 
-**Hypothesis:** marker detection alone is not sufficient to reliably identify the meaningful document hierarchy needed for knowledge extraction. Given the markers produced by AT-044, Atanor should infer their contextual parent/child relationships deterministically without assuming that every numeric or lettered sequence represents a document-level section.
+**Hypothesis:** marker detection and simple marker-depth rules are not sufficient to reliably identify the meaningful document hierarchy needed by the next knowledge-extraction experiment. The same marker family can represent different semantic roles depending on its surrounding context. For example, a sequence such as `1`, `2`, `c`, `d` may be an internal enumeration rather than a new document section, while an explicit marker such as `6.10.2` establishes genuine nesting.
+
+**Experiment:** using the current AT-044 marker output as the only structural input, run a focused comparison between the existing hierarchy and a contextual inference strategy. The experiment should answer one question: **does adding local structural context materially improve the separation between meaningful sections and internal enumerations across the existing real documents?**
+
+The experiment should inspect, at minimum:
+
+- the BOE sample, including the observed `6 → 6.10 → 6.10.2 → 1/2/c/d → 7` transition;
+- the BOJA sample, including mixed numeric/roman nesting and `2.1 → 2.1.1` structures;
+- the Archiveros programme, where `Tema N` markers form a regular topic sequence.
+
+Compare the current hierarchy with the proposed contextual inference and record concrete differences rather than relying only on aggregate counts. The output should make it possible to identify false nesting, missed nesting and correct nesting.
+
+**Expected learning:** determine whether local context is sufficient to make the structural output materially more useful for the next extraction step, and identify the smallest rule set that produces that improvement. If the experiment shows no meaningful improvement, stop rather than adding complexity.
 
 **Mini-MVP scope:**
 
-- Separate marker detection from hierarchy inference as explicit implementation stages.
-- Use surrounding context and established marker patterns to infer parent/child relationships.
-- Preserve the raw marker information so inference remains replaceable and inspectable.
-- Validate the inference against the existing BOE, BOJA and Archiveros samples.
-- Add focused regression tests for the hierarchy cases already observed and for at least one cross-document variation.
-- Keep the output suitable for subsequent extraction experiments, without yet generating canonical Knowledge.
+- Keep marker detection unchanged unless the experiment exposes a concrete detection defect.
+- Treat hierarchy inference as a distinct, replaceable stage after marker detection.
+- Use only deterministic local/contextual evidence already present in the extracted document.
+- Preserve raw markers and make inferred relationships inspectable.
+- Add regression tests only for behaviors accepted as part of the validated structural contract.
+- Validate against all three text-based real samples before considering the iteration complete.
+- Produce structural context suitable for the next knowledge-extraction experiment, without generating canonical Knowledge.
 
 **Explicitly outside AT-045:**
 
@@ -209,10 +222,11 @@ AT-044 is closed. No further structural sophistication is planned unless a regre
 - Confidence scoring as a domain feature.
 - Canonical Knowledge construction or semantic validation.
 - Candidate-facing UI.
+- Generalization to document formats not represented by the current evidence.
 
 **Completion criterion:**
 
-For the supported text-based sample documents, the inferred hierarchy is sufficiently reliable to distinguish meaningful document sections from internal enumerations and to provide a stable structural context for the next knowledge-extraction experiment. The behavior is covered by automated tests and the full suite passes without regression.
+The experiment demonstrates either (a) a materially better contextual hierarchy on the supported samples, backed by focused tests and a full-suite regression run, or (b) that additional hierarchy sophistication is not justified by the available evidence. In the latter case, the task should stop without introducing unnecessary complexity and the next mini-MVP should be selected from the resulting knowledge-extraction needs.
 
 ---
 
@@ -244,4 +258,4 @@ The foundation, requirement discovery, structured discovery, requirement scope/k
 
 **Current status: 36 completed tasks, 1 pending, 3 deferred, 5 cancelled, 0 in progress.**
 
-AT-044 is closed with no regression. **AT-045 is the next mini-MVP**, selected directly from the evidence produced by AT-043 and AT-044: improve contextual hierarchy inference just enough to make subsequent knowledge-extraction experiments more reliable, without turning the analyzer into a premature universal parser.
+AT-044 is closed with no regression. **AT-045 is the next mini-MVP**, selected directly from the evidence produced by AT-043 and AT-044: test whether contextual hierarchy inference materially improves the structural context available for knowledge extraction, and implement only the smallest improvement justified by that experiment.
