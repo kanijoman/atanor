@@ -1,9 +1,9 @@
-from dataclasses import dataclass
 from pathlib import Path
 import re
 
 from pypdf import PdfReader
 
+from app.application.document_structure import analyze_document_structure
 from app.application.pdf_extraction import extract_pdf_text
 from app.application.source import import_pdf_source
 
@@ -16,275 +16,37 @@ SAMPLES = [
 ]
 
 MAX_NODES = 60
-
-# A structural marker is deliberately broader than a knowledge unit. The
-# experiment first tries to recover document hierarchy and only later decides
-# which nodes are relevant to the knowledge model.
-TEMA_PATTERN = re.compile(r"^Tema\s+(?P<number>\d+)\s*[.\-–—:]?\s*(?P<title>.+)$", re.IGNORECASE)
-NUMERIC_PATTERN = re.compile(
-    r"^(?P<marker>\d+(?:\s*\.\s*\d+)*\s*[.)]?)(?:\s+)(?P<title>.+)$"
-)
-ROMAN_PATTERN = re.compile(
-    r"^(?P<marker>[IVXLCDM]+(?:\s*\.\s*\d+)*\s*[.)]?)\s+(?P<title>.+)$",
-    re.IGNORECASE,
-)
-LETTER_PATTERN = re.compile(
-    r"^(?P<marker>[A-Z](?:\s*\.\s*\d+)*\s*[.)]?)\s+(?P<title>.+)$"
-)
 PROGRAMME_PATTERN = re.compile(r"\bprograma(?:\s+de\s+materias)?\b", re.IGNORECASE)
-
-
-@dataclass(frozen=True)
-class StructuralMarker:
-    line_number: int
-    marker: str
-    title: str
-    kind: str
-    level: int
-    continuation: tuple[str, ...]
-    classification: str = "STRUCTURAL"
-    parent_index: int | None = None
-
-
-def _normalise_marker(marker: str) -> str:
-    marker = re.sub(r"\s+", "", marker)
-    return marker.rstrip(".")
-
-
-def _marker_level(marker: str, kind: str) -> int:
-    if kind == "topic":
-        return 3
-
-    normalised = _normalise_marker(marker)
-    parts = normalised.split(".")
-
-    if kind == "roman":
-        return 1 + max(0, len(parts) - 1)
-
-    if kind == "letter":
-        return 2 + max(0, len(parts) - 1)
-
-    return len(parts)
-
-
-def _match_marker(line: str) -> tuple[str, str, str, int] | None:
-    match = TEMA_PATTERN.match(line)
-    if match:
-        marker = f"Tema {match.group('number')}"
-        return marker, match.group("title").strip(), "topic", 3
-
-    for pattern, kind in (
-        (ROMAN_PATTERN, "roman"),
-        (LETTER_PATTERN, "letter"),
-        (NUMERIC_PATTERN, "numeric"),
-    ):
-        match = pattern.match(line)
-        if match:
-            marker = _normalise_marker(match.group("marker"))
-            return marker, match.group("title").strip(), kind, _marker_level(marker, kind)
-
-    return None
 
 
 def _is_programme_marker(line: str) -> bool:
     return bool(PROGRAMME_PATTERN.search(line))
 
 
-def _looks_like_parent_heading(line: str) -> bool:
-    if _is_programme_marker(line):
-        return True
-    if len(line) > 180:
-        return False
-    return bool(re.fullmatch(r"[A-ZÁÉÍÓÚÜÑ][A-ZÁÉÍÓÚÜÑ\s,.-]{4,}", line))
-
-
-def _extract_markers(lines: list[str]) -> list[StructuralMarker]:
-    markers: list[StructuralMarker] = []
-
-    index = 0
-    while index < len(lines):
-        line = lines[index]
-        matched = _match_marker(line)
-
-        if matched is None:
-            index += 1
-            continue
-
-        marker, title, kind, level = matched
-        continuation: list[str] = []
-        next_index = index + 1
-
-        while next_index < len(lines):
-            next_line = lines[next_index]
-            if _match_marker(next_line) or _looks_like_parent_heading(next_line):
-                break
-            continuation.append(next_line)
-            next_index += 1
-
-        markers.append(
-            StructuralMarker(
-                line_number=index + 1,
-                marker=marker,
-                title=title,
-                kind=kind,
-                level=level,
-                continuation=tuple(continuation),
-            )
-        )
-        index = next_index
-
-    return markers
-
-
-def _is_simple_marker(marker: StructuralMarker) -> bool:
-    return marker.kind in {"numeric", "roman", "letter"} and "." not in marker.marker
-
-
-def _simple_numeric_value(marker: StructuralMarker) -> int | None:
-    if marker.kind != "numeric" or not _is_simple_marker(marker):
-        return None
-    try:
-        return int(marker.marker)
-    except ValueError:
-        return None
-
-
-def _with_classification(marker: StructuralMarker, classification: str) -> StructuralMarker:
-    return StructuralMarker(
-        line_number=marker.line_number,
-        marker=marker.marker,
-        title=marker.title,
-        kind=marker.kind,
-        level=marker.level,
-        continuation=marker.continuation,
-        classification=classification,
-        parent_index=marker.parent_index,
-    )
-
-
-def _classify_markers(markers: list[StructuralMarker]) -> list[StructuralMarker]:
-    """Classify obvious local enumerations without changing the extraction rules.
-
-    This is intentionally an experiment, not a production classifier. It uses
-    only the immediately preceding structural depth and a simple numeric
-    sequence (1, 2, ...), allowing letters to continue the same enumeration.
-    """
-    result: list[StructuralMarker] = []
-    enumeration_level: int | None = None
-    expected_numeric: int | None = None
-
-    for marker in markers:
-        numeric_value = _simple_numeric_value(marker)
-
-        if enumeration_level is not None:
-            if numeric_value is not None:
-                if expected_numeric == numeric_value:
-                    result.append(_with_classification(marker, "ENUMERATION"))
-                    expected_numeric = numeric_value + 1
-                    continue
-                enumeration_level = None
-                expected_numeric = None
-            elif _is_simple_marker(marker) and marker.kind == "roman":
-                result.append(_with_classification(marker, "ENUMERATION"))
-                continue
-            elif _is_simple_marker(marker) and marker.kind == "letter":
-                result.append(_with_classification(marker, "ENUMERATION"))
-                continue
-            else:
-                enumeration_level = None
-                expected_numeric = None
-
-        previous = result[-1] if result else None
-        # A simple numeric "1" immediately following a nested structural
-        # marker is the common beginning of an enumeration. Level 2 is also
-        # valid here (for example, 6.10 -> 1 -> 2 -> c -> d).
-        if numeric_value == 1 and previous is not None and previous.level >= 2:
-            enumeration_level = previous.level + 1
-            expected_numeric = 2
-            result.append(_with_classification(marker, "ENUMERATION"))
-            continue
-
-        result.append(_with_classification(marker, "STRUCTURAL"))
-
-    return result
-
-
-def _build_hierarchy(markers: list[StructuralMarker]) -> list[StructuralMarker]:
-    # Keep this helper convenient for the experiment/tests: callers may pass
-    # raw extracted markers or already-classified markers.
-    if any(marker.classification == "STRUCTURAL" for marker in markers):
-        markers = _classify_markers(markers)
-
-    result: list[StructuralMarker] = []
-    stack: list[int] = []
-    enumeration_level: int | None = None
-    expected_numeric: int | None = None
-
-    for marker in markers:
-        effective_level = marker.level
-
-        if marker.classification == "ENUMERATION":
-            # Enumeration items are content inside the preceding structural
-            # marker. Their source marker level is therefore not their
-            # effective hierarchy level.
-            if enumeration_level is None:
-                previous = result[-1] if result else None
-                if previous is None:
-                    enumeration_level = marker.level
-                else:
-                    enumeration_level = previous.level + 1
-            effective_level = enumeration_level
-        elif enumeration_level is not None:
-            # A structural marker explicitly starts a new hierarchy context.
-            # Do not let the previous enumeration leak into it.
-            enumeration_level = None
-            expected_numeric = None
-
-        if marker.classification == "ENUMERATION" and _simple_numeric_value(marker) == 1:
-            expected_numeric = 2
-        elif marker.classification == "ENUMERATION":
-            numeric_value = _simple_numeric_value(marker)
-            if numeric_value is not None and expected_numeric == numeric_value:
-                expected_numeric = numeric_value + 1
-
-        while stack and result[stack[-1]].level >= effective_level:
-            stack.pop()
-
-        parent_index = stack[-1] if stack else None
-        node = StructuralMarker(
-            line_number=marker.line_number,
-            marker=marker.marker,
-            title=marker.title,
-            kind=marker.kind,
-            level=effective_level,
-            continuation=marker.continuation,
-            classification=marker.classification,
-            parent_index=parent_index,
-        )
-        result.append(node)
-        stack.append(len(result) - 1)
-
-    return result
-
-
-def _print_marker_summary(lines: list[str], markers: list[StructuralMarker]) -> None:
+def _print_marker_summary(lines: list[str], markers) -> None:
     programmes = sum(_is_programme_marker(line) for line in lines)
     by_kind = {}
     by_classification = {}
+
     for marker in markers:
         by_kind[marker.kind] = by_kind.get(marker.kind, 0) + 1
-        by_classification[marker.classification] = by_classification.get(marker.classification, 0) + 1
+        by_classification[marker.classification] = (
+            by_classification.get(marker.classification, 0) + 1
+        )
 
     print("\nStructural marker summary:")
     print(f"  programme markers: {programmes}")
     print(f"  structural markers: {len(markers)}")
-    print("  by kind: " + ", ".join(f"{kind}={count}" for kind, count in sorted(by_kind.items())))
+    print("  by kind: " + ", ".join(
+        f"{kind}={count}" for kind, count in sorted(by_kind.items())
+    ))
     print("  by classification: " + ", ".join(
-        f"{classification}={count}" for classification, count in sorted(by_classification.items())
+        f"{classification}={count}"
+        for classification, count in sorted(by_classification.items())
     ))
 
 
-def _print_tree(markers: list[StructuralMarker]) -> None:
+def _print_tree(markers) -> None:
     print(f"\nStructural hierarchy: {min(len(markers), MAX_NODES)} shown (max {MAX_NODES})")
 
     for marker in markers[:MAX_NODES]:
@@ -294,8 +56,7 @@ def _print_tree(markers: list[StructuralMarker]) -> None:
         print(f"{indent}  line={marker.line_number} level={marker.level} parent={parent}")
 
         if marker.continuation:
-            preview = marker.continuation[0]
-            print(f"{indent}  continuation: {preview[:140]}")
+            print(f"{indent}  continuation: {marker.continuation[0][:140]}")
 
 
 def inspect_document(name: str, path: Path) -> None:
@@ -323,9 +84,7 @@ def inspect_document(name: str, path: Path) -> None:
         return
 
     print("Extraction status: TEXT")
-    extracted = _extract_markers(lines)
-    classified = _classify_markers(extracted)
-    markers = _build_hierarchy(classified)
+    markers = analyze_document_structure(text)
     _print_marker_summary(lines, markers)
     _print_tree(markers)
 
