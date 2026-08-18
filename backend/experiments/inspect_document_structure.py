@@ -15,105 +15,181 @@ SAMPLES = [
     ("Ayuntamiento de León", Path("tests/samples/OPOS_AYTO_LEON_INFORMATICA_B.pdf")),
 ]
 
-MAX_UNITS = 40
+MAX_NODES = 60
 
-UNIT_PATTERN = re.compile(
-    r"^(?P<marker>(?:Tema\s+\d+|\d+(?:\.\d+)*[.)]?|[IVXLCDM]+(?:\.\d+)*[.)]?))\s+(?P<title>.+)$",
+# A structural marker is deliberately broader than a knowledge unit. The
+# experiment first tries to recover document hierarchy and only later decides
+# which nodes are relevant to the knowledge model.
+TEMA_PATTERN = re.compile(r"^Tema\s+(?P<number>\d+)\s*[.\-–—:]?\s*(?P<title>.+)$", re.IGNORECASE)
+NUMERIC_PATTERN = re.compile(
+    r"^(?P<marker>\d+(?:\.\d+)*[.)])\s*(?P<title>.+)$"
+)
+ROMAN_PATTERN = re.compile(
+    r"^(?P<marker>[IVXLCDM]+(?:\.\d+)*[.)])\s*(?P<title>.+)$",
     re.IGNORECASE,
 )
-PARENT_PATTERN = re.compile(
-    r"^(?:[IVXLCDM]+(?:\.\d+)*[.)]?|[A-Z](?:\.\d+)*[.)]?)\s+.+$",
-    re.IGNORECASE,
+LETTER_PATTERN = re.compile(
+    r"^(?P<marker>[A-Z](?:\.\d+)*[.)])\s*(?P<title>.+)$"
 )
 PROGRAMME_PATTERN = re.compile(r"\bprograma(?:\s+de\s+materias)?\b", re.IGNORECASE)
 
 
 @dataclass(frozen=True)
-class KnowledgeUnitCandidate:
+class StructuralMarker:
     line_number: int
     marker: str
     title: str
-    parent: str | None
+    kind: str
+    level: int
     continuation: tuple[str, ...]
+    parent_index: int | None = None
 
 
-class _InMemorySourceRepository:
-    def save(self, source):
-        return source
+def _normalise_marker(marker: str) -> str:
+    return marker.rstrip(".")
+
+
+def _marker_level(marker: str, kind: str) -> int:
+    if kind == "topic":
+        return 3
+
+    normalised = _normalise_marker(marker)
+    parts = normalised.split(".")
+
+    if kind == "roman":
+        # Roman top-level sections (I., II.) and their descendants (II.1.).
+        return 1 + max(0, len(parts) - 1)
+
+    if kind == "letter":
+        return 2 + max(0, len(parts) - 1)
+
+    return len(parts)
+
+
+def _match_marker(line: str) -> tuple[str, str, str, int] | None:
+    match = TEMA_PATTERN.match(line)
+    if match:
+        marker = f"Tema {match.group('number')}"
+        return marker, match.group("title").strip(), "topic", 3
+
+    for pattern, kind in (
+        (ROMAN_PATTERN, "roman"),
+        (LETTER_PATTERN, "letter"),
+        (NUMERIC_PATTERN, "numeric"),
+    ):
+        match = pattern.match(line)
+        if match:
+            marker = match.group("marker")
+            return marker, match.group("title").strip(), kind, _marker_level(marker, kind)
+
+    return None
 
 
 def _is_programme_marker(line: str) -> bool:
     return bool(PROGRAMME_PATTERN.search(line))
 
 
-def _is_parent_candidate(line: str) -> bool:
+def _looks_like_parent_heading(line: str) -> bool:
     if _is_programme_marker(line):
         return True
-    return bool(PARENT_PATTERN.match(line))
+    if len(line) > 180:
+        return False
+    return bool(re.fullmatch(r"[A-ZÁÉÍÓÚÜÑ][A-ZÁÉÍÓÚÜÑ\s,.-]{4,}", line))
 
 
-def _extract_units(lines: list[str]) -> list[KnowledgeUnitCandidate]:
-    candidates: list[KnowledgeUnitCandidate] = []
-    current_parent: str | None = None
+def _extract_markers(lines: list[str]) -> list[StructuralMarker]:
+    markers: list[StructuralMarker] = []
 
-    for index, line in enumerate(lines):
-        match = UNIT_PATTERN.match(line)
-        if not match:
-            if _is_parent_candidate(line) and len(line) <= 180:
-                current_parent = line
+    index = 0
+    while index < len(lines):
+        line = lines[index]
+        matched = _match_marker(line)
+
+        if matched is None:
+            index += 1
             continue
 
-        title = match.group("title").strip()
+        marker, title, kind, level = matched
         continuation: list[str] = []
         next_index = index + 1
+
         while next_index < len(lines):
             next_line = lines[next_index]
-            if UNIT_PATTERN.match(next_line) or _is_parent_candidate(next_line):
+            if _match_marker(next_line) or _looks_like_parent_heading(next_line):
                 break
             continuation.append(next_line)
             next_index += 1
 
-        candidates.append(
-            KnowledgeUnitCandidate(
+        markers.append(
+            StructuralMarker(
                 line_number=index + 1,
-                marker=match.group("marker"),
+                marker=marker,
                 title=title,
-                parent=current_parent,
+                kind=kind,
+                level=level,
                 continuation=tuple(continuation),
             )
         )
+        index = next_index
 
-        if len(candidates) >= MAX_UNITS:
-            break
-
-    return candidates
+    return markers
 
 
-def _print_units(units: list[KnowledgeUnitCandidate]) -> None:
-    print(f"\nKnowledge unit candidates: {len(units)} shown (max {MAX_UNITS})")
-    for number, unit in enumerate(units, start=1):
-        print(f"\n  [{number}] line {unit.line_number}: {unit.marker}")
-        print(f"      title: {unit.title}")
-        print(f"      parent: {unit.parent or '<none>'}")
-        if unit.continuation:
-            print(f"      continuation lines: {len(unit.continuation)}")
-            for continuation in unit.continuation[:2]:
-                print(f"        + {continuation}")
-            if len(unit.continuation) > 2:
-                print(f"        + ... {len(unit.continuation) - 2} more")
+def _build_hierarchy(markers: list[StructuralMarker]) -> list[StructuralMarker]:
+    result: list[StructuralMarker] = []
+    stack: list[int] = []
+
+    for marker in markers:
+        while stack and result[stack[-1]].level >= marker.level:
+            stack.pop()
+
+        parent_index = stack[-1] if stack else None
+        node = StructuralMarker(
+            line_number=marker.line_number,
+            marker=marker.marker,
+            title=marker.title,
+            kind=marker.kind,
+            level=marker.level,
+            continuation=marker.continuation,
+            parent_index=parent_index,
+        )
+        result.append(node)
+        stack.append(len(result) - 1)
+
+    return result
 
 
-def _print_marker_summary(lines: list[str]) -> None:
-    numbered = sum(bool(UNIT_PATTERN.match(line)) for line in lines)
-    programmes = sum(bool(PROGRAMME_PATTERN.search(line)) for line in lines)
-    parents = sum(_is_parent_candidate(line) for line in lines)
+def _print_marker_summary(lines: list[str], markers: list[StructuralMarker]) -> None:
+    programmes = sum(_is_programme_marker(line) for line in lines)
+    by_kind = {}
+    for marker in markers:
+        by_kind[marker.kind] = by_kind.get(marker.kind, 0) + 1
+
     print("\nStructural marker summary:")
     print(f"  programme markers: {programmes}")
-    print(f"  unit markers: {numbered}")
-    print(f"  parent-like markers: {parents}")
+    print(f"  structural markers: {len(markers)}")
+    print("  by kind: " + ", ".join(f"{kind}={count}" for kind, count in sorted(by_kind.items())))
+
+
+def _print_tree(markers: list[StructuralMarker]) -> None:
+    print(f"\nStructural hierarchy: {min(len(markers), MAX_NODES)} shown (max {MAX_NODES})")
+
+    for index, marker in enumerate(markers[:MAX_NODES]):
+        parent = markers[marker.parent_index].marker if marker.parent_index is not None else "<root>"
+        indent = "  " * max(0, marker.level - 1)
+        print(f"{indent}- [{marker.kind}] {marker.marker} {marker.title}")
+        print(f"{indent}  line={marker.line_number} level={marker.level} parent={parent}")
+
+        if marker.continuation:
+            preview = marker.continuation[0]
+            print(f"{indent}  continuation: {preview[:140]}")
 
 
 def inspect_document(name: str, path: Path) -> None:
+    class _InMemorySourceRepository:
+        def save(self, source):
+            return source
+
     source = import_pdf_source(path, _InMemorySourceRepository())
     text = extract_pdf_text(source)
     lines = [line.strip() for line in text.splitlines() if line.strip()]
@@ -134,8 +210,9 @@ def inspect_document(name: str, path: Path) -> None:
         return
 
     print("Extraction status: TEXT")
-    _print_marker_summary(lines)
-    _print_units(_extract_units(lines))
+    markers = _build_hierarchy(_extract_markers(lines))
+    _print_marker_summary(lines, markers)
+    _print_tree(markers)
 
 
 def main() -> None:
