@@ -7,7 +7,7 @@
 | Project | Atanor |
 | Document | BACKLOG |
 | Status | 🟢 Active |
-| Version | 3.7 |
+| Version | 3.8 |
 | Last Updated | 2026-08-18 |
 | Audience | Contributors and Developers |
 
@@ -17,17 +17,17 @@
 
 | Metric | Value |
 | --- | ---: |
-| Total Tasks | 44 |
+| Total Tasks | 45 |
 | Pending | 1 |
 | In Progress | 0 |
-| Completed | 36 |
+| Completed | 37 |
 | Deferred | 3 |
 | Cancelled | 5 |
 | Blocked | 0 |
 
 **Current Epic:** Epic L · Knowledge Construction
 
-**Current Task:** AT-045 · Contextual Hierarchy Inference for Extracted Document Markers
+**Current Task:** AT-046 · Integrate Document Structure Analysis into the Real Processing Pipeline
 
 ---
 
@@ -180,53 +180,66 @@ Objective: progressively transform acquired authoritative source material into t
 
 AT-044 validated deterministic structural marker detection and contextual hierarchy construction against the BOE, BOJA and Archiveros samples. The analyzer recognizes heterogeneous marker families (`numeric`, `roman`, `letter`, `topic`) and builds useful hierarchy for the observed structures.
 
-The iteration explicitly accepts that the analyzer is heuristic rather than complete. In particular, internal enumerations such as `1`, `2`, `c`, `d` must not incorrectly become top-level document sections, while explicit nested markers and new top-level sequences must reset hierarchy context correctly. These behaviors are now covered by `tests/test_document_structure.py`.
+The iteration explicitly accepts that the analyzer is heuristic rather than complete. In particular, internal enumerations such as `1`, `2`, `c`, `d` must not incorrectly become top-level document sections, while explicit nested markers and new top-level sequences must reset hierarchy context correctly. These behaviors are covered by `tests/test_document_structure.py`.
 
 The Ayuntamiento de León sample remains `IMAGE_ONLY_OR_EMPTY` and structural analysis is skipped upstream; OCR is still outside scope.
 
-The complete test suite passes with no regressions after correcting `_build_hierarchy()` to prevent nested enumeration context from leaking into subsequent top-level sequences.
-
 AT-044 is closed. No further structural sophistication is planned unless a regression or a concrete product workflow demonstrates the need.
 
-### AT-045 · Contextual Hierarchy Inference for Extracted Document Markers — 🔴 Pending
+### AT-045 · Validate Contextual Hierarchy Inference — ✅ Completed
 
-**Hypothesis:** marker detection and simple marker-depth rules are not sufficient to reliably identify the meaningful document hierarchy needed by the next knowledge-extraction experiment. The same marker family can represent different semantic roles depending on its surrounding context. For example, a sequence such as `1`, `2`, `c`, `d` may be an internal enumeration rather than a new document section, while an explicit marker such as `6.10.2` establishes genuine nesting.
+**Goal:** determine whether local structural context materially improves the separation between meaningful sections and internal enumerations across the existing real documents.
 
-**Experiment:** using the current AT-044 marker output as the only structural input, run a focused comparison between the existing hierarchy and a contextual inference strategy. The experiment should answer one question: **does adding local structural context materially improve the separation between meaningful sections and internal enumerations across the existing real documents?**
+AT-045 used the four current PDF samples as an isolated experiment and classified extracted markers as `STRUCTURAL` or `ENUMERATION` before hierarchy construction. The experiment established that the distinction is useful and can be implemented with a small deterministic rule set based on local sequence and hierarchy context.
 
-The experiment should inspect, at minimum:
+Validated behaviors include:
 
-- the BOE sample, including the observed `6 → 6.10 → 6.10.2 → 1/2/c/d → 7` transition;
-- the BOJA sample, including mixed numeric/roman nesting and `2.1 → 2.1.1` structures;
-- the Archiveros programme, where `Tema N` markers form a regular topic sequence.
+- simple numeric sequences can represent internal enumerations rather than new sections;
+- numeric and letter markers can participate in the same local enumeration;
+- an enumeration may begin after a nested structural marker;
+- an explicit nested structural marker terminates the previous enumeration context;
+- a new top-level sequence does not inherit a previous nested enumeration context;
+- raw marker information and continuation text remain preserved;
+- image-only documents remain outside structural analysis.
 
-Compare the current hierarchy with the proposed contextual inference and record concrete differences rather than relying only on aggregate counts. The output should make it possible to identify false nesting, missed nesting and correct nesting.
+The behavior is covered by `tests/test_document_structure.py`. The experiment reached **9/9 focused tests and 99/99 tests in the complete suite** with no regressions.
 
-**Expected learning:** determine whether local context is sufficient to make the structural output materially more useful for the next extraction step, and identify the smallest rule set that produces that improvement. If the experiment shows no meaningful improvement, stop rather than adding complexity.
+The experiment deliberately did not introduce OCR, AI/NLP, confidence scoring, universal parsing or a new domain model. Its conclusion is that the next justified step is not more exploratory hierarchy sophistication, but integration of the validated structural analysis into the real application processing path.
+
+AT-045 is closed.
+
+### AT-046 · Integrate Document Structure Analysis into the Real Processing Pipeline — 🔴 Pending
+
+**Hypothesis:** the structural analysis validated in AT-044/AT-045 becomes materially useful only when it is a real application capability consumed by the processing workflow, rather than an isolated experiment.
+
+**Goal:** promote the minimum validated structural-analysis behavior into the application pipeline so that text extracted from a supported PDF can be transformed into an inspectable structured representation before downstream requirement/knowledge extraction.
 
 **Mini-MVP scope:**
 
-- Keep marker detection unchanged unless the experiment exposes a concrete detection defect.
-- Treat hierarchy inference as a distinct, replaceable stage after marker detection.
-- Use only deterministic local/contextual evidence already present in the extracted document.
-- Preserve raw markers and make inferred relationships inspectable.
-- Add regression tests only for behaviors accepted as part of the validated structural contract.
-- Validate against all three text-based real samples before considering the iteration complete.
-- Produce structural context suitable for the next knowledge-extraction experiment, without generating canonical Knowledge.
+- Reuse the existing PDF text-extraction path; do not redesign source import or persistence.
+- Introduce the smallest application-level structural-analysis component justified by AT-045.
+- Keep marker extraction, classification and hierarchy inference as explicit processing stages where that separation improves testability.
+- Preserve raw marker data, marker classification, hierarchy level, parent relationship and continuation text in the processing result.
+- Feed the resulting structural representation into the next downstream processing stage without yet changing the domain model for `Requirement`, `KnowledgeNeed` or `Knowledge`.
+- Provide a minimal application/CLI inspection path so the real pipeline can be observed on the existing BOE, BOJA and Archiveros samples.
+- Preserve the current image-only behavior: scanned PDFs remain unsupported and must not trigger OCR implicitly.
+- Add focused unit tests for the production structural-analysis component and at least one application-level integration test proving that extracted PDF text reaches the structural representation.
+- Run the complete regression suite before closing the task.
 
-**Explicitly outside AT-045:**
+**Explicitly outside AT-046:**
 
 - OCR or scanned-PDF support.
-- Semantic AI/NLP or external AI services.
+- AI/NLP or external AI services.
+- New semantic document models in the domain layer.
 - Universal document parsing.
-- Confidence scoring as a domain feature.
-- Canonical Knowledge construction or semantic validation.
+- Automatic canonical Knowledge construction.
 - Candidate-facing UI.
-- Generalization to document formats not represented by the current evidence.
+- Persistence of the full structural tree unless a concrete downstream requirement demonstrates that it is necessary.
+- Additional hierarchy heuristics not supported by the AT-045 evidence.
 
 **Completion criterion:**
 
-The experiment demonstrates either (a) a materially better contextual hierarchy on the supported samples, backed by focused tests and a full-suite regression run, or (b) that additional hierarchy sophistication is not justified by the available evidence. In the latter case, the task should stop without introducing unnecessary complexity and the next mini-MVP should be selected from the resulting knowledge-extraction needs.
+A supported text-based PDF can pass through the real application processing path and produce the validated structural representation, observable through a minimal inspection path and covered by focused tests plus the complete regression suite. The existing requirement/knowledge domain behavior remains unchanged. If implementation reveals that a new abstraction is required, its necessity must be demonstrated by the concrete pipeline rather than introduced speculatively.
 
 ---
 
@@ -248,14 +261,14 @@ The experiment demonstrates either (a) a materially better contextual hierarchy 
 | TD-012 | Knowledge extraction quality | Current extraction may include incidental references and is not semantically complete. | Candidate-facing knowledge requires trustworthy, structured or complete knowledge. |
 | TD-013 | Knowledge provenance and quality metadata | Rich freshness/evidence/confidence semantics deferred. | Acquired knowledge is presented directly to candidates or maintained over time. |
 
-No debt item currently requires a standalone cleanup task before AT-045.
+No debt item currently requires a standalone cleanup task before AT-046.
 
 ---
 
 # Active Backlog Summary
 
-The foundation, requirement discovery, structured discovery, requirement scope/knowledge-need modeling, coverage evaluation, documentation re-evaluation, first candidate workflow, automatic requirement resolution, user-oriented requirement projection, candidate validation, knowledge coverage validation, knowledge acquisition prototype and structural document analysis are complete.
+The foundation, requirement discovery, structured discovery, requirement scope/knowledge-need modeling, coverage evaluation, documentation re-evaluation, first candidate workflow, automatic requirement resolution, user-oriented requirement projection, candidate validation, knowledge coverage validation, knowledge acquisition prototype, structural document analysis and contextual hierarchy inference are complete.
 
-**Current status: 36 completed tasks, 1 pending, 3 deferred, 5 cancelled, 0 in progress.**
+**Current status: 37 completed tasks, 1 pending, 3 deferred, 5 cancelled, 0 in progress.**
 
-AT-044 is closed with no regression. **AT-045 is the next mini-MVP**, selected directly from the evidence produced by AT-043 and AT-044: test whether contextual hierarchy inference materially improves the structural context available for knowledge extraction, and implement only the smallest improvement justified by that experiment.
+AT-045 is closed after validating the `STRUCTURAL / ENUMERATION` distinction with 99/99 tests passing. **AT-046 is now the active mini-MVP**, selected directly from that evidence: promote the validated structural analysis into the real application processing pipeline, keeping the implementation minimal and the domain model unchanged.
