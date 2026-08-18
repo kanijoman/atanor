@@ -7,7 +7,7 @@
 | Project | Atanor |
 | Document | ARCHITECTURE |
 | Status | 🟢 Active |
-| Version | 0.8 |
+| Version | 0.9 |
 | Last Updated | 2026-08-18 |
 | Audience | Contributors and Developers |
 
@@ -40,7 +40,9 @@ Persist Source
     ↓
 Text Extraction
     ↓
-Requirement Discovery
+Document Structure Analysis
+    ↓
+Requirement Discovery / Knowledge Extraction
     ↓
 Requirement Mention
     ↓
@@ -63,6 +65,8 @@ Coverage
 
 The source workflow has been validated against real BOE and Junta de Castilla y León samples. Requirement Scope, Knowledge Need and initial Coverage have been validated through domain and persistence tests. AT-043 additionally validated a minimal autonomous acquisition and deterministic relevance-extraction path using a BOE sample.
 
+AT-044 and AT-045 validated a deterministic document-structure analysis stage for supported text-based PDFs. The stage currently separates marker detection, local classification (`STRUCTURAL` / `ENUMERATION`) and hierarchy construction. This representation is an application processing result, not a new domain concept.
+
 The acquisition/extraction path is currently a prototype. It must not be interpreted as proof that arbitrary acquired material is complete, semantically valid or canonical Knowledge.
 
 # Architectural Layers
@@ -74,6 +78,24 @@ Provides adapters for application use cases. The current implementation uses a m
 ## Application Layer
 
 Contains use cases that coordinate validation, domain operations, persistence, transactions and document processing. Source- and format-specific parsing belongs here or in dedicated integration components, not in domain concepts.
+
+The document-processing path now has an explicit structural-analysis boundary:
+
+```text
+Extracted Text
+    ↓
+Marker Detection
+    ↓
+Marker Classification
+    ↓
+Hierarchy Construction
+    ↓
+Structured Document Representation
+    ↓
+Downstream Requirement / Knowledge Extraction
+```
+
+The first three stages are deterministic and evidence-driven. AT-045 established that local context is sufficient for the currently observed distinction between meaningful structural markers and internal enumerations. The implementation must remain replaceable and must not be treated as a universal document parser.
 
 The current application flow distinguishes three stages during knowledge acquisition:
 
@@ -111,6 +133,8 @@ Knowledge
 Coverage
 ```
 
+Document structure remains outside this model. Structural markers, classifications, hierarchy levels, parent relationships and continuation text are processing information used to improve downstream extraction; they are not currently domain entities.
+
 ### Requirement
 
 Represents a requirement in the application domain. Provenance remains explicit through its source relationship.
@@ -139,6 +163,8 @@ Semantic matching, partial coverage and depth-aware coverage are not currently i
 
 The persistence layer uses SQLAlchemy with SQLite and Alembic. Persistence must not make domain concepts dependent on SQLAlchemy or SQLite-specific behavior. Requirement scopes and knowledge needs are persisted as part of the requirement aggregate.
 
+The current structural-analysis representation is not persisted. Persistence should be introduced only if a downstream workflow demonstrates a concrete need for structural-tree storage, repeatability or auditability.
+
 # Source and Requirement Discovery
 
 Requirement Discovery is a validated capability rather than a universal document parser.
@@ -148,12 +174,18 @@ Source
     ↓
 Document Structure Detection
     ↓
+Marker Classification
+    ↓
+Hierarchy Construction
+    ↓
 Requirement Mention
     ↓
 Requirement
 ```
 
 Real samples demonstrate different document structures. The current implementation recognizes only the minimum deterministic structures justified by those samples. `Tema` identifiers and other structured identifiers are preserved as text and are not assigned semantic meaning.
+
+The current validated structural representation preserves raw marker information, marker classification, hierarchy level, parent relationship and continuation text. `STRUCTURAL` and `ENUMERATION` are processing classifications; they do not imply domain semantics beyond the validated hierarchy behavior.
 
 Scanned PDFs remain outside the supported extraction boundary; OCR is future work.
 
@@ -234,6 +266,8 @@ validated requirement
     ↓
 tests/
 ```
+
+AT-045 demonstrated this transition explicitly: the structural distinction was first evaluated in `experiments/`, then accepted behaviors were encoded in focused tests. The experiment itself remains exploratory; the validated behavior is now an input to the real application pipeline.
 
 Experiments may expose raw extracted content, sizes, intermediate representations or other implementation details. Tests should verify only behavior that has become part of the accepted contract. This allows uncertain acquisition and extraction approaches to evolve without creating brittle regression expectations.
 
