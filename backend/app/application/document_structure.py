@@ -24,11 +24,11 @@ NUMERIC_PATTERN = re.compile(
     r"^(?P<marker>\d+(?:\s*\.\s*\d+)*\s*[.)]?)(?:\s+)(?P<title>.+)$"
 )
 ROMAN_PATTERN = re.compile(
-    r"^(?P<marker>[IVXLCDM]+(?:\s*\.\s*\d+)*\s*[.)]?)\s+(?P<title>.+)$",
-    re.IGNORECASE,
+    r"^(?P<marker>[IVXLCDM]+(?:\s*\.\s*\d+)*\s*[.)]?)\s+(?P<title>.+)$"
 )
 LETTER_PATTERN = re.compile(
-    r"^(?P<marker>[A-Z](?:\s*\.\s*\d+)*\s*[.)]?)\s+(?P<title>.+)$"
+    r"^(?P<marker>[A-Z](?:\s*\.\s*\d+)*\s*[.)]?)\s+(?P<title>.+)$",
+    re.IGNORECASE,
 )
 
 
@@ -80,16 +80,22 @@ def extract_structure_markers(lines: list[str]) -> list[DocumentStructureMarker]
     """Extract structural markers and their immediate continuation text."""
     markers: list[DocumentStructureMarker] = []
     index = 0
+    pending_continuation: list[str] = []
 
     while index < len(lines):
         line = lines[index]
         matched = _match_marker(line)
         if matched is None:
+            if _looks_like_parent_heading(line):
+                pending_continuation = []
+            else:
+                pending_continuation.append(line)
             index += 1
             continue
 
         marker, title, kind, level = matched
-        continuation: list[str] = []
+        continuation: list[str] = pending_continuation
+        pending_continuation = []
         next_index = index + 1
 
         while next_index < len(lines):
