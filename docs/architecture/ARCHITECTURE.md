@@ -7,8 +7,8 @@
 | Project | Atanor |
 | Document | ARCHITECTURE |
 | Status | 🟢 Active |
-| Version | 0.7 |
-| Last Updated | 2026-08-13 |
+| Version | 0.8 |
+| Last Updated | 2026-08-18 |
 | Audience | Contributors and Developers |
 
 ---
@@ -26,6 +26,8 @@ This document describes the conceptual and validated technical architecture of A
 - Requirement expressions remain distinguishable from canonical requirements.
 - Persistence technology is an implementation detail.
 - New abstractions require validated product needs.
+- Acquired source material is not automatically canonical Knowledge.
+- Exploratory experiments may inspect implementation behavior without becoming product contracts.
 
 # Current Validated Architecture
 
@@ -48,10 +50,20 @@ Requirement Scope
     ↓
 Knowledge Need
     ↓
+Knowledge Acquisition
+    ↓
+Source Material
+    ↓
+Relevant Content
+    ↓
+Knowledge
+    ↓
 Coverage
 ```
 
-The source workflow has been validated against real BOE and Junta de Castilla y León samples. Requirement Scope, Knowledge Need and initial Coverage have been validated through domain and persistence tests.
+The source workflow has been validated against real BOE and Junta de Castilla y León samples. Requirement Scope, Knowledge Need and initial Coverage have been validated through domain and persistence tests. AT-043 additionally validated a minimal autonomous acquisition and deterministic relevance-extraction path using a BOE sample.
+
+The acquisition/extraction path is currently a prototype. It must not be interpreted as proof that arbitrary acquired material is complete, semantically valid or canonical Knowledge.
 
 # Architectural Layers
 
@@ -62,6 +74,22 @@ Provides adapters for application use cases. The current implementation uses a m
 ## Application Layer
 
 Contains use cases that coordinate validation, domain operations, persistence, transactions and document processing. Source- and format-specific parsing belongs here or in dedicated integration components, not in domain concepts.
+
+The current application flow distinguishes three stages during knowledge acquisition:
+
+```text
+Knowledge Need
+    ↓
+Acquisition strategy
+    ↓
+Source material
+    ↓
+Extraction strategy
+    ↓
+Relevant content / candidate Knowledge
+```
+
+Acquisition and extraction strategies are replaceable implementation mechanisms. The domain does not assume BOE structure, a particular retrieval technology or a particular extraction algorithm.
 
 ## Domain Layer
 
@@ -99,6 +127,8 @@ Represents a unit of knowledge coverage required by a scope. It is valid even wh
 
 Represents reusable knowledge that may satisfy one or more Knowledge Needs. The definitive canonical Knowledge model remains intentionally limited until concrete requirements justify further design.
 
+An external document or extracted text is not automatically equivalent to canonical Knowledge. This distinction is particularly important after AT-043: the BOE experiment demonstrated useful relevant context but also incidental references.
+
 ### Coverage
 
 Represents the result of comparing a Knowledge Need with available Knowledge. The initial model supports only `COVERED` and `MISSING`. Coverage is derived and is not an independent persisted entity. Adding Knowledge may change Coverage without changing the Requirement Scope or Knowledge Need.
@@ -129,6 +159,38 @@ Scanned PDFs remain outside the supported extraction boundary; OCR is future wor
 
 Requirement expression is not requirement identity. Semantic entity resolution is not currently implemented.
 
+# Knowledge Acquisition and Extraction Boundary
+
+AT-043 established the first application-level knowledge acquisition path. Its architecture intentionally separates:
+
+```text
+Knowledge Need
+      ↓
+Acquisition
+      ↓
+External Source Material
+      ↓
+Relevance Extraction
+      ↓
+Candidate Knowledge
+```
+
+The first implementation uses the BOE as an experimental source and a deterministic literal/context extraction strategy. This is evidence for the architecture of the workflow, not a commitment to BOE-only acquisition or literal matching as the final solution.
+
+Provider-specific document structures must remain outside the domain model. Different BOE documents, and different providers, may expose different layouts or levels of structure. A source adapter may exploit known structure when evidence justifies it, but the domain must continue to represent `Source`, `KnowledgeNeed` and `Knowledge` independently.
+
+The current extraction strategy may return relevant context mixed with incidental references. Therefore the following distinction must remain explicit:
+
+```text
+Source Material
+      ≠
+Relevant Content
+      ≠
+Validated / Canonical Knowledge
+```
+
+Semantic validation, completeness assessment, richer provenance, freshness and quality scoring remain future capabilities until a concrete candidate-facing workflow requires them.
+
 # Requirement Scope Boundary
 
 The current validated progression is:
@@ -143,6 +205,8 @@ Knowledge Need
 Coverage
 ```
 
+The acquisition prototype extends the implementation around `KnowledgeNeed` without changing this domain boundary.
+
 This layer deliberately does not construct the complete knowledge corpus. The following remain outside the current architecture:
 
 - semantic scope discovery;
@@ -154,6 +218,24 @@ This layer deliberately does not construct the complete knowledge corpus. The fo
 - learning paths and assessments.
 
 A richer Knowledge Blueprint may become useful later if future requirements need confidence, evidence requirements, alternative interpretations or unresolved inference. It is not currently required as an independent domain entity.
+
+# Experiments and Tests
+
+Exploratory experiments are kept separate from automated tests:
+
+```text
+experiments/
+    ↓
+observe / measure / compare
+    ↓
+product or engineering insight
+    ↓
+validated requirement
+    ↓
+tests/
+```
+
+Experiments may expose raw extracted content, sizes, intermediate representations or other implementation details. Tests should verify only behavior that has become part of the accepted contract. This allows uncertain acquisition and extraction approaches to evolve without creating brittle regression expectations.
 
 # Evolution Strategy
 
