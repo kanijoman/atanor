@@ -1,5 +1,7 @@
 from pathlib import Path
 
+from pypdf import PdfReader
+
 from app.application.pdf_extraction import extract_pdf_text
 from app.application.source import import_pdf_source
 from app.domain.models import KnowledgeNeed
@@ -42,12 +44,13 @@ def inspect_document(name: str, path: Path, topic: str) -> None:
     text = extract_pdf_text(source)
     lines = text.splitlines()
     non_empty_lines = [line for line in lines if line.strip()]
+    pages = len(PdfReader(path).pages)
 
     print("\n" + "=" * 80)
     print(name)
     print("=" * 80)
     print(f"File: {path}")
-    print(f"Pages: {source.metadata.get('pages') if source.metadata else 'unknown'}")
+    print(f"Pages: {pages}")
     print(f"Characters: {len(text)}")
     print(f"Lines: {len(lines)}")
     print(f"Non-empty lines: {len(non_empty_lines)}")
