@@ -195,7 +195,10 @@ def _classify_markers(markers: list[StructuralMarker]) -> list[StructuralMarker]
                 expected_numeric = None
 
         previous = result[-1] if result else None
-        if numeric_value == 1 and previous is not None and previous.level >= 3:
+        # A simple numeric "1" immediately following a nested structural
+        # marker is the common beginning of an enumeration. Level 2 is also
+        # valid here (for example, 6.10 -> 1 -> 2 -> c -> d).
+        if numeric_value == 1 and previous is not None and previous.level >= 2:
             enumeration_level = previous.level + 1
             expected_numeric = 2
             result.append(_with_classification(marker, "ENUMERATION"))
@@ -207,6 +210,11 @@ def _classify_markers(markers: list[StructuralMarker]) -> list[StructuralMarker]
 
 
 def _build_hierarchy(markers: list[StructuralMarker]) -> list[StructuralMarker]:
+    # Keep this helper convenient for the experiment/tests: callers may pass
+    # raw extracted markers or already-classified markers.
+    if any(marker.classification == "STRUCTURAL" for marker in markers):
+        markers = _classify_markers(markers)
+
     result: list[StructuralMarker] = []
     stack: list[int] = []
     enumeration_level: int | None = None
