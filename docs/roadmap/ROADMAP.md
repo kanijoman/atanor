@@ -7,8 +7,8 @@
 | Project      | Atanor                      |
 | Document     | ROADMAP                     |
 | Status       | 🟢 Active                   |
-| Version      | 0.7                         |
-| Last Updated | 2026-08-14                  |
+| Version      | 0.8                         |
+| Last Updated | 2026-08-18                  |
 | Audience     | Contributors and Developers |
 
 ---
@@ -45,6 +45,22 @@ Real validation
 Learning
     ↓
 Refinement
+```
+
+Exploratory work follows a complementary loop:
+
+```text
+Hypothesis
+    ↓
+Experiment
+    ↓
+Observation
+    ↓
+Product insight
+    ↓
+Validated requirement
+    ↓
+Implementation / test
 ```
 
 The roadmap therefore evolves from validated product capabilities rather than from a predetermined architectural target.
@@ -119,11 +135,11 @@ The stage is covered by domain, persistence and real-sample regression tests.
 
 ## Stage 5 · First User-Validated MVP Workflow
 
-**Status: 🟢 In Progress**
+**Status: 🟢 Completed**
 
-Turn the validated requirement-processing capabilities into an observable product experience and use the resulting user feedback to determine what Atanor needs next.
+Turned the validated requirement-processing capabilities into an observable product experience and used real-sample evidence to determine what Atanor needs next.
 
-Current validated capability:
+Validated capability:
 
 ```text
 Convocatoria
@@ -137,29 +153,45 @@ Automatic Resolution
 User-Oriented Study Requirements
 ```
 
-AT-041 is the next step: expose this output through the smallest meaningful application interface so that a real user can inspect and evaluate it.
+The candidate experience is intentionally minimal. Atanor does not ask the candidate to understand or validate internal semantic decisions.
 
-The goal of this stage is **not** to complete the architecture or the learning platform. It is to establish whether Atanor's first user-visible output is useful and to let that evidence drive subsequent product and technical decisions.
-
-Potential next capabilities after validation may include improving requirement quality, adding contextual information, identifying missing knowledge, constructing knowledge or beginning study interactions. Their priority must be determined by observed user needs rather than assumed in advance.
+The stage also established an important product principle: Atanor, rather than the candidate, owns the responsibility for supplying knowledge required for study.
 
 ## Stage 6 · Knowledge Construction
 
-**Status: ⚪ Future**
+**Status: 🟢 Prototype Validated / Next Increment Pending**
 
-Build the capability to transform validated Knowledge Needs into reusable canonical Knowledge when product validation demonstrates that this is the next valuable step.
+Build the capability to transform validated Knowledge Needs into reusable knowledge when product validation demonstrates that this is the next valuable step.
+
+AT-043 established the first autonomous acquisition and extraction path:
+
+```text
+Knowledge Need
+    ↓
+Knowledge Acquisition
+    ↓
+External Source Material
+    ↓
+Relevant Content
+    ↓
+Candidate Knowledge
+```
+
+The BOE experiment demonstrated that a deterministic strategy can substantially reduce a real source to potentially relevant context. It did not yet establish semantic completeness, canonical knowledge validation or a universal source template.
 
 Potential capabilities include:
 
 - identify suitable knowledge sources;
 - acquire or ingest source material;
+- detect source/document structure without embedding provider assumptions in the domain;
 - extract candidate knowledge;
+- distinguish relevant content from incidental references;
 - validate knowledge against evidence;
 - establish provenance;
 - construct reusable canonical Knowledge;
 - reuse existing Knowledge where it satisfies a need.
 
-These capabilities remain intentionally provisional. The first implementation step should be derived from the user workflow validated in Stage 5 rather than from the complete Knowledge model anticipated today.
+These capabilities remain intentionally provisional. The next implementation step should be derived from the evidence of AT-043 rather than from the complete Knowledge model anticipated today.
 
 ## Stage 7 · Knowledge Retrieval and Assistance
 
