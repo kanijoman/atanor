@@ -22,14 +22,14 @@ MAX_NODES = 60
 # which nodes are relevant to the knowledge model.
 TEMA_PATTERN = re.compile(r"^Tema\s+(?P<number>\d+)\s*[.\-–—:]?\s*(?P<title>.+)$", re.IGNORECASE)
 NUMERIC_PATTERN = re.compile(
-    r"^(?P<marker>\d+(?:\s*\.\s*\d+)*\s*[.)])\s*(?P<title>.+)$"
+    r"^(?P<marker>\d+(?:\s*\.\s*\d+)*\s*[.)]?)(?:\s+)(?P<title>.+)$"
 )
 ROMAN_PATTERN = re.compile(
-    r"^(?P<marker>[IVXLCDM]+(?:\s*\.\s*\d+)*\s*[.)])\s*(?P<title>.+)$",
+    r"^(?P<marker>[IVXLCDM]+(?:\s*\.\s*\d+)*\s*[.)]?)\s+(?P<title>.+)$",
     re.IGNORECASE,
 )
 LETTER_PATTERN = re.compile(
-    r"^(?P<marker>[A-Z](?:\s*\.\s*\d+)*\s*[.)])\s*(?P<title>.+)$"
+    r"^(?P<marker>[A-Z](?:\s*\.\s*\d+)*\s*[.)]?)\s+(?P<title>.+)$"
 )
 PROGRAMME_PATTERN = re.compile(r"\bprograma(?:\s+de\s+materias)?\b", re.IGNORECASE)
 
@@ -216,20 +216,28 @@ def _build_hierarchy(markers: list[StructuralMarker]) -> list[StructuralMarker]:
         effective_level = marker.level
 
         if marker.classification == "ENUMERATION":
+            # Enumeration items are content inside the preceding structural
+            # marker. Their source marker level is therefore not their
+            # effective hierarchy level.
             if enumeration_level is None:
-                enumeration_level = marker.level
+                previous = result[-1] if result else None
+                if previous is None:
+                    enumeration_level = marker.level
+                else:
+                    enumeration_level = previous.level + 1
             effective_level = enumeration_level
         elif enumeration_level is not None:
-            numeric_value = _simple_numeric_value(marker)
-            if numeric_value is not None and expected_numeric == numeric_value:
-                effective_level = enumeration_level
-                expected_numeric = numeric_value + 1
-            else:
-                enumeration_level = None
-                expected_numeric = None
+            # A structural marker explicitly starts a new hierarchy context.
+            # Do not let the previous enumeration leak into it.
+            enumeration_level = None
+            expected_numeric = None
 
         if marker.classification == "ENUMERATION" and _simple_numeric_value(marker) == 1:
             expected_numeric = 2
+        elif marker.classification == "ENUMERATION":
+            numeric_value = _simple_numeric_value(marker)
+            if numeric_value is not None and expected_numeric == numeric_value:
+                expected_numeric = numeric_value + 1
 
         while stack and result[stack[-1]].level >= effective_level:
             stack.pop()
