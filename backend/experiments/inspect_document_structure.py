@@ -58,7 +58,6 @@ def _marker_level(marker: str, kind: str) -> int:
     parts = normalised.split(".")
 
     if kind == "roman":
-        # Roman top-level sections (I., II.) and their descendants (II.1.).
         return 1 + max(0, len(parts) - 1)
 
     if kind == "letter":
@@ -140,38 +139,54 @@ def _is_simple_marker(marker: StructuralMarker) -> bool:
     return marker.kind in {"numeric", "roman", "letter"} and "." not in marker.marker
 
 
+def _simple_numeric_value(marker: StructuralMarker) -> int | None:
+    if marker.kind != "numeric" or not _is_simple_marker(marker):
+        return None
+    try:
+        return int(marker.marker)
+    except ValueError:
+        return None
+
+
 def _build_hierarchy(markers: list[StructuralMarker]) -> list[StructuralMarker]:
     result: list[StructuralMarker] = []
     stack: list[int] = []
     enumeration_level: int | None = None
+    expected_numeric: int | None = None
 
     for marker in markers:
         effective_level = marker.level
 
-        # A simple marker immediately following an explicitly nested marker
-        # may be an enumeration inside that section rather than a new
-        # top-level section. This covers patterns such as:
-        #
-        #   6.10.2 Exención...
-        #       1 ...
-        #       2 ...
-        #       c) ...
-        #       d) ...
-        #
-        # The context is intentionally narrow: it starts only after a nested
-        # marker and is discarded as soon as an explicit multi-part marker or
-        # a normal top-level section appears.
         if enumeration_level is not None:
-            if _is_simple_marker(marker) and marker.level == 1:
+            numeric_value = _simple_numeric_value(marker)
+
+            # A numeric enumeration is expected to start at 1 and continue
+            # sequentially. A jump such as 1, 2, c, d, 7 therefore signals a
+            # new top-level section instead of another item in the previous
+            # enumeration. Letters remain valid members of the same sequence.
+            if numeric_value is not None:
+                if expected_numeric is not None and numeric_value != expected_numeric:
+                    enumeration_level = None
+                    expected_numeric = None
+                else:
+                    effective_level = enumeration_level
+                    expected_numeric = numeric_value + 1
+            elif _is_simple_marker(marker):
                 effective_level = enumeration_level
             else:
                 enumeration_level = None
+                expected_numeric = None
 
         if enumeration_level is None and result:
             previous = result[-1]
-            if previous.level >= 3 and _is_simple_marker(marker) and marker.level == 1:
+            numeric_value = _simple_numeric_value(marker)
+            if (
+                previous.level >= 3
+                and numeric_value == 1
+            ):
                 enumeration_level = previous.level + 1
                 effective_level = enumeration_level
+                expected_numeric = 2
 
         while stack and result[stack[-1]].level >= effective_level:
             stack.pop()
