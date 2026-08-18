@@ -1,7 +1,15 @@
-from app.experiments.inspect_document_structure import (
-    StructuralMarker,
-    _build_hierarchy,
-)
+import importlib.util
+from pathlib import Path
+
+
+_EXPERIMENT = Path(__file__).parents[1] / "experiments" / "inspect_document_structure.py"
+_SPEC = importlib.util.spec_from_file_location("inspect_document_structure", _EXPERIMENT)
+_MODULE = importlib.util.module_from_spec(_SPEC)
+assert _SPEC.loader is not None
+_SPEC.loader.exec_module(_MODULE)
+
+StructuralMarker = _MODULE.StructuralMarker
+_build_hierarchy = _MODULE._build_hierarchy
 
 
 def marker(number: str, level: int, kind: str = "numeric") -> StructuralMarker:
