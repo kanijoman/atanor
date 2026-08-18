@@ -34,6 +34,16 @@ Knowledge gaps are therefore a product responsibility, not a candidate task. Ata
 
 This principle does not prescribe a particular acquisition technology. Search, public-source retrieval, document ingestion, AI-assisted extraction, or other mechanisms may be evaluated pragmatically as the product evolves.
 
+### Experiments and tests
+
+Exploratory experiments and product tests have different responsibilities.
+
+- `experiments/` is for investigation, inspection, comparison and measurement. Experiments may expose implementation details and produce observations that are not yet product requirements.
+- `tests/` specify validated behavior. Tests should remain deterministic and agnostic of exploratory implementation details.
+- An observation from an experiment becomes a test expectation only after the product or engineering decision is accepted as part of the contract.
+
+This separation allows Atanor to explore uncertain product behavior without prematurely freezing it into the test suite.
+
 ## Validated discoveries
 
 ### AT-041 — Candidate entry point
@@ -47,6 +57,8 @@ The important product insight was that the convocatoria itself can be used as th
 The BOE sample demonstrated that a real convocatoria contains substantially more information than the study programme. Automatic extraction therefore produces information that may be useful but is not necessarily a study requirement.
 
 Potential future capabilities include identifying and exposing non-study information such as candidate eligibility requirements, application conditions, merit requirements, deadlines, and other convocatoria metadata. These capabilities remain deliberately deferred while the MVP focuses on the simplest candidate value path.
+
+The experiment also reinforced that BOE documents must not be treated as having one universal template. Different sections and programme formulations can coexist in the same source, so provider-specific structure is an implementation concern rather than a domain assumption.
 
 ### Knowledge availability mini-MVP
 
@@ -66,11 +78,13 @@ At this point Atanor can:
 2. identify candidate study requirements;
 3. represent knowledge needs for those requirements;
 4. represent whether knowledge is currently available for a need;
-5. evaluate study coverage from the knowledge currently represented by Atanor.
+5. evaluate study coverage from the knowledge currently represented by Atanor;
+6. autonomously acquire source material for a concrete knowledge need through a minimal external-source strategy;
+7. extract a first deterministic subset of potentially relevant content from acquired source material.
 
-The current system does **not** yet provide the candidate with a complete study experience, nor does it yet acquire missing knowledge automatically. Knowledge coverage is currently a validated domain capability rather than a complete candidate-facing knowledge supply workflow.
+The current system does **not** yet provide the candidate with a complete study experience, nor does acquisition automatically imply that the resulting material is validated canonical knowledge. Knowledge coverage is currently a validated domain capability rather than a complete candidate-facing knowledge supply workflow.
 
-This boundary is intentional. The next mini-MVP, **AT-043 — Knowledge Acquisition Prototype**, will test whether Atanor can begin building its own knowledge from an external source without requiring the candidate to provide that information.
+This boundary is intentional. AT-043 established the first autonomous knowledge-acquisition capability and identified the next product gap: distinguishing relevant content from incidental references and eventually validating or structuring that content as trustworthy knowledge.
 
 ## AT-043 — Knowledge Acquisition Prototype
 
@@ -78,27 +92,20 @@ This boundary is intentional. The next mini-MVP, **AT-043 — Knowledge Acquisit
 
 > **Atanor can acquire a first useful piece of knowledge for a `KnowledgeNeed` through its own acquisition mechanism, making the resulting knowledge available for study coverage without requiring the candidate to supply it.**
 
-### Scope
+### Result
 
-The experiment should remain deliberately small: one concrete knowledge need, one acquisition path, one external source, and enough extraction to create usable `Knowledge`.
+AT-043 validated the acquisition part of the hypothesis with a BOE-backed experiment and a deterministic extraction strategy. For `Constitución Española`, approximately 328,116 source characters were reduced to 1,991 extracted characters. The extracted material contained several genuinely relevant programme formulations, while also including incidental references to the Constitution.
 
-The acquisition mechanism is an implementation detail of the experiment. The product hypothesis does not require a particular technology such as scraping, search, AI, or RAG.
+The result therefore validates:
 
-### Success criterion
+- autonomous source acquisition without candidate intervention;
+- deterministic first-stage relevance filtering;
+- preservation of the distinction between source material and knowledge;
+- the usefulness of real-source experiments for discovering the next product gap.
 
-Atanor can take a concrete `KnowledgeNeed`, acquire appropriate source material without candidate intervention, transform it into knowledge represented by the existing model, and demonstrate that the knowledge changes the corresponding coverage result.
+It does **not** yet validate semantic completeness, factual validation, canonical knowledge construction, or a universal BOE parsing strategy.
 
-### Out of scope
-
-- complete knowledge corpus management;
-- general-purpose knowledge CRUD/UI;
-- a complete curator workflow;
-- mandatory use of AI/LLMs;
-- embeddings or RAG;
-- sophisticated source ranking;
-- complete provenance, freshness, or quality scoring.
-
-These may become future capabilities if the experiment provides evidence that they are necessary.
+AT-043 is considered **closed** with **89 passing tests** and no regressions.
 
 ## Potential future capabilities
 
@@ -106,6 +113,8 @@ These items have emerged from experiments but are intentionally not scheduled un
 
 - distinguish study-programme content from other convocatoria information;
 - identify candidate eligibility and application requirements before study planning;
+- detect document structure without assuming a universal BOE or provider template;
+- improve relevance extraction beyond literal topic matching;
 - represent partial, uncertain, outdated, or insufficient knowledge;
 - automatically acquire, populate, or validate knowledge using external sources and/or NLP/ML techniques;
 - curator workflows for resolving ambiguity and filling knowledge gaps;
