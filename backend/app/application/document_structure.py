@@ -27,8 +27,7 @@ ROMAN_PATTERN = re.compile(
     r"^(?P<marker>[IVXLCDM]+(?:\s*\.\s*\d+)*\s*[.)]?)\s+(?P<title>.+)$"
 )
 LETTER_PATTERN = re.compile(
-    r"^(?P<marker>[A-Z](?:\s*\.\s*\d+)*\s*[.)]?)\s+(?P<title>.+)$",
-    re.IGNORECASE,
+    r"^(?P<marker>(?:[A-Z](?:\s*\.\s*\d+)*|[a-z](?:\s*\.\s*\d+)*[.)]))\s+(?P<title>.+)$"
 )
 
 
