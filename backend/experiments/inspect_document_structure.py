@@ -22,14 +22,14 @@ MAX_NODES = 60
 # which nodes are relevant to the knowledge model.
 TEMA_PATTERN = re.compile(r"^Tema\s+(?P<number>\d+)\s*[.\-–—:]?\s*(?P<title>.+)$", re.IGNORECASE)
 NUMERIC_PATTERN = re.compile(
-    r"^(?P<marker>\d+(?:\.\d+)*[.)])\s*(?P<title>.+)$"
+    r"^(?P<marker>\d+(?:\s*\.\s*\d+)*\s*[.)])\s*(?P<title>.+)$"
 )
 ROMAN_PATTERN = re.compile(
-    r"^(?P<marker>[IVXLCDM]+(?:\.\d+)*[.)])\s*(?P<title>.+)$",
+    r"^(?P<marker>[IVXLCDM]+(?:\s*\.\s*\d+)*\s*[.)])\s*(?P<title>.+)$",
     re.IGNORECASE,
 )
 LETTER_PATTERN = re.compile(
-    r"^(?P<marker>[A-Z](?:\.\d+)*[.)])\s*(?P<title>.+)$"
+    r"^(?P<marker>[A-Z](?:\s*\.\s*\d+)*\s*[.)])\s*(?P<title>.+)$"
 )
 PROGRAMME_PATTERN = re.compile(r"\bprograma(?:\s+de\s+materias)?\b", re.IGNORECASE)
 
@@ -46,6 +46,7 @@ class StructuralMarker:
 
 
 def _normalise_marker(marker: str) -> str:
+    marker = re.sub(r"\s+", "", marker)
     return marker.rstrip(".")
 
 
@@ -79,7 +80,7 @@ def _match_marker(line: str) -> tuple[str, str, str, int] | None:
     ):
         match = pattern.match(line)
         if match:
-            marker = match.group("marker")
+            marker = _normalise_marker(match.group("marker"))
             return marker, match.group("title").strip(), kind, _marker_level(marker, kind)
 
     return None
@@ -174,7 +175,7 @@ def _print_marker_summary(lines: list[str], markers: list[StructuralMarker]) -> 
 def _print_tree(markers: list[StructuralMarker]) -> None:
     print(f"\nStructural hierarchy: {min(len(markers), MAX_NODES)} shown (max {MAX_NODES})")
 
-    for index, marker in enumerate(markers[:MAX_NODES]):
+    for marker in markers[:MAX_NODES]:
         parent = markers[marker.parent_index].marker if marker.parent_index is not None else "<root>"
         indent = "  " * max(0, marker.level - 1)
         print(f"{indent}- [{marker.kind}] {marker.marker} {marker.title}")
