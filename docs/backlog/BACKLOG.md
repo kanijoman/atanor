@@ -7,8 +7,8 @@
 | Project | Atanor |
 | Document | BACKLOG |
 | Status | 🟢 Active |
-| Version | 3.4 |
-| Last Updated | 2026-08-14 |
+| Version | 3.5 |
+| Last Updated | 2026-08-18 |
 | Audience | Contributors and Developers |
 
 ---
@@ -17,17 +17,17 @@
 
 | Metric | Value |
 | --- | ---: |
-| Total Tasks | 41 |
+| Total Tasks | 43 |
 | Pending | 0 |
-| In Progress | 1 |
-| Completed | 32 |
+| In Progress | 0 |
+| Completed | 35 |
 | Deferred | 3 |
 | Cancelled | 5 |
 | Blocked | 0 |
 
-**Current Epic:** Epic K · MVP Requirement Workflow
+**Current Epic:** Epic L · Knowledge Construction
 
-**Current Task:** AT-041 — Validate the First Candidate Product Experience
+**Current Task:** No implementation task committed. The next mini-MVP will be selected from the evidence produced by AT-043.
 
 ---
 
@@ -50,6 +50,8 @@
 - During the current early product stage, each task should be treated as a mini-MVP: a small, self-contained increment that provides value or produces actionable product knowledge.
 - Future tasks are hypotheses, not commitments. Detailed future work should be defined only when evidence from the preceding iteration justifies it.
 - Parallel development should be introduced only when the product direction is sufficiently stable to make independent work valuable.
+- `experiments/` is used for exploratory product and technical investigation. Experiments may inspect, measure or compare behavior without becoming part of the product contract.
+- Tests specify validated behavior and should remain agnostic of exploratory implementation details. Observations from experiments become tests only after they are accepted as product or engineering requirements.
 
 ---
 
@@ -275,45 +277,37 @@ The task exposed no debt requiring a standalone cleanup task before continuing M
 
 ### AT-041 · Validate the First Candidate Product Experience
 
-**Status: In Progress**
+**Status: Completed**
 
-**Goal:** validate the first genuinely useful candidate interaction rather than prematurely selecting a complete UI, API or future workflow. The task is a product experiment: determine the minimum interaction through which a candidate can provide a supported convocatoria and obtain a useful answer to the question **"What do I need to study?"**.
+Validated the first candidate-oriented product flow using a real convocatoria. The experiment confirmed that the candidate can obtain a useful study-requirement result without being asked to understand or validate Atanor's internal discovery and resolution process.
 
-#### AT-041 Product Hypothesis
+The task established the development rule that candidate validation of Atanor's semantic decisions is not part of the intended mature product experience. Expert inspection may still be used internally during product discovery.
 
-A candidate should be able to provide a real convocatoria and receive a clear, useful and sufficiently reliable representation of the study requirements derived from it, without being asked to understand or validate Atanor's internal discovery, resolution or curation process.
+### AT-042 · Validate Knowledge Coverage for a Candidate Requirement
 
-#### AT-041 Scope
+**Status: Completed**
 
-- Define the candidate who participates in this first product validation.
-- Define the minimum input required from that candidate.
-- Define the minimum result that could constitute a useful first product outcome.
-- Define what information makes that result useful and trustworthy.
-- Define the product behavior that is deliberately outside the experiment.
-- Select the smallest interface capable of exercising the experiment meaningfully only after the product interaction is defined.
-- Use manual/internal curation when necessary during development; do not build dedicated curator functionality unless the experiment demonstrates that it is required.
-- Validate the result using at least one realistic convocatoria and explicit product-value criteria.
+Validated that a requirement can declare contextual `KnowledgeNeed`s and that Atanor can report whether corresponding knowledge is currently available. The workflow deliberately supports the truthful absence of knowledge rather than asking the candidate to provide it.
 
-#### AT-041 Explicitly Outside
+The implementation remains intentionally binary (`COVERED` / `MISSING`) and does not introduce partial coverage, semantic matching or candidate-managed knowledge input.
 
-- Designing the complete Candidate Journey.
-- Defining the final product UI or frontend architecture.
-- Building a dedicated curator application.
-- Making the candidate responsible for semantic validation.
-- Study planning, progress tracking, tests or adaptive learning.
-- OCR or scanned-PDF support unless the experiment proves it necessary.
-- Advanced ML/NLP, confidence scoring or semantic matching unless the experiment demonstrates that the current approach cannot provide sufficient value.
-- Predicting or scheduling detailed future tasks beyond what the experiment's evidence justifies.
+The complete suite reached **87 passing tests** during this iteration.
 
-#### AT-041 Validation Model
+### AT-043 · Knowledge Acquisition Prototype
 
-During development, the candidate result may be inspected by the product developer or another expert to identify omissions, false positives, ambiguities and usability problems. This is a **development validation mechanism**, not part of the intended mature candidate experience.
+**Status: Completed**
 
-The mature product should instead provide the candidate with a sufficiently reliable result directly. Candidate validation of Atanor's semantic decisions is not considered part of the target product experience.
+**Goal:** validate whether Atanor can begin building its own knowledge from an external authoritative source without requiring the candidate to provide the missing information.
 
-#### AT-041 Completion Criterion
+AT-043 introduced a minimal BOE-backed acquisition path and a deterministic knowledge-extraction strategy. The experiment proved that a concrete `KnowledgeNeed` can trigger autonomous acquisition and that the acquired document can be reduced to a substantially smaller set of potentially relevant textual context.
 
-AT-041 is complete when we have a working, minimal candidate-facing interaction and enough evidence to determine whether the resulting answer to **"What do I need to study?"** provides real value. The implementation should be the smallest practical mechanism capable of producing that evidence. The outcome of AT-041 will determine the next mini-MVP rather than committing the project to a predefined AT-042 implementation.
+The BOE experiment reduced approximately **328k source characters to 1,991 extracted characters** for `Constitución Española`. The extracted content contained multiple genuinely relevant programme formulations, but also incidental references. Therefore the experiment validates autonomous acquisition and first-stage relevance filtering, not semantic knowledge validation.
+
+The experiment also demonstrated why Atanor must not assume a universal BOE document template: the same source may contain different programme structures and other convocatoria information. Provider-specific structure detection remains an implementation concern rather than a domain assumption.
+
+AT-043 deliberately added an `experiments/` area for exploratory inspection. Experiments may print or compare results without becoming part of the product contract; tests remain agnostic and specify only validated behavior. The full suite reaches **89 passing tests** with no regressions.
+
+AT-043 is considered complete. The next mini-MVP must be selected from the evidence produced by this experiment rather than predefined in the backlog.
 
 ---
 
@@ -331,12 +325,14 @@ These items are tracked deliberately but do not currently block MVP-oriented wor
 | TD-006 | CLI inspection completeness | Existing CLI is sufficient for current development validation. | CLI becomes a primary user workflow or manual inspection becomes a bottleneck. |
 | TD-007 | Scanned PDF / OCR support | Explicitly unsupported; Ayuntamiento de León remains a regression case. | A real MVP workflow requires scanned convocatorias. |
 | TD-008 | Richer Knowledge Coverage | Keep `COVERED/MISSING`; defer `PARTIAL`, depth-aware and semantic matching. | An open-domain use case demonstrates binary coverage is insufficient. |
-| TD-009 | Generalized provider-specific parsing | Current strategies are driven by observed real samples. | More source formats require repeated structural adaptations. |
+| TD-009 | Generalized provider-specific parsing | Current strategies are driven by observed real samples. Do not assume a universal BOE template. | More source formats or template variants require repeated structural adaptations. |
 | TD-010 | Resolution result persistence | AT-039 produced in-memory resolutions; AT-040 still derives the user-oriented set during the application call. Durable resolution decisions are not yet stored. | Repeatability, auditability, asynchronous processing or internal curation becomes a concrete requirement. |
 | TD-011 | Resolution algorithm sophistication | Current matching is intentionally deterministic and minimal. | Real user-oriented output demonstrates unacceptable unresolved/ambiguous rates. |
 | TD-012 | Application workflow contract | Discovery, requirement operations and workflow orchestration are now separated, but their APIs are still small and may evolve rapidly during MVP work. | Repeated consumers, external API exposure or increasing workflow complexity. |
+| TD-013 | Knowledge extraction quality | Current deterministic extraction identifies textually relevant context but may include incidental references and does not validate semantic completeness. | A candidate-facing knowledge workflow requires trustworthy, structured or semantically complete knowledge. |
+| TD-014 | Knowledge provenance and quality metadata | Acquired knowledge currently lacks richer freshness, evidence-quality and confidence semantics. | Atanor begins presenting acquired knowledge directly to candidates or maintaining it over time. |
 
-**Debt triage after AT-040:** no item requires a standalone debt-resolution task before AT-041. TD-010 remains intentionally deferred because durable resolution state has no demonstrated MVP requirement yet. TD-011 remains deferred until real output quality provides evidence that deterministic matching is insufficient. TD-012 should be monitored as the workflow crosses an application-interface boundary in AT-041. The repository-contract duplication identified during AT-040 was resolved within the task and does not remain as debt.
+**Debt triage after AT-043:** no item requires a standalone debt-resolution task before the next mini-MVP. TD-009 and TD-013 should inform future experiments, but neither justifies speculative generalization yet.
 
 ---
 
@@ -366,12 +362,34 @@ Available Knowledge
 Derived Coverage
 ```
 
-Requirement discovery preserves source expressions and provenance. Automatic resolution is now an application-level step. The user-oriented requirement set is a minimal application output and does not yet justify a separate domain entity. Further domain changes should be driven by the candidate experiment and its evidence.
+Requirement discovery preserves source expressions and provenance. Automatic resolution is now an application-level step. The user-oriented requirement set is a minimal application output and does not yet justify a separate domain entity.
+
+AT-043 adds an application-level acquisition/extraction path around the existing `KnowledgeNeed` and `Knowledge` concepts. It does **not** establish that an external document is itself canonical Knowledge.
+
+The current product direction is therefore:
+
+```text
+Knowledge Need
+      ↓
+Knowledge acquisition
+      ↓
+Source material
+      ↓
+Relevant content
+      ↓
+Candidate Knowledge
+      ↓
+Coverage
+```
+
+The distinction between source material, relevant content and validated/canonical knowledge must remain explicit. Further domain changes should be driven by the next candidate experiment.
 
 ---
 
 # Active Backlog Summary
 
-The foundation, requirement discovery, structured discovery, requirement scope/knowledge-need modeling, coverage evaluation, documentation re-evaluation, first real-sample workflow, automatic requirement resolution and user-oriented requirement projection are complete. **AT-040 is complete with 82 passing tests.**
+The foundation, requirement discovery, structured discovery, requirement scope/knowledge-need modeling, coverage evaluation, documentation re-evaluation, first real-sample workflow, automatic requirement resolution, user-oriented requirement projection, candidate product validation, knowledge coverage validation and autonomous knowledge acquisition prototype are complete.
 
-The active work is **AT-041 — Validate the First Candidate Product Experience**. It is intentionally defined as a mini-MVP experiment. No subsequent implementation task is committed until the evidence produced by AT-041 justifies the next step.
+**Current status: 35 completed tasks, 3 deferred, 5 cancelled, 0 in progress. The full test suite contains 89 passing tests.**
+
+AT-043 is closed. No detailed AT-044 implementation is committed yet. The next task should be defined from the evidence gathered by the BOE acquisition and deterministic extraction experiments.
