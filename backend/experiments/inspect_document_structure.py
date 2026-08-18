@@ -136,12 +136,44 @@ def _extract_markers(lines: list[str]) -> list[StructuralMarker]:
     return markers
 
 
+def _is_simple_marker(marker: StructuralMarker) -> bool:
+    return marker.kind in {"numeric", "roman", "letter"} and "." not in marker.marker
+
+
 def _build_hierarchy(markers: list[StructuralMarker]) -> list[StructuralMarker]:
     result: list[StructuralMarker] = []
     stack: list[int] = []
+    enumeration_level: int | None = None
 
     for marker in markers:
-        while stack and result[stack[-1]].level >= marker.level:
+        effective_level = marker.level
+
+        # A simple marker immediately following an explicitly nested marker
+        # may be an enumeration inside that section rather than a new
+        # top-level section. This covers patterns such as:
+        #
+        #   6.10.2 Exención...
+        #       1 ...
+        #       2 ...
+        #       c) ...
+        #       d) ...
+        #
+        # The context is intentionally narrow: it starts only after a nested
+        # marker and is discarded as soon as an explicit multi-part marker or
+        # a normal top-level section appears.
+        if enumeration_level is not None:
+            if _is_simple_marker(marker) and marker.level == 1:
+                effective_level = enumeration_level
+            else:
+                enumeration_level = None
+
+        if enumeration_level is None and result:
+            previous = result[-1]
+            if previous.level >= 3 and _is_simple_marker(marker) and marker.level == 1:
+                enumeration_level = previous.level + 1
+                effective_level = enumeration_level
+
+        while stack and result[stack[-1]].level >= effective_level:
             stack.pop()
 
         parent_index = stack[-1] if stack else None
@@ -150,7 +182,7 @@ def _build_hierarchy(markers: list[StructuralMarker]) -> list[StructuralMarker]:
             marker=marker.marker,
             title=marker.title,
             kind=marker.kind,
-            level=marker.level,
+            level=effective_level,
             continuation=marker.continuation,
             parent_index=parent_index,
         )
