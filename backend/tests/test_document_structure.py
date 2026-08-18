@@ -1,11 +1,14 @@
 import importlib.util
 from pathlib import Path
+import sys
 
 
 _EXPERIMENT = Path(__file__).parents[1] / "experiments" / "inspect_document_structure.py"
 _SPEC = importlib.util.spec_from_file_location("inspect_document_structure", _EXPERIMENT)
-_MODULE = importlib.util.module_from_spec(_SPEC)
+assert _SPEC is not None
 assert _SPEC.loader is not None
+_MODULE = importlib.util.module_from_spec(_SPEC)
+sys.modules[_SPEC.name] = _MODULE
 _SPEC.loader.exec_module(_MODULE)
 
 StructuralMarker = _MODULE.StructuralMarker
