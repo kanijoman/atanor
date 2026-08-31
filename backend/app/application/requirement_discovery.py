@@ -5,7 +5,6 @@ from typing import Protocol
 from uuid import UUID
 
 from app.application.pdf_extraction import extract_pdf_text
-from app.application.requirement_structure import discover_numbered_candidates_in_context
 from app.domain.models import Source
 
 
@@ -64,12 +63,4 @@ class PdfRequirementDiscoveryStrategy:
             raise ValueError("Requirement discovery source must be a PDF")
 
         text = extract_pdf_text(source)
-        candidates = discover_numbered_candidates_in_context(text)
-        return [
-            RequirementMention(
-                expression=candidate.expression,
-                source_id=source.id,
-                locator=f"line:{candidate.line_number}",
-            )
-            for candidate in candidates
-        ]
+        return discover_numbered_requirement_mentions(text, source.id)
