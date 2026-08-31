@@ -69,8 +69,16 @@ class PdfRequirementDiscoveryStrategy:
     """Discover requirement mentions from a processed PDF document."""
 
     def discover(
-        self, processing_result: DocumentProcessingResult
+        self, processing_result: DocumentProcessingResult | Source
     ) -> list[RequirementMention]:
+        # Source input is retained as a compatibility adapter for existing callers.
+        # The application pipeline passes DocumentProcessingResult directly, so the
+        # normal path performs no second extraction or structure analysis.
+        if isinstance(processing_result, Source):
+            from app.application.document_processing import process_document
+
+            processing_result = process_document(processing_result)
+
         source = processing_result.source
         if not source.locator:
             raise ValueError("PDF source must have a locator")
