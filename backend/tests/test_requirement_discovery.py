@@ -208,12 +208,12 @@ def test_pdf_strategy_uses_source_id_and_expected_locators(monkeypatch: pytest.M
     source = Source(title="call.pdf", locator="/tmp/call.pdf")
     monkeypatch.setattr(
         "app.application.requirement_discovery.extract_pdf_text",
-        lambda _: "1. Constitución Española\n2. Ley 39/2015",
+        lambda _: "INTRODUCCIÓN\nPROGRAMA\n1. Constitución Española\n2. Ley 39/2015",
     )
 
     result = PdfRequirementDiscoveryStrategy().discover(source)
 
     assert [(item.expression, item.source_id, item.locator) for item in result] == [
-        ("Constitución Española", source.id, "line:1"),
-        ("Ley 39/2015", source.id, "line:2"),
+        ("Constitución Española", source.id, "line:3"),
+        ("Ley 39/2015", source.id, "line:4"),
     ]
