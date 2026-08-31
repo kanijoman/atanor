@@ -1,11 +1,9 @@
 from dataclasses import dataclass
-from pathlib import Path
 import re
 from typing import Protocol
 from uuid import UUID
 
-from app.application.document_structure import analyze_document_structure
-from app.application.pdf_extraction import extract_pdf_text
+from app.application.document_processing import DocumentProcessingResult
 from app.domain.models import Source
 
 
@@ -19,14 +17,19 @@ class RequirementMention:
 
 
 class RequirementDiscoveryStrategy(Protocol):
-    def discover(self, source: Source) -> list[RequirementMention]: ...
+    def discover(
+        self, processing_result: DocumentProcessingResult
+    ) -> list[RequirementMention]: ...
 
 
 def discover_requirements(
     source: Source,
     strategy: RequirementDiscoveryStrategy,
 ) -> list[RequirementMention]:
-    return strategy.discover(source)
+    """Process a source once and discover requirements from the shared result."""
+    from app.application.document_processing import process_document
+
+    return strategy.discover(process_document(source))
 
 
 _REQUIREMENT_MARKER = re.compile(r"^\s*\d+(?:\.\d+)*[.)]\s+(.+?)\s*$")
@@ -55,40 +58,38 @@ def discover_numbered_requirement_mentions(
     return mentions
 
 
-def _program_context(text: str) -> tuple[str, int] | None:
-    """Return programme text and its zero-based starting line."""
-    lines = text.splitlines()
-    for index, line in enumerate(lines):
+def _program_start(text: str) -> int | None:
+    for index, line in enumerate(text.splitlines()):
         if _PROGRAM_MARKER.search(line):
-            return "\n".join(lines[index:]), index
+            return index
     return None
 
 
 class PdfRequirementDiscoveryStrategy:
-    """Discover requirement mentions from textual PDF programme content."""
+    """Discover requirement mentions from a processed PDF document."""
 
-    def discover(self, source: Source) -> list[RequirementMention]:
+    def discover(
+        self, processing_result: DocumentProcessingResult
+    ) -> list[RequirementMention]:
+        source = processing_result.source
         if not source.locator:
             raise ValueError("PDF source must have a locator")
-        if Path(source.locator).suffix.lower() != ".pdf":
+        if not source.locator.lower().endswith(".pdf"):
             raise ValueError("Requirement discovery source must be a PDF")
 
-        text = extract_pdf_text(source)
-        context = _program_context(text)
-        if context is None:
+        program_start = _program_start(processing_result.text)
+        if program_start is None:
             return []
 
-        program_text, program_start = context
-        markers = analyze_document_structure(program_text)
         mentions: list[RequirementMention] = []
-
-        for marker in markers:
+        for marker in processing_result.structure:
+            if marker.line_number <= program_start:
+                continue
             if marker.classification != "STRUCTURAL":
                 continue
             if marker.kind not in {"numeric", "topic"}:
                 continue
 
-            line_number = program_start + marker.line_number
             if marker.kind == "topic":
                 expression = f"{marker.marker} {marker.title}"
             else:
@@ -100,7 +101,7 @@ class PdfRequirementDiscoveryStrategy:
                     RequirementMention(
                         expression=expression,
                         source_id=source.id,
-                        locator=f"line:{line_number}",
+                        locator=f"line:{marker.line_number}",
                     )
                 )
 
