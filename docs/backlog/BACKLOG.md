@@ -7,8 +7,8 @@
 | Project | Atanor |
 | Document | BACKLOG |
 | Status | 🟢 Active |
-| Version | 3.8 |
-| Last Updated | 2026-08-18 |
+| Version | 3.9 |
+| Last Updated | 2026-08-31 |
 | Audience | Contributors and Developers |
 
 ---
@@ -20,14 +20,14 @@
 | Total Tasks | 45 |
 | Pending | 1 |
 | In Progress | 0 |
-| Completed | 37 |
+| Completed | 38 |
 | Deferred | 3 |
 | Cancelled | 5 |
 | Blocked | 0 |
 
 **Current Epic:** Epic L · Knowledge Construction
 
-**Current Task:** AT-046 · Integrate Document Structure Analysis into the Real Processing Pipeline
+**Current Task:** AT-047 · Build the Real Document Processing Pipeline
 
 ---
 
@@ -166,6 +166,8 @@ Validated autonomous acquisition from an authoritative BOE source and determinis
 
 AT-043 established `experiments/` as an exploratory area and confirmed that provider-specific structure must remain an implementation concern rather than a domain assumption. The suite reached 89 passing tests with no regressions.
 
+AT-043 is closed.
+
 ---
 
 # Epic L · Knowledge Construction
@@ -208,38 +210,51 @@ The experiment deliberately did not introduce OCR, AI/NLP, confidence scoring, u
 
 AT-045 is closed.
 
-### AT-046 · Integrate Document Structure Analysis into the Real Processing Pipeline — 🔴 Pending
+### AT-046 · Integrate Document Structure Analysis into the Real Processing Pipeline — ✅ Completed
 
-**Hypothesis:** the structural analysis validated in AT-044/AT-045 becomes materially useful only when it is a real application capability consumed by the processing workflow, rather than an isolated experiment.
+**Goal:** promote the minimum validated structural-analysis behavior from AT-044/AT-045 into the application layer while keeping extraction and analysis responsibilities separate and avoiding speculative domain changes.
 
-**Goal:** promote the minimum validated structural-analysis behavior into the application pipeline so that text extracted from a supported PDF can be transformed into an inspectable structured representation before downstream requirement/knowledge extraction.
+AT-046 introduced the production application-level structural analysis path and separated PDF text extraction from structural analysis. The validated marker detection, `STRUCTURAL` / `ENUMERATION` classification and hierarchy construction are now exercised through application code rather than remaining confined to `experiments/`.
+
+The application tests cover the accepted structural behaviors, including Roman/letter levels, continuation handling, enumeration context and explicit nested markers. Real PDF processing was also validated against the existing samples, including the Archiveros programme and the image-only Ayuntamiento de León sample. A false-positive letter-marker case discovered during integration (`y León...`) was corrected without introducing broader parsing heuristics.
+
+The final regression suite reached **104/104 tests passing** with no regressions.
+
+No OCR, AI/NLP, semantic interpretation, new document domain model or persistence of the structural tree was introduced. The structural representation remains an application processing result.
+
+AT-046 is closed.
+
+### AT-047 · Build the Real Document Processing Pipeline — 🔴 Pending
+
+**Hypothesis:** the validated extraction and structural-analysis stages become a useful product capability when orchestrated as one explicit application processing workflow.
+
+**Goal:** provide the smallest real application pipeline that receives a supported `Source`, extracts its text, analyzes its document structure and returns an inspectable structured processing result.
 
 **Mini-MVP scope:**
 
-- Reuse the existing PDF text-extraction path; do not redesign source import or persistence.
-- Introduce the smallest application-level structural-analysis component justified by AT-045.
-- Keep marker extraction, classification and hierarchy inference as explicit processing stages where that separation improves testability.
-- Preserve raw marker data, marker classification, hierarchy level, parent relationship and continuation text in the processing result.
-- Feed the resulting structural representation into the next downstream processing stage without yet changing the domain model for `Requirement`, `KnowledgeNeed` or `Knowledge`.
-- Provide a minimal application/CLI inspection path so the real pipeline can be observed on the existing BOE, BOJA and Archiveros samples.
-- Preserve the current image-only behavior: scanned PDFs remain unsupported and must not trigger OCR implicitly.
-- Add focused unit tests for the production structural-analysis component and at least one application-level integration test proving that extracted PDF text reaches the structural representation.
-- Run the complete regression suite before closing the task.
+- compose the existing PDF text extraction and document structure analysis components into one application use case;
+- keep extraction and analysis responsibilities explicitly separated;
+- return a structured application result without introducing a new domain entity;
+- preserve the validated marker information, classification, hierarchy and continuation data;
+- provide a minimal inspection path for development validation;
+- cover the orchestration with focused tests and at least one real-PDF application-level test;
+- preserve the existing behavior for image-only PDFs: extraction failure/empty text remains outside structural analysis and must not trigger OCR;
+- run the complete regression suite before closing the task.
 
-**Explicitly outside AT-046:**
+**Explicitly outside AT-047:**
 
-- OCR or scanned-PDF support.
-- AI/NLP or external AI services.
-- New semantic document models in the domain layer.
-- Universal document parsing.
-- Automatic canonical Knowledge construction.
-- Candidate-facing UI.
-- Persistence of the full structural tree unless a concrete downstream requirement demonstrates that it is necessary.
-- Additional hierarchy heuristics not supported by the AT-045 evidence.
+- OCR or scanned-PDF support;
+- AI/NLP or external AI services;
+- semantic requirement interpretation;
+- canonical Knowledge construction;
+- persistence of the structural tree;
+- candidate-facing UI;
+- additional hierarchy heuristics not justified by a concrete observed failure;
+- speculative abstraction beyond the orchestration required by the real workflow.
 
 **Completion criterion:**
 
-A supported text-based PDF can pass through the real application processing path and produce the validated structural representation, observable through a minimal inspection path and covered by focused tests plus the complete regression suite. The existing requirement/knowledge domain behavior remains unchanged. If implementation reveals that a new abstraction is required, its necessity must be demonstrated by the concrete pipeline rather than introduced speculatively.
+A supported text-based PDF can pass through a single real application processing use case from `Source` to extracted text to structured document analysis, with the result observable through a minimal inspection path and covered by focused and complete regression tests. Existing requirement and knowledge behavior remains unchanged.
 
 ---
 
@@ -261,14 +276,14 @@ A supported text-based PDF can pass through the real application processing path
 | TD-012 | Knowledge extraction quality | Current extraction may include incidental references and is not semantically complete. | Candidate-facing knowledge requires trustworthy, structured or complete knowledge. |
 | TD-013 | Knowledge provenance and quality metadata | Rich freshness/evidence/confidence semantics deferred. | Acquired knowledge is presented directly to candidates or maintained over time. |
 
-No debt item currently requires a standalone cleanup task before AT-046.
+No debt item currently requires a standalone cleanup task before AT-047.
 
 ---
 
 # Active Backlog Summary
 
-The foundation, requirement discovery, structured discovery, requirement scope/knowledge-need modeling, coverage evaluation, documentation re-evaluation, first candidate workflow, automatic requirement resolution, user-oriented requirement projection, candidate validation, knowledge coverage validation, knowledge acquisition prototype, structural document analysis and contextual hierarchy inference are complete.
+The foundation, requirement discovery, structured discovery, requirement scope/knowledge-need modeling, coverage evaluation, documentation re-evaluation, first candidate workflow, automatic requirement resolution, user-oriented requirement projection, candidate validation, knowledge coverage validation, knowledge acquisition prototype, structural document analysis, contextual hierarchy inference and integration of structural analysis into the application layer are complete.
 
-**Current status: 37 completed tasks, 1 pending, 3 deferred, 5 cancelled, 0 in progress.**
+**Current status: 38 completed tasks, 1 pending, 3 deferred, 5 cancelled, 0 in progress.**
 
-AT-045 is closed after validating the `STRUCTURAL / ENUMERATION` distinction with 99/99 tests passing. **AT-046 is now the active mini-MVP**, selected directly from that evidence: promote the validated structural analysis into the real application processing pipeline, keeping the implementation minimal and the domain model unchanged.
+AT-046 is closed after promoting the validated structural analysis into the application layer and reaching **104/104 tests passing**. **AT-047 is now the active mini-MVP**, selected from that evidence: compose extraction and structural analysis into one explicit real application processing workflow, while keeping responsibilities separate and the domain model unchanged.
