@@ -7,7 +7,7 @@
 | Project | Atanor |
 | Document | BACKLOG |
 | Status | 🟢 Active |
-| Version | 3.9 |
+| Version | 4.0 |
 | Last Updated | 2026-08-31 |
 | Audience | Contributors and Developers |
 
@@ -17,17 +17,17 @@
 
 | Metric | Value |
 | --- | ---: |
-| Total Tasks | 45 |
+| Total Tasks | 48 |
 | Pending | 1 |
 | In Progress | 0 |
-| Completed | 38 |
+| Completed | 39 |
 | Deferred | 3 |
 | Cancelled | 5 |
 | Blocked | 0 |
 
 **Current Epic:** Epic L · Knowledge Construction
 
-**Current Task:** AT-047 · Build the Real Document Processing Pipeline
+**Current Task:** AT-048 · Connect Document Processing to Requirement Discovery
 
 ---
 
@@ -224,37 +224,64 @@ No OCR, AI/NLP, semantic interpretation, new document domain model or persistenc
 
 AT-046 is closed.
 
-### AT-047 · Build the Real Document Processing Pipeline — 🔴 Pending
+### AT-047 · Build the Real Document Processing Pipeline — ✅ Completed
 
 **Hypothesis:** the validated extraction and structural-analysis stages become a useful product capability when orchestrated as one explicit application processing workflow.
 
 **Goal:** provide the smallest real application pipeline that receives a supported `Source`, extracts its text, analyzes its document structure and returns an inspectable structured processing result.
 
+AT-047 introduced the application-level `DocumentProcessingResult` and `process_document(source)` orchestration. The pipeline is now explicitly:
+
+```text
+Source
+  ↓
+PDF text extraction
+  ↓
+Document structure analysis
+  ↓
+DocumentProcessingResult
+```
+
+Extraction and structural analysis remain separate responsibilities. The processing result preserves the extracted text and validated structural representation without introducing a domain entity or persistence model for the document tree.
+
+Focused tests cover orchestration, empty/image-only documents, error propagation and integration with a real PDF. The complete regression suite reached **108/108 tests passing** with no regressions.
+
+AT-047 deliberately did not introduce OCR, AI/NLP, semantic interpretation, structural-tree persistence, candidate-facing UI or speculative abstractions.
+
+AT-047 is closed.
+
+### AT-048 · Connect Document Processing to Requirement Discovery — 🔴 Pending
+
+**Hypothesis:** the real document-processing result becomes materially more useful when the validated document structure is consumed by the existing requirement-discovery capability, allowing requirement discovery to operate on a single application processing representation instead of independently interpreting raw extracted text.
+
+**Goal:** integrate document processing with the existing requirement-discovery workflow using the smallest evidence-driven change, without changing the domain model or prematurely persisting the structural representation.
+
 **Mini-MVP scope:**
 
-- compose the existing PDF text extraction and document structure analysis components into one application use case;
-- keep extraction and analysis responsibilities explicitly separated;
-- return a structured application result without introducing a new domain entity;
-- preserve the validated marker information, classification, hierarchy and continuation data;
-- provide a minimal inspection path for development validation;
-- cover the orchestration with focused tests and at least one real-PDF application-level test;
-- preserve the existing behavior for image-only PDFs: extraction failure/empty text remains outside structural analysis and must not trigger OCR;
-- run the complete regression suite before closing the task.
+- identify the smallest adapter/boundary needed for requirement discovery to consume `DocumentProcessingResult`;
+- preserve the existing requirement-discovery behavior and domain contracts;
+- use structural information only where it demonstrably improves or simplifies the existing discovery path;
+- keep PDF extraction, document structure analysis and requirement discovery as separate responsibilities;
+- validate the integration against the existing real PDF samples, especially documents with heterogeneous structure;
+- add focused tests for the new application boundary and regression tests for existing requirement discovery;
+- compare the integrated result with the current discovery behavior before accepting any behavioral change;
+- avoid persistence changes unless the integration exposes a concrete need for them.
 
-**Explicitly outside AT-047:**
+**Explicitly outside AT-048:**
 
 - OCR or scanned-PDF support;
 - AI/NLP or external AI services;
 - semantic requirement interpretation;
-- canonical Knowledge construction;
-- persistence of the structural tree;
+- new domain entities for document structure;
+- persistence of `DocumentProcessingResult` or the structural tree;
+- universal document parsing;
+- new hierarchy heuristics without a concrete observed failure;
 - candidate-facing UI;
-- additional hierarchy heuristics not justified by a concrete observed failure;
-- speculative abstraction beyond the orchestration required by the real workflow.
+- speculative refactoring unrelated to the integration boundary.
 
 **Completion criterion:**
 
-A supported text-based PDF can pass through a single real application processing use case from `Source` to extracted text to structured document analysis, with the result observable through a minimal inspection path and covered by focused and complete regression tests. Existing requirement and knowledge behavior remains unchanged.
+A supported text-based PDF can enter the application through `process_document(source)` and provide the validated structural representation to requirement discovery through an explicit application boundary, while existing requirement behavior remains green and any improvement is demonstrated by tests and real-sample validation. The complete regression suite passes without regressions.
 
 ---
 
@@ -276,14 +303,14 @@ A supported text-based PDF can pass through a single real application processing
 | TD-012 | Knowledge extraction quality | Current extraction may include incidental references and is not semantically complete. | Candidate-facing knowledge requires trustworthy, structured or complete knowledge. |
 | TD-013 | Knowledge provenance and quality metadata | Rich freshness/evidence/confidence semantics deferred. | Acquired knowledge is presented directly to candidates or maintained over time. |
 
-No debt item currently requires a standalone cleanup task before AT-047.
+No debt item currently requires a standalone cleanup task before AT-048.
 
 ---
 
 # Active Backlog Summary
 
-The foundation, requirement discovery, structured discovery, requirement scope/knowledge-need modeling, coverage evaluation, documentation re-evaluation, first candidate workflow, automatic requirement resolution, user-oriented requirement projection, candidate validation, knowledge coverage validation, knowledge acquisition prototype, structural document analysis, contextual hierarchy inference and integration of structural analysis into the application layer are complete.
+The foundation, requirement discovery, structured discovery, requirement scope/knowledge-need modeling, coverage evaluation, documentation re-evaluation, first candidate workflow, automatic requirement resolution, user-oriented requirement projection, candidate validation, knowledge coverage validation, knowledge acquisition prototype, structural document analysis, contextual hierarchy inference, integration of structural analysis into the application layer and the explicit document processing pipeline are complete.
 
-**Current status: 38 completed tasks, 1 pending, 3 deferred, 5 cancelled, 0 in progress.**
+**Current status: 39 completed tasks, 1 pending, 3 deferred, 5 cancelled, 0 in progress.**
 
-AT-046 is closed after promoting the validated structural analysis into the application layer and reaching **104/104 tests passing**. **AT-047 is now the active mini-MVP**, selected from that evidence: compose extraction and structural analysis into one explicit real application processing workflow, while keeping responsibilities separate and the domain model unchanged.
+AT-047 is closed after introducing the real application document-processing pipeline and reaching **108/108 tests passing**. **AT-048 is now the active mini-MVP**, selected from that evidence: connect the processing result to the existing requirement-discovery capability through an explicit application boundary, while preserving current behavior and avoiding speculative domain or persistence changes.
