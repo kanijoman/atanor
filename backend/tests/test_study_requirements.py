@@ -106,9 +106,9 @@ def test_get_study_requirements_returns_empty_set_when_nothing_is_resolved(monke
 
 @pytest.mark.parametrize("sample_name", SAMPLE_NAMES)
 def test_supported_real_samples_produce_a_user_oriented_requirement_set(
-    samples_dir: Path,
     sample_name: str,
 ) -> None:
+    samples_dir = Path(__file__).parent / "samples"
     source = Source(id=uuid4(), title=sample_name, locator=str(samples_dir / sample_name))
     mentions = PdfRequirementDiscoveryStrategy().discover(source)
     requirements = tuple(
