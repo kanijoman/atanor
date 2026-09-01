@@ -7,8 +7,8 @@
 | Project | Atanor |
 | Document | BACKLOG |
 | Status | 🟢 Active |
-| Version | 4.0 |
-| Last Updated | 2026-08-31 |
+| Version | 4.1 |
+| Last Updated | 2026-09-01 |
 | Audience | Contributors and Developers |
 
 ---
@@ -17,17 +17,17 @@
 
 | Metric | Value |
 | --- | ---: |
-| Total Tasks | 48 |
-| Pending | 1 |
+| Total Tasks | 49 |
+| Pending | 0 |
 | In Progress | 0 |
-| Completed | 39 |
+| Completed | 41 |
 | Deferred | 3 |
 | Cancelled | 5 |
 | Blocked | 0 |
 
 **Current Epic:** Epic L · Knowledge Construction
 
-**Current Task:** AT-048 · Connect Document Processing to Requirement Discovery
+**Current Task:** AT-050 · Next mini-MVP to be defined from AT-049 evidence
 
 ---
 
@@ -250,7 +250,7 @@ AT-047 deliberately did not introduce OCR, AI/NLP, semantic interpretation, stru
 
 AT-047 is closed.
 
-### AT-048 · Connect Document Processing to Requirement Discovery — 🔴 Pending
+### AT-048 · Connect Document Processing to Requirement Discovery — ✅ Completed
 
 **Hypothesis:** the real document-processing result becomes materially more useful when the validated document structure is consumed by the existing requirement-discovery capability, allowing requirement discovery to operate on a single application processing representation instead of independently interpreting raw extracted text.
 
@@ -283,7 +283,33 @@ AT-047 is closed.
 
 A supported text-based PDF can enter the application through `process_document(source)` and provide the validated structural representation to requirement discovery through an explicit application boundary, while existing requirement behavior remains green and any improvement is demonstrated by tests and real-sample validation. The complete regression suite passes without regressions.
 
----
+AT-048 was completed by migrating Requirement Discovery to consume `DocumentProcessingResult` through the application boundary established by `process_document(source)`. Extraction and structural analysis are no longer duplicated inside the normal discovery path. Existing tests were migrated to the new contract, real PDF samples remained covered, and the complete regression suite reached **116/116 tests passing** with no regressions.
+
+AT-048 deliberately did not introduce OCR, AI/NLP, semantic interpretation, document-structure persistence or new domain entities.
+
+### AT-049 · Integrate Requirement Discovery with Document Processing — ✅ Completed
+
+**Hypothesis:** `DocumentProcessingResult` is a suitable common application boundary for consumers that need extracted text and validated document structure.
+
+AT-049 migrated the requirement-discovery tests and integration path to the new boundary established by AT-048. The resulting application flow is:
+
+```text
+Source
+  ↓
+process_document(source)
+  ↓
+DocumentProcessingResult
+  ↓
+Requirement Discovery
+  ↓
+RequirementMention[]
+```
+
+The migration removed dependence on internal PDF extraction from requirement-discovery tests and preserved real-sample validation. The final suite reached **116/116 tests passing** with no regressions.
+
+AT-049 deliberately did not introduce semantic interpretation, OCR, AI/NLP, persistence of the processing result or further structural heuristics. Its conclusion is that the processing result provides an adequate boundary for downstream application consumers.
+
+AT-049 is closed.
 
 # Known Technical Debt & Deferred Concerns
 
@@ -303,14 +329,14 @@ A supported text-based PDF can enter the application through `process_document(s
 | TD-012 | Knowledge extraction quality | Current extraction may include incidental references and is not semantically complete. | Candidate-facing knowledge requires trustworthy, structured or complete knowledge. |
 | TD-013 | Knowledge provenance and quality metadata | Rich freshness/evidence/confidence semantics deferred. | Acquired knowledge is presented directly to candidates or maintained over time. |
 
-No debt item currently requires a standalone cleanup task before AT-048.
+No debt item currently requires a standalone cleanup task before AT-050.
 
 ---
 
 # Active Backlog Summary
 
-The foundation, requirement discovery, structured discovery, requirement scope/knowledge-need modeling, coverage evaluation, documentation re-evaluation, first candidate workflow, automatic requirement resolution, user-oriented requirement projection, candidate validation, knowledge coverage validation, knowledge acquisition prototype, structural document analysis, contextual hierarchy inference, integration of structural analysis into the application layer and the explicit document processing pipeline are complete.
+The foundation, requirement discovery, structured discovery, requirement scope/knowledge-need modeling, coverage evaluation, documentation re-evaluation, first candidate workflow, automatic requirement resolution, user-oriented requirement projection, candidate validation, knowledge coverage validation, knowledge acquisition prototype, structural document analysis, contextual hierarchy inference, integration of structural analysis into the application layer, the explicit document processing pipeline and its integration with requirement discovery are complete.
 
-**Current status: 39 completed tasks, 1 pending, 3 deferred, 5 cancelled, 0 in progress.**
+**Current status: 41 completed tasks, 0 pending, 3 deferred, 5 cancelled, 0 in progress.**
 
-AT-047 is closed after introducing the real application document-processing pipeline and reaching **108/108 tests passing**. **AT-048 is now the active mini-MVP**, selected from that evidence: connect the processing result to the existing requirement-discovery capability through an explicit application boundary, while preserving current behavior and avoiding speculative domain or persistence changes.
+AT-047 is closed after introducing the real application document-processing pipeline and reaching **108/108 tests passing**. AT-048 is closed after connecting `DocumentProcessingResult` to Requirement Discovery and reaching **116/116 tests passing**. AT-049 is also closed after validating that this boundary is suitable for downstream consumers. **AT-050 is the next active mini-MVP and will be defined from the evidence produced by AT-049.**
