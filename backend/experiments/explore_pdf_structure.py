@@ -6,6 +6,7 @@ from app.domain.models import Source
 
 
 PDF_PATH = Path("tests/samples/BOE-A-2024-14098.pdf")
+MAX_EXAMPLES = 8
 
 
 PATTERNS = {
@@ -36,6 +37,29 @@ def get_signals(line: str) -> list[str]:
     return signals
 
 
+def collect_examples(lines: list[str], signal: str) -> list[tuple[int, str]]:
+    examples = []
+
+    for index, line in enumerate(lines):
+        if signal in get_signals(line):
+            examples.append((index + 1, line))
+
+    return examples[:MAX_EXAMPLES]
+
+
+def print_examples(title: str, examples: list[tuple[int, str]]) -> None:
+    print(title)
+
+    if not examples:
+        print("  None")
+        return
+
+    for line_number, line in examples:
+        print(f"  {line_number:5d}: {line}")
+
+    print()
+
+
 def main() -> None:
     source = Source(
         title=PDF_PATH.stem,
@@ -45,174 +69,130 @@ def main() -> None:
     text = extract_pdf_text(source)
     lines = [line.strip() for line in text.splitlines() if line.strip()]
 
-    print("=" * 100)
+    print("=" * 80)
     print("DOCUMENT STRUCTURE EXPLORATION")
-    print("=" * 100)
+    print("=" * 80)
     print(f"PDF: {PDF_PATH}")
     print(f"Non-empty lines: {len(lines)}")
     print(f"Characters: {len(text):,}")
     print()
 
     # ------------------------------------------------------------------
-    # 1. Numbering signals
+    # Structural signal counts and representative examples
     # ------------------------------------------------------------------
-
-    print("=" * 100)
-    print("1. NUMBERING SIGNALS")
-    print("=" * 100)
-
-    for index, line in enumerate(lines):
-        detected = get_signals(line)
-
-        if any(
-            signal in detected
-            for signal in (
-                "decimal_numbering",
-                "hierarchical_numbering",
-                "roman_numbering",
-                "letter_numbering",
-                "annex",
-            )
-        ):
-            print(
-                f"{index + 1:5d}: "
-                f"[{', '.join(detected)}] "
-                f"{line}"
-            )
-
-    print()
-
-    # ------------------------------------------------------------------
-    # 2. Short / heading-like lines
-    # ------------------------------------------------------------------
-
-    print("=" * 100)
-    print("2. SHORT / HEADING-LIKE LINES")
-    print("=" * 100)
-
-    for index, line in enumerate(lines):
-        detected = get_signals(line)
-
-        if "short" in detected and len(line) <= 60:
-            print(
-                f"{index + 1:5d}: "
-                f"[{', '.join(detected)}] "
-                f"{line}"
-            )
-
-    print()
-
-    # ------------------------------------------------------------------
-    # 3. Structural candidates with context
-    # ------------------------------------------------------------------
-
-    print("=" * 100)
-    print("3. STRUCTURAL CANDIDATES WITH CONTEXT")
-    print("=" * 100)
-
-    candidate_indexes = []
-
-    for index, line in enumerate(lines):
-        detected = get_signals(line)
-
-        if any(
-            signal in detected
-            for signal in (
-                "decimal_numbering",
-                "roman_numbering",
-                "annex",
-                "uppercase",
-            )
-        ):
-            candidate_indexes.append(index)
-
-    for index in candidate_indexes:
-        print("-" * 100)
-
-        start = max(0, index - 1)
-        end = min(len(lines), index + 3)
-
-        for current in range(start, end):
-            marker = ">>" if current == index else "  "
-
-            print(
-                f"{marker} "
-                f"{current + 1:5d}: "
-                f"{lines[current]}"
-            )
-
-    print()
-
-    # ------------------------------------------------------------------
-    # 4. Structural statistics
-    # ------------------------------------------------------------------
-
-    print("=" * 100)
-    print("4. STRUCTURAL STATISTICS")
-    print("=" * 100)
 
     counts = {name: 0 for name in PATTERNS}
 
     for line in lines:
         detected = get_signals(line)
-
         for name in counts:
             if name in detected:
                 counts[name] += 1
 
+    print("STRUCTURAL SIGNALS")
     for name, count in counts.items():
-        print(f"{name:25s}: {count}")
-
+        print(f"  {name:25s}: {count:4d}")
     print()
 
-    lengths = [len(line) for line in lines]
+    for signal in PATTERNS:
+        examples = collect_examples(lines, signal)
+        print_examples(f"{signal.upper()} examples:", examples)
 
-    print(f"Minimum line length: {min(lengths)}")
-    print(f"Maximum line length: {max(lengths)}")
-    print(f"Average line length: {sum(lengths) / len(lengths):.1f}")
-    print(f"Lines <= 40 chars:   {sum(x <= 40 for x in lengths)}")
-    print(f"Lines <= 60 chars:   {sum(x <= 60 for x in lengths)}")
-    print(f"Lines <= 80 chars:   {sum(x <= 80 for x in lengths)}")
+    # ------------------------------------------------------------------
+    # Heading-like candidates
+    # ------------------------------------------------------------------
+
+    candidates = []
+
+    for index, line in enumerate(lines):
+        detected = get_signals(line)
+
+        if (
+            "short" in detected
+            and (
+                "decimal_numbering" in detected
+                or "roman_numbering" in detected
+                or "uppercase" in detected
+            )
+        ):
+            candidates.append((index + 1, line, detected))
+
+    print("HEADING-LIKE CANDIDATES")
+    print(f"  Total candidates: {len(candidates)}")
+
+    for line_number, line, detected in candidates[:MAX_EXAMPLES]:
+        print(f"  {line_number:5d}: [{', '.join(detected)}] {line}")
+
+    if len(candidates) > MAX_EXAMPLES:
+        print(f"  ... {len(candidates) - MAX_EXAMPLES} more")
     print()
 
     # ------------------------------------------------------------------
-    # 5. Consecutive decimal numbering
+    # Consecutive decimal numbering
     # ------------------------------------------------------------------
-
-    print("=" * 100)
-    print("5. CONSECUTIVE NUMBERING")
-    print("=" * 100)
 
     numbered = []
 
     for index, line in enumerate(lines):
         match = re.match(r"^(\d+)[.)]\s+", line)
-
         if match:
-            numbered.append(
-                (
-                    index,
-                    int(match.group(1)),
-                    line,
-                )
-            )
+            numbered.append((index, int(match.group(1)), line))
 
-    previous_number = None
-    previous_index = None
+    sequences = []
+    current = []
 
-    for index, number, line in numbered:
-        if previous_number is not None:
-            if number == previous_number + 1:
-                print(
-                    f"{previous_index + 1:5d} -> "
-                    f"{index + 1:5d}: "
-                    f"{previous_number} -> {number}"
-                )
+    for item in numbered:
+        if not current or item[1] == current[-1][1] + 1:
+            current.append(item)
+        else:
+            if len(current) >= 2:
+                sequences.append(current)
+            current = [item]
 
-        previous_number = number
-        previous_index = index
+    if len(current) >= 2:
+        sequences.append(current)
 
+    print("CONSECUTIVE DECIMAL SEQUENCES")
+    print(f"  Total sequences: {len(sequences)}")
+
+    for sequence in sequences[:MAX_EXAMPLES]:
+        first = sequence[0]
+        last = sequence[-1]
+        print(
+            f"  Lines {first[0] + 1}-{last[0] + 1}: "
+            f"{first[1]} -> {last[1]} "
+            f"({len(sequence)} items)"
+        )
+
+    if len(sequences) > MAX_EXAMPLES:
+        print(f"  ... {len(sequences) - MAX_EXAMPLES} more")
     print()
+
+    # ------------------------------------------------------------------
+    # Representative local context
+    # ------------------------------------------------------------------
+
+    print("REPRESENTATIVE CONTEXT")
+
+    context_candidates = []
+    for index, line in enumerate(lines):
+        detected = get_signals(line)
+        if "roman_numbering" in detected or "annex" in detected:
+            context_candidates.append(index)
+
+    for index in context_candidates[:MAX_EXAMPLES]:
+        print(f"  Around line {index + 1}:")
+        start = max(0, index - 1)
+        end = min(len(lines), index + 2)
+
+        for current in range(start, end):
+            marker = ">>" if current == index else "  "
+            print(f"    {marker} {current + 1:5d}: {lines[current]}")
+        print()
+
+    if len(context_candidates) > MAX_EXAMPLES:
+        print(f"  ... {len(context_candidates) - MAX_EXAMPLES} more contexts")
+
     print("End of exploration.")
 
 
