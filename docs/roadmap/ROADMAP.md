@@ -7,8 +7,8 @@
 | Project      | Atanor                      |
 | Document     | ROADMAP                     |
 | Status       | 🟢 Active                   |
-| Version      | 0.8                         |
-| Last Updated | 2026-08-18                  |
+| Version      | 0.9                         |
+| Last Updated | 2026-09-03                  |
 | Audience     | Contributors and Developers |
 
 ---
@@ -157,6 +157,77 @@ The candidate experience is intentionally minimal. Atanor does not ask the candi
 
 The stage also established an important product principle: Atanor, rather than the candidate, owns the responsibility for supplying knowledge required for study.
 
+## Future Capability · Eligibility and Opportunity Discovery
+
+**Status: ⚪ Future / Product Direction Identified**
+
+Atanor should eventually be able to determine which selection processes are relevant to a candidate based on the candidate's capabilities and circumstances, rather than requiring the candidate to start from a known convocatoria.
+
+A candidate may provide relevant information such as:
+
+- nationality or other legally relevant personal conditions;
+- educational qualifications and training;
+- professional experience;
+- seniority or previous public-service status;
+- other capabilities or circumstances required by a selection process.
+
+The capability should support both directions of discovery:
+
+```text
+Known Convocatoria
+    ↓
+Requirements
+    ↓
+Candidate Profile
+    ↓
+Eligibility Assessment
+```
+
+and:
+
+```text
+Candidate Profile
+    ↓
+Relevant Requirements
+    ↓
+Matching Selection Processes
+    ↓
+Relevant Convocatorias
+```
+
+Eligibility must explicitly distinguish at least three outcomes:
+
+```text
+ELIGIBLE
+    Known information satisfies the relevant requirements.
+
+NOT ELIGIBLE
+    Known information contradicts at least one relevant requirement.
+
+UNDETERMINED
+    Available information is insufficient to establish eligibility.
+```
+
+Eligibility conclusions should remain traceable to the requirements extracted from authoritative sources. Atanor should not turn missing information or uncertain interpretation into a definitive eligibility decision.
+
+When a compatible process is identified, eligibility should become a natural entry point into the existing preparation flow:
+
+```text
+Candidate Profile
+    ↓
+Eligible Selection Process
+    ↓
+Requirements
+    ↓
+Programme
+    ↓
+Knowledge Needs
+    ↓
+Preparation
+```
+
+This capability is deliberately documented as a product direction rather than an implementation commitment. It must not yet drive the creation of domain entities, persistence structures or candidate-profile infrastructure until concrete user validation establishes their need.
+
 ## Stage 6 · Knowledge Construction
 
 **Status: 🟢 Prototype Validated / Next Increment Pending**
@@ -231,6 +302,22 @@ Knowledge Need
 Evidence
     ↓
 Canonical Knowledge
+    ↓
+Learning
+```
+
+Eligibility and opportunity discovery add another entry point to this model:
+
+```text
+Candidate Capabilities
+    ↓
+Requirement Matching
+    ↓
+Eligible Opportunities
+    ↓
+Selection Process
+    ↓
+Knowledge Needs
     ↓
 Learning
 ```
