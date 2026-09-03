@@ -14,6 +14,9 @@ from app.persistence.knowledge_repository import SqlAlchemyKnowledgeRepository
 from app.persistence.source_repository import SqlAlchemySourceRepository
 
 
+SAMPLES_DIR = Path(__file__).parent / "samples"
+
+
 def test_atanor_can_acquire_knowledge_from_boe_without_candidate_input(
     tmp_path: Path,
 ) -> None:
@@ -26,7 +29,7 @@ def test_atanor_can_acquire_knowledge_from_boe_without_candidate_input(
     knowledge_repository = SqlAlchemyKnowledgeRepository(session_factory)
 
     source = import_pdf_source(
-        Path("tests/samples/BOE-A-2024-14098.pdf"),
+        SAMPLES_DIR / "BOE-A-2024-14098.pdf",
         source_repository,
     )
     need = KnowledgeNeed(topic="Constitución Española", depth=1)
