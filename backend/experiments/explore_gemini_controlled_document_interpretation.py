@@ -16,15 +16,12 @@ API_URL = (
     "https://generativelanguage.googleapis.com/v1beta/models/"
     "{model}:generateContent"
 )
-MAX_OUTPUT_TOKENS = int(os.getenv("ATANOR_GEMINI_MAX_OUTPUT_TOKENS", "6000"))
+MAX_OUTPUT_TOKENS = int(os.getenv("ATANOR_GEMINI_MAX_OUTPUT_TOKENS", "4000"))
 
-# This experiment deliberately uses one known, bounded section of the BOE
-# document. The anchors are only used to select the test slice; they are not
-# sent as semantic instructions to Gemini.
-START_ANCHOR = "CUERPO DE TÉCNICOS AUXILIARES DE INFORMÁTICA"
-PROGRAM_ANCHOR = "Programa."
-START_CONTEXT_UNITS = 45
-END_CONTEXT_UNITS = 140
+# Fixed experimental fixture: a known bounded section of the BOE sample.
+# These coordinates are not application rules.
+SLICE_START_UNIT = 1220
+SLICE_END_UNIT = 1450
 
 
 @dataclass(frozen=True)
@@ -110,23 +107,13 @@ def extract_units(pdf_path: Path) -> list[TextUnit]:
     return units
 
 
-def find_anchor(units: list[TextUnit], anchor: str) -> int:
-    normalized_anchor = " ".join(anchor.casefold().split())
-    for index, unit in enumerate(units):
-        if normalized_anchor in unit.text.casefold():
-            return index
-    raise RuntimeError(f"Anchor not found in extracted document: {anchor!r}")
-
-
 def select_controlled_slice(units: list[TextUnit]) -> list[TextUnit]:
-    start_index = find_anchor(units, START_ANCHOR)
-    program_index = find_anchor(units[start_index:], PROGRAM_ANCHOR) + start_index
-
-    # Include the process context before the process anchor and enough text
-    # after the programme marker to contain meaningful programme content.
-    slice_start = max(0, start_index - START_CONTEXT_UNITS)
-    slice_end = min(len(units), program_index + END_CONTEXT_UNITS)
-    return units[slice_start:slice_end]
+    if SLICE_START_UNIT < 1 or SLICE_END_UNIT > len(units):
+        raise RuntimeError(
+            f"Controlled slice {SLICE_START_UNIT}-{SLICE_END_UNIT} is outside "
+            f"the extracted unit range 1-{len(units)}"
+        )
+    return units[SLICE_START_UNIT - 1 : SLICE_END_UNIT]
 
 
 def format_document(units: list[TextUnit]) -> str:
