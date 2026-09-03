@@ -16,6 +16,9 @@ from app.persistence.requirement_repository import SqlAlchemyRequirementReposito
 from app.persistence.source_repository import SqlAlchemySourceRepository
 
 
+SAMPLES_DIR = Path(__file__).parent / "samples"
+
+
 def test_candidate_can_see_knowledge_coverage_for_a_convocatoria(
     tmp_path: Path,
 ) -> None:
@@ -29,7 +32,7 @@ def test_candidate_can_see_knowledge_coverage_for_a_convocatoria(
     knowledge_repository = SqlAlchemyKnowledgeRepository(session_factory)
 
     source = import_pdf_source(
-        Path("tests/samples/Programa_Archiveros_0.pdf"),
+        SAMPLES_DIR / "Programa_Archiveros_0.pdf",
         source_repository,
     )
     mentions = discover_requirements(
