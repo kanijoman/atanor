@@ -1,13 +1,15 @@
+from collections import Counter
 from pathlib import Path
 import re
+
+from pypdf import PdfReader
 
 from app.application.pdf_extraction import extract_pdf_text
 from app.domain.models import Source
 
 
-PDF_PATH = Path("tests/samples/BOE-A-2024-14098.pdf")
-MAX_EXAMPLES = 8
-
+SAMPLES_DIR = Path("tests/samples")
+MAX_EXAMPLES = 5
 
 PATTERNS = {
     "decimal_numbering": re.compile(r"^\d+[.)]\s+"),
@@ -37,163 +39,191 @@ def get_signals(line: str) -> list[str]:
     return signals
 
 
-def collect_examples(lines: list[str], signal: str) -> list[tuple[int, str]]:
-    examples = []
-
-    for index, line in enumerate(lines):
-        if signal in get_signals(line):
-            examples.append((index + 1, line))
-
-    return examples[:MAX_EXAMPLES]
-
-
-def print_examples(title: str, examples: list[tuple[int, str]]) -> None:
-    print(title)
-
-    if not examples:
-        print("  None")
-        return
-
-    for line_number, line in examples:
-        print(f"  {line_number:5d}: {line}")
-
-    print()
-
-
-def main() -> None:
-    source = Source(
-        title=PDF_PATH.stem,
-        locator=str(PDF_PATH),
-    )
-
+def extract_text_characteristics(pdf_path: Path) -> dict:
+    source = Source(title=pdf_path.stem, locator=str(pdf_path))
     text = extract_pdf_text(source)
     lines = [line.strip() for line in text.splitlines() if line.strip()]
 
-    print("=" * 80)
-    print("DOCUMENT STRUCTURE EXPLORATION")
-    print("=" * 80)
-    print(f"PDF: {PDF_PATH}")
-    print(f"Non-empty lines: {len(lines)}")
-    print(f"Characters: {len(text):,}")
-    print()
-
-    # ------------------------------------------------------------------
-    # Structural signal counts and representative examples
-    # ------------------------------------------------------------------
-
     counts = {name: 0 for name in PATTERNS}
-
     for line in lines:
-        detected = get_signals(line)
-        for name in counts:
-            if name in detected:
-                counts[name] += 1
+        for signal in get_signals(line):
+            if signal in counts:
+                counts[signal] += 1
 
+    repeated_lines = Counter(lines)
+    repeated = [
+        (line, count)
+        for line, count in repeated_lines.most_common()
+        if count > 1
+    ]
+
+    return {
+        "text": text,
+        "lines": lines,
+        "characters": len(text),
+        "non_empty_lines": len(lines),
+        "replacement_characters": text.count("\ufffd"),
+        "alphabetic_characters": sum(c.isalpha() for c in text),
+        "whitespace_characters": sum(c.isspace() for c in text),
+        "average_line_length": len(text) / len(lines) if lines else 0,
+        "signals": counts,
+        "repeated_lines": repeated,
+    }
+
+
+def extract_layout_characteristics(pdf_path: Path) -> dict:
+    reader = PdfReader(pdf_path)
+    font_sizes = Counter()
+    fonts = Counter()
+    fragments = 0
+
+    for page in reader.pages:
+        def visitor_text(text, cm, tm, font_dict, font_size):
+            nonlocal fragments
+            if not text.strip():
+                return
+
+            fragments += 1
+            font_sizes[round(float(font_size), 2)] += 1
+            font = font_dict.get("/BaseFont", "<unknown>") if font_dict else "<unknown>"
+            fonts[str(font)] += 1
+
+        page.extract_text(visitor_text=visitor_text)
+
+    return {
+        "pages": len(reader.pages),
+        "fragments": fragments,
+        "font_sizes": font_sizes,
+        "fonts": fonts,
+    }
+
+
+def format_counter(counter: Counter, limit: int = MAX_EXAMPLES) -> str:
+    if not counter:
+        return "None"
+
+    values = [f"{value} ({count})" for value, count in counter.most_common(limit)]
+    if len(counter) > limit:
+        values.append(f"... {len(counter) - limit} more")
+    return ", ".join(values)
+
+
+def print_text_characteristics(characteristics: dict) -> None:
+    print("TEXT")
+    print(f"  Characters:              {characteristics['characters']:,}")
+    print(f"  Non-empty lines:         {characteristics['non_empty_lines']:,}")
+    print(f"  Average line length:     {characteristics['average_line_length']:.1f}")
+    print(f"  Replacement characters:  {characteristics['replacement_characters']:,}")
+    print(f"  Alphabetic characters:   {characteristics['alphabetic_characters']:,}")
+    print(f"  Whitespace characters:   {characteristics['whitespace_characters']:,}")
+    print()
+
+
+def print_structural_signals(characteristics: dict) -> None:
     print("STRUCTURAL SIGNALS")
-    for name, count in counts.items():
-        print(f"  {name:25s}: {count:4d}")
+    for name, count in characteristics["signals"].items():
+        print(f"  {name:25s}: {count:5d}")
     print()
 
-    for signal in PATTERNS:
-        examples = collect_examples(lines, signal)
-        print_examples(f"{signal.upper()} examples:", examples)
 
-    # ------------------------------------------------------------------
-    # Heading-like candidates
-    # ------------------------------------------------------------------
-
-    candidates = []
-
-    for index, line in enumerate(lines):
-        detected = get_signals(line)
-
-        if (
-            "short" in detected
-            and (
-                "decimal_numbering" in detected
-                or "roman_numbering" in detected
-                or "uppercase" in detected
-            )
-        ):
-            candidates.append((index + 1, line, detected))
-
-    print("HEADING-LIKE CANDIDATES")
-    print(f"  Total candidates: {len(candidates)}")
-
-    for line_number, line, detected in candidates[:MAX_EXAMPLES]:
-        print(f"  {line_number:5d}: [{', '.join(detected)}] {line}")
-
-    if len(candidates) > MAX_EXAMPLES:
-        print(f"  ... {len(candidates) - MAX_EXAMPLES} more")
+def print_layout_characteristics(characteristics: dict) -> None:
+    print("PHYSICAL LAYOUT")
+    print(f"  Pages:                   {characteristics['pages']:,}")
+    print(f"  Text fragments:          {characteristics['fragments']:,}")
+    print(f"  Font sizes:              {format_counter(characteristics['font_sizes'])}")
+    print(f"  Fonts:                   {format_counter(characteristics['fonts'])}")
     print()
 
-    # ------------------------------------------------------------------
-    # Consecutive decimal numbering
-    # ------------------------------------------------------------------
 
-    numbered = []
-
-    for index, line in enumerate(lines):
-        match = re.match(r"^(\d+)[.)]\s+", line)
-        if match:
-            numbered.append((index, int(match.group(1)), line))
-
-    sequences = []
-    current = []
-
-    for item in numbered:
-        if not current or item[1] == current[-1][1] + 1:
-            current.append(item)
-        else:
-            if len(current) >= 2:
-                sequences.append(current)
-            current = [item]
-
-    if len(current) >= 2:
-        sequences.append(current)
-
-    print("CONSECUTIVE DECIMAL SEQUENCES")
-    print(f"  Total sequences: {len(sequences)}")
-
-    for sequence in sequences[:MAX_EXAMPLES]:
-        first = sequence[0]
-        last = sequence[-1]
-        print(
-            f"  Lines {first[0] + 1}-{last[0] + 1}: "
-            f"{first[1]} -> {last[1]} "
-            f"({len(sequence)} items)"
-        )
-
-    if len(sequences) > MAX_EXAMPLES:
-        print(f"  ... {len(sequences) - MAX_EXAMPLES} more")
-    print()
-
-    # ------------------------------------------------------------------
-    # Representative local context
-    # ------------------------------------------------------------------
-
-    print("REPRESENTATIVE CONTEXT")
-
-    context_candidates = []
-    for index, line in enumerate(lines):
-        detected = get_signals(line)
-        if "roman_numbering" in detected or "annex" in detected:
-            context_candidates.append(index)
-
-    for index in context_candidates[:MAX_EXAMPLES]:
-        print(f"  Around line {index + 1}:")
-        start = max(0, index - 1)
-        end = min(len(lines), index + 2)
-
-        for current in range(start, end):
-            marker = ">>" if current == index else "  "
-            print(f"    {marker} {current + 1:5d}: {lines[current]}")
+def print_repeated_lines(characteristics: dict) -> None:
+    print("REPEATED LINES")
+    repeated = characteristics["repeated_lines"]
+    if not repeated:
+        print("  None")
         print()
+        return
 
-    if len(context_candidates) > MAX_EXAMPLES:
-        print(f"  ... {len(context_candidates) - MAX_EXAMPLES} more contexts")
+    for line, count in repeated[:MAX_EXAMPLES]:
+        print(f"  ({count:3d}x) {line}")
+    if len(repeated) > MAX_EXAMPLES:
+        print(f"  ... {len(repeated) - MAX_EXAMPLES} more")
+    print()
 
-    print("End of exploration.")
+
+def print_representative_lines(characteristics: dict) -> None:
+    print("REPRESENTATIVE TEXT")
+    lines = characteristics["lines"]
+    if not lines:
+        print("  No extractable text")
+        print()
+        return
+
+    for line in lines[:MAX_EXAMPLES]:
+        print(f"  {line}")
+    print()
+
+
+def characterize_text(characteristics: dict) -> str:
+    characters = characteristics["characters"]
+    replacement_characters = characteristics["replacement_characters"]
+
+    if characters == 0:
+        return "no_extractable_text"
+    if replacement_characters > 0:
+        return "text_with_replacement_characters"
+    if characters < 1_000:
+        return "very_low_text_volume"
+    if characters < 10_000:
+        return "low_text_volume"
+    return "substantial_text"
+
+
+def print_characterization(characteristics: dict) -> None:
+    print("PRELIMINARY CHARACTERIZATION")
+    print(f"  Text extraction:        {characterize_text(characteristics)}")
+    print(f"  Numbering signals:      {sum(characteristics['signals'].values()):,}")
+    print(f"  Repeated lines:         {len(characteristics['repeated_lines']):,}")
+    print("  NOTE: These are observations, not document-type classifications.")
+    print()
+
+
+def analyze_sample(pdf_path: Path) -> None:
+    print("=" * 80)
+    print(f"SAMPLE: {pdf_path.name}")
+    print("=" * 80)
+
+    text_characteristics = extract_text_characteristics(pdf_path)
+    layout_characteristics = extract_layout_characteristics(pdf_path)
+
+    print_text_characteristics(text_characteristics)
+    print_layout_characteristics(layout_characteristics)
+    print_structural_signals(text_characteristics)
+    print_repeated_lines(text_characteristics)
+    print_representative_lines(text_characteristics)
+    print_characterization(text_characteristics)
+
+
+def main() -> None:
+    if not SAMPLES_DIR.is_dir():
+        raise FileNotFoundError(f"Samples directory not found: {SAMPLES_DIR}")
+
+    samples = sorted(SAMPLES_DIR.glob("*.pdf"))
+    if not samples:
+        raise FileNotFoundError(f"No PDF samples found in: {SAMPLES_DIR}")
+
+    print("=" * 80)
+    print("PDF SAMPLE CHARACTERIZATION")
+    print("=" * 80)
+    print(f"Samples directory: {SAMPLES_DIR}")
+    print(f"Samples found:     {len(samples)}")
+    print()
+
+    for pdf_path in samples:
+        analyze_sample(pdf_path)
+
+    print("=" * 80)
+    print("End of characterization.")
+    print("=" * 80)
 
 
 if __name__ == "__main__":
