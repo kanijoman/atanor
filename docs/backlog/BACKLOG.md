@@ -7,8 +7,8 @@
 | Project | Atanor |
 | Document | BACKLOG |
 | Status | 🟢 Active |
-| Version | 4.1 |
-| Last Updated | 2026-09-01 |
+| Version | 4.2 |
+| Last Updated | 2026-09-03 |
 | Audience | Contributors and Developers |
 
 ---
@@ -17,17 +17,17 @@
 
 | Metric | Value |
 | --- | ---: |
-| Total Tasks | 49 |
+| Total Tasks | 50 |
 | Pending | 0 |
 | In Progress | 0 |
-| Completed | 41 |
+| Completed | 42 |
 | Deferred | 3 |
 | Cancelled | 5 |
 | Blocked | 0 |
 
 **Current Epic:** Epic L · Knowledge Construction
 
-**Current Task:** AT-050 · Next mini-MVP to be defined from AT-049 evidence
+**Current Task:** None · AT-050 completed; next mini-MVP to be defined from current evidence
 
 ---
 
@@ -172,7 +172,7 @@ AT-043 is closed.
 
 # Epic L · Knowledge Construction
 
-**Status: 🟢 Active**
+**Status: 🟢 Completed**
 
 Objective: progressively transform acquired authoritative source material into trustworthy, reusable knowledge while keeping document structure, acquisition and extraction strategies outside the domain model.
 
@@ -311,6 +311,37 @@ AT-049 deliberately did not introduce semantic interpretation, OCR, AI/NLP, pers
 
 AT-049 is closed.
 
+### AT-050 · Build the First Knowledge Construction Workflow — ✅ Completed
+
+**Hypothesis:** the existing acquisition and extraction capabilities are sufficient to construct a first reusable `Knowledge` object for a `KnowledgeNeed` without introducing a new domain abstraction.
+
+**Goal:** orchestrate source-material acquisition and relevant-knowledge extraction into one explicit application workflow while preserving source provenance and keeping acquisition/extraction strategies outside the domain model.
+
+AT-050 introduced `construct_knowledge(need, acquisition_strategy, extraction_strategy)`. The workflow is explicitly:
+
+```text
+KnowledgeNeed
+  ↓
+Knowledge acquisition
+  ↓
+Acquired source material
+  ↓
+Knowledge extraction
+  ↓
+Knowledge
+  └── provenance → Source
+```
+
+The construction use case returns `None` when acquisition produces no material or extraction produces no result. When construction succeeds, provenance from the acquired material is preserved while the extracted content supplies the resulting knowledge description.
+
+The workflow was validated first with isolated fake strategies and then with the real `BoeKnowledgeAcquisitionStrategy` and `DeterministicKnowledgeExtractionStrategy` against the BOE sample. The complete regression suite reached **120/120 tests passing** with no regressions.
+
+AT-050 deliberately did not introduce `KnowledgeConstructionStrategy`, semantic matching, AI/NLP, embeddings/RAG, OCR, Knowledge Graph structures, additional knowledge metadata, persistence changes or candidate-facing UI. The existing `Knowledge` model was sufficient for this first construction workflow.
+
+During integration, several existing test paths and the Alembic configuration were made independent of the current working directory. These changes improve test and migration robustness without introducing new product abstractions.
+
+AT-050 is closed. The next task should be defined from the evidence produced by this first real Knowledge Construction workflow rather than being pre-planned.
+
 # Known Technical Debt & Deferred Concerns
 
 | ID | Concern | Current Decision | Trigger for Re-evaluation |
@@ -329,14 +360,16 @@ AT-049 is closed.
 | TD-012 | Knowledge extraction quality | Current extraction may include incidental references and is not semantically complete. | Candidate-facing knowledge requires trustworthy, structured or complete knowledge. |
 | TD-013 | Knowledge provenance and quality metadata | Rich freshness/evidence/confidence semantics deferred. | Acquired knowledge is presented directly to candidates or maintained over time. |
 
-No debt item currently requires a standalone cleanup task before AT-050.
+No debt item currently requires a standalone cleanup task before the next mini-MVP is defined.
 
 ---
 
 # Active Backlog Summary
 
-The foundation, requirement discovery, structured discovery, requirement scope/knowledge-need modeling, coverage evaluation, documentation re-evaluation, first candidate workflow, automatic requirement resolution, user-oriented requirement projection, candidate validation, knowledge coverage validation, knowledge acquisition prototype, structural document analysis, contextual hierarchy inference, integration of structural analysis into the application layer, the explicit document processing pipeline and its integration with requirement discovery are complete.
+The foundation, requirement discovery, structured discovery, requirement scope/knowledge-need modeling, coverage evaluation, documentation re-evaluation, first candidate workflow, automatic requirement resolution, user-oriented requirement projection, candidate validation, knowledge coverage validation, knowledge acquisition prototype, structural document analysis, contextual hierarchy inference, integration of structural analysis into the application layer, the explicit document processing pipeline, its integration with requirement discovery and the first Knowledge Construction workflow are complete.
 
-**Current status: 41 completed tasks, 0 pending, 3 deferred, 5 cancelled, 0 in progress.**
+**Current status: 42 completed tasks, 0 pending, 3 deferred, 5 cancelled, 0 in progress.**
 
-AT-047 is closed after introducing the real application document-processing pipeline and reaching **108/108 tests passing**. AT-048 is closed after connecting `DocumentProcessingResult` to Requirement Discovery and reaching **116/116 tests passing**. AT-049 is also closed after validating that this boundary is suitable for downstream consumers. **AT-050 is the next active mini-MVP and will be defined from the evidence produced by AT-049.**
+AT-047 is closed after introducing the real application document-processing pipeline and reaching **108/108 tests passing**. AT-048 is closed after connecting `DocumentProcessingResult` to Requirement Discovery and reaching **116/116 tests passing**. AT-049 is closed after validating that this boundary is suitable for downstream consumers. **AT-050 is closed after validating the first real Knowledge Construction workflow and reaching 120/120 tests passing.**
+
+No new active task is defined yet. The next mini-MVP should be selected from the evidence produced by AT-050 rather than from speculative future work.
