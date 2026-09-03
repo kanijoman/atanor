@@ -1,4 +1,5 @@
 import pytest
+from pathlib import Path
 from uuid import UUID
 
 from app.application.document_processing import DocumentProcessingResult, process_document
@@ -12,6 +13,9 @@ from app.application.requirement_discovery import (
 )
 from app.application.requirements import discover_and_persist_requirements
 from app.domain.models import Requirement, Source
+
+
+SAMPLES_DIR = Path(__file__).parent / "samples"
 
 
 class FakeRequirementDiscoveryStrategy:
@@ -138,7 +142,7 @@ def test_pdf_strategy_ignores_numbered_items_outside_program_context() -> None:
 
 
 def test_pdf_strategy_discovers_mentions_from_real_boe_sample() -> None:
-    source = Source(title="BOE-A-2024-14098.pdf", locator="tests/samples/BOE-A-2024-14098.pdf")
+    source = Source(title="BOE-A-2024-14098.pdf", locator=str(SAMPLES_DIR / "BOE-A-2024-14098.pdf"))
     result = PdfRequirementDiscoveryStrategy().discover(process_document(source))
     assert result
     assert all(mention.source_id == source.id for mention in result)
@@ -146,7 +150,7 @@ def test_pdf_strategy_discovers_mentions_from_real_boe_sample() -> None:
 
 
 def test_pdf_strategy_discovers_tema_items_from_real_jcyl_sample() -> None:
-    source = Source(title="Programa_Archiveros_0.pdf", locator="tests/samples/Programa_Archiveros_0.pdf")
+    source = Source(title="Programa_Archiveros_0.pdf", locator=str(SAMPLES_DIR / "Programa_Archiveros_0.pdf"))
     result = PdfRequirementDiscoveryStrategy().discover(process_document(source))
     assert result
     assert all(mention.source_id == source.id for mention in result)
@@ -155,7 +159,7 @@ def test_pdf_strategy_discovers_tema_items_from_real_jcyl_sample() -> None:
 
 
 def test_pdf_strategy_returns_no_mentions_for_scanned_pdf_sample() -> None:
-    source = Source(title="OPOS_AYTO_LEON_INFORMATICA_B.pdf", locator="tests/samples/OPOS_AYTO_LEON_INFORMATICA_B.pdf")
+    source = Source(title="OPOS_AYTO_LEON_INFORMATICA_B.pdf", locator=str(SAMPLES_DIR / "OPOS_AYTO_LEON_INFORMATICA_B.pdf"))
     result = PdfRequirementDiscoveryStrategy().discover(process_document(source))
     assert result == []
 
