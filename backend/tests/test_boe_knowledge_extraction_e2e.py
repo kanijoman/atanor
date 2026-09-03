@@ -11,6 +11,9 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
 
+SAMPLES_DIR = Path(__file__).parent / "samples"
+
+
 def test_boe_can_provide_relevant_knowledge_for_a_need(tmp_path: Path) -> None:
     database_path = tmp_path / "e2e.db"
     engine = create_engine(f"sqlite:///{database_path}")
@@ -19,7 +22,7 @@ def test_boe_can_provide_relevant_knowledge_for_a_need(tmp_path: Path) -> None:
 
     source_repository = SqlAlchemySourceRepository(session_factory)
     source = import_pdf_source(
-        Path("tests/samples/BOE-A-2024-14098.pdf"),
+        SAMPLES_DIR / "BOE-A-2024-14098.pdf",
         source_repository,
     )
     need = KnowledgeNeed(topic="Constitución Española", depth=1)
