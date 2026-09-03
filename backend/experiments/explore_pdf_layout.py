@@ -5,8 +5,9 @@ from pypdf import PdfReader
 
 
 PDF_PATH = Path("tests/samples/BOE-A-2024-14098.pdf")
-MAX_EXAMPLES = 12
+MAX_EXAMPLES = 5
 Y_TOLERANCE = 2.0
+TARGET_TERMS = ("Programa", "ANEXO")
 
 
 def extract_fragments(page) -> list[dict]:
@@ -14,13 +15,12 @@ def extract_fragments(page) -> list[dict]:
     fragments = []
 
     def visitor_text(text, cm, tm, font_dict, font_size):
-        text = text.replace("\n", "\\n")
         if not text.strip():
             return
 
         fragments.append(
             {
-                "text": text,
+                "text": text.replace("\n", "\\n"),
                 "x": round(float(tm[4]), 2),
                 "y": round(float(tm[5]), 2),
                 "font_size": round(float(font_size), 2),
@@ -72,67 +72,44 @@ def summarize_page(page_number: int, page) -> dict:
     fragments = extract_fragments(page)
     lines = group_fragments_into_lines(fragments)
 
-    font_sizes = Counter(fragment["font_size"] for fragment in fragments)
-    fonts = Counter(fragment["font"] for fragment in fragments)
-
     return {
         "page": page_number,
         "width": round(float(page.mediabox.width), 2),
         "height": round(float(page.mediabox.height), 2),
         "fragments": fragments,
         "lines": lines,
-        "font_sizes": font_sizes,
-        "fonts": fonts,
+        "font_sizes": Counter(fragment["font_size"] for fragment in fragments),
+        "fonts": Counter(fragment["font"] for fragment in fragments),
     }
 
 
-def print_fragment_examples(fragments: list[dict]) -> None:
-    print("TEXT FRAGMENT EXAMPLES")
-    for fragment in fragments[:MAX_EXAMPLES]:
-        print(
-            f"  ({fragment['x']:7.2f}, {fragment['y']:7.2f}) "
-            f"size={fragment['font_size']:5.2f} "
-            f"font={fragment['font']} "
-            f"flags={fragment['font_flags']} "
-            f"text={fragment['text']!r}"
-        )
-    print()
+def format_line(line: list[dict]) -> str:
+    sizes = sorted({fragment["font_size"] for fragment in line})
+    flags = sorted({fragment["font_flags"] for fragment in line})
+    x = min(fragment["x"] for fragment in line)
+    y = line[0]["y"]
+    return f"({x:.1f}, {y:.1f}) size={sizes} flags={flags} {line_text(line)!r}"
 
 
-def print_line_examples(lines: list[list[dict]]) -> None:
-    print("RECONSTRUCTED LINE EXAMPLES")
-    for line in lines[:MAX_EXAMPLES]:
-        text = line_text(line)
-        sizes = sorted({fragment["font_size"] for fragment in line})
-        x = min(fragment["x"] for fragment in line)
-        y = line[0]["y"]
-        print(f"  ({x:7.2f}, {y:7.2f}) sizes={sizes} text={text!r}")
-    print()
-
-
-def print_target_context(page_summaries: list[dict], terms: tuple[str, ...]) -> None:
-    print("TARGET CONTEXT")
+def print_target_examples(page_summaries: list[dict]) -> None:
+    print("TARGET EXAMPLES")
+    examples = 0
 
     for summary in page_summaries:
-        lines = summary["lines"]
-        for index, line in enumerate(lines):
+        for index, line in enumerate(summary["lines"]):
             text = line_text(line)
-            if any(term.casefold() in text.casefold() for term in terms):
-                print(f"  Page {summary['page']}, line {index + 1}:")
-                start = max(0, index - 1)
-                end = min(len(lines), index + 2)
-                for current in range(start, end):
-                    marker = ">>" if current == index else "  "
-                    current_line = lines[current]
-                    current_text = line_text(current_line)
-                    sizes = sorted({f["font_size"] for f in current_line})
-                    x = min(f["x"] for f in current_line)
-                    y = current_line[0]["y"]
-                    print(
-                        f"    {marker} ({x:7.2f}, {y:7.2f}) "
-                        f"sizes={sizes} {current_text!r}"
-                    )
+            if not any(term.casefold() in text.casefold() for term in TARGET_TERMS):
+                continue
+
+            print(f"  Page {summary['page']}, line {index + 1}: {format_line(line)}")
+            examples += 1
+            if examples >= MAX_EXAMPLES:
                 print()
+                return
+
+    if examples == 0:
+        print("  None")
+    print()
 
 
 def main() -> None:
@@ -163,36 +140,30 @@ def main() -> None:
     print(f"Reconstructed lines: {total_lines:,}")
     print()
 
-    print("PAGE DIMENSIONS")
+    print("FONT SIZES")
+    for size, count in font_sizes.most_common(MAX_EXAMPLES):
+        print(f"  {size:6.2f} pt: {count:6d} fragments")
+    print(f"  ... {len(font_sizes)} distinct sizes")
+    print()
+
+    print("FONTS")
+    for font, count in fonts.most_common(MAX_EXAMPLES):
+        print(f"  {font:35s}: {count:6d} fragments")
+    print(f"  ... {len(fonts)} distinct fonts")
+    print()
+
+    print("PAGE SAMPLE")
     for summary in page_summaries[:MAX_EXAMPLES]:
         print(
             f"  Page {summary['page']:4d}: "
-            f"{summary['width']:7.2f} x {summary['height']:7.2f} pt, "
-            f"fragments={len(summary['fragments']):4d}, "
-            f"lines={len(summary['lines']):4d}"
+            f"{summary['width']:.1f} x {summary['height']:.1f} pt, "
+            f"fragments={len(summary['fragments'])}, lines={len(summary['lines'])}"
         )
     if len(page_summaries) > MAX_EXAMPLES:
         print(f"  ... {len(page_summaries) - MAX_EXAMPLES} more pages")
     print()
 
-    print("FONT SIZES")
-    for size, count in font_sizes.most_common(MAX_EXAMPLES):
-        print(f"  {size:6.2f} pt: {count:6d} fragments")
-    print()
-
-    print("FONTS")
-    for font, count in fonts.most_common(MAX_EXAMPLES):
-        print(f"  {font:40s}: {count:6d} fragments")
-    print()
-
-    if page_summaries:
-        first_page = page_summaries[0]
-        print(f"FIRST PAGE ({first_page['page']})")
-        print_fragment_examples(first_page["fragments"])
-        print_line_examples(first_page["lines"])
-
-    print_target_context(page_summaries, ("Programa", "ANEXO"))
-
+    print_target_examples(page_summaries)
     print("End of exploration.")
 
 
