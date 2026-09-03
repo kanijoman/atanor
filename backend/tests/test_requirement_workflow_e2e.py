@@ -15,6 +15,9 @@ from app.persistence.requirement_repository import SqlAlchemyRequirementReposito
 from app.persistence.source_repository import SqlAlchemySourceRepository
 
 
+SAMPLES_DIR = Path(__file__).parent / "samples"
+
+
 def test_program_archiveros_produces_study_requirements_from_known_knowledge(
     tmp_path: Path,
 ) -> None:
@@ -26,7 +29,7 @@ def test_program_archiveros_produces_study_requirements_from_known_knowledge(
     source_repository = SqlAlchemySourceRepository(session_factory)
     requirement_repository = SqlAlchemyRequirementRepository(session_factory)
 
-    sample_path = Path("tests/samples/Programa_Archiveros_0.pdf")
+    sample_path = SAMPLES_DIR / "Programa_Archiveros_0.pdf"
 
     source = import_pdf_source(sample_path, source_repository)
 
