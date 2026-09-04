@@ -114,7 +114,10 @@ def extract_boe_units(units: list[TextUnit], annex: Annex) -> tuple[int | None, 
             sections.append((match.group(1).upper(), unit.order))
 
     candidates = [
-        unit for unit in scoped if ITEM_PATTERN.fullmatch(unit.text)
+        unit
+        for unit in scoped
+        if ITEM_PATTERN.fullmatch(unit.text)
+        and not PROGRAMME_PATTERN.fullmatch(unit.text)
     ]
     result: list[StudyUnit] = []
     for index, unit in enumerate(candidates):
@@ -125,7 +128,9 @@ def extract_boe_units(units: list[TextUnit], annex: Annex) -> tuple[int | None, 
             (section for section in sections if section[1] > unit.order),
             None,
         )
-        boundaries = [candidate.order for candidate in (next_item,)]
+        boundaries = []
+        if next_item is not None:
+            boundaries.append(next_item.order)
         if next_section is not None:
             boundaries.append(next_section[1])
         end = min(boundaries) - 1 if boundaries else annex.end
