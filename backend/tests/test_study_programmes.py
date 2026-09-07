@@ -4,7 +4,6 @@ from app.application.study_programmes import discover_programmes
 from app.domain.models import Source
 from app.persistence.database import Base
 from app.persistence.models.source import Source as PersistenceSource
-from app.persistence.models.study_programme import StudyProgramme, StudyProgrammeUnit
 from app.persistence.study_programme_repository import SqlAlchemyStudyProgrammeRepository
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
@@ -21,13 +20,7 @@ def test_discovers_boja_programmes() -> None:
 
     assert len(programmes) == 7
     assert [programme.identifier for programme in programmes] == [
-        "II.1",
-        "II.A",
-        "II.B",
-        "II.C",
-        "II.D",
-        "II.E",
-        "II.F",
+        "II.1", "II.A", "II.B", "II.C", "II.D", "II.E", "II.F",
     ]
     assert len(programmes[0].units) == 30
     assert len(programmes[1].units) == 39
@@ -39,7 +32,9 @@ def test_discovers_boe_programmes() -> None:
     programmes = discover_programmes(source("BOE-A-2024-14098.pdf"))
 
     assert len(programmes) == 10
-    assert [programme.identifier for programme in programmes] == list("ABCDEFGHIJ")
+    assert [programme.identifier for programme in programmes] == [
+        "I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X",
+    ]
     assert all(programme.units for programme in programmes)
 
 
