@@ -63,3 +63,23 @@ class Requirement:
             scopes=(*self.scopes, scope),
             id=self.id,
         )
+
+
+@dataclass(frozen=True)
+class StudyProgrammeUnit:
+    number: int
+    title: str
+    start_page: int
+    start_order: int
+    end_page: int
+    end_order: int
+    id: UUID = field(default_factory=uuid4)
+
+
+@dataclass(frozen=True)
+class StudyProgramme:
+    source_id: UUID
+    identifier: str
+    title: str
+    units: tuple[StudyProgrammeUnit, ...] = field(default_factory=tuple)
+    id: UUID = field(default_factory=uuid4)
