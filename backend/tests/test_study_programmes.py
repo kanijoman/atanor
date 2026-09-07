@@ -57,6 +57,7 @@ def test_repository_round_trip() -> None:
     persisted_source = PersistenceSource(
         id=programme.source_id,
         title="Programa_Archiveros_0.pdf",
+        locator=str(SAMPLES / "Programa_Archiveros_0.pdf"),
     )
     with session_factory() as session:
         session.add(persisted_source)
