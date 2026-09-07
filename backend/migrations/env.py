@@ -4,6 +4,7 @@ from sqlalchemy import engine_from_config, pool
 from app.persistence.database import Base
 from app.persistence.models.requirement import Requirement
 from app.persistence.models.source import Source
+from app.persistence.models.study_programme import StudyProgramme, StudyProgrammeUnit
 
 config = context.config
 target_metadata = Base.metadata
