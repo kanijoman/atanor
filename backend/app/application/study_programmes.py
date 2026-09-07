@@ -53,7 +53,7 @@ class BojaProgrammeDiscoveryStrategy:
         r"^(?P<identifier>II\.(?:1|[A-Z]))\.\s+(?P<title>PROGRAMA DE MATERIAS.*)$",
         re.IGNORECASE,
     )
-    _TEMA = re.compile(r"^Tema\s+(\d+)[.\-–—]\s*(.*)$", re.IGNORECASE)
+    _TEMA = re.compile(r"^Tema\s+(\d+)\s*[.\-–—]\s*(.*)$", re.IGNORECASE)
 
     def discover(self, source: Source) -> list[StudyProgramme]:
         units = _extract_units(source)
@@ -109,7 +109,7 @@ class BojaProgrammeDiscoveryStrategy:
 
 
 class ArchiverosProgrammeDiscoveryStrategy:
-    _TEMA = re.compile(r"^Tema\s+(\d+)[.\-–—]\s*(.*)$", re.IGNORECASE)
+    _TEMA = re.compile(r"^Tema\s+(\d+)\s*[.\-–—]\s*(.*)$", re.IGNORECASE)
 
     def discover(self, source: Source) -> list[StudyProgramme]:
         units = _extract_units(source)
