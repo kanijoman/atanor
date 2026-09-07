@@ -7,11 +7,10 @@ from typing import Protocol
 from pypdf import PdfReader
 
 from app.domain.models import Source, StudyProgramme, StudyProgrammeUnit
-from app.persistence.study_programme_repository import SqlAlchemyStudyProgrammeRepository
 
 
-class ProgrammeDiscoveryStrategy(Protocol):
-    def discover(self, source: Source) -> list[StudyProgramme]: ...
+class StudyProgrammeRepository(Protocol):
+    def save(self, programme: StudyProgramme) -> StudyProgramme: ...
 
 
 class _TextUnit:
@@ -36,7 +35,7 @@ def _extract_units(source: Source) -> list[_TextUnit]:
     return units
 
 
-def _unit_span(units: list[_TextUnit], start: int, end: int, number: int, title: str) -> StudyProgrammeUnit:
+def _unit_span(units, start, end, number, title) -> StudyProgrammeUnit:
     first = units[start]
     last = units[end - 1]
     return StudyProgrammeUnit(
@@ -50,7 +49,10 @@ def _unit_span(units: list[_TextUnit], start: int, end: int, number: int, title:
 
 
 class BojaProgrammeDiscoveryStrategy:
-    _HEADER = re.compile(r"^(?P<identifier>II\.(?:1|[A-Z]))\.\s+(?P<title>PROGRAMA DE MATERIAS.*)$", re.IGNORECASE)
+    _HEADER = re.compile(
+        r"^(?P<identifier>II\.(?:1|[A-Z]))\.\s+(?P<title>PROGRAMA DE MATERIAS.*)$",
+        re.IGNORECASE,
+    )
     _TEMA = re.compile(r"^Tema\s+(\d+)[.\-–—]\s*(.*)$", re.IGNORECASE)
 
     def discover(self, source: Source) -> list[StudyProgramme]:
@@ -60,7 +62,7 @@ class BojaProgrammeDiscoveryStrategy:
             for index, unit in enumerate(units)
             if (match := self._HEADER.fullmatch(unit.text))
         ]
-        programmes: list[StudyProgramme] = []
+        programmes = []
         for header_index, match in headers:
             next_header = next(
                 (index for index, _ in headers if index > header_index), len(units)
@@ -71,7 +73,9 @@ class BojaProgrammeDiscoveryStrategy:
                 and not self._TEMA.fullmatch(units[header_index + 1].text)
                 else ""
             )
-            title = " ".join(part for part in (match.group("title"), continuation) if part)
+            title = " ".join(
+                part for part in (match.group("title"), continuation) if part
+            )
             tema_indices = [
                 index
                 for index in range(header_index + 1, next_header)
@@ -79,14 +83,20 @@ class BojaProgrammeDiscoveryStrategy:
             ]
             if not tema_indices:
                 continue
-            programme_units: list[StudyProgrammeUnit] = []
+            programme_units = []
             for position, start in enumerate(tema_indices):
-                end = tema_indices[position + 1] if position + 1 < len(tema_indices) else next_header
+                end = (
+                    tema_indices[position + 1]
+                    if position + 1 < len(tema_indices)
+                    else next_header
+                )
                 tema = self._TEMA.fullmatch(units[start].text)
                 assert tema is not None
-                number = int(tema.group(1))
-                title = tema.group(2).strip()
-                programme_units.append(_unit_span(units, start, end, number, title))
+                programme_units.append(
+                    _unit_span(
+                        units, start, end, int(tema.group(1)), tema.group(2).strip()
+                    )
+                )
             programmes.append(
                 StudyProgramme(
                     source_id=source.id,
@@ -124,11 +134,7 @@ class ArchiverosProgrammeDiscoveryStrategy:
             assert tema is not None
             programme_units.append(
                 _unit_span(
-                    units,
-                    start,
-                    end,
-                    int(tema.group(1)),
-                    tema.group(2).strip(),
+                    units, start, end, int(tema.group(1)), tema.group(2).strip()
                 )
             )
         return [
@@ -153,7 +159,7 @@ class BoeProgrammeDiscoveryStrategy:
             for index, unit in enumerate(units)
             if (match := self._ANNEX.fullmatch(unit.text))
         ]
-        programmes: list[StudyProgramme] = []
+        programmes = []
         for annex_index, identifier in annexes:
             next_annex = next(
                 (index for index, _ in annexes if index > annex_index), len(units)
@@ -168,7 +174,6 @@ class BoeProgrammeDiscoveryStrategy:
             )
             if programme_index is None:
                 continue
-            title = _boe_process_title(units, annex_index)
             item_indices = [
                 index
                 for index in range(programme_index + 1, next_annex)
@@ -178,35 +183,27 @@ class BoeProgrammeDiscoveryStrategy:
                 continue
             programme_units = []
             for position, start in enumerate(item_indices):
-                end = item_indices[position + 1] if position + 1 < len(item_indices) else next_annex
+                end = (
+                    item_indices[position + 1]
+                    if position + 1 < len(item_indices)
+                    else next_annex
+                )
                 item = self._TOP_LEVEL.fullmatch(units[start].text)
                 assert item is not None
                 programme_units.append(
                     _unit_span(
-                        units,
-                        start,
-                        end,
-                        int(item.group(1)),
-                        item.group(2).strip(),
+                        units, start, end, int(item.group(1)), item.group(2).strip()
                     )
                 )
             programmes.append(
                 StudyProgramme(
                     source_id=source.id,
                     identifier=identifier,
-                    title=title,
+                    title=f"ANEXO {identifier}",
                     units=tuple(programme_units),
                 )
             )
         return programmes
-
-
-def _boe_process_title(units: list[_TextUnit], annex_index: int) -> str:
-    for unit in units[annex_index + 1 : annex_index + 9]:
-        text = unit.text
-        if "Cuerpo " in text or text.startswith("Cuerpo "):
-            return text.rstrip(".")
-    return f"ANEXO {units[annex_index].text.split(maxsplit=1)[-1]}"
 
 
 def discover_programmes(source: Source) -> list[StudyProgramme]:
@@ -224,7 +221,6 @@ def discover_programmes(source: Source) -> list[StudyProgramme]:
 
 def discover_and_persist_programmes(
     source: Source,
-    repository: SqlAlchemyStudyProgrammeRepository,
+    repository: StudyProgrammeRepository,
 ) -> list[StudyProgramme]:
-    programmes = discover_programmes(source)
-    return [repository.save(programme) for programme in programmes]
+    return [repository.save(programme) for programme in discover_programmes(source)]
