@@ -1,375 +1,185 @@
-# Backlog
+# Atanor Backlog
 
-# Document Information
+## Document Information
 
 | Field | Value |
 | --- | --- |
 | Project | Atanor |
 | Document | BACKLOG |
-| Status | 🟢 Active |
-| Version | 4.2 |
-| Last Updated | 2026-09-03 |
+| Status | Active |
+| Version | 5.0 |
+| Last Updated | 2026-09-08 |
 | Audience | Contributors and Developers |
 
 ---
 
-# Backlog Status
+## Purpose
 
-| Metric | Value |
-| --- | ---: |
-| Total Tasks | 50 |
-| Pending | 0 |
-| In Progress | 0 |
-| Completed | 42 |
-| Deferred | 3 |
-| Cancelled | 5 |
-| Blocked | 0 |
+`BACKLOG.md` is the project's **operational product backlog**. It communicates where Atanor is, what has been validated, and what should be considered next.
 
-**Current Epic:** Epic L · Knowledge Construction
-
-**Current Task:** None · AT-050 completed; next mini-MVP to be defined from current evidence
+It is intentionally not a historical task ledger. Concrete task definition and execution tracking are managed through GitHub Issues; implementation history is preserved by Git.
 
 ---
 
-# Backlog Governance
+## Current Product State
 
-- Task identifiers are unique and immutable once work has started.
-- Once a task enters **In Progress**, its definition is considered frozen.
-- Implementation details belong in commits and technical documentation.
-- Additional work discovered during implementation must be evaluated as new work.
-- Tasks may be cancelled if they no longer provide value or are considered premature.
-- Cancelled task identifiers are never reused.
-- Deferred tasks retain their identifiers and are not part of the active implementation sequence.
-- Git history is the project's technical record; the backlog reflects planning and execution status.
-- A single push should normally represent one isolated backlog task.
-- Implemented functionality should be validated by automated tests whenever practical.
-- User interfaces are implementations of application use cases, not architectural dependencies of the domain.
-- Technology choices should be justified by concrete product requirements rather than introduced speculatively.
-- Development should be driven by concrete user needs and validated MVP workflows rather than speculative architecture.
-- The domain and persistence model should remain flexible and minimal; new abstractions require concrete evidence.
-- During the current early product stage, each task is a mini-MVP: a small, self-contained increment that provides value or produces actionable product knowledge.
-- Future tasks are hypotheses, not commitments. Detailed future work is defined only when evidence from the preceding iteration justifies it.
-- Parallel development should be introduced only when the product direction is sufficiently stable to make independent work valuable.
-- `experiments/` is used for exploratory product and technical investigation. Experiments may inspect, measure or compare behavior without becoming part of the product contract.
-- Tests specify validated behavior and should remain agnostic of exploratory implementation details. Observations become tests only after they are accepted as product or engineering requirements.
+Atanor is an early-stage product focused first on Spanish public administration examinations.
 
----
-
-# Historical Backlog
-
-The following tasks are completed or deferred/cancelled. Their implementation details and technical decisions are preserved in Git history and the project documentation.
-
-## Foundation · AT-001–AT-023
-
-| ID | Task | Status |
-| --- | --- | :---: |
-| AT-001 | Create initial repository structure | ✅ |
-| AT-002 | Initialize backend project | ✅ |
-| AT-003 | Initialize frontend project | ✅ |
-| AT-004 | Configure initial Docker Compose | ❌ |
-| AT-005 | Configure environment variables | ❌ |
-| AT-006 | Initialize FastAPI application | ✅ |
-| AT-007 | Configure configuration system | ✅ |
-| AT-008 | Configure logging | ✅ |
-| AT-009 | Implement health endpoint | ✅ |
-| AT-010 | Configure persistence layer | ✅ |
-| AT-011 | Define initial domain model | ✅ |
-| AT-012 | Configure migrations | ✅ |
-| AT-013 | Reorganize product interaction roadmap | ✅ |
-| AT-014 | Define first application use cases | ✅ |
-| AT-015 | Build minimal CLI interface | ✅ |
-| AT-016 | Validate first end-to-end user workflow | ✅ |
-| AT-017 | Configure Ruff | ⏸ |
-| AT-018 | Configure Pyright | ⏸ |
-| AT-019 | Configure pre-commit hooks | ⏸ |
-| AT-020 | Configure testing framework | ✅ |
-| AT-021 | Superseded | ❌ |
-| AT-022 | Superseded | ❌ |
-| AT-023 | Superseded | ❌ |
-
-AT-004 and AT-005 were cancelled. AT-017–AT-019 remain deferred. AT-021–AT-023 were cancelled/superseded by the validated workflow and their identifiers are retained.
-
-## Epic G · Requirement Discovery · AT-024–AT-029
-
-| ID | Task | Status |
-| --- | --- | :---: |
-| AT-024 | Define requirement discovery use case | ✅ |
-| AT-025 | Extract text from PDF sources | ✅ |
-| AT-026 | Identify and normalize requirement candidates | ✅ |
-| AT-027 | Persist discovered requirements | ✅ |
-| AT-028 | Expose requirement inspection | ✅ |
-| AT-029 | Validate requirement discovery end-to-end | ✅ |
-
-The initial PDF workflow was validated. Scanned PDFs without a meaningful text layer remain unsupported.
-
-## Epic H · Structured Requirement Discovery · AT-030–AT-032
-
-| ID | Task | Status |
-| --- | --- | :---: |
-| AT-030 | Define structured requirement sections | ✅ |
-| AT-031 | Extract requirements from a known structured section | ✅ |
-| AT-032 | Validate discovery against multiple real source structures | ✅ |
-
-Real BOE, BOCyL and Ayuntamiento de León samples demonstrated that provider structures differ and that OCR should remain deferred until required.
-
-## Epic I · Requirement Scope & Knowledge Needs · AT-033–AT-035
-
-| ID | Task | Status |
-| --- | --- | :---: |
-| AT-033 | Define Requirement Scope and Knowledge Need | ✅ |
-| AT-034 | Persist Requirement Scope and Knowledge Needs | ✅ |
-| AT-035 | Evaluate Knowledge Coverage | ✅ |
-
-The validated model distinguishes `RequirementScope`, `KnowledgeNeed`, `Knowledge` and derived binary `Coverage` (`COVERED` / `MISSING`).
-
-## Epic J · Documentation Re-evaluation · AT-036
-
-**AT-036 · Re-evaluate and Update Project Documentation — ✅ Completed**
-
-Project documentation was aligned with the validated domain model and MVP-oriented development strategy. Development conventions remain separate from architecture.
-
----
-
-# Epic K · MVP Requirement Workflow · AT-037–AT-043
-
-**Status: 🟢 Completed**
-
-Objective: iteratively validate the smallest useful candidate experience. The candidate is the primary product user; curator activity remains an internal mechanism and is not a parallel MVP.
-
-### AT-037 · Validate the First MVP Requirement Workflow — ✅
-
-Validated the flow `PDF convocatoria → Source import → text extraction → structured discovery → persistence → retrieval` against real samples.
-
-### AT-038 · Automatic Requirement Resolution — ✅
-
-Established deterministic resolution: exactly one match resolves; no match or multiple matches remain `UNRESOLVED`. No semantic AI/NLP, OCR, confidence scoring or user-facing validation was introduced.
-
-### AT-039 · Integrate Requirement Discovery with Automatic Resolution — ✅
-
-Connected discovery and deterministic resolution into one application workflow while preserving provenance and unresolved outcomes.
-
-### AT-040 · Produce a User-Usable Requirement Set — ✅
-
-Introduced the minimal application-level `StudyRequirementSet`, reusing `Requirement` rather than adding a speculative domain entity. Unresolved cases remain internal.
-
-### AT-041 · Validate the First Candidate Product Experience — ✅
-
-Confirmed that a candidate can obtain a useful study-requirement result without understanding or validating Atanor's internal decisions.
-
-### AT-042 · Validate Knowledge Coverage for a Candidate Requirement — ✅
-
-Validated contextual `KnowledgeNeed`s and binary knowledge coverage while deliberately avoiding semantic matching, partial coverage and candidate-managed knowledge input.
-
-### AT-043 · Knowledge Acquisition Prototype — ✅
-
-Validated autonomous acquisition from an authoritative BOE source and deterministic relevance extraction. The experiment reduced approximately 328k source characters to 1,991 characters for `Constitución Española`, but the result still contained incidental references. Therefore acquisition and first-stage relevance filtering were validated, not semantic knowledge validation or canonical Knowledge construction.
-
-AT-043 established `experiments/` as an exploratory area and confirmed that provider-specific structure must remain an implementation concern rather than a domain assumption. The suite reached 89 passing tests with no regressions.
-
-AT-043 is closed.
-
----
-
-# Epic L · Knowledge Construction
-
-**Status: 🟢 Completed**
-
-Objective: progressively transform acquired authoritative source material into trustworthy, reusable knowledge while keeping document structure, acquisition and extraction strategies outside the domain model.
-
-### AT-044 · Validate Document Structural Analysis — ✅ Completed
-
-**Goal:** establish a useful first-stage structural analyzer for heterogeneous text-based documents without attempting universal or perfect document interpretation.
-
-AT-044 validated deterministic structural marker detection and contextual hierarchy construction against the BOE, BOJA and Archiveros samples. The analyzer recognizes heterogeneous marker families (`numeric`, `roman`, `letter`, `topic`) and builds useful hierarchy for the observed structures.
-
-The iteration explicitly accepts that the analyzer is heuristic rather than complete. In particular, internal enumerations such as `1`, `2`, `c`, `d` must not incorrectly become top-level document sections, while explicit nested markers and new top-level sequences must reset hierarchy context correctly. These behaviors are covered by `tests/test_document_structure.py`.
-
-The Ayuntamiento de León sample remains `IMAGE_ONLY_OR_EMPTY` and structural analysis is skipped upstream; OCR is still outside scope.
-
-AT-044 is closed. No further structural sophistication is planned unless a regression or a concrete product workflow demonstrates the need.
-
-### AT-045 · Validate Contextual Hierarchy Inference — ✅ Completed
-
-**Goal:** determine whether local structural context materially improves the separation between meaningful sections and internal enumerations across the existing real documents.
-
-AT-045 used the four current PDF samples as an isolated experiment and classified extracted markers as `STRUCTURAL` or `ENUMERATION` before hierarchy construction. The experiment established that the distinction is useful and can be implemented with a small deterministic rule set based on local sequence and hierarchy context.
-
-Validated behaviors include:
-
-- simple numeric sequences can represent internal enumerations rather than new sections;
-- numeric and letter markers can participate in the same local enumeration;
-- an enumeration may begin after a nested structural marker;
-- an explicit nested structural marker terminates the previous enumeration context;
-- a new top-level sequence does not inherit a previous nested enumeration context;
-- raw marker information and continuation text remain preserved;
-- image-only documents remain outside structural analysis.
-
-The behavior is covered by `tests/test_document_structure.py`. The experiment reached **9/9 focused tests and 99/99 tests in the complete suite** with no regressions.
-
-The experiment deliberately did not introduce OCR, AI/NLP, confidence scoring, universal parsing or a new domain model. Its conclusion is that the next justified step is not more exploratory hierarchy sophistication, but integration of the validated structural analysis into the real application processing path.
-
-AT-045 is closed.
-
-### AT-046 · Integrate Document Structure Analysis into the Real Processing Pipeline — ✅ Completed
-
-**Goal:** promote the minimum validated structural-analysis behavior from AT-044/AT-045 into the application layer while keeping extraction and analysis responsibilities separate and avoiding speculative domain changes.
-
-AT-046 introduced the production application-level structural analysis path and separated PDF text extraction from structural analysis. The validated marker detection, `STRUCTURAL` / `ENUMERATION` classification and hierarchy construction are now exercised through application code rather than remaining confined to `experiments/`.
-
-The application tests cover the accepted structural behaviors, including Roman/letter levels, continuation handling, enumeration context and explicit nested markers. Real PDF processing was also validated against the existing samples, including the Archiveros programme and the image-only Ayuntamiento de León sample. A false-positive letter-marker case discovered during integration (`y León...`) was corrected without introducing broader parsing heuristics.
-
-The final regression suite reached **104/104 tests passing** with no regressions.
-
-No OCR, AI/NLP, semantic interpretation, new document domain model or persistence of the structural tree was introduced. The structural representation remains an application processing result.
-
-AT-046 is closed.
-
-### AT-047 · Build the Real Document Processing Pipeline — ✅ Completed
-
-**Hypothesis:** the validated extraction and structural-analysis stages become a useful product capability when orchestrated as one explicit application processing workflow.
-
-**Goal:** provide the smallest real application pipeline that receives a supported `Source`, extracts its text, analyzes its document structure and returns an inspectable structured processing result.
-
-AT-047 introduced the application-level `DocumentProcessingResult` and `process_document(source)` orchestration. The pipeline is now explicitly:
+The current validated application flow is:
 
 ```text
+Convocatoria PDF
+    ↓
 Source
-  ↓
-PDF text extraction
-  ↓
-Document structure analysis
-  ↓
-DocumentProcessingResult
-```
-
-Extraction and structural analysis remain separate responsibilities. The processing result preserves the extracted text and validated structural representation without introducing a domain entity or persistence model for the document tree.
-
-Focused tests cover orchestration, empty/image-only documents, error propagation and integration with a real PDF. The complete regression suite reached **108/108 tests passing** with no regressions.
-
-AT-047 deliberately did not introduce OCR, AI/NLP, semantic interpretation, structural-tree persistence, candidate-facing UI or speculative abstractions.
-
-AT-047 is closed.
-
-### AT-048 · Connect Document Processing to Requirement Discovery — ✅ Completed
-
-**Hypothesis:** the real document-processing result becomes materially more useful when the validated document structure is consumed by the existing requirement-discovery capability, allowing requirement discovery to operate on a single application processing representation instead of independently interpreting raw extracted text.
-
-**Goal:** integrate document processing with the existing requirement-discovery workflow using the smallest evidence-driven change, without changing the domain model or prematurely persisting the structural representation.
-
-**Mini-MVP scope:**
-
-- identify the smallest adapter/boundary needed for requirement discovery to consume `DocumentProcessingResult`;
-- preserve the existing requirement-discovery behavior and domain contracts;
-- use structural information only where it demonstrably improves or simplifies the existing discovery path;
-- keep PDF extraction, document structure analysis and requirement discovery as separate responsibilities;
-- validate the integration against the existing real PDF samples, especially documents with heterogeneous structure;
-- add focused tests for the new application boundary and regression tests for existing requirement discovery;
-- compare the integrated result with the current discovery behavior before accepting any behavioral change;
-- avoid persistence changes unless the integration exposes a concrete need for them.
-
-**Explicitly outside AT-048:**
-
-- OCR or scanned-PDF support;
-- AI/NLP or external AI services;
-- semantic requirement interpretation;
-- new domain entities for document structure;
-- persistence of `DocumentProcessingResult` or the structural tree;
-- universal document parsing;
-- new hierarchy heuristics without a concrete observed failure;
-- candidate-facing UI;
-- speculative refactoring unrelated to the integration boundary.
-
-**Completion criterion:**
-
-A supported text-based PDF can enter the application through `process_document(source)` and provide the validated structural representation to requirement discovery through an explicit application boundary, while existing requirement behavior remains green and any improvement is demonstrated by tests and real-sample validation. The complete regression suite passes without regressions.
-
-AT-048 was completed by migrating Requirement Discovery to consume `DocumentProcessingResult` through the application boundary established by `process_document(source)`. Extraction and structural analysis are no longer duplicated inside the normal discovery path. Existing tests were migrated to the new contract, real PDF samples remained covered, and the complete regression suite reached **116/116 tests passing** with no regressions.
-
-AT-048 deliberately did not introduce OCR, AI/NLP, semantic interpretation, document-structure persistence or new domain entities.
-
-### AT-049 · Integrate Requirement Discovery with Document Processing — ✅ Completed
-
-**Hypothesis:** `DocumentProcessingResult` is a suitable common application boundary for consumers that need extracted text and validated document structure.
-
-AT-049 migrated the requirement-discovery tests and integration path to the new boundary established by AT-048. The resulting application flow is:
-
-```text
-Source
-  ↓
-process_document(source)
-  ↓
-DocumentProcessingResult
-  ↓
+    ↓
+Document Processing
+    ↓
 Requirement Discovery
-  ↓
-RequirementMention[]
+    ↓
+Requirement Resolution
+    ↓
+Study Requirements
+    ↓
+Study Programme Discovery
+    ↓
+Study Programme Units
+    ↓
+Knowledge Need
+    ↓
+Knowledge Construction
 ```
 
-The migration removed dependence on internal PDF extraction from requirement-discovery tests and preserved real-sample validation. The final suite reached **116/116 tests passing** with no regressions.
+The current implementation supports heterogeneous text-based PDF structures through source-specific application strategies. Scanned/image-only PDFs remain outside the current extraction boundary.
 
-AT-049 deliberately did not introduce semantic interpretation, OCR, AI/NLP, persistence of the processing result or further structural heuristics. Its conclusion is that the processing result provides an adequate boundary for downstream application consumers.
+### Validated capabilities
 
-AT-049 is closed.
+- PDF source import and persistence.
+- Deterministic document text extraction with page/order provenance.
+- Document structure analysis for the currently observed source families.
+- Requirement discovery and deterministic requirement resolution.
+- User-oriented study requirement projection.
+- Requirement scopes and knowledge needs.
+- Binary knowledge coverage assessment (`COVERED` / `MISSING`).
+- Autonomous acquisition from an authoritative BOE source.
+- Deterministic relevant-content extraction for acquired material.
+- First reusable `Knowledge` construction workflow.
+- Deterministic study-programme discovery for the current BOE, BOJA and Archiveros samples.
+- Persistence and retrieval of discovered study programmes and units.
 
-### AT-050 · Build the First Knowledge Construction Workflow — ✅ Completed
-
-**Hypothesis:** the existing acquisition and extraction capabilities are sufficient to construct a first reusable `Knowledge` object for a `KnowledgeNeed` without introducing a new domain abstraction.
-
-**Goal:** orchestrate source-material acquisition and relevant-knowledge extraction into one explicit application workflow while preserving source provenance and keeping acquisition/extraction strategies outside the domain model.
-
-AT-050 introduced `construct_knowledge(need, acquisition_strategy, extraction_strategy)`. The workflow is explicitly:
-
-```text
-KnowledgeNeed
-  ↓
-Knowledge acquisition
-  ↓
-Acquired source material
-  ↓
-Knowledge extraction
-  ↓
-Knowledge
-  └── provenance → Source
-```
-
-The construction use case returns `None` when acquisition produces no material or extraction produces no result. When construction succeeds, provenance from the acquired material is preserved while the extracted content supplies the resulting knowledge description.
-
-The workflow was validated first with isolated fake strategies and then with the real `BoeKnowledgeAcquisitionStrategy` and `DeterministicKnowledgeExtractionStrategy` against the BOE sample. The complete regression suite reached **120/120 tests passing** with no regressions.
-
-AT-050 deliberately did not introduce `KnowledgeConstructionStrategy`, semantic matching, AI/NLP, embeddings/RAG, OCR, Knowledge Graph structures, additional knowledge metadata, persistence changes or candidate-facing UI. The existing `Knowledge` model was sufficient for this first construction workflow.
-
-During integration, several existing test paths and the Alembic configuration were made independent of the current working directory. These changes improve test and migration robustness without introducing new product abstractions.
-
-AT-050 is closed. The next task should be defined from the evidence produced by this first real Knowledge Construction workflow rather than being pre-planned.
-
-# Known Technical Debt & Deferred Concerns
-
-| ID | Concern | Current Decision | Trigger for Re-evaluation |
-| --- | --- | --- | --- |
-| TD-001 | Static type checking | Keep AT-018 deferred. | Type-related regressions or increasing cross-layer complexity. |
-| TD-002 | Automated linting / pre-commit | Keep AT-017 and AT-019 deferred. | Growing codebase, CI adoption or additional contributors. |
-| TD-003 | Requirement/Source identifier consistency | `Requirement` uses `int`; `Source` uses `UUID`. | Concrete persistence/API requirement or broader identity refactor. |
-| TD-004 | `RequirementScope` builder identity semantics | Review when persisted scope mutation is required. | A workflow mutates/replaces persisted scopes. |
-| TD-005 | Error and edge-case coverage | Expand incrementally with product workflows. | Concrete failure mode or user-facing workflow. |
-| TD-006 | CLI inspection completeness | Sufficient for current development validation. | CLI becomes primary user workflow or manual inspection bottleneck. |
-| TD-007 | Scanned PDF / OCR support | Explicitly unsupported; León sample remains a regression case. | A real MVP workflow requires scanned convocatorias. |
-| TD-008 | Richer Knowledge Coverage | Keep binary `COVERED/MISSING`. | An open-domain use case demonstrates insufficiency. |
-| TD-009 | Generalized provider-specific parsing | Use evidence-driven strategies; do not assume a universal template. | More formats require repeated structural adaptations. |
-| TD-010 | Resolution result persistence | Current resolutions are application-level results. | Repeatability, auditability, asynchronous processing or curation becomes concrete. |
-| TD-011 | Resolution algorithm sophistication | Keep deterministic and minimal. | User-oriented output demonstrates unacceptable unresolved/ambiguous rates. |
-| TD-012 | Knowledge extraction quality | Current extraction may include incidental references and is not semantically complete. | Candidate-facing knowledge requires trustworthy, structured or complete knowledge. |
-| TD-013 | Knowledge provenance and quality metadata | Rich freshness/evidence/confidence semantics deferred. | Acquired knowledge is presented directly to candidates or maintained over time. |
-
-No debt item currently requires a standalone cleanup task before the next mini-MVP is defined.
+These capabilities are validated against the project's four real PDF samples. They do not imply universal support for arbitrary official-document formats.
 
 ---
 
-# Active Backlog Summary
+## Current Product Gap
 
-The foundation, requirement discovery, structured discovery, requirement scope/knowledge-need modeling, coverage evaluation, documentation re-evaluation, first candidate workflow, automatic requirement resolution, user-oriented requirement projection, candidate validation, knowledge coverage validation, knowledge acquisition prototype, structural document analysis, contextual hierarchy inference, integration of structural analysis into the application layer, the explicit document processing pipeline, its integration with requirement discovery and the first Knowledge Construction workflow are complete.
+The main unresolved question is no longer whether Atanor can process isolated technical stages. The key question is whether these capabilities can be composed into a **useful preparation experience for an actual candidate**.
 
-**Current status: 42 completed tasks, 0 pending, 3 deferred, 5 cancelled, 0 in progress.**
+In particular, Atanor must demonstrate that a candidate can move from an official examination call to a trustworthy, usable study scope and then to the knowledge required to prepare it.
 
-AT-047 is closed after introducing the real application document-processing pipeline and reaching **108/108 tests passing**. AT-048 is closed after connecting `DocumentProcessingResult` to Requirement Discovery and reaching **116/116 tests passing**. AT-049 is closed after validating that this boundary is suitable for downstream consumers. **AT-050 is closed after validating the first real Knowledge Construction workflow and reaching 120/120 tests passing.**
+The next work should therefore prioritize product value and validation over additional infrastructure or speculative architecture.
 
-No new active task is defined yet. The next mini-MVP should be selected from the evidence produced by AT-050 rather than from speculative future work.
+---
+
+## Immediate Priority
+
+**Define and validate the next candidate-facing mini-MVP from the capabilities now available.**
+
+The next task should establish a concrete user workflow that uses the validated requirement and study-programme capabilities and exposes the smallest meaningful preparation result.
+
+The precise implementation should be defined in a GitHub Issue after the product hypothesis is selected.
+
+---
+
+## Working Model
+
+Each new task follows this general loop:
+
+```text
+Product hypothesis / need
+        ↓
+GitHub Issue
+        ↓
+Minimal implementation
+        ↓
+Automated validation
+        ↓
+Real-product validation
+        ↓
+Learning
+        ↓
+Next Issue / refinement
+```
+
+A task is considered a mini-MVP when it provides user value, materially improves a validated workflow, produces actionable product knowledge, or provides technical capability demonstrably required by the current experiment.
+
+Future work is intentionally treated as hypotheses rather than commitments.
+
+---
+
+## Documentation Responsibilities
+
+| Artifact | Responsibility |
+| --- | --- |
+| `README.md` | Project introduction, current high-level capability and contributor orientation. |
+| `docs/foundations/FOUNDATIONS.md` | Product mission, vision and foundational principles. |
+| `docs/roadmap/ROADMAP.md` | Strategic product direction and major stages; not individual tasks. |
+| `docs/backlog/BACKLOG.md` | Current product state, active hypothesis and immediate priorities. |
+| GitHub Issues | Concrete tasks, acceptance criteria, discussion and execution status. |
+| `docs/architecture/ARCHITECTURE.md` | Validated architecture, domain/application boundaries and architectural decisions. |
+| `docs/conventions/CONVENTIONS.md` | Engineering and development practices. |
+| `docs/technology/TECHNOLOGY.md` | Adopted, deferred and rejected technology choices. |
+| `docs/migrations/MIGRATIONS.md` | Database migration strategy and conventions. |
+| `backend/experiments/` | Exploratory investigations and evidence that has not necessarily become a product contract. |
+| Git history | Actual implementation history and technical change record. |
+
+Documentation should be updated only when the information belongs to that document and its maintenance cost is justified.
+
+---
+
+## GitHub Issues Workflow
+
+New concrete tasks should normally be created as GitHub Issues using the `AT-XXX` identifier in the title.
+
+An Issue should contain enough information to establish:
+
+- the problem or hypothesis;
+- the intended outcome;
+- relevant scope and explicit non-goals;
+- acceptance criteria when they can be defined in advance.
+
+Implementation details discovered during development do not need to be copied into this backlog. They belong in code, commits, experiments or technical documentation as appropriate.
+
+When a task is completed, its Issue is closed after validation. If new work is discovered, create a separate Issue rather than silently expanding the original scope.
+
+Commits continue to use:
+
+```text
+AT-XXX Change description
+```
+
+This preserves traceability between product task, implementation and Git history without requiring the repository backlog to duplicate the Issue history.
+
+---
+
+## Historical Context
+
+The project has completed the initial foundation, source workflow, requirement-discovery, requirement-scope, document-processing, knowledge-acquisition, knowledge-construction and study-programme validation iterations.
+
+The detailed history of those iterations is intentionally not reproduced here. It remains available through Git history, experiments and the corresponding project documentation.
+
+The current transition to GitHub Issues as the primary task-tracking mechanism is itself being evaluated through **AT-080**.
+
+---
+
+## Backlog Governance
+
+- Keep this document short and operational.
+- Do not duplicate the detailed history of completed tasks.
+- Do not use the backlog as a technical specification.
+- Do not predefine a long sequence of speculative implementation tasks.
+- Prefer one isolated task per GitHub Issue.
+- Keep task scope stable once implementation starts.
+- Validate behavior with automated tests whenever practical.
+- Validate product-facing work against real user value, not only technical correctness.
+- Introduce new abstractions, dependencies or infrastructure only when justified by concrete evidence.
+- Preserve uncertainty explicitly; unresolved product questions should become hypotheses or experiments rather than hidden assumptions.
