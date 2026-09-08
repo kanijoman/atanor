@@ -1,252 +1,161 @@
 # Atanor
 
-# Document Information
-
-| Field        | Value                |
-| ------------ | -------------------- |
-| Project      | Atanor               |
-| Document     | README               |
-| Status       | 🟢 Active            |
-| Version      | 0.7                  |
-| Last Updated | 2026-08-17           |
-| Audience     | Users and Developers |
-
 > **A knowledge-driven platform for public service examination preparation.**
 
 Atanor is an open-source platform designed to transform examination requirements and authoritative sources into structured, traceable and reusable knowledge that can support effective learning.
 
-The first MVP focuses on Spanish public administration examinations. The underlying model is intentionally broader so that validated knowledge can eventually be reused across different examinations and other knowledge-intensive learning domains.
+The first MVP focuses on Spanish public administration examinations. The underlying model is intentionally broader so validated knowledge can eventually be reused across different examinations and other knowledge-intensive learning domains.
 
----
-
-# Product Direction
+## Product Direction
 
 Atanor aims to solve a problem traditionally addressed by preparation services: turning an official examination requirement into a justified knowledge scope and, eventually, an effective learning journey.
 
-The current validated product direction starts with a narrower promise: **a user provides a supported convocatoria and Atanor determines what the user needs to study without requiring the user to validate Atanor's discovery or resolution decisions.**
+The current product direction is deliberately incremental. A user should be able to provide a supported `convocatoria`, obtain the relevant study requirements and programme structure, and progressively receive the knowledge needed to prepare it.
 
-The validated requirement flow is:
+The current validated application flow is:
 
 ```text
-Convocatoria
+Convocatoria PDF
     ↓
 Source
     ↓
+Document Processing
+    ↓
 Requirement Discovery
     ↓
-Automatic Resolution
+Requirement Resolution
     ↓
-User-Oriented Study Requirements
+Study Requirements
+    ↓
+Study Programme Discovery
+    ↓
+Study Programme Units
+    ↓
+Knowledge Needs
+    ↓
+Knowledge Construction
 ```
 
-AT-043 extended the product exploration beyond requirement discovery. Atanor can now acquire text from an authoritative BOE source and apply a deterministic relevance strategy to a `KnowledgeNeed` without requiring the candidate to provide the missing knowledge.
+## Current Status
 
-This does **not** mean that arbitrary source text is considered validated knowledge. External documents are treated as raw material; acquisition, relevant-content extraction and validated knowledge remain distinct steps.
+Atanor currently supports:
 
----
+- PDF source import and persistence;
+- deterministic text extraction with page/order provenance;
+- deterministic document structure analysis for the currently observed source families;
+- requirement discovery and deterministic resolution;
+- user-oriented study requirements;
+- requirement scopes and knowledge needs;
+- binary knowledge coverage (`COVERED` / `MISSING`);
+- autonomous acquisition from an authoritative BOE source;
+- deterministic relevant-content extraction;
+- first reusable `Knowledge` construction;
+- study-programme discovery for the current BOE, BOJA and Archiveros samples;
+- persistence and retrieval of study programmes and programme units.
 
-# Current Status
+These capabilities have been validated against four real PDF samples. Support is intentionally not presented as universal parsing of arbitrary official documents. Scanned/image-only PDFs remain outside the current extraction boundary.
 
-The foundation, source workflow, requirement discovery, requirement resolution, user-oriented requirement projection and the first autonomous knowledge-acquisition experiment are complete through **AT-043**.
+## Product Principles
 
-Atanor currently has two validated experimental flows:
+A few principles guide the current development stage:
 
-```text
-PDF source
-    ↓
-Import
-    ↓
-Persist
-    ↓
-Text extraction
-    ↓
-Structured requirement discovery
-    ↓
-Automatic resolution
-    ↓
-User-oriented study requirements
-```
+- **Product validation drives development.**
+- **Atanor should provide the knowledge required by the candidate rather than making the candidate responsible for finding and supplying it.**
+- **External sources are evidence and raw material, not automatically validated knowledge.**
+- **Important knowledge claims should remain traceable to supporting evidence.**
+- **Uncertainty must remain explicit; unsupported knowledge is preferable to fabricated certainty.**
+- **Architecture enables product evolution rather than dictating it.**
+- **New abstractions, dependencies and infrastructure require concrete evidence.**
+- **Experiments discover behavior; tests protect behavior once it is accepted.**
+- **Development is incremental, pragmatic and maintainable.**
 
-and:
+## Experiments and Tests
 
-```text
-Knowledge Need
-    ↓
-External source acquisition
-    ↓
-Raw extracted content
-    ↓
-Deterministic relevance extraction
-    ↓
-Candidate Knowledge
-```
+Exploratory work lives under `backend/experiments/`. Experiments may inspect real documents, compare strategies or test hypotheses without becoming product contracts.
 
-The second flow was validated experimentally against a real BOE sample. From approximately 328,000 extracted characters, the deterministic strategy selected approximately 2,000 characters containing multiple relevant formulations of the Constitution Española topic. The result demonstrates that autonomous acquisition and basic relevance filtering are viable, but it is not yet sufficient to claim semantic knowledge extraction.
-
-The BOE experiment also demonstrated that source documents may contain substantially more information than the study programme itself, including administrative, eligibility and procedural information. Such information may become valuable product functionality, but it is intentionally outside the current MVP scope.
-
-Different BOE and other official-document templates must not be assumed to share a universal structure. The current deterministic strategy is therefore an experiment, not a general-purpose BOE parser.
-
----
-
-# Product Development Principle: Atanor Must Provide Knowledge
-
-A core product constraint has now been established:
-
-> **Atanor must provide the knowledge required by the candidate; it must not make the candidate responsible for finding and supplying that knowledge.**
-
-A candidate may eventually benefit from curator intervention when automation cannot reliably resolve a gap, but candidate-supplied knowledge is not the intended default workflow.
-
-This principle guides future Knowledge Construction work. Atanor may use authoritative sources, deterministic extraction, AI or other mechanisms, but it must distinguish between:
+Tests define behavior that Atanor has decided to preserve. The preferred development loop is:
 
 ```text
-Source material
+Hypothesis
     ↓
-Acquired information
+Experiment / mini-MVP
     ↓
-Relevant information
-    ↓
-Validated knowledge
-```
-
-Atanor must not claim `COVERED` merely because a source contains a textual match. Saying **"I don't know"** is preferable to presenting invented, incomplete or insufficiently supported knowledge as fact.
-
----
-
-# Experiments and Tests
-
-Atanor now deliberately distinguishes **experiments** from **tests**.
-
-### Experiments
-
-Experiments are exploratory tools used to inspect, measure and understand product behavior. They may print output, compare strategies, process real documents and evolve rapidly. They are not product contracts.
-
-They live under:
-
-```text
-backend/experiments/
-```
-
-For example, AT-043 introduced `inspect_boe_knowledge.py` to inspect the actual content produced by the deterministic BOE knowledge-extraction strategy.
-
-### Tests
-
-Tests define behavior that Atanor has already decided to preserve. They should remain deterministic, self-contained and agnostic of exploratory implementation details.
-
-The intended development loop is:
-
-```text
-Experiment
+Real validation
     ↓
 Observation
     ↓
-Product insight
+Validated requirement
     ↓
-Requirement / decision
-    ↓
-Test
-    ↓
-Implementation
+Test + implementation
 ```
 
-This separation allows Atanor to investigate uncertain product questions without prematurely turning hypotheses into permanent technical contracts.
+## Documentation
 
----
+Project documentation is organized by responsibility:
 
-# Current Domain Model
+| Document | Purpose |
+|---|---|
+| `docs/foundations/FOUNDATIONS.md` | Product mission, vision and foundational principles. |
+| `docs/roadmap/ROADMAP.md` | Strategic product direction and major stages. |
+| `docs/backlog/BACKLOG.md` | Current product state and immediate priorities. |
+| `docs/architecture/ARCHITECTURE.md` | Validated architecture and architectural decisions. |
+| `docs/conventions/CONVENTIONS.md` | Development and engineering conventions. |
+| `docs/technology/TECHNOLOGY.md` | Technology decisions. |
+| `docs/migrations/MIGRATIONS.md` | Database migration strategy. |
+| GitHub Issues | Concrete task definition, acceptance criteria, discussion and status. |
 
-Atanor currently distinguishes:
+The backlog intentionally does not duplicate the detailed history of completed tasks. GitHub Issues and Git history provide the execution record.
 
-- **Requirement** — the requirement represented in the application domain;
-- **Requirement Scope** — the contextual knowledge coverage required by a requirement in a specific examination context;
-- **Knowledge Need** — a unit of knowledge coverage required by a scope, independently of whether corresponding knowledge already exists;
-- **Knowledge** — reusable knowledge that may satisfy one or more needs;
-- **Coverage** — the result of comparing a knowledge need with available knowledge.
+## Development Workflow
 
-The initial coverage model is intentionally limited to:
+New concrete work is normally tracked through a GitHub Issue using the `AT-XXX` identifier. Each task should be isolated, validated and traceable.
+
+Commit messages use:
 
 ```text
-COVERED
-MISSING
+AT-XXX Change description
 ```
 
-A need may therefore exist without available knowledge. Richer states such as partial coverage or semantic matching remain future possibilities and are not assumed by the current model.
+The preferred workflow is:
 
-The `StudyRequirementSet` introduced at the application layer is deliberately a product-oriented output rather than a new domain entity. It currently reuses `Requirement` directly.
+```text
+Product hypothesis / need
+    ↓
+GitHub Issue
+    ↓
+Minimal implementation
+    ↓
+Automated validation
+    ↓
+Real-product validation
+    ↓
+Issue closed
+```
 
----
+## Technology
 
-# Project Principles
+The current backend stack is:
 
-Atanor is developed around a small set of core principles:
+- Python 3.14
+- uv
+- FastAPI
+- Pydantic
+- Pydantic Settings
+- Uvicorn
+- SQLAlchemy
+- Alembic
+- SQLite
 
-* **Product validation drives development.**
-* **Technical decisions must support a concrete user need, product capability or demonstrated engineering risk.**
-* **Architecture enables product evolution; it does not dictate the roadmap.**
-* **Requirements, scopes, needs and knowledge are distinct concepts.**
-* **Canonical knowledge must remain reusable independently of a curriculum.**
-* **Important knowledge claims should remain traceable to supporting evidence.**
-* **Atanor must provide knowledge rather than delegating knowledge acquisition to the candidate.**
-* **Uncertainty must be explicit; unsupported knowledge is preferable to fabricated certainty.**
-* **External sources are evidence and raw material, not automatically validated knowledge.**
-* **Experiments are used to discover product behavior; tests protect behavior once it is decided.**
-* **Artificial Intelligence is a tool, not the product itself.**
-* **Maintainability takes precedence over unnecessary complexity.**
-* **Infrastructure is introduced only when it solves an existing problem.**
-* **Development is iterative, incremental and pragmatic.**
+The project deliberately has no mandatory paid dependency and does not currently require Docker, PostgreSQL, vector databases, graph databases, external AI services or crawling infrastructure.
 
-Technical quality remains fundamental: product-driven development does not mean accepting fragile or unmaintainable implementations. The goal is to build the minimum sound technical foundation needed to validate and evolve the product safely.
+Technology choices remain subordinate to validated product requirements.
 
----
+## Current Product Gap
 
-# Technology
+The main unresolved question is now product-oriented: can the validated processing capabilities be composed into a genuinely useful preparation experience for a candidate?
 
-The currently adopted backend stack is:
+The next mini-MVP should therefore focus on the smallest candidate workflow that turns the existing requirement and programme capabilities into a meaningful preparation result.
 
-* Python 3.14
-* uv
-* FastAPI
-* Pydantic
-* Pydantic Settings
-* Uvicorn
-* SQLAlchemy
-* Alembic
-* SQLite
+## Vision
 
-The project deliberately has no mandatory paid dependency and no requirement for Docker, PostgreSQL, vector databases, graph databases, external AI services or crawling infrastructure at this stage.
-
-Technology decisions remain subordinate to validated product requirements.
-
----
-
-# Documentation
-
-The main project documentation can be found under the `docs/` directory.
-
-| Document | Description |
-|---|---|
-| **FOUNDATIONS.md** | Product mission, vision and foundational principles. |
-| **ROADMAP.md** | Strategic product evolution and major development stages. |
-| **BACKLOG.md** | Current implementation tasks and execution status. |
-| **ARCHITECTURE.md** | Conceptual and validated technical architecture. |
-| **TECHNOLOGY.md** | Adopted and deferred technology decisions. |
-| **CONVENTIONS.md** | Development conventions and engineering practices. |
-| **MIGRATIONS.md** | Database migration strategy and conventions. |
-
----
-
-# Current Development Sequence
-
-AT-043 demonstrated that Atanor can begin constructing knowledge autonomously from an authoritative external source, but also established that raw source extraction is not equivalent to validated knowledge.
-
-The next product direction should therefore focus on improving the reliability and generality of the transition from **source material → relevant information → knowledge**, while avoiding assumptions about a single document template. The next mini-MVP should be selected from evidence produced by experiments rather than from a predetermined technical roadmap.
-
-Potential future directions include document-structure discovery, more robust relevance extraction, source diversification and semantic knowledge construction. None is currently a commitment.
-
----
-
-# Vision
-
-Atanor is not intended to become another conversational chatbot.
-
-Its purpose is to become a knowledge platform capable of understanding, organizing and relating information, allowing users to study more effectively while maintaining traceability to authoritative sources and making uncertainty explicit.
+Atanor is intended to become a knowledge platform capable of understanding, organizing and relating information so users can study more effectively while maintaining traceability to authoritative sources and making uncertainty explicit.
