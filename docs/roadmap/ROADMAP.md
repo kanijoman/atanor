@@ -1,121 +1,85 @@
 # Atanor Roadmap
 
-# Document Information
+## Document Information
 
-| Field        | Value                       |
-| ------------ | --------------------------- |
-| Project      | Atanor                      |
-| Document     | ROADMAP                     |
-| Status       | 🟢 Active                   |
-| Version      | 0.9                         |
-| Last Updated | 2026-09-03                  |
-| Audience     | Contributors and Developers |
+| Field | Value |
+| --- | --- |
+| Project | Atanor |
+| Document | ROADMAP |
+| Status | Active |
+| Version | 1.0 |
+| Last Updated | 2026-09-08 |
+| Audience | Contributors and Developers |
 
 ---
 
-# Vision
+## Vision
 
 Atanor aims to become a knowledge-driven learning platform capable of transforming examination requirements and authoritative sources into structured, traceable and adaptive learning experiences.
 
-The initial MVP focuses on Spanish public administration competitive examinations.
+The initial product focuses on Spanish public administration competitive examinations.
 
 ---
 
-# Development Strategy
+## Development Strategy
 
-Atanor follows an incremental delivery model. Infrastructure and supporting technologies are introduced only when they solve an existing problem.
+The roadmap defines **strategic product direction**, not implementation tasks.
 
-The roadmap describes strategic direction. It does not enumerate implementation tasks or establish one-to-one correspondence with the backlog.
-
-Development is guided by working software, small traceable changes, evidence-driven domain decisions, MVP alignment and real source material rather than hypothetical formats.
-
-From the first user-visible MVP workflow onward, **product validation is the primary driver of development**. Technical quality remains fundamental, but technical decisions are justified by the user value, product capability or demonstrated engineering risk they address.
-
-The preferred evolution loop is:
+Atanor follows an evidence-driven, incremental model:
 
 ```text
-User need
-    ↓
-Product behavior
-    ↓
-Minimal technical support
-    ↓
+User need / product hypothesis
+        ↓
+Minimal experiment or mini-MVP
+        ↓
 Real validation
-    ↓
+        ↓
 Learning
-    ↓
-Refinement
+        ↓
+Next validated capability
 ```
 
-Exploratory work follows a complementary loop:
+Technical quality remains fundamental, but technical work is subordinate to validated product needs and demonstrated engineering risks.
 
-```text
-Hypothesis
-    ↓
-Experiment
-    ↓
-Observation
-    ↓
-Product insight
-    ↓
-Validated requirement
-    ↓
-Implementation / test
-```
-
-The roadmap therefore evolves from validated product capabilities rather than from a predetermined architectural target.
+Future stages are directional. Their order, scope and implementation may change as product evidence accumulates.
 
 ---
 
-# Product Evolution
+## Product Evolution
 
-## Stage 1 · Foundation
+### Stage 1 · Foundation
 
-**Status: 🟢 Completed**
+**Status: Completed**
 
-Established the technical, organizational and development foundations of Atanor.
+Established the technical and development foundations of Atanor, including the backend, persistence, testing and minimal application infrastructure.
 
-## Stage 2 · Application & Source Foundation
+### Stage 2 · Source and Requirement Foundation
 
-**Status: 🟢 Completed**
+**Status: Completed**
 
-Established the minimal source, persistence and application capabilities required to introduce authoritative source material.
+Established the ability to import authoritative PDF sources, process their text and discover structured examination requirements.
 
-Validated workflow:
-
-```text
-PDF source
-    ↓
-Import
-    ↓
-Persist
-    ↓
-Retrieve / List
-```
-
-## Stage 3 · Requirement Discovery
-
-**Status: 🟢 Completed**
-
-Validated deterministic extraction of structured requirement mentions from supported PDF formats.
+Validated direction:
 
 ```text
+PDF Source
+    ↓
 Source
     ↓
-Document Structure Detection
+Document Processing
     ↓
-Requirement Mention
+Requirement Discovery
     ↓
 Requirement
 ```
 
-Real BOE and Junta de Castilla y León samples demonstrated different structures. Scanned PDFs remain outside the current extraction boundary.
+Real official-document samples demonstrated that source structures differ. Scanned/image-only PDFs remain outside the current extraction boundary.
 
-## Stage 4 · Requirement Scope & Coverage
+### Stage 3 · Requirement Context and Candidate Study Scope
 
-**Status: 🟢 Completed**
+**Status: Completed**
 
-Validated the contextual knowledge layer between requirements and available knowledge.
+Established the contextual layer needed to turn requirements into study-oriented knowledge needs.
 
 ```text
 Requirement
@@ -127,51 +91,79 @@ Knowledge Need
 Coverage
 ```
 
-The model supports multiple contextual scopes, required depth and Knowledge Needs that may remain unfulfilled. Initial coverage is deliberately limited to `COVERED` and `MISSING`.
+The initial coverage model deliberately distinguishes only `COVERED` and `MISSING`.
 
-Coverage is an assessment result rather than a persistent domain entity at this stage.
+### Stage 4 · Document Structure and Programme Discovery
 
-The stage is covered by domain, persistence and real-sample regression tests.
+**Status: Validated / Implemented**
 
-## Stage 5 · First User-Validated MVP Workflow
+Validated deterministic document-structure analysis and source-specific study-programme discovery against the current BOE, BOJA and Archiveros samples.
 
-**Status: 🟢 Completed**
+The current application can normalize heterogeneous programme structures into:
 
-Turned the validated requirement-processing capabilities into an observable product experience and used real-sample evidence to determine what Atanor needs next.
+```text
+Source
+    ↓
+Source-specific structure detection
+    ↓
+Study Programme
+    ↓
+Study Programme Units
+```
 
-Validated capability:
+The implementation deliberately keeps provider-specific structure in the application layer and does not assume a universal official-document format.
+
+### Stage 5 · Knowledge Acquisition and Construction
+
+**Status: Prototype Validated / Implemented**
+
+Validated the first path from a `KnowledgeNeed` to reusable `Knowledge` through authoritative source acquisition and deterministic relevance extraction.
+
+```text
+Knowledge Need
+    ↓
+Knowledge Acquisition
+    ↓
+Source Material
+    ↓
+Relevant Content
+    ↓
+Knowledge Construction
+    ↓
+Knowledge
+```
+
+The current capability demonstrates acquisition, relevance extraction and first knowledge construction, but does not yet establish semantic completeness, universal source support or fully validated canonical knowledge.
+
+### Stage 6 · Candidate Preparation MVP
+
+**Status: Next Product Focus**
+
+The next major goal is to compose the validated capabilities into a genuinely useful preparation workflow for an actual candidate.
+
+The target direction is:
 
 ```text
 Convocatoria
     ↓
-Source
+Requirements
     ↓
-Requirement Discovery
+Study Programme
     ↓
-Automatic Resolution
+Knowledge Needs
     ↓
-User-Oriented Study Requirements
+Knowledge
+    ↓
+Preparation
 ```
 
-The candidate experience is intentionally minimal. Atanor does not ask the candidate to understand or validate internal semantic decisions.
+The next mini-MVP should establish the smallest meaningful candidate experience rather than expanding infrastructure or completing the theoretical knowledge model in advance.
 
-The stage also established an important product principle: Atanor, rather than the candidate, owns the responsibility for supplying knowledge required for study.
+### Future Capability · Eligibility and Opportunity Discovery
 
-## Future Capability · Eligibility and Opportunity Discovery
+**Status: Future Product Direction**
 
-**Status: ⚪ Future / Product Direction Identified**
-
-Atanor should eventually be able to determine which selection processes are relevant to a candidate based on the candidate's capabilities and circumstances, rather than requiring the candidate to start from a known convocatoria.
-
-A candidate may provide relevant information such as:
-
-- nationality or other legally relevant personal conditions;
-- educational qualifications and training;
-- professional experience;
-- seniority or previous public-service status;
-- other capabilities or circumstances required by a selection process.
-
-The capability should support both directions of discovery:
+Atanor should eventually be able to determine which selection processes are relevant to a candidate, including both starting from a known convocatoria and discovering opportunities from a candidate profile.
 
 ```text
 Known Convocatoria
@@ -195,100 +187,39 @@ Matching Selection Processes
 Relevant Convocatorias
 ```
 
-Eligibility must explicitly distinguish at least three outcomes:
+Eligibility should distinguish at least:
 
 ```text
 ELIGIBLE
-    Known information satisfies the relevant requirements.
-
 NOT ELIGIBLE
-    Known information contradicts at least one relevant requirement.
-
 UNDETERMINED
-    Available information is insufficient to establish eligibility.
 ```
 
-Eligibility conclusions should remain traceable to the requirements extracted from authoritative sources. Atanor should not turn missing information or uncertain interpretation into a definitive eligibility decision.
+This remains a product direction rather than an implementation commitment.
 
-When a compatible process is identified, eligibility should become a natural entry point into the existing preparation flow:
+### Future Capability · Knowledge Retrieval and Assistance
 
-```text
-Candidate Profile
-    ↓
-Eligible Selection Process
-    ↓
-Requirements
-    ↓
-Programme
-    ↓
-Knowledge Needs
-    ↓
-Preparation
-```
+**Status: Future**
 
-This capability is deliberately documented as a product direction rather than an implementation commitment. It must not yet drive the creation of domain entities, persistence structures or candidate-profile infrastructure until concrete user validation establishes their need.
+Make validated knowledge usable through search and grounded AI-assisted interaction, including citations, explanations and explicit uncertainty when these capabilities address validated user needs.
 
-## Stage 6 · Knowledge Construction
+### Future Capability · Adaptive Learning
 
-**Status: 🟢 Prototype Validated / Next Increment Pending**
+**Status: Future**
 
-Build the capability to transform validated Knowledge Needs into reusable knowledge when product validation demonstrates that this is the next valuable step.
+Evolve validated knowledge into an adaptive learning environment with study sessions, questions, assessment, progress tracking and revision planning when product evidence establishes the need.
 
-AT-043 established the first autonomous acquisition and extraction path:
+### Future Capability · Ecosystem Expansion
 
-```text
-Knowledge Need
-    ↓
-Knowledge Acquisition
-    ↓
-External Source Material
-    ↓
-Relevant Content
-    ↓
-Candidate Knowledge
-```
+**Status: Future**
 
-The BOE experiment demonstrated that a deterministic strategy can substantially reduce a real source to potentially relevant context. It did not yet establish semantic completeness, canonical knowledge validation or a universal source template.
-
-Potential capabilities include:
-
-- identify suitable knowledge sources;
-- acquire or ingest source material;
-- detect source/document structure without embedding provider assumptions in the domain;
-- extract candidate knowledge;
-- distinguish relevant content from incidental references;
-- validate knowledge against evidence;
-- establish provenance;
-- construct reusable canonical Knowledge;
-- reuse existing Knowledge where it satisfies a need.
-
-These capabilities remain intentionally provisional. The next implementation step should be derived from the evidence of AT-043 rather than from the complete Knowledge model anticipated today.
-
-## Stage 7 · Knowledge Retrieval and Assistance
-
-**Status: ⚪ Future**
-
-Make structured knowledge usable through search and AI-assisted interaction, including grounded retrieval, source citation, explanations and uncertainty reporting, when these capabilities address validated user needs.
-
-## Stage 8 · Learning Platform
-
-**Status: ⚪ Future**
-
-Transform validated knowledge capabilities into an adaptive learning environment, including learning paths, study sessions, questions, assessment, progress tracking and revision planning as product evidence establishes their priority.
-
-## Stage 9 · Ecosystem Expansion
-
-**Status: ⚪ Future**
-
-Expand beyond the initial MVP once the core product has been validated. Possible directions include additional examination domains, integrations, analytics, collaboration and broader learning use cases.
+Expand beyond the initial examination domain once the core candidate experience has been validated. Possible directions include additional examination domains, integrations, analytics, collaboration and broader knowledge-intensive learning use cases.
 
 ---
 
-# Long-Term Vision
+## Long-Term Conceptual Direction
 
-Although the initial product targets Spanish public administration examinations, the underlying model should remain sufficiently general to support other knowledge-intensive domains.
-
-The reusable conceptual direction is:
+The reusable conceptual model remains:
 
 ```text
 Source
@@ -306,7 +237,7 @@ Canonical Knowledge
 Learning
 ```
 
-Eligibility and opportunity discovery add another entry point to this model:
+Eligibility and opportunity discovery provide an additional entry point:
 
 ```text
 Candidate Capabilities
@@ -322,12 +253,12 @@ Knowledge Needs
 Learning
 ```
 
-This is a strategic direction rather than a fixed implementation contract. Concrete product validation may change the order, boundaries or representation of these capabilities.
+These models describe direction, not fixed technical contracts.
 
 ---
 
-# Living Document
+## Living Roadmap
 
-This roadmap defines strategic direction. Implementation detail belongs in the backlog and relevant technical documentation.
+The roadmap should change when product evidence changes the project's priorities or invalidates an assumption.
 
-The roadmap may evolve when new evidence invalidates assumptions or product validation changes priorities.
+Implementation details and concrete tasks belong in GitHub Issues, while validated architectural decisions belong in `ARCHITECTURE.md`.
