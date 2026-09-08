@@ -19,13 +19,15 @@ class CandidateStudyProgrammeUnit:
 def get_candidate_study_map(programme, requirements):
     result = []
     for unit in programme.units:
-        knowledge_needs = tuple(
-            need
-            for requirement in requirements
-            for scope in requirement.scopes
-            if scope.context == unit.title
-            for need in scope.knowledge_needs
+        knowledge_needs = []
+        for requirement in requirements:
+            for scope in requirement.scopes:
+                if scope.context == unit.title:
+                    for need in scope.knowledge_needs:
+                        if need not in knowledge_needs:
+                            knowledge_needs.append(need)
+        result.append(
+            CandidateStudyProgrammeUnit(unit, tuple(knowledge_needs))
         )
-        result.append(CandidateStudyProgrammeUnit(unit, knowledge_needs))
 
     return tuple(result)
