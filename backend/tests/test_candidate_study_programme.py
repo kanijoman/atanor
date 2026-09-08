@@ -311,3 +311,62 @@ def test_build_candidate_study_map_preserves_units_without_matching_knowledge_ne
     assert result[1].knowledge_needs == ()
     assert result[1].covered_knowledge_needs == ()
     assert result[1].missing_knowledge_needs == ()
+
+
+def test_build_candidate_study_map_deduplicates_repeated_knowledge_needs() -> None:
+    source = Source(
+        title="Examination call",
+        locator="call.pdf",
+    )
+
+    programme = StudyProgramme(
+        source_id=source.id,
+        identifier="I",
+        title="Study programme",
+        units=(
+            StudyProgrammeUnit(
+                number=1,
+                title="Administrative procedure",
+                start_page=10,
+                start_order=100,
+                end_page=12,
+                end_order=120,
+            ),
+        ),
+    )
+
+    shared_need = KnowledgeNeed(
+        topic="Administrative deadlines",
+        depth=1,
+    )
+    requirements = (
+        Requirement(
+            title="Law 39/2015",
+            source_id=source.id,
+            scopes=(
+                RequirementScope(
+                    context="Administrative procedure",
+                    knowledge_needs=(shared_need,),
+                ),
+            ),
+        ),
+        Requirement(
+            title="Regulatory deadlines",
+            source_id=source.id,
+            scopes=(
+                RequirementScope(
+                    context="Administrative procedure",
+                    knowledge_needs=(shared_need,),
+                ),
+            ),
+        ),
+    )
+
+    result = get_candidate_study_map(programme, requirements)
+
+    assert [need.topic for need in result[0].knowledge_needs] == [
+        "Administrative deadlines",
+    ]
+    assert [need.topic for need in result[0].missing_knowledge_needs] == [
+        "Administrative deadlines",
+    ]
