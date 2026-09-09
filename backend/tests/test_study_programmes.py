@@ -1,9 +1,8 @@
+import re
 from pathlib import Path
 
 from app.application.study_programmes import (
-    ArchiverosProgrammeDiscoveryStrategy,
     BoeProgrammeDiscoveryStrategy,
-    BojaProgrammeDiscoveryStrategy,
     _extract_units,
     discover_programmes,
 )
@@ -51,8 +50,7 @@ def test_boe_numbering_resets_are_delimited_by_section_headers() -> None:
         for index, unit in enumerate(units)
         if BoeProgrammeDiscoveryStrategy._ANNEX.fullmatch(unit.text)
     ]
-
-    section_header = __import__("re").compile(r"^[IVXLCDM]+\.\s+.+$")
+    section_header = re.compile(r"^[IVXLCDM]+\.\s+.+$")
     top_level = BoeProgrammeDiscoveryStrategy._TOP_LEVEL
 
     for annex_position, annex_index in enumerate(annexes):
@@ -76,6 +74,7 @@ def test_boe_numbering_resets_are_delimited_by_section_headers() -> None:
         ]
 
         previous_number = None
+        previous_index = None
         for candidate_index in candidates:
             candidate = top_level.fullmatch(units[candidate_index].text)
             assert candidate is not None
@@ -83,9 +82,10 @@ def test_boe_numbering_resets_are_delimited_by_section_headers() -> None:
             if number == 1 and previous_number is not None:
                 assert any(
                     section_header.fullmatch(units[index].text)
-                    for index in range(candidates[candidates.index(candidate_index) - 1] + 1, candidate_index)
+                    for index in range(previous_index + 1, candidate_index)
                 )
             previous_number = number
+            previous_index = candidate_index
 
 
 def test_discovers_archiveros_programme() -> None:
