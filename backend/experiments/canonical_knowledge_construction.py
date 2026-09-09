@@ -3,15 +3,17 @@
 This is a deterministic discovery experiment, not a production contract. It
 follows one real study-programme unit outside the call PDF's own content:
 
-    KnowledgeNeed -> canonical legal source -> relevant source content
-    -> candidate Knowledge -> coverage evidence
+    KnowledgeNeed -> canonical legal source -> source material
+    -> relevant provisions -> candidate Knowledge -> coverage evidence
 
 The experiment intentionally keeps the production domain model unchanged.
 """
 
 from dataclasses import dataclass
+from html.parser import HTMLParser
 from pathlib import Path
 import re
+from urllib.request import Request, urlopen
 
 from app.application.requirement_discovery import (
     PdfRequirementDiscoveryStrategy,
@@ -32,14 +34,87 @@ TARGET_TITLE = (
     "La Ley 19/2013, de 9 de diciembre, de transparencia, acceso a la información"
 )
 
-# Canonical source configured for the experiment. This is deliberately experiment
-# data rather than a new production source-discovery abstraction.
 CANONICAL_SOURCE = {
     "title": "Ley 19/2013, de 9 de diciembre, de transparencia, acceso a la información pública y buen gobierno",
     "identifier": "BOE-A-2013-12887",
     "locator": "https://www.boe.es/buscar/act.php?id=BOE-A-2013-12887",
     "authority": "Boletín Oficial del Estado",
 }
+
+RELEVANCE_TERMS = (
+    "transparencia",
+    "acceso a la información",
+    "buen gobierno",
+)
+
+
+@dataclass(frozen=True)
+class SourceFragment:
+    """Experiment representation of a source provision relevant to a need."""
+
+    source_identifier: str
+    locator: str
+    title: str
+    text: str
+
+
+class _LawHtmlParser(HTMLParser):
+    """Extract article headings and their following text from BOE HTML."""
+
+    _ARTICLE_PATTERN = re.compile(r"Artículo\s+([0-9]+(?:\s+bis)?)\.\s*(.*)", re.I)
+
+    def __init__(self) -> None:
+        super().__init__()
+        self.articles: list[tuple[str, str, str]] = []
+        self._current_number: str | None = None
+        self._current_title: str | None = None
+        self._current_text: list[str] = []
+        self._capture_heading = False
+        self._capture_body = False
+
+    def handle_starttag(self, tag: str, attrs) -> None:
+        attributes = dict(attrs)
+        element_id = attributes.get("id", "")
+        if element_id.startswith("a") and element_id[1:].isdigit():
+            self._finish_article()
+        if tag in {"h4", "h5"}:
+            self._capture_heading = True
+        elif self._current_number is not None and tag in {"p", "li"}:
+            self._capture_body = True
+
+    def handle_endtag(self, tag: str) -> None:
+        if tag in {"h4", "h5"}:
+            self._capture_heading = False
+        elif tag in {"p", "li"}:
+            self._capture_body = False
+
+    def handle_data(self, data: str) -> None:
+        text = " ".join(data.split())
+        if not text:
+            return
+        if self._capture_heading:
+            match = self._ARTICLE_PATTERN.match(text)
+            if match:
+                self._finish_article()
+                self._current_number = match.group(1)
+                self._current_title = match.group(2)
+                return
+        if self._current_number is not None and self._capture_body:
+            self._current_text.append(text)
+
+    def _finish_article(self) -> None:
+        if self._current_number is None or self._current_title is None:
+            return
+        self.articles.append(
+            (self._current_number, self._current_title, " ".join(self._current_text))
+        )
+        self._current_number = None
+        self._current_title = None
+        self._current_text = []
+
+    def close(self) -> None:
+        super().close()
+        self._finish_article()
 
 
 def _normalise(text: str) -> str:
@@ -50,15 +125,6 @@ def _matches_target(title: str) -> bool:
     return _normalise(title).startswith(_normalise(TARGET_TITLE))
 
 
-@dataclass(frozen=True)
-class RelevantContent:
-    """Experiment representation of a source fragment relevant to a need."""
-
-    source_identifier: str
-    locator: str
-    description: str
-
-
 def _find_target(programmes):
     for programme in programmes:
         for unit in programme.units:
@@ -67,7 +133,49 @@ def _find_target(programmes):
     raise RuntimeError(f"Target study unit not found: {TARGET_TITLE}")
 
 
-def _build_candidate_knowledge(need: KnowledgeNeed) -> Knowledge:
+def _fetch_canonical_text() -> str:
+    request = Request(
+        CANONICAL_SOURCE["locator"],
+        headers={"User-Agent": "Atanor canonical-knowledge experiment"},
+    )
+    with urlopen(request, timeout=30) as response:
+        return response.read().decode("utf-8")
+
+
+def _extract_articles(html: str) -> list[SourceFragment]:
+    parser = _LawHtmlParser()
+    parser.feed(html)
+    parser.close()
+    return [
+        SourceFragment(
+            source_identifier=CANONICAL_SOURCE["identifier"],
+            locator=CANONICAL_SOURCE["locator"] + f"#a{number.replace(' ', '')}",
+            title=f"Artículo {number}. {title}",
+            text=text,
+        )
+        for number, title, text in parser.articles
+    ]
+
+
+def _score_fragment(fragment: SourceFragment) -> int:
+    haystack = _normalise(f"{fragment.title} {fragment.text}")
+    return sum(haystack.count(_normalise(term)) for term in RELEVANCE_TERMS)
+
+
+def _select_relevant_fragments(
+    fragments: list[SourceFragment],
+) -> list[tuple[SourceFragment, int]]:
+    scored = [(fragment, _score_fragment(fragment)) for fragment in fragments]
+    return sorted(
+        ((fragment, score) for fragment, score in scored if score > 0),
+        key=lambda item: (-item[1], item[0].title),
+    )
+
+
+def _build_candidate_knowledge(
+    need: KnowledgeNeed,
+    fragments: list[SourceFragment],
+) -> Knowledge:
     source = Source(
         title=CANONICAL_SOURCE["title"],
         locator=CANONICAL_SOURCE["locator"],
@@ -75,14 +183,21 @@ def _build_candidate_knowledge(need: KnowledgeNeed) -> Knowledge:
     return Knowledge(
         title=need.topic,
         description=(
-            "Candidate knowledge grounded in the official consolidated text of "
-            "the identified law. Relevance and completeness still require validation."
+            "Candidate knowledge grounded in the official consolidated text of the law. "
+            f"The experiment identified {len(fragments)} potentially relevant articles; "
+            "relevance and completeness still require validation."
         ),
         sources=(source,),
     )
 
 
-def _print_probe(programme, unit, need, relevant_content, candidate):
+def _print_probe(
+    programme,
+    unit,
+    need,
+    fragments: list[tuple[SourceFragment, int]],
+    candidate: Knowledge,
+) -> None:
     print(f"\nPROGRAMME {programme.identifier} — {programme.title}")
     print(f"STUDY UNIT: {unit.number}. {unit.title}")
     print(f"CALL SOURCE SPAN: pages {unit.start_page}-{unit.end_page}")
@@ -95,31 +210,42 @@ def _print_probe(programme, unit, need, relevant_content, candidate):
     for key in ("title", "identifier", "authority", "locator"):
         print(f"  {key}: {CANONICAL_SOURCE[key]}")
 
-    print("\n3. RELEVANT SOURCE CONTENT")
-    print(f"  source: {relevant_content.source_identifier}")
-    print(f"  locator: {relevant_content.locator}")
-    print(f"  description: {relevant_content.description}")
-    print("  status: NOT ACQUIRED IN THIS EXPERIMENT")
+    print("\n3. SOURCE MATERIAL")
+    print("  status: ACQUIRED")
+    print(f"  candidate relevant articles: {len(fragments)}")
+    print("  source role: canonical legal reference")
 
-    print("\n4. CANDIDATE KNOWLEDGE")
+    print("\n4. RELEVANT SOURCE CONTENT")
+    if not fragments:
+        print("  no candidate provisions identified")
+    else:
+        for fragment, score in fragments:
+            print(f"  - {fragment.title} (relevance score: {score})")
+            print(f"    locator: {fragment.locator}")
+            print(f"    excerpt: {fragment.text[:240]}")
+
+    print("\n5. CANDIDATE KNOWLEDGE")
     print(f"  title: {candidate.title}")
     print(f"  sources: {len(candidate.sources)}")
     print("  status: CANDIDATE — NOT VALIDATED")
 
-    print("\n5. COVERAGE EVIDENCE")
+    print("\n6. COVERAGE EVIDENCE")
     print("  source authority: SATISFIED")
-    print("  source acquisition: MISSING")
-    print("  relevant-content identification: MISSING")
-    print("  completeness against KnowledgeNeed: MISSING")
-    print("  current-version validation: MISSING")
+    print("  source acquisition: SATISFIED")
+    print(
+        "  relevant-content identification: "
+        + ("PARTIAL" if fragments else "MISSING")
+    )
+    print("  completeness against KnowledgeNeed: NOT ESTABLISHED")
+    print("  current-version validation: NOT ESTABLISHED")
     print("  coverage result: NOT COVERED")
 
-    print("\n6. MODEL OBSERVATIONS")
+    print("\n7. MODEL OBSERVATIONS")
     print("  Knowledge can reference the canonical Source.")
-    print("  Knowledge can describe the candidate content at a coarse level.")
-    print("  The current model cannot represent the relevant source fragment")
-    print("  or the evidence connecting that fragment to the KnowledgeNeed.")
-    print("  Therefore Knowledge.sources alone is insufficient for auditable coverage.")
+    print("  The experiment can identify concrete source fragments outside the call.")
+    print("  Knowledge.sources still cannot represent which fragments support it.")
+    print("  The experiment therefore tests whether source-fragment provenance")
+    print("  is the missing evidence boundary rather than assuming a new domain model.")
 
 
 def run() -> None:
@@ -132,22 +258,9 @@ def run() -> None:
     try:
         source = import_pdf_source(SAMPLES_DIR / CALL_DOCUMENT, source_repository)
         programmes = discover_programmes(source)
-        mentions = discover_requirements(
-            source,
-            PdfRequirementDiscoveryStrategy(),
-        )
+        mentions = discover_requirements(source, PdfRequirementDiscoveryStrategy())
         programme, unit = _find_target(programmes)
         need = KnowledgeNeed(topic=unit.title, depth=1)
-
-        relevant_content = RelevantContent(
-            source_identifier=CANONICAL_SOURCE["identifier"],
-            locator=CANONICAL_SOURCE["locator"],
-            description=(
-                "The provisions of Ley 19/2013 relevant to the study-programme "
-                "scope. Exact articles must be identified from the consolidated text."
-            ),
-        )
-        candidate = _build_candidate_knowledge(need)
 
         print(f"=== {CALL_DOCUMENT} ===")
         print(f"PROGRAMMES: {len(programmes)}")
@@ -156,19 +269,28 @@ def run() -> None:
         print("The call defines the study scope; the official law provides the")
         print("canonical legal content. No coverage is claimed without evidence.")
 
-        _print_probe(programme, unit, need, relevant_content, candidate)
+        html = _fetch_canonical_text()
+        articles = _extract_articles(html)
+        relevant = _select_relevant_fragments(articles)
+        candidate = _build_candidate_knowledge(
+            need, [fragment for fragment, _ in relevant]
+        )
+        _print_probe(programme, unit, need, relevant, candidate)
 
         print("\nEXPERIMENT CONCLUSION")
-        print("  1. Current Knowledge model: PARTIALLY SUFFICIENT")
-        print("     It can identify the knowledge and its canonical source, but not")
-        print("     the source fragment/evidence needed for auditable coverage.")
-        print("  2. Direct KnowledgeNeed -> Knowledge: INSUFFICIENT FOR COVERAGE")
-        print("     A relationship alone does not explain why the need is covered.")
-        print("  3. Required evidence: authoritative source + relevant content +")
-        print("     completeness/currentness validation.")
-        print("  4. Source granularity: the need may map to a subset of the law.")
-        print("  5. Boundary: acquisition obtains source material; construction")
-        print("     produces candidate Knowledge; coverage evaluates evidence.")
+        print("  1. Canonical source acquisition: WORKS")
+        print("     The experiment can obtain the current consolidated legal source.")
+        print("  2. Source-fragment extraction: WORKS")
+        print("     Concrete provisions can be identified outside the call document.")
+        print("  3. Relevant-content selection: PARTIAL")
+        print("     Deterministic matching produces candidates, but does not prove")
+        print("     that the selected provisions fully satisfy the study scope.")
+        print("  4. Knowledge model: PARTIALLY SUFFICIENT")
+        print("     It can identify the knowledge and canonical source, but cannot")
+        print("     record the exact source fragments supporting the knowledge.")
+        print("  5. Coverage: NOT ESTABLISHED")
+        print("     Source authority and acquisition are not sufficient to establish")
+        print("     completeness against the KnowledgeNeed.")
         print("\nEXPERIMENT STATUS: EVIDENCE COLLECTED — MODEL EXTENSION NOT YET IMPLEMENTED")
     finally:
         engine.dispose()
