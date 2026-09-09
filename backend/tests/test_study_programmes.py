@@ -1,6 +1,10 @@
 from pathlib import Path
 
-from app.application.study_programmes import discover_programmes
+from app.application.study_programmes import (
+    BoeProgrammeDiscoveryStrategy,
+    _extract_units,
+    discover_programmes,
+)
 from app.domain.models import Source
 from app.persistence.database import Base
 from app.persistence.models.source import Source as PersistenceSource
@@ -41,6 +45,31 @@ def test_discovers_boe_programmes() -> None:
         for programme in programmes
         for index, unit in enumerate(programme.units)
     )
+
+
+def test_boe_programme_blocks_are_delimited_by_programme_markers() -> None:
+    units = _extract_units(source("BOE-A-2024-14098.pdf"))
+    markers = [
+        index
+        for index, unit in enumerate(units)
+        if BoeProgrammeDiscoveryStrategy._PROGRAMME.fullmatch(unit.text)
+    ]
+
+    assert len(markers) > 10
+
+    for marker_index, marker in enumerate(markers):
+        end = markers[marker_index + 1] if marker_index + 1 < len(markers) else len(units)
+        block_numbers = [
+            int(match.group(1))
+            for unit in units[marker + 1:end]
+            if (match := BoeProgrammeDiscoveryStrategy._TOP_LEVEL.fullmatch(unit.text))
+            and not BoeProgrammeDiscoveryStrategy._NON_PROGRAMME_SECTION.match(
+                match.group(2)
+            )
+        ]
+
+        assert block_numbers
+        assert block_numbers == list(range(1, max(block_numbers) + 1))
 
 
 def test_discovers_archiveros_programme() -> None:
