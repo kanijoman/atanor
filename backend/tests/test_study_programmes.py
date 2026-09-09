@@ -1,7 +1,9 @@
 from pathlib import Path
 
 from app.application.study_programmes import (
+    ArchiverosProgrammeDiscoveryStrategy,
     BoeProgrammeDiscoveryStrategy,
+    BojaProgrammeDiscoveryStrategy,
     _extract_units,
     discover_programmes,
 )
@@ -40,36 +42,50 @@ def test_discovers_boe_programmes() -> None:
         "I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X",
     ]
     assert all(programme.units for programme in programmes)
-    assert all(
-        unit.number not in {previous.number for previous in programme.units[:index]}
-        for programme in programmes
-        for index, unit in enumerate(programme.units)
-    )
 
 
-def test_boe_programme_blocks_are_delimited_by_programme_markers() -> None:
+def test_boe_numbering_resets_are_delimited_by_section_headers() -> None:
     units = _extract_units(source("BOE-A-2024-14098.pdf"))
-    markers = [
+    annexes = [
         index
         for index, unit in enumerate(units)
-        if BoeProgrammeDiscoveryStrategy._PROGRAMME.fullmatch(unit.text)
+        if BoeProgrammeDiscoveryStrategy._ANNEX.fullmatch(unit.text)
     ]
 
-    assert len(markers) > 10
+    section_header = __import__("re").compile(r"^[IVXLCDM]+\.\s+.+$")
+    top_level = BoeProgrammeDiscoveryStrategy._TOP_LEVEL
 
-    for marker_index, marker in enumerate(markers):
-        end = markers[marker_index + 1] if marker_index + 1 < len(markers) else len(units)
-        block_numbers = [
-            int(match.group(1))
-            for unit in units[marker + 1:end]
-            if (match := BoeProgrammeDiscoveryStrategy._TOP_LEVEL.fullmatch(unit.text))
+    for annex_position, annex_index in enumerate(annexes):
+        end = (
+            annexes[annex_position + 1]
+            if annex_position + 1 < len(annexes)
+            else len(units)
+        )
+        programme_index = next(
+            index
+            for index in range(annex_index + 1, end)
+            if BoeProgrammeDiscoveryStrategy._PROGRAMME.fullmatch(units[index].text)
+        )
+        candidates = [
+            index
+            for index in range(programme_index + 1, end)
+            if top_level.fullmatch(units[index].text)
             and not BoeProgrammeDiscoveryStrategy._NON_PROGRAMME_SECTION.match(
-                match.group(2)
+                top_level.fullmatch(units[index].text).group(2)
             )
         ]
 
-        assert block_numbers
-        assert block_numbers == list(range(1, max(block_numbers) + 1))
+        previous_number = None
+        for candidate_index in candidates:
+            candidate = top_level.fullmatch(units[candidate_index].text)
+            assert candidate is not None
+            number = int(candidate.group(1))
+            if number == 1 and previous_number is not None:
+                assert any(
+                    section_header.fullmatch(units[index].text)
+                    for index in range(candidates[candidates.index(candidate_index) - 1] + 1, candidate_index)
+                )
+            previous_number = number
 
 
 def test_discovers_archiveros_programme() -> None:
