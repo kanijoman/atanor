@@ -151,6 +151,7 @@ class BoeProgrammeDiscoveryStrategy:
     _ANNEX = re.compile(r"^ANEXO\s+([IVXLCDM]+)$", re.IGNORECASE)
     _PROGRAMME = re.compile(r"^(\d+)\.\s+Programa\.$", re.IGNORECASE)
     _TOP_LEVEL = re.compile(r"^(\d+)\.\s+(.+)$")
+    _NON_PROGRAMME_SECTION = re.compile(r"^(?:REQUISITOS|MÉRITOS)\b", re.IGNORECASE)
 
     def discover(self, source: Source) -> list[StudyProgramme]:
         units = _extract_units(source)
@@ -178,6 +179,9 @@ class BoeProgrammeDiscoveryStrategy:
                 index
                 for index in range(programme_index + 1, next_annex)
                 if self._TOP_LEVEL.fullmatch(units[index].text)
+                and not self._NON_PROGRAMME_SECTION.match(
+                    self._TOP_LEVEL.fullmatch(units[index].text).group(2)
+                )
             ]
             if not item_indices:
                 continue
