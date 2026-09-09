@@ -43,49 +43,30 @@ def test_discovers_boe_programmes() -> None:
     assert all(programme.units for programme in programmes)
 
 
-def test_boe_numbering_resets_are_delimited_by_section_headers() -> None:
-    units = _extract_units(source("BOE-A-2024-14098.pdf"))
-    annexes = [
-        index
-        for index, unit in enumerate(units)
-        if BoeProgrammeDiscoveryStrategy._ANNEX.fullmatch(unit.text)
-    ]
+def test_boe_units_do_not_cross_section_boundaries() -> None:
+    source_document = source("BOE-A-2024-14098.pdf")
+    units = _extract_units(source_document)
+    programmes = discover_programmes(source_document)
     section_header = re.compile(r"^[IVXLCDM]+\.\s+.+$")
-    top_level = BoeProgrammeDiscoveryStrategy._TOP_LEVEL
+    section_orders = {
+        unit.order
+        for unit in units
+        if section_header.fullmatch(unit.text)
+    }
 
-    for annex_position, annex_index in enumerate(annexes):
-        end = (
-            annexes[annex_position + 1]
-            if annex_position + 1 < len(annexes)
-            else len(units)
-        )
-        programme_index = next(
-            index
-            for index in range(annex_index + 1, end)
-            if BoeProgrammeDiscoveryStrategy._PROGRAMME.fullmatch(units[index].text)
-        )
-        candidates = [
-            index
-            for index in range(programme_index + 1, end)
-            if top_level.fullmatch(units[index].text)
-            and not BoeProgrammeDiscoveryStrategy._NON_PROGRAMME_SECTION.match(
-                top_level.fullmatch(units[index].text).group(2)
+    assert section_orders
+
+    for programme in programmes:
+        for unit in programme.units:
+            crossed_sections = [
+                order
+                for order in section_orders
+                if unit.start_order < order <= unit.end_order
+            ]
+            assert not crossed_sections, (
+                f"Programme {programme.identifier} unit {unit.number} "
+                f"crosses section boundary at order(s) {crossed_sections}"
             )
-        ]
-
-        previous_number = None
-        previous_index = None
-        for candidate_index in candidates:
-            candidate = top_level.fullmatch(units[candidate_index].text)
-            assert candidate is not None
-            number = int(candidate.group(1))
-            if number == 1 and previous_number is not None:
-                assert any(
-                    section_header.fullmatch(units[index].text)
-                    for index in range(previous_index + 1, candidate_index)
-                )
-            previous_number = number
-            previous_index = candidate_index
 
 
 def test_discovers_archiveros_programme() -> None:
