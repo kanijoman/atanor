@@ -1,13 +1,14 @@
 from pathlib import Path
 
 from app.application.candidate_study_programme import get_candidate_study_map
-from app.application.requirement_discovery import PdfRequirementDiscoveryStrategy, discover_requirements
-from app.application.requirement_workflow import get_study_requirements
+from app.application.requirement_discovery import (
+    PdfRequirementDiscoveryStrategy,
+    discover_requirements,
+)
 from app.application.source import import_pdf_source
 from app.application.study_programmes import discover_programmes
-from app.domain.models import Requirement, Source
+from app.domain.models import KnowledgeNeed, Requirement, RequirementScope
 from app.persistence.database import Base
-from app.persistence.requirement_repository import SqlAlchemyRequirementRepository
 from app.persistence.source_repository import SqlAlchemySourceRepository
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
@@ -22,28 +23,63 @@ SAMPLES = (
 )
 
 
-def _print_report(document: str, programme, requirements, study_map) -> None:
-    print(f"\nDOCUMENT: {document}")
-    print(f"PROGRAMME: {programme.identifier} — {programme.title}")
-    print(f"UNITS: {len(programme.units)}")
-    print(f"REQUIREMENTS: {len(requirements)}")
+def _build_structural_probe_requirements(source, programme, mentions):
+    """Build an explicit model probe from exact textual programme matches.
 
-    mapped = sum(bool(unit.knowledge_needs) for unit in study_map)
-    print(f"MAPPED UNITS: {mapped}/{len(study_map)}")
+    The current requirement pipeline discovers mentions but does not construct
+    RequirementScope or KnowledgeNeed objects. This probe therefore creates the
+    smallest possible in-memory scope/need representation only when a discovered
+    requirement expression exactly matches a real programme unit title.
 
-    print("UNITS WITHOUT KNOWLEDGE NEEDS:")
-    for unit in study_map:
-        if not unit.knowledge_needs:
-            print(f"  {unit.number}. {unit.title}")
+    It deliberately avoids semantic matching and fabricated knowledge coverage.
+    """
+    expressions = {mention.expression for mention in mentions}
+    return tuple(
+        Requirement(
+            title=unit.title,
+            source_id=source.id,
+            scopes=(
+                RequirementScope(
+                    context=unit.title,
+                    knowledge_needs=(
+                        KnowledgeNeed(topic=unit.title, depth=1),
+                    ),
+                ),
+            ),
+        )
+        for unit in programme.units
+        if unit.title in expressions
+    )
 
-    print("MAPPED UNITS:")
-    for unit in study_map:
-        if not unit.knowledge_needs:
-            continue
-        print(f"  {unit.number}. {unit.title}")
-        for need in unit.knowledge_needs:
-            status = "COVERED" if need.knowledge is not None else "MISSING"
-            print(f"    - {status}: {need.topic} [depth={need.depth}]")
+
+def _print_report(document, programme, mentions, requirements, study_map) -> None:
+    mapped_units = [unit for unit in study_map if unit.knowledge_needs]
+    covered_needs = sum(
+        len(unit.covered_knowledge_needs) for unit in study_map
+    )
+    missing_needs = sum(
+        len(unit.missing_knowledge_needs) for unit in study_map
+    )
+
+    print(f"\nPROGRAMME {programme.identifier} — {programme.title}")
+    print(f"  units: {len(programme.units)}")
+    print(f"  discovered requirement mentions: {len(mentions)}")
+    print(f"  exact unit-title matches: {len(requirements)}")
+    print(f"  mapped units: {len(mapped_units)}/{len(study_map)}")
+    print(f"  knowledge needs: {covered_needs + missing_needs}")
+    print(f"  coverage: {covered_needs} covered / {missing_needs} missing")
+    print("  coverage source: unavailable in current pipeline")
+
+    if mapped_units:
+        print("  mapped examples:")
+        for unit in mapped_units[:5]:
+            print(f"    {unit.number}. {unit.title}")
+            for need in unit.knowledge_needs:
+                print(f"      - MISSING: {need.topic} [depth={need.depth}]")
+
+    unmapped_count = len(study_map) - len(mapped_units)
+    if unmapped_count:
+        print(f"  unmapped units: {unmapped_count}")
 
 
 def run() -> None:
@@ -52,14 +88,9 @@ def run() -> None:
     Base.metadata.create_all(engine)
     session_factory = sessionmaker(bind=engine)
     source_repository = SqlAlchemySourceRepository(session_factory)
-    requirement_repository = SqlAlchemyRequirementRepository(session_factory)
 
     try:
         for document in SAMPLES:
-            source = Source(
-                title=document,
-                locator=str(SAMPLES_DIR / document),
-            )
             source = import_pdf_source(SAMPLES_DIR / document, source_repository)
             programmes = discover_programmes(source)
             mentions = discover_requirements(
@@ -67,33 +98,26 @@ def run() -> None:
                 PdfRequirementDiscoveryStrategy(),
             )
 
-            for mention in mentions:
-                requirement_repository.save(
-                    Requirement(
-                        title=mention.expression,
-                        source_id=source.id,
-                    )
-                )
-
-            study_requirements = get_study_requirements(
-                source,
-                requirement_repository,
-            )
-
             print(f"\n=== {document} ===")
             print(f"DISCOVERED PROGRAMMES: {len(programmes)}")
             print(f"DISCOVERED REQUIREMENT MENTIONS: {len(mentions)}")
-            print(f"RESOLVED REQUIREMENTS: {len(study_requirements.requirements)}")
+
+            if not programmes:
+                print("NO PROGRAMME AVAILABLE FOR CANDIDATE STUDY VALIDATION")
+                continue
 
             for programme in programmes:
-                study_map = get_candidate_study_map(
+                requirements = _build_structural_probe_requirements(
+                    source,
                     programme,
-                    study_requirements.requirements,
+                    mentions,
                 )
+                study_map = get_candidate_study_map(programme, requirements)
                 _print_report(
                     document,
                     programme,
-                    study_requirements.requirements,
+                    mentions,
+                    requirements,
                     study_map,
                 )
     finally:
