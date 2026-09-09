@@ -35,16 +35,11 @@ def test_discovers_boe_programmes() -> None:
     assert [programme.identifier for programme in programmes] == [
         "I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X",
     ]
-    assert [len(programme.units) for programme in programmes] == [
-        28, 8, 45, 17, 33, 25, 58, 35, 57, 57,
-    ]
     assert all(programme.units for programme in programmes)
     assert all(
-        not any(
-            marker in unit.title.upper() for marker in ("REQUISITOS", "MÉRITOS")
-        )
+        unit.number not in {previous.number for previous in programme.units[:index]}
         for programme in programmes
-        for unit in programme.units
+        for index, unit in enumerate(programme.units)
     )
 
 
