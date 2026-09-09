@@ -151,6 +151,7 @@ class BoeProgrammeDiscoveryStrategy:
     _ANNEX = re.compile(r"^ANEXO\s+([IVXLCDM]+)$", re.IGNORECASE)
     _PROGRAMME = re.compile(r"^(\d+)\.\s+Programa\.$", re.IGNORECASE)
     _TOP_LEVEL = re.compile(r"^(\d+)\.\s+(.+)$")
+    _SECTION = re.compile(r"^[IVXLCDM]+\.\s+.+$")
     _NON_PROGRAMME_SECTION = re.compile(r"^(?:REQUISITOS|MÉRITOS)\b", re.IGNORECASE)
 
     def discover(self, source: Source) -> list[StudyProgramme]:
@@ -175,6 +176,11 @@ class BoeProgrammeDiscoveryStrategy:
             )
             if programme_index is None:
                 continue
+            section_indices = [
+                index
+                for index in range(programme_index + 1, next_annex)
+                if self._SECTION.fullmatch(units[index].text)
+            ]
             item_indices = [
                 index
                 for index in range(programme_index + 1, next_annex)
@@ -187,11 +193,16 @@ class BoeProgrammeDiscoveryStrategy:
                 continue
             programme_units = []
             for position, start in enumerate(item_indices):
-                end = (
+                next_item = (
                     item_indices[position + 1]
                     if position + 1 < len(item_indices)
                     else next_annex
                 )
+                next_section = next(
+                    (index for index in section_indices if index > start),
+                    next_annex,
+                )
+                end = min(next_item, next_section)
                 item = self._TOP_LEVEL.fullmatch(units[start].text)
                 assert item is not None
                 programme_units.append(
