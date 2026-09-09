@@ -1,4 +1,5 @@
 from pathlib import Path
+import re
 
 from app.application.candidate_study_programme import get_candidate_study_map
 from app.application.requirement_discovery import (
@@ -22,34 +23,53 @@ SAMPLES = (
     "Programa_Archiveros_0.pdf",
 )
 
+_TOPIC_MARKER = re.compile(r"^Tema\s+\d+\s*[.\-–—:]?\s*", re.IGNORECASE)
+
+
+def _normalise_title(title: str) -> str:
+    """Normalise a discovered title for deterministic structural comparison."""
+    title = _TOPIC_MARKER.sub("", title)
+    return " ".join(title.split()).casefold()
+
 
 def _build_structural_probe_requirements(source, programme, mentions):
-    """Build an explicit model probe from exact textual programme matches.
+    """Build an in-memory probe from structurally matching real mentions.
 
-    The current requirement pipeline discovers mentions but does not construct
-    RequirementScope or KnowledgeNeed objects. This probe therefore creates the
-    smallest possible in-memory scope/need representation only when a discovered
-    requirement expression exactly matches a real programme unit title.
+    The current requirement pipeline discovers requirement mentions but does not
+    construct RequirementScope or KnowledgeNeed objects. This experiment therefore
+    creates the smallest possible in-memory representation needed to validate the
+    candidate-study projection.
 
-    It deliberately avoids semantic matching and fabricated knowledge coverage.
+    Matching is deterministic and intentionally limited to normalised titles. The
+    probe does not use semantic matching, AI, persistence, or fabricated knowledge
+    coverage.
     """
-    expressions = {mention.expression for mention in mentions}
-    return tuple(
-        Requirement(
-            title=unit.title,
-            source_id=source.id,
-            scopes=(
-                RequirementScope(
-                    context=unit.title,
-                    knowledge_needs=(
-                        KnowledgeNeed(topic=unit.title, depth=1),
-                    ),
-                ),
-            ),
+    mentions_by_title = {}
+    for mention in mentions:
+        mentions_by_title.setdefault(_normalise_title(mention.expression), []).append(
+            mention
         )
-        for unit in programme.units
-        if unit.title in expressions
-    )
+
+    requirements = []
+    for unit in programme.units:
+        matching_mentions = mentions_by_title.get(_normalise_title(unit.title), ())
+        for mention in matching_mentions:
+            requirements.append(
+                Requirement(
+                    title=mention.expression,
+                    source_id=source.id,
+                    scopes=(
+                        RequirementScope(
+                            context=unit.title,
+                            knowledge_needs=(
+                                KnowledgeNeed(topic=unit.title, depth=1),
+                            ),
+                        ),
+                    ),
+                )
+            )
+
+    return tuple(requirements)
 
 
 def _print_report(document, programme, mentions, requirements, study_map) -> None:
@@ -64,7 +84,7 @@ def _print_report(document, programme, mentions, requirements, study_map) -> Non
     print(f"\nPROGRAMME {programme.identifier} — {programme.title}")
     print(f"  units: {len(programme.units)}")
     print(f"  discovered requirement mentions: {len(mentions)}")
-    print(f"  exact unit-title matches: {len(requirements)}")
+    print(f"  structural unit-title matches: {len(requirements)}")
     print(f"  mapped units: {len(mapped_units)}/{len(study_map)}")
     print(f"  knowledge needs: {covered_needs + missing_needs}")
     print(f"  coverage: {covered_needs} covered / {missing_needs} missing")
