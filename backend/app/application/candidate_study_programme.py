@@ -20,11 +20,14 @@ def get_candidate_study_map(programme, requirements):
     result = []
     for unit in programme.units:
         knowledge_needs = []
+        knowledge_need_keys = set()
         for requirement in requirements:
             for scope in requirement.scopes:
                 if scope.context == unit.title:
                     for need in scope.knowledge_needs:
-                        if need not in knowledge_needs:
+                        key = (need.topic, need.depth)
+                        if key not in knowledge_need_keys:
+                            knowledge_need_keys.add(key)
                             knowledge_needs.append(need)
         result.append(
             CandidateStudyProgrammeUnit(unit, tuple(knowledge_needs))
