@@ -1,17 +1,15 @@
-"""Explore construction of canonical knowledge from a real KnowledgeNeed.
+"""Explore canonical knowledge construction from one real legal KnowledgeNeed.
 
-This is an evidence-gathering experiment, not a product contract. It deliberately
-keeps the current domain model unchanged and separates:
+This is a deterministic discovery experiment, not a production contract. It
+follows one real study-programme unit outside the call PDF's own content:
 
-    KnowledgeNeed -> canonical source candidates -> relevant source content
+    KnowledgeNeed -> canonical legal source -> relevant source content
+    -> candidate Knowledge -> coverage evidence
 
-from the later construction of validated Knowledge.
-
-The experiment uses the existing BOE sample and a manually selected legal topic
-so that we can inspect what a canonical-source workflow actually requires before
-introducing production abstractions.
+The experiment intentionally keeps the production domain model unchanged.
 """
 
+from dataclasses import dataclass
 from pathlib import Path
 import re
 
@@ -21,7 +19,7 @@ from app.application.requirement_discovery import (
 )
 from app.application.source import import_pdf_source
 from app.application.study_programmes import discover_programmes
-from app.domain.models import KnowledgeNeed
+from app.domain.models import Knowledge, KnowledgeNeed, Source
 from app.persistence.database import Base
 from app.persistence.source_repository import SqlAlchemySourceRepository
 from sqlalchemy import create_engine
@@ -29,93 +27,149 @@ from sqlalchemy.orm import sessionmaker
 
 
 SAMPLES_DIR = Path(__file__).parent.parent / "tests" / "samples"
-SOURCE_DOCUMENT = "BOE-A-2024-14098.pdf"
-
-_TOPIC_MARKER = re.compile(r"^Tema\s+\d+\s*[.\-–—:]?\s*", re.IGNORECASE)
-_CANONICAL_HINTS = (
-    "constitución",
-    "ley ",
-    "real decreto",
-    "reglamento",
-    "estatuto",
-    "tratado",
-    "derechos",
-    "procedimiento administrativo",
-    "organización administrativa",
+CALL_DOCUMENT = "BOE-A-2024-14098.pdf"
+TARGET_TITLE = (
+    "La Ley 19/2013, de 9 de diciembre, de transparencia, acceso a la información"
 )
+
+# Canonical source configured for the experiment. This is deliberately experiment
+# data rather than a new production source-discovery abstraction.
+CANONICAL_SOURCE = {
+    "title": "Ley 19/2013, de 9 de diciembre, de transparencia, acceso a la información pública y buen gobierno",
+    "identifier": "BOE-A-2013-12887",
+    "locator": "https://www.boe.es/buscar/act.php?id=BOE-A-2013-12887",
+    "authority": "Boletín Oficial del Estado",
+}
 
 
 def _normalise(text: str) -> str:
     return " ".join(text.split()).casefold()
 
 
-def _is_canonical_candidate(title: str) -> bool:
-    normalised = _normalise(_TOPIC_MARKER.sub("", title))
-    return any(hint in normalised for hint in _CANONICAL_HINTS)
+def _matches_target(title: str) -> bool:
+    return _normalise(title).startswith(_normalise(TARGET_TITLE))
 
 
-def _print_unit(unit, programme) -> None:
+@dataclass(frozen=True)
+class RelevantContent:
+    """Experiment representation of a source fragment relevant to a need."""
+
+    source_identifier: str
+    locator: str
+    description: str
+
+
+def _find_target(programmes):
+    for programme in programmes:
+        for unit in programme.units:
+            if _matches_target(unit.title):
+                return programme, unit
+    raise RuntimeError(f"Target study unit not found: {TARGET_TITLE}")
+
+
+def _build_candidate_knowledge(need: KnowledgeNeed) -> Knowledge:
+    source = Source(
+        title=CANONICAL_SOURCE["title"],
+        locator=CANONICAL_SOURCE["locator"],
+    )
+    return Knowledge(
+        title=need.topic,
+        description=(
+            "Candidate knowledge grounded in the official consolidated text of "
+            "the identified law. Relevance and completeness still require validation."
+        ),
+        sources=(source,),
+    )
+
+
+def _print_probe(programme, unit, need, relevant_content, candidate):
     print(f"\nPROGRAMME {programme.identifier} — {programme.title}")
-    print(f"UNIT: {unit.number}. {unit.title}")
-    print(f"SOURCE SPAN: pages {unit.start_page}-{unit.end_page}")
-    print("KNOWLEDGE NEED")
-    print(f"  topic: {unit.title}")
-    print("  depth: 1")
-    print("CANONICAL CLASSIFICATION")
-    print("  candidate: YES")
-    print("  basis: deterministic legal/canonical vocabulary hint")
-    print("\nCANONICAL SOURCE CANDIDATES")
-    print("  [to be identified]")
-    print("\nREQUIRED EVIDENCE QUESTIONS")
-    print("  1. Which authoritative source(s) define the required knowledge?")
-    print("  2. Which source provisions/content are relevant to this need?")
-    print("  3. Is the source current for the selected call?")
-    print("  4. Is the extracted content sufficient to claim coverage?")
-    print("\nCURRENT KNOWLEDGE MODEL")
-    print("  Knowledge: not constructed")
-    print("  Coverage: MISSING")
-    print("  reason: canonical source identification and validation are not yet")
-    print("          an implemented product capability")
+    print(f"STUDY UNIT: {unit.number}. {unit.title}")
+    print(f"CALL SOURCE SPAN: pages {unit.start_page}-{unit.end_page}")
+
+    print("\n1. KNOWLEDGE NEED")
+    print(f"  topic: {need.topic}")
+    print(f"  depth: {need.depth}")
+
+    print("\n2. CANONICAL LEGAL SOURCE")
+    for key in ("title", "identifier", "authority", "locator"):
+        print(f"  {key}: {CANONICAL_SOURCE[key]}")
+
+    print("\n3. RELEVANT SOURCE CONTENT")
+    print(f"  source: {relevant_content.source_identifier}")
+    print(f"  locator: {relevant_content.locator}")
+    print(f"  description: {relevant_content.description}")
+    print("  status: NOT ACQUIRED IN THIS EXPERIMENT")
+
+    print("\n4. CANDIDATE KNOWLEDGE")
+    print(f"  title: {candidate.title}")
+    print(f"  sources: {len(candidate.sources)}")
+    print("  status: CANDIDATE — NOT VALIDATED")
+
+    print("\n5. COVERAGE EVIDENCE")
+    print("  source authority: SATISFIED")
+    print("  source acquisition: MISSING")
+    print("  relevant-content identification: MISSING")
+    print("  completeness against KnowledgeNeed: MISSING")
+    print("  current-version validation: MISSING")
+    print("  coverage result: NOT COVERED")
+
+    print("\n6. MODEL OBSERVATIONS")
+    print("  Knowledge can reference the canonical Source.")
+    print("  Knowledge can describe the candidate content at a coarse level.")
+    print("  The current model cannot represent the relevant source fragment")
+    print("  or the evidence connecting that fragment to the KnowledgeNeed.")
+    print("  Therefore Knowledge.sources alone is insufficient for auditable coverage.")
 
 
 def run() -> None:
-    """Inspect candidate canonical topics in the real BOE study programme."""
+    """Run the single-case canonical knowledge construction probe."""
     engine = create_engine("sqlite:///:memory:")
     Base.metadata.create_all(engine)
     session_factory = sessionmaker(bind=engine)
     source_repository = SqlAlchemySourceRepository(session_factory)
 
     try:
-        source = import_pdf_source(SAMPLES_DIR / SOURCE_DOCUMENT, source_repository)
+        source = import_pdf_source(SAMPLES_DIR / CALL_DOCUMENT, source_repository)
         programmes = discover_programmes(source)
         mentions = discover_requirements(
             source,
             PdfRequirementDiscoveryStrategy(),
         )
+        programme, unit = _find_target(programmes)
+        need = KnowledgeNeed(topic=unit.title, depth=1)
 
-        print(f"=== {SOURCE_DOCUMENT} ===")
+        relevant_content = RelevantContent(
+            source_identifier=CANONICAL_SOURCE["identifier"],
+            locator=CANONICAL_SOURCE["locator"],
+            description=(
+                "The provisions of Ley 19/2013 relevant to the study-programme "
+                "scope. Exact articles must be identified from the consolidated text."
+            ),
+        )
+        candidate = _build_candidate_knowledge(need)
+
+        print(f"=== {CALL_DOCUMENT} ===")
         print(f"PROGRAMMES: {len(programmes)}")
         print(f"REQUIREMENT MENTIONS: {len(mentions)}")
-        print("\nCANONICAL KNOWLEDGE CONSTRUCTION PROBE")
-        print("This experiment does not use AI, semantic matching, or fabricated")
-        print("knowledge. It only identifies promising legal/canonical topics and")
-        print("records the evidence still needed to construct Knowledge.")
+        print("\nCANONICAL KNOWLEDGE CONSTRUCTION — SINGLE CASE")
+        print("The call defines the study scope; the official law provides the")
+        print("canonical legal content. No coverage is claimed without evidence.")
 
-        candidate_count = 0
-        for programme in programmes:
-            for unit in programme.units:
-                if not _is_canonical_candidate(unit.title):
-                    continue
-                candidate_count += 1
-                KnowledgeNeed(topic=unit.title, depth=1)
-                _print_unit(unit, programme)
-                if candidate_count >= 3:
-                    break
-            if candidate_count >= 3:
-                break
+        _print_probe(programme, unit, need, relevant_content, candidate)
 
-        print(f"\nCANONICAL CANDIDATES INSPECTED: {candidate_count}")
-        print("EXPERIMENT STATUS: READY FOR MANUAL SOURCE-MAPPING")
+        print("\nEXPERIMENT CONCLUSION")
+        print("  1. Current Knowledge model: PARTIALLY SUFFICIENT")
+        print("     It can identify the knowledge and its canonical source, but not")
+        print("     the source fragment/evidence needed for auditable coverage.")
+        print("  2. Direct KnowledgeNeed -> Knowledge: INSUFFICIENT FOR COVERAGE")
+        print("     A relationship alone does not explain why the need is covered.")
+        print("  3. Required evidence: authoritative source + relevant content +")
+        print("     completeness/currentness validation.")
+        print("  4. Source granularity: the need may map to a subset of the law.")
+        print("  5. Boundary: acquisition obtains source material; construction")
+        print("     produces candidate Knowledge; coverage evaluates evidence.")
+        print("\nEXPERIMENT STATUS: EVIDENCE COLLECTED — MODEL EXTENSION NOT YET IMPLEMENTED")
     finally:
         engine.dispose()
 
