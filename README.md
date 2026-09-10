@@ -31,9 +31,11 @@ Study Programme Discovery
     ↓
 Study Programme Units
     ↓
-Knowledge Needs
+Knowledge Need
     ↓
 Knowledge Construction
+    ↓
+Candidate Study Material
 ```
 
 ## Current Status
@@ -51,9 +53,12 @@ Atanor currently supports:
 - deterministic relevant-content extraction;
 - first reusable `Knowledge` construction;
 - study-programme discovery for the current BOE, BOJA and Archiveros samples;
-- persistence and retrieval of study programmes and programme units.
+- persistence and retrieval of study programmes and programme units;
+- a first end-to-end candidate study-material flow from a real programme point to persisted and retrievable material.
 
-These capabilities have been validated against four real PDF samples. Support is intentionally not presented as universal parsing of arbitrary official documents. Scanned/image-only PDFs remain outside the current extraction boundary.
+The first end-to-end material case uses a real BOE call point referring to Ley 19/2013. Atanor derives the narrower `Derecho de acceso a la información pública` knowledge need without modifying the original programme point.
+
+These capabilities have been validated against four real PDF samples and focused product tests. Support is intentionally not presented as universal parsing of arbitrary official documents. Scanned/image-only PDFs remain outside the current extraction boundary.
 
 ## Product Principles
 
@@ -71,7 +76,7 @@ A few principles guide the current development stage:
 
 ## Experiments and Tests
 
-Exploratory work lives under `backend/experiments/`. Experiments may inspect real documents, compare strategies or test hypotheses without becoming product contracts.
+Exploratory work may live under `backend/experiments/` while it is actively useful for answering an unresolved question. Once an experiment's conclusions are incorporated into product behavior, tests or documentation, the exploratory artifact should normally be removed. Git history preserves the investigation.
 
 Tests define behavior that Atanor has decided to preserve. The preferred development loop is:
 
@@ -152,9 +157,9 @@ Technology choices remain subordinate to validated product requirements.
 
 ## Current Product Gap
 
-The main unresolved question is now product-oriented: can the validated processing capabilities be composed into a genuinely useful preparation experience for a candidate?
+The first candidate study-material vertical is now proven at the application level, but the candidate does not yet have a simple interface for selecting a programme point and reading its generated material.
 
-The next mini-MVP should therefore focus on the smallest candidate workflow that turns the existing requirement and programme capabilities into a meaningful preparation result.
+The next mini-MVP should therefore expose this capability through the existing application interface before expanding the knowledge model or introducing additional infrastructure.
 
 ## Vision
 
