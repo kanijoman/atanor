@@ -47,12 +47,15 @@ Las resoluciones en materia de acceso pueden ser objeto de recurso en los térmi
 """
 
 
+_ACCESS_TOPIC = "Derecho de acceso a la información pública"
+
+
 def generate_access_to_public_information_material(
     need: KnowledgeNeed,
     repository: KnowledgeRepository,
 ) -> Knowledge:
     """Generate and persist the first candidate-facing study material."""
-    if need.topic != "Derecho de acceso a la información pública":
+    if need.topic != _ACCESS_TOPIC:
         raise ValueError(f"Unsupported study topic: {need.topic}")
 
     knowledge = Knowledge(
@@ -78,14 +81,42 @@ def generate_study_material_for_programme_unit(
     return generate_access_to_public_information_material(need, repository)
 
 
+def derive_knowledge_needs_for_programme_unit(
+    programme_unit: StudyProgrammeUnit,
+) -> tuple[KnowledgeNeed, ...]:
+    """Derive the first supported knowledge need from a programme item."""
+    normalized_title = programme_unit.title.lower()
+    if "ley 19/2013" in normalized_title and "transparencia" in normalized_title:
+        return (KnowledgeNeed(topic=_ACCESS_TOPIC, depth=1),)
+
+    raise ValueError(
+        f"No supported knowledge need can be derived from programme item "
+        f"'{programme_unit.title}'"
+    )
+
+
 def prepare_programme_unit_for_study(
     programme_unit: StudyProgrammeUnit,
     repository: KnowledgeRepository,
 ) -> Knowledge:
     """Prepare candidate-facing study material for a programme unit."""
-    need = KnowledgeNeed(topic=programme_unit.title, depth=1)
+    needs = derive_knowledge_needs_for_programme_unit(programme_unit)
+    if len(needs) != 1:
+        raise ValueError(
+            "Preparing a programme item requires exactly one supported "
+            "knowledge need"
+        )
+
     return generate_study_material_for_programme_unit(
-        programme_unit,
-        need,
+        StudyProgrammeUnit(
+            number=programme_unit.number,
+            title=needs[0].topic,
+            start_page=programme_unit.start_page,
+            start_order=programme_unit.start_order,
+            end_page=programme_unit.end_page,
+            end_order=programme_unit.end_order,
+            id=programme_unit.id,
+        ),
+        needs[0],
         repository,
     )
