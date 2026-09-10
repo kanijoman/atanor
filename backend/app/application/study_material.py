@@ -1,6 +1,6 @@
 from typing import Protocol
 
-from app.domain.models import Knowledge, KnowledgeNeed, Source
+from app.domain.models import Knowledge, KnowledgeNeed, Source, StudyProgrammeUnit
 
 
 class KnowledgeRepository(Protocol):
@@ -61,3 +61,18 @@ def generate_access_to_public_information_material(
         sources=(_CANONICAL_SOURCE,),
     )
     return repository.save(knowledge)
+
+
+def generate_study_material_for_programme_unit(
+    programme_unit: StudyProgrammeUnit,
+    need: KnowledgeNeed,
+    repository: KnowledgeRepository,
+) -> Knowledge:
+    """Generate study material when a programme unit identifies the knowledge need."""
+    if programme_unit.title != need.topic:
+        raise ValueError(
+            f"Knowledge need '{need.topic}' does not match programme item "
+            f"'{programme_unit.title}'"
+        )
+
+    return generate_access_to_public_information_material(need, repository)
