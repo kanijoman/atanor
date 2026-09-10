@@ -86,7 +86,10 @@ def derive_knowledge_needs_for_programme_unit(
 ) -> tuple[KnowledgeNeed, ...]:
     """Derive the first supported knowledge need from a programme item."""
     normalized_title = programme_unit.title.lower()
-    if "ley 19/2013" in normalized_title and "transparencia" in normalized_title:
+    if (
+        normalized_title == _ACCESS_TOPIC.lower()
+        or ("ley 19/2013" in normalized_title and "transparencia" in normalized_title)
+    ):
         return (KnowledgeNeed(topic=_ACCESS_TOPIC, depth=1),)
 
     raise ValueError(
