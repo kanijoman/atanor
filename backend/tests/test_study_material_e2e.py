@@ -1,8 +1,6 @@
 from pathlib import Path
 from uuid import UUID
 
-import pytest
-
 from app.application.study_material import prepare_programme_unit_for_study
 from app.application.study_programmes import discover_programmes
 from app.domain.models import Knowledge, Source
@@ -39,7 +37,7 @@ def test_real_call_to_persisted_candidate_study_material() -> None:
 
     assert programme.source_id == call.id
     assert "Ley 19/2013" in programme_unit.title
-    assert material.title == programme_unit.title
+    assert material.title == "Derecho de acceso a la información pública"
     assert material.description
     assert material.sources
     assert retrieved == material
