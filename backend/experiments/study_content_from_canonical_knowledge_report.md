@@ -11,13 +11,9 @@ Test whether a concrete `KnowledgeNeed` plus authoritative canonical evidence ca
 - Evidence range: **articles 12–24**
 - Source authority: **Boletín Oficial del Estado**
 
-## Method
+## Iteration 1: candidate-facing structure
 
-The experiment acquires the current consolidated BOE HTML and resolves the article provisions used by an intentionally authored candidate-facing study artifact.
-
-The study artifact is not generated automatically. This is deliberate: the experiment first investigates the shape and information requirements of useful study content before choosing a generation strategy.
-
-The artifact separates:
+The first probe established a useful candidate-facing structure:
 
 ```text
 Canonical evidence
@@ -27,67 +23,109 @@ Candidate-facing synthesis
 Exam-oriented points
 ```
 
-Each study section declares the canonical article(s) supporting it.
+The artifact is intentionally authored in the experiment. It groups the legal provisions into concepts and procedures rather than reproducing the legal text.
 
-## Observed study structure
+The first probe also demonstrated that article references are useful for traceability but insufficient to establish learning coverage.
 
-The resulting artifact naturally forms nine sections:
+## Iteration 2: semantic coverage probe
 
-1. What the right of access is — Art. 12
-2. What counts as public information — Art. 13
-3. Limits to the right — Art. 14
-4. Personal data and partial access — Arts. 15–16
-5. How the right is exercised — Arts. 17 and 19
-6. When a request may be inadmissible — Art. 18
-7. Processing and resolution — Arts. 19–20
-8. Formalisation of access — Art. 22
-9. Appeals and claims — Arts. 23–24
+The experiment now checks coverage at a finer granularity than article references.
 
-This is materially different from reproducing the legal text: the candidate-facing artifact groups provisions into concepts and processes that can be studied.
+A small manual matrix defines the aspects that should be present for each experimental concept. The study artifact is then compared with that matrix and each concept is classified as:
+
+- **COVERED** — all required aspects are represented;
+- **PARTIAL** — some required aspects are represented and others are missing;
+- **MISSING** — none of the required aspects are represented.
+
+This matrix is deliberately experimental. It is not a production domain model and does not imply that semantic matching has been solved automatically.
+
+### Expected result for the current artifact
+
+The probe intentionally exposes incompleteness in several concepts. In particular:
+
+- `access_limits` is **PARTIAL** because the synthesis captures justification, proportionality and case-specific application but does not enumerate the protected interests;
+- `personal_data` is **PARTIAL** because it acknowledges the specific regime but does not fully explain the relevant distinction;
+- `resolution` is **PARTIAL** because it covers notification, the one-month deadline, the possible extension and the silence rule, but does not cover all relevant guarantees such as reasoned denial, judicial challenge and the optional claim;
+- `information_units` is **PARTIAL** because the candidate-facing text is too generic to demonstrate all required aspects;
+- other concepts can reach **COVERED** under the current manual matrix.
+
+The important result is not the exact count. It is that a concept can cite the correct article and still be materially incomplete for study purposes.
 
 ## Findings
 
-### 1. Candidate-facing structure is a distinct product concern
+### 1. Article-level completeness is insufficient
 
-The raw canonical provisions are not sufficient as study material. A candidate needs an organised explanation of the concepts, rules, procedure and exam-relevant details.
+All target articles 12–24 are referenced by the artifact. This demonstrates complete article-level traceability for the selected range.
 
-### 2. Evidence traceability is useful and feasible
+It does **not** demonstrate that the candidate-facing content covers the knowledge expressed by those articles.
 
-Every study section can point back to one or more canonical provisions. This is enough to demonstrate the value of provenance without deciding its final production representation.
+### 2. Semantic aspects provide a useful validation mechanism
 
-### 3. Knowledge and Study Content should not be conflated
+The manual `concept → required aspects` matrix exposes omissions that article-level checks cannot detect. This is a stronger experimental signal for future coverage validation.
 
-`Knowledge` describes reusable knowledge, while the experiment's artifact is a pedagogical presentation of that knowledge. The latter includes structure and exam-oriented emphasis that do not belong naturally in the current `Knowledge` value object.
+### 3. Semantic matching remains unresolved
 
-### 4. Evidence coverage and pedagogical coverage are different
+The experiment currently supplies the aspect mapping manually. Therefore it demonstrates the shape of the validation problem, not an automated solution.
 
-All target articles can be referenced by the experiment, but that does not prove that the resulting material is pedagogically complete or legally complete. Article-level presence is evidence of traceability, not evidence of learning coverage.
+A future automated matcher would need to establish that a piece of candidate-facing content actually expresses a required aspect. That is a semantic validation problem and should not yet be hidden behind a production abstraction.
 
-### 5. Generation strategy remains deliberately open
+### 4. Candidate-facing content remains distinct from Knowledge and evidence
 
-The experiment does not establish whether future study content should be authored manually, extracted, generated by an LLM, curated from editorial material, or produced through a hybrid process. That decision should follow a broader product test.
+The experiment continues to support the separation between:
 
-## Production candidates
+- canonical evidence;
+- reusable knowledge concepts;
+- candidate-facing pedagogical presentation;
+- coverage evaluation.
 
-The experiment suggests that production will eventually need to represent at least these concerns:
+These concerns are related but not interchangeable.
 
-- candidate-facing study content as distinct from canonical source material;
-- explicit provenance from content to canonical evidence;
-- a way to validate that study content covers a KnowledgeNeed rather than merely referencing its source.
+### 5. The current production model still does not need to change
 
-However, the experiment does **not** yet establish the correct domain model for these concerns. No production model extension is justified solely by AT-084.
+The experiment has now demonstrated a concrete validation need, but it has not demonstrated the minimum stable representation that should become part of the production domain.
 
-## Open questions
+In particular, it is still premature to introduce production entities such as `CoverageAspect`, `EvidenceFragment`, `StudyContent` or richer coverage states solely from this case.
 
-- Is this amount of pedagogical synthesis actually sufficient for exam preparation?
-- Which assertions need article-level provenance versus broader source provenance?
-- Should exam-oriented points be part of study content or a separate learning/assessment layer?
-- How should legal changes invalidate or refresh derived study content?
-- What minimum validation process is required before content can be considered trustworthy?
-- Can this workflow be repeated efficiently across many legal KnowledgeNeeds?
+The next step should test whether the same semantic-coverage pattern repeats across another independently selected `KnowledgeNeed`.
+
+## Candidate-facing value
+
+The product value is becoming clearer:
+
+```text
+Knowledge Need
+      ↓
+Study Content
+      ↓
+Coverage
+   /       \
+covered   missing
+```
+
+Atanor should eventually be able to tell the candidate not only *what to study*, but also which relevant aspects are still missing from the material.
+
+This is a stronger product proposition than simply attaching official sources to study notes.
+
+## Architectural decision
+
+**No production domain-model extension yet.**
+
+The smallest justified architectural conclusion is that future coverage work will likely need semantic validation below the article level. The experiment does not yet justify choosing its final representation, persistence model or matching technology.
+
+## Next smallest product experiment
+
+Repeat the same manual semantic-coverage procedure with a second real `KnowledgeNeed` from the same legal corpus, preferably one whose structure differs from the current procedural topic.
+
+Success would mean that the aspect-based validation pattern is useful beyond this single case. Failure would be equally valuable evidence against prematurely promoting it to the production model.
 
 ## Conclusion
 
-**EXPERIMENT STATUS: CANDIDATE STUDY CONTENT SHAPE IDENTIFIED — PRODUCTION MODEL EXTENSION DEFERRED**
+**EXPERIMENT STATUS: SEMANTIC COVERAGE HYPOTHESIS SUPPORTED — PRODUCTION MODEL EXTENSION DEFERRED**
 
-The next decision should be based on whether this artifact is genuinely useful to a candidate and whether the same transformation can be repeated. The strongest evidence from this iteration is the need to preserve the boundary between canonical evidence and candidate-facing study content, not a particular implementation of that boundary.
+AT-084 now demonstrates three distinct levels:
+
+1. article-level traceability;
+2. concept-level organisation;
+3. aspect-level coverage validation.
+
+The third level catches real omissions that the first two cannot. That is sufficient evidence to continue the investigation, but not sufficient evidence to freeze a new production abstraction.
