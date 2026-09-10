@@ -5,6 +5,7 @@ import pytest
 from app.application.study_material import (
     generate_access_to_public_information_material,
     generate_study_material_for_programme_unit,
+    prepare_programme_unit_for_study,
 )
 from app.domain.models import (
     KnowledgeNeed,
@@ -166,3 +167,18 @@ def test_rejects_a_knowledge_need_that_does_not_match_the_programme_item() -> No
             need,
             repository,
         )
+
+
+def test_prepares_study_material_from_a_programme_item_without_manual_knowledge_need() -> None:
+    programme, programme_unit = real_access_to_public_information_programme()
+    repository = InMemoryKnowledgeRepository()
+
+    material = prepare_programme_unit_for_study(
+        programme_unit,
+        repository,
+    )
+
+    assert programme.units[0] == programme_unit
+    assert material.title == programme_unit.title
+    assert material.description
+    assert repository.get_by_id(material.id) == material
