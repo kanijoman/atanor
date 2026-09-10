@@ -12,7 +12,7 @@ from app.persistence.models.source import Source as PersistenceSource
 from app.persistence.study_programme_repository import SqlAlchemyStudyProgrammeRepository
 
 
-class TestDatabase:
+class StudyApiDatabase:
     def __init__(self, database_path: Path) -> None:
         self.engine = create_engine(f"sqlite:///{database_path}")
         Base.metadata.create_all(self.engine)
@@ -22,7 +22,9 @@ class TestDatabase:
         self.engine.dispose()
 
 
-def _seed_programme(database: TestDatabase) -> tuple[StudyProgramme, StudyProgrammeUnit]:
+def _seed_programme(
+    database: StudyApiDatabase,
+) -> tuple[StudyProgramme, StudyProgrammeUnit]:
     source = Source(title="Synthetic call", locator="synthetic-call.pdf")
     unit = StudyProgrammeUnit(
         number=1,
@@ -54,7 +56,7 @@ def _seed_programme(database: TestDatabase) -> tuple[StudyProgramme, StudyProgra
 
 
 def test_list_programmes_returns_candidate_selectable_programmes(tmp_path, monkeypatch) -> None:
-    database = TestDatabase(tmp_path / "api.db")
+    database = StudyApiDatabase(tmp_path / "api.db")
     programme, _ = _seed_programme(database)
     monkeypatch.setattr("app.api.study.SessionLocal", database.session_factory)
     client = TestClient(app)
@@ -73,7 +75,7 @@ def test_list_programmes_returns_candidate_selectable_programmes(tmp_path, monke
 
 
 def test_get_programme_returns_units_for_candidate_selection(tmp_path, monkeypatch) -> None:
-    database = TestDatabase(tmp_path / "api.db")
+    database = StudyApiDatabase(tmp_path / "api.db")
     programme, unit = _seed_programme(database)
     monkeypatch.setattr("app.api.study.SessionLocal", database.session_factory)
     client = TestClient(app)
@@ -97,7 +99,7 @@ def test_get_programme_returns_units_for_candidate_selection(tmp_path, monkeypat
 
 
 def test_get_programme_returns_not_found_for_unknown_programme(tmp_path, monkeypatch) -> None:
-    database = TestDatabase(tmp_path / "api.db")
+    database = StudyApiDatabase(tmp_path / "api.db")
     monkeypatch.setattr("app.api.study.SessionLocal", database.session_factory)
     client = TestClient(app)
 
