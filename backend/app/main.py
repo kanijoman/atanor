@@ -4,6 +4,7 @@ from fastapi import FastAPI
 
 from app.api.health import router as health_router
 from app.api.root import router as root_router
+from app.api.study import router as study_router
 from app.config import settings
 
 
@@ -15,5 +16,6 @@ app = FastAPI(title=settings.app_name)
 
 app.include_router(root_router)
 app.include_router(health_router)
+app.include_router(study_router)
 
 logger.info("Atanor application started")
