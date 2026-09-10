@@ -1,15 +1,15 @@
 from pathlib import Path
-from uuid import UUID, uuid4
+from uuid import uuid4
 
 from fastapi.testclient import TestClient
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
+from app.domain.models import Source, StudyProgramme, StudyProgrammeUnit
 from app.main import app
 from app.persistence.database import Base
 from app.persistence.models.source import Source as PersistenceSource
 from app.persistence.study_programme_repository import SqlAlchemyStudyProgrammeRepository
-from app.domain.models import Source, StudyProgramme, StudyProgrammeUnit
 
 
 class TestDatabase:
@@ -47,14 +47,15 @@ def _seed_programme(database: TestDatabase) -> tuple[StudyProgramme, StudyProgra
                 locator=source.locator,
             )
         )
-        SqlAlchemyStudyProgrammeRepository(database.session_factory).save(programme)
+        session.commit()
 
+    SqlAlchemyStudyProgrammeRepository(database.session_factory).save(programme)
     return programme, unit
 
 
 def test_list_programmes_returns_candidate_selectable_programmes(tmp_path, monkeypatch) -> None:
     database = TestDatabase(tmp_path / "api.db")
-    _seed_programme(database)
+    programme, _ = _seed_programme(database)
     monkeypatch.setattr("app.api.study.SessionLocal", database.session_factory)
     client = TestClient(app)
 
@@ -63,7 +64,7 @@ def test_list_programmes_returns_candidate_selectable_programmes(tmp_path, monke
     assert response.status_code == 200
     assert response.json() == [
         {
-            "id": str(next(iter(_list_programmes(database))).id),
+            "id": str(programme.id),
             "identifier": "I",
             "title": "Programa oficial",
         }
@@ -105,19 +106,3 @@ def test_get_programme_returns_not_found_for_unknown_programme(tmp_path, monkeyp
     assert response.status_code == 404
     assert response.json() == {"detail": "Study programme not found"}
     database.close()
-
-
-def _list_programmes(database: TestDatabase) -> list[StudyProgramme]:
-    with database.session_factory() as session:
-        programmes = session.query(
-            __import__("app.persistence.models.study_programme", fromlist=["StudyProgramme"]).StudyProgramme
-        ).all()
-    return [
-        StudyProgramme(
-            id=programme.id,
-            source_id=programme.source_id,
-            identifier=programme.identifier,
-            title=programme.title,
-        )
-        for programme in programmes
-    ]
