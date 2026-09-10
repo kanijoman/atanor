@@ -76,3 +76,16 @@ def generate_study_material_for_programme_unit(
         )
 
     return generate_access_to_public_information_material(need, repository)
+
+
+def prepare_programme_unit_for_study(
+    programme_unit: StudyProgrammeUnit,
+    repository: KnowledgeRepository,
+) -> Knowledge:
+    """Prepare candidate-facing study material for a programme unit."""
+    need = KnowledgeNeed(topic=programme_unit.title, depth=1)
+    return generate_study_material_for_programme_unit(
+        programme_unit,
+        need,
+        repository,
+    )
