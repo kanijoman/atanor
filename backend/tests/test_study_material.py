@@ -32,7 +32,7 @@ def test_generates_candidate_facing_material_for_access_to_public_information() 
     assert "1. Concepto y titulares" in knowledge.description
     assert "10. Recursos y reclamaciones" in knowledge.description
     assert "Artículo 12" in knowledge.description
-    assert "Artículo 24" in knowledge.description
+    assert "(Artículos 23 y 24)" in knowledge.description
 
 
 def test_candidate_facing_material_contains_explanations_and_relevant_concepts() -> None:
