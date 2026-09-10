@@ -107,16 +107,4 @@ def prepare_programme_unit_for_study(
             "knowledge need"
         )
 
-    return generate_study_material_for_programme_unit(
-        StudyProgrammeUnit(
-            number=programme_unit.number,
-            title=needs[0].topic,
-            start_page=programme_unit.start_page,
-            start_order=programme_unit.start_order,
-            end_page=programme_unit.end_page,
-            end_order=programme_unit.end_order,
-            id=programme_unit.id,
-        ),
-        needs[0],
-        repository,
-    )
+    return generate_access_to_public_information_material(needs[0], repository)
