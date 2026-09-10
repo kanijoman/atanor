@@ -10,10 +10,9 @@ strategy or extending the production domain model.
 """
 
 from dataclasses import dataclass
-from pathlib import Path
 from urllib.request import Request, urlopen
 
-from app.experiments.canonical_knowledge_construction import (
+from canonical_knowledge_construction import (
     _extract_articles,
     CANONICAL_SOURCE,
 )
