@@ -7,8 +7,8 @@
 | Project | Atanor |
 | Document | BACKLOG |
 | Status | Active |
-| Version | 5.0 |
-| Last Updated | 2026-09-08 |
+| Version | 6.0 |
+| Last Updated | 2026-09-10 |
 | Audience | Contributors and Developers |
 
 ---
@@ -47,6 +47,8 @@ Study Programme Units
 Knowledge Need
     ↓
 Knowledge Construction
+    ↓
+Candidate Study Material
 ```
 
 The current implementation supports heterogeneous text-based PDF structures through source-specific application strategies. Scanned/image-only PDFs remain outside the current extraction boundary.
@@ -65,28 +67,31 @@ The current implementation supports heterogeneous text-based PDF structures thro
 - First reusable `Knowledge` construction workflow.
 - Deterministic study-programme discovery for the current BOE, BOJA and Archiveros samples.
 - Persistence and retrieval of discovered study programmes and units.
+- First end-to-end candidate study-material vertical: a real programme point can derive a concrete `KnowledgeNeed`, generate candidate-facing material, persist it and retrieve it.
 
-These capabilities are validated against the project's four real PDF samples. They do not imply universal support for arbitrary official-document formats.
+The first end-to-end material case is grounded in the real BOE call sample and derives the narrower knowledge need `Derecho de acceso a la información pública` from the broader programme wording referring to Ley 19/2013. The programme unit itself is preserved unchanged.
+
+These capabilities are validated against the project's real PDF samples and focused product tests. They do not imply universal support for arbitrary official-document formats.
 
 ---
 
 ## Current Product Gap
 
-The main unresolved question is no longer whether Atanor can process isolated technical stages. The key question is whether these capabilities can be composed into a **useful preparation experience for an actual candidate**.
+The main unresolved question is now whether the validated application capabilities are exposed as a **usable candidate workflow** rather than only as internal operations and tests.
 
-In particular, Atanor must demonstrate that a candidate can move from an official examination call to a trustworthy, usable study scope and then to the knowledge required to prepare it.
+Atanor can already derive study material from a real programme point, but the candidate does not yet have a simple product interface for selecting a programme point and reading the resulting material.
 
-The next work should therefore prioritize product value and validation over additional infrastructure or speculative architecture.
+The next work should therefore prioritize making the first study-material vertical directly usable, before expanding the knowledge model or introducing additional infrastructure.
 
 ---
 
 ## Immediate Priority
 
-**Define and validate the next candidate-facing mini-MVP from the capabilities now available.**
+**Expose the first candidate study-material workflow through the existing application interface.**
 
-The next task should establish a concrete user workflow that uses the validated requirement and study-programme capabilities and exposes the smallest meaningful preparation result.
+The next task should allow a candidate to select a real study-programme unit and obtain its generated study material, while preserving the programme point and derived Knowledge Need as distinct concepts.
 
-The precise implementation should be defined in a GitHub Issue after the product hypothesis is selected.
+Concrete implementation and acceptance criteria are tracked in GitHub Issue **AT-087**.
 
 ---
 
@@ -129,7 +134,7 @@ Future work is intentionally treated as hypotheses rather than commitments.
 | `docs/conventions/CONVENTIONS.md` | Engineering and development practices. |
 | `docs/technology/TECHNOLOGY.md` | Adopted, deferred and rejected technology choices. |
 | `docs/migrations/MIGRATIONS.md` | Database migration strategy and conventions. |
-| `backend/experiments/` | Exploratory investigations and evidence that has not necessarily become a product contract. |
+| `backend/experiments/` | Exploratory investigations only while they are actively useful; completed experiments should be removed once their conclusions are captured by product code, tests or documentation. |
 | Git history | Actual implementation history and technical change record. |
 
 Documentation should be updated only when the information belongs to that document and its maintenance cost is justified.
@@ -163,11 +168,11 @@ This preserves traceability between product task, implementation and Git history
 
 ## Historical Context
 
-The project has completed the initial foundation, source workflow, requirement-discovery, requirement-scope, document-processing, knowledge-acquisition, knowledge-construction and study-programme validation iterations.
+The project has completed the initial foundation, source workflow, requirement-discovery, requirement-scope, document-processing, knowledge-acquisition, knowledge-construction, study-programme and first candidate study-material validation iterations.
 
-The detailed history of those iterations is intentionally not reproduced here. It remains available through Git history, experiments and the corresponding project documentation.
+The detailed history of those iterations is intentionally not reproduced here. It remains available through Git history and the corresponding project documentation.
 
-The current transition to GitHub Issues as the primary task-tracking mechanism is itself being evaluated through **AT-080**.
+The current transition to GitHub Issues as the primary task-tracking mechanism was evaluated through **AT-080**.
 
 ---
 
