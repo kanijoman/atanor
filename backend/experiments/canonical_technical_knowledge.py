@@ -54,7 +54,7 @@ class KnowledgeNeedCase:
 
 CASE = KnowledgeNeedCase(
     title="Métodos HTTP y semántica de las peticiones",
-    evidence_sections=("9.2", "9.3", "9.3.1", "9.3.2", "9.3.3", "9.3.4", "9.3.5", "9.3.6", "9.3.7", "9.3.8", "9.3.9"),
+    evidence_sections=("9.2", "9.3", "9.3.1", "9.3.2", "9.3.3", "9.3.4", "9.3.5", "9.3.6", "9.3.7", "9.3.8"),
     sections=(
         StudySection(
             "1. Propiedades generales de los métodos HTTP",
@@ -188,7 +188,7 @@ def evaluate_coverage(case: KnowledgeNeedCase) -> tuple[CoverageResult, ...]:
 
 def run() -> None:
     canonical_text = fetch_canonical_text()
-    required_markers = ("9.2", "9.3", "9.3.1", "9.3.9")
+    required_markers = ("9.2", "9.3", "9.3.1", "9.3.8")
     missing_markers = [marker for marker in required_markers if marker not in canonical_text]
     if missing_markers:
         raise RuntimeError(f"Canonical source is missing expected section markers: {missing_markers}")
