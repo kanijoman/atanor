@@ -10,8 +10,8 @@ class StudyProgramme(Base):
     __tablename__ = "study_programmes"
 
     id: Mapped[UUID] = mapped_column(Uuid(), primary_key=True, default=uuid4)
-    source_id: Mapped[UUID] = mapped_column(
-        ForeignKey("sources.id", ondelete="CASCADE"), nullable=False
+    call_id: Mapped[UUID] = mapped_column(
+        ForeignKey("calls.id", ondelete="CASCADE"), nullable=False
     )
     identifier: Mapped[str] = mapped_column(String(100), nullable=False)
     title: Mapped[str] = mapped_column(String(255), nullable=False)
