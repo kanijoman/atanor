@@ -6,6 +6,7 @@ from app.domain.models import (
     StudyProgramme as DomainStudyProgramme,
     StudyProgrammeUnit as DomainStudyProgrammeUnit,
 )
+from app.persistence.models.call import Call
 from app.persistence.models.study_programme import StudyProgramme, StudyProgrammeUnit
 
 
@@ -50,6 +51,17 @@ class SqlAlchemyStudyProgrammeRepository:
             programmes = session.scalars(
                 select(StudyProgramme)
                 .where(StudyProgramme.call_id == call_id)
+                .order_by(StudyProgramme.identifier, StudyProgramme.id)
+            ).all()
+            return [self._to_domain(programme) for programme in programmes]
+
+    def list_by_source(self, source_id: UUID) -> list[DomainStudyProgramme]:
+        """Return programmes for calls backed by a source during the transition to call-first APIs."""
+        with self._session_factory() as session:
+            programmes = session.scalars(
+                select(StudyProgramme)
+                .join(Call, StudyProgramme.call_id == Call.id)
+                .where(Call.source_id == source_id)
                 .order_by(StudyProgramme.identifier, StudyProgramme.id)
             ).all()
             return [self._to_domain(programme) for programme in programmes]
