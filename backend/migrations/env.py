@@ -9,7 +9,9 @@ from app.persistence.models.source import Source
 from app.persistence.models.study_programme import StudyProgramme, StudyProgrammeUnit
 
 config = context.config
-config.set_main_option("sqlalchemy.url", settings.database_url)
+configured_database_url = config.get_main_option("sqlalchemy.url")
+if configured_database_url == "sqlite:///./atanor.db":
+    config.set_main_option("sqlalchemy.url", settings.database_url)
 target_metadata = Base.metadata
 
 
