@@ -8,6 +8,7 @@ from app.application.study_material import (
     prepare_programme_unit_for_study,
 )
 from app.domain.models import (
+    Call,
     KnowledgeNeed,
     Source,
     StudyProgramme,
@@ -34,8 +35,9 @@ def real_access_to_public_information_programme() -> tuple[
         title="Real examination call",
         locator="call.pdf",
     )
+    call = Call(title="Real examination call", source_id=source.id)
     programme = StudyProgramme(
-        source_id=source.id,
+        call_id=call.id,
         identifier="I",
         title="Programa oficial",
         units=(
