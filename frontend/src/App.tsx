@@ -10,6 +10,10 @@ type Route =
 export function resolveRoute(pathname: string): Route {
   const segments = pathname.split("/").filter(Boolean);
 
+  if (segments.length === 0) {
+    return { name: "programmes" };
+  }
+
   if (segments.length === 1 && segments[0] === "programmes") {
     return { name: "programmes" };
   }
