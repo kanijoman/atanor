@@ -19,6 +19,7 @@ def test_migrations_round_trip(tmp_path) -> None:
         assert "alembic_version" in inspector.get_table_names()
         assert "requirements" in inspector.get_table_names()
         assert "sources" in inspector.get_table_names()
+        assert "calls" in inspector.get_table_names()
         assert "requirement_scopes" in inspector.get_table_names()
         assert "knowledge_needs" in inspector.get_table_names()
         assert "knowledge" in inspector.get_table_names()
@@ -37,6 +38,11 @@ def test_migrations_round_trip(tmp_path) -> None:
         source_id = next(column for column in source_columns if column["name"] == "id")
         assert isinstance(source_id["type"], CHAR)
         assert source_id["type"].length == 32
+
+        call_columns = inspector.get_columns("calls")
+        assert {column["name"] for column in call_columns} == {
+            "id", "source_id", "title",
+        }
 
         scope_columns = inspector.get_columns("requirement_scopes")
         assert {column["name"] for column in scope_columns} == {"id", "requirement_id", "context"}
@@ -64,6 +70,13 @@ def test_migrations_round_trip(tmp_path) -> None:
             (foreign_key["referred_table"], tuple(foreign_key["constrained_columns"]))
             for foreign_key in requirement_foreign_keys
         } == {("sources", ("source_id",))}
+
+        call_foreign_keys = inspector.get_foreign_keys("calls")
+        assert {
+            (foreign_key["referred_table"], tuple(foreign_key["constrained_columns"]))
+            for foreign_key in call_foreign_keys
+        } == {("sources", ("source_id",))}
+        assert call_foreign_keys[0]["options"]["ondelete"] == "CASCADE"
 
         scope_foreign_keys = inspector.get_foreign_keys("requirement_scopes")
         assert {
@@ -100,6 +113,7 @@ def test_migrations_round_trip(tmp_path) -> None:
         tables = inspect(engine).get_table_names()
         assert "requirements" not in tables
         assert "sources" not in tables
+        assert "calls" not in tables
         assert "requirement_scopes" not in tables
         assert "knowledge_needs" not in tables
         assert "knowledge" not in tables
