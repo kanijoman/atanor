@@ -6,7 +6,7 @@ from typing import Protocol
 
 from pypdf import PdfReader
 
-from app.domain.models import Source, StudyProgramme, StudyProgrammeUnit
+from app.domain.models import Call, Source, StudyProgramme, StudyProgrammeUnit
 
 
 class StudyProgrammeRepository(Protocol):
@@ -55,7 +55,7 @@ class BojaProgrammeDiscoveryStrategy:
     )
     _TEMA = re.compile(r"^Tema\s+(\d+)\s*[.\-–—]\s*(.*)$", re.IGNORECASE)
 
-    def discover(self, source: Source) -> list[StudyProgramme]:
+    def discover(self, call: Call, source: Source) -> list[StudyProgramme]:
         units = _extract_units(source)
         headers = [
             (index, match)
@@ -99,7 +99,7 @@ class BojaProgrammeDiscoveryStrategy:
                 )
             programmes.append(
                 StudyProgramme(
-                    source_id=source.id,
+                    call_id=call.id,
                     identifier=match.group("identifier"),
                     title=title,
                     units=tuple(programme_units),
@@ -111,7 +111,7 @@ class BojaProgrammeDiscoveryStrategy:
 class ArchiverosProgrammeDiscoveryStrategy:
     _TEMA = re.compile(r"^Tema\s+(\d+)\s*[.\-–—]\s*(.*)$", re.IGNORECASE)
 
-    def discover(self, source: Source) -> list[StudyProgramme]:
+    def discover(self, call: Call, source: Source) -> list[StudyProgramme]:
         units = _extract_units(source)
         temas = [
             index for index, unit in enumerate(units) if self._TEMA.fullmatch(unit.text)
@@ -139,7 +139,7 @@ class ArchiverosProgrammeDiscoveryStrategy:
             )
         return [
             StudyProgramme(
-                source_id=source.id,
+                call_id=call.id,
                 identifier="I",
                 title=title,
                 units=tuple(programme_units),
@@ -154,7 +154,7 @@ class BoeProgrammeDiscoveryStrategy:
     _SECTION = re.compile(r"^[IVXLCDM]+\.\s+.+$")
     _NON_PROGRAMME_SECTION = re.compile(r"^(?:REQUISITOS|MÉRITOS)\b", re.IGNORECASE)
 
-    def discover(self, source: Source) -> list[StudyProgramme]:
+    def discover(self, call: Call, source: Source) -> list[StudyProgramme]:
         units = _extract_units(source)
         annexes = [
             (index, match.group(1).upper())
@@ -212,7 +212,7 @@ class BoeProgrammeDiscoveryStrategy:
                 )
             programmes.append(
                 StudyProgramme(
-                    source_id=source.id,
+                    call_id=call.id,
                     identifier=identifier,
                     title=f"ANEXO {identifier}",
                     units=tuple(programme_units),
@@ -221,21 +221,25 @@ class BoeProgrammeDiscoveryStrategy:
         return programmes
 
 
-def discover_programmes(source: Source) -> list[StudyProgramme]:
+def discover_programmes(call: Call, source: Source) -> list[StudyProgramme]:
+    if call.source_id != source.id:
+        raise ValueError("Call source does not match the supplied source")
+
     units = _extract_units(source)
     if any(BojaProgrammeDiscoveryStrategy._HEADER.fullmatch(unit.text) for unit in units):
-        return BojaProgrammeDiscoveryStrategy().discover(source)
+        return BojaProgrammeDiscoveryStrategy().discover(call, source)
     if any(BoeProgrammeDiscoveryStrategy._ANNEX.fullmatch(unit.text) for unit in units) and any(
         BoeProgrammeDiscoveryStrategy._PROGRAMME.fullmatch(unit.text) for unit in units
     ):
-        return BoeProgrammeDiscoveryStrategy().discover(source)
+        return BoeProgrammeDiscoveryStrategy().discover(call, source)
     if any(ArchiverosProgrammeDiscoveryStrategy._TEMA.fullmatch(unit.text) for unit in units):
-        return ArchiverosProgrammeDiscoveryStrategy().discover(source)
+        return ArchiverosProgrammeDiscoveryStrategy().discover(call, source)
     return []
 
 
 def discover_and_persist_programmes(
+    call: Call,
     source: Source,
     repository: StudyProgrammeRepository,
 ) -> list[StudyProgramme]:
-    return [repository.save(programme) for programme in discover_programmes(source)]
+    return [repository.save(programme) for programme in discover_programmes(call, source)]
