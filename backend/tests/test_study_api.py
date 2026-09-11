@@ -5,9 +5,10 @@ from fastapi.testclient import TestClient
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
-from app.domain.models import Source, StudyProgramme, StudyProgrammeUnit
+from app.domain.models import Call, Source, StudyProgramme, StudyProgrammeUnit
 from app.main import app
 from app.persistence.database import Base
+from app.persistence.models.call import Call as PersistenceCall
 from app.persistence.models.source import Source as PersistenceSource
 from app.persistence.study_programme_repository import SqlAlchemyStudyProgrammeRepository
 
@@ -26,6 +27,7 @@ def _seed_programme(
     database: StudyApiDatabase,
 ) -> tuple[StudyProgramme, StudyProgrammeUnit]:
     source = Source(title="Synthetic call", locator="synthetic-call.pdf")
+    call = Call(title="Synthetic call", source_id=source.id)
     unit = StudyProgrammeUnit(
         number=1,
         title="Derecho de acceso a la información pública",
@@ -35,7 +37,7 @@ def _seed_programme(
         end_order=2,
     )
     programme = StudyProgramme(
-        source_id=source.id,
+        call_id=call.id,
         identifier="I",
         title="Programa oficial",
         units=(unit,),
@@ -47,6 +49,13 @@ def _seed_programme(
                 id=source.id,
                 title=source.title,
                 locator=source.locator,
+            )
+        )
+        session.add(
+            PersistenceCall(
+                id=call.id,
+                source_id=call.source_id,
+                title=call.title,
             )
         )
         session.commit()
