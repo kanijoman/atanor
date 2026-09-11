@@ -3,7 +3,16 @@ from uuid import uuid4
 import pytest
 
 from app.domain.coverage import CoverageStatus, evaluate_coverage
-from app.domain.models import Knowledge, KnowledgeNeed, Requirement, RequirementScope, Source
+from app.domain.models import Call, Knowledge, KnowledgeNeed, Requirement, RequirementScope, Source
+
+
+def test_call_identifies_the_examination_opportunity_from_its_source() -> None:
+    source = Source(title="Official examination notice", locator="call.pdf")
+
+    call = Call(title="Administrative Management Corps", source_id=source.id)
+
+    assert call.source_id == source.id
+    assert call.title == "Administrative Management Corps"
 
 
 def test_requirement_can_define_multiple_contextual_scopes() -> None:
