@@ -1,10 +1,11 @@
+from uuid import uuid4
+
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
 from app.domain.models import Call
 from app.persistence.call_repository import SqlAlchemyCallRepository
 from app.persistence.database import Base
-from app.persistence.models.call import Call as CallModel
 from app.persistence.models.source import Source as SourceModel
 
 
@@ -14,7 +15,7 @@ def test_call_repository_persists_and_retrieves_calls(tmp_path) -> None:
     Base.metadata.create_all(engine)
     session_factory = sessionmaker(bind=engine)
 
-    source_id = __import__('uuid').uuid4()
+    source_id = uuid4()
     with session_factory() as session:
         session.add(
             SourceModel(
