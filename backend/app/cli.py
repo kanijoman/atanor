@@ -2,11 +2,14 @@ import argparse
 from pathlib import Path
 from uuid import UUID
 
+from app.application.call_import import import_call_from_pdf
 from app.application.requirements import get_requirement, list_requirements
 from app.application.source import get_source, import_pdf_source, list_sources
+from app.persistence.call_repository import SqlAlchemyCallRepository
 from app.persistence.database import SessionLocal
 from app.persistence.requirement_repository import SqlAlchemyRequirementRepository
 from app.persistence.source_repository import SqlAlchemySourceRepository
+from app.persistence.study_programme_repository import SqlAlchemyStudyProgrammeRepository
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -17,6 +20,11 @@ def build_parser() -> argparse.ArgumentParser:
         "import-source", help="Import a local PDF as a source"
     )
     import_source.add_argument("pdf", type=Path, help="Path to the PDF file")
+
+    import_call = subparsers.add_parser(
+        "import-call", help="Import a competitive-exam call from a PDF"
+    )
+    import_call.add_argument("pdf", type=Path, help="Path to the call PDF")
 
     get_source_parser = subparsers.add_parser(
         "get-source", help="Get a source by ID"
@@ -52,6 +60,22 @@ def main(argv: list[str] | None = None) -> int:
         print(f"  ID: {source.id}")
         print(f"  Title: {source.title}")
         print(f"  Locator: {source.locator}")
+        return 0
+
+    if args.command == "import-call":
+        try:
+            call = import_call_from_pdf(
+                args.pdf,
+                source_repository,
+                SqlAlchemyCallRepository(SessionLocal),
+                SqlAlchemyStudyProgrammeRepository(SessionLocal),
+            )
+        except (FileNotFoundError, ValueError) as exc:
+            parser.error(str(exc))
+
+        print("Call imported successfully:")
+        print(f"  ID: {call.id}")
+        print(f"  Title: {call.title}")
         return 0
 
     if args.command == "get-source":
