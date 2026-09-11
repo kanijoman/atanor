@@ -4,10 +4,21 @@ from __future__ import annotations
 
 import re
 from dataclasses import dataclass
+from typing import Protocol
 
 from app.application.document_processing import process_document
 from app.application.study_programmes import discover_programmes
-from app.domain.models import Call, Source
+from app.domain.models import Call, Source, StudyProgramme
+
+
+class CallRepository(Protocol):
+    def save(self, call: Call) -> Call: ...
+
+    def list_all(self) -> list[Call]: ...
+
+
+class StudyProgrammeRepository(Protocol):
+    def save(self, programme: StudyProgramme) -> StudyProgramme: ...
 
 
 @dataclass(frozen=True)
@@ -106,3 +117,26 @@ def discover_calls(source: Source) -> list[Call]:
         return []
 
     return [call]
+
+
+def discover_and_persist_call(
+    source: Source,
+    call_repository: CallRepository,
+    programme_repository: StudyProgrammeRepository,
+) -> Call | None:
+    """Discover, persist, and populate a call from a source document."""
+    existing_call = next(
+        (call for call in call_repository.list_all() if call.source_id == source.id),
+        None,
+    )
+    if existing_call is not None:
+        return existing_call
+
+    calls = discover_calls(source)
+    if not calls:
+        return None
+
+    call = call_repository.save(calls[0])
+    for programme in discover_programmes(call, source):
+        programme_repository.save(programme)
+    return call
