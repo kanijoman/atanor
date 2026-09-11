@@ -51,7 +51,7 @@ class SqlAlchemyStudyProgrammeRepository:
             programmes = session.scalars(
                 select(StudyProgramme)
                 .where(StudyProgramme.call_id == call_id)
-                .order_by(StudyProgramme.identifier, StudyProgramme.id)
+                .order_by(StudyProgramme.id)
             ).all()
             return [self._to_domain(programme) for programme in programmes]
 
@@ -62,7 +62,7 @@ class SqlAlchemyStudyProgrammeRepository:
                 select(StudyProgramme)
                 .join(Call, StudyProgramme.call_id == Call.id)
                 .where(Call.source_id == source_id)
-                .order_by(StudyProgramme.identifier, StudyProgramme.id)
+                .order_by(StudyProgramme.id)
             ).all()
             return [self._to_domain(programme) for programme in programmes]
 
