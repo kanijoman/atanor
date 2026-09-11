@@ -1,6 +1,6 @@
 import "@testing-library/jest-dom/vitest";
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { render, screen, waitFor } from "@testing-library/react";
+import { cleanup, render, screen, waitFor } from "@testing-library/react";
 
 import { ProgrammesPage } from "./ProgrammesPage";
 
@@ -19,6 +19,7 @@ const programmes = [
 
 describe("ProgrammesPage", () => {
   afterEach(() => {
+    cleanup();
     vi.restoreAllMocks();
   });
 
