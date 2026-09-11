@@ -38,10 +38,17 @@ describe("ProgrammesPage", () => {
     expect(screen.getByRole("heading", { name: "Programmes" })).toBeVisible();
     expect(screen.getByText("Loading programmes…")).toBeVisible();
 
-    expect(await screen.findByText("Programa oficial")).toBeVisible();
-    expect(screen.getByText("Programa técnico")).toBeVisible();
-    expect(screen.getByText("I")).toBeVisible();
-    expect(screen.getByText("II")).toBeVisible();
+    const officialProgramme = await screen.findByRole("link", {
+      name: /Programa oficial/,
+    });
+    const technicalProgramme = screen.getByRole("link", {
+      name: /Programa técnico/,
+    });
+
+    expect(officialProgramme).toHaveTextContent("I");
+    expect(officialProgramme).toHaveTextContent("Programa oficial");
+    expect(technicalProgramme).toHaveTextContent("II");
+    expect(technicalProgramme).toHaveTextContent("Programa técnico");
   });
 
   it("offers a selectable link for each programme", async () => {
@@ -103,7 +110,7 @@ describe("ProgrammesPage", () => {
 
     render(<ProgrammesPage />);
 
-    await screen.findByText("Programa oficial");
+    await screen.findByRole("link", { name: /Programa oficial/ });
 
     expect(fetchMock).toHaveBeenCalledWith("/api/study/programmes");
   });
