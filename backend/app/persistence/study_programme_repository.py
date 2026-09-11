@@ -17,7 +17,7 @@ class SqlAlchemyStudyProgrammeRepository:
         with self._session_factory() as session:
             persisted = StudyProgramme(
                 id=programme.id,
-                source_id=programme.source_id,
+                call_id=programme.call_id,
                 identifier=programme.identifier,
                 title=programme.title,
                 units=[
@@ -45,11 +45,11 @@ class SqlAlchemyStudyProgrammeRepository:
                 return None
             return self._to_domain(persisted)
 
-    def list_by_source(self, source_id: UUID) -> list[DomainStudyProgramme]:
+    def list_by_call(self, call_id: UUID) -> list[DomainStudyProgramme]:
         with self._session_factory() as session:
             programmes = session.scalars(
                 select(StudyProgramme)
-                .where(StudyProgramme.source_id == source_id)
+                .where(StudyProgramme.call_id == call_id)
                 .order_by(StudyProgramme.identifier, StudyProgramme.id)
             ).all()
             return [self._to_domain(programme) for programme in programmes]
@@ -58,7 +58,7 @@ class SqlAlchemyStudyProgrammeRepository:
     def _to_domain(programme: StudyProgramme) -> DomainStudyProgramme:
         return DomainStudyProgramme(
             id=programme.id,
-            source_id=programme.source_id,
+            call_id=programme.call_id,
             identifier=programme.identifier,
             title=programme.title,
             units=tuple(
