@@ -8,12 +8,19 @@ afterEach(() => {
 });
 
 describe("resolveRoute", () => {
-  it("resolves the root route to programmes", () => {
-    expect(resolveRoute("/")).toEqual({ name: "programmes" });
+  it("resolves the root route to calls", () => {
+    expect(resolveRoute("/")).toEqual({ name: "calls" });
   });
 
-  it("resolves the programmes route", () => {
-    expect(resolveRoute("/programmes")).toEqual({ name: "programmes" });
+  it("resolves the calls route", () => {
+    expect(resolveRoute("/calls")).toEqual({ name: "calls" });
+  });
+
+  it("resolves a call route", () => {
+    expect(resolveRoute("/calls/call-1")).toEqual({
+      name: "call",
+      callId: "call-1",
+    });
   });
 
   it("resolves a programme route", () => {
@@ -36,6 +43,14 @@ describe("resolveRoute", () => {
 });
 
 describe("App", () => {
+  it("renders the calls page for the root route", () => {
+    window.history.pushState({}, "", "/");
+
+    render(<App />);
+
+    expect(screen.getByRole("heading", { name: "Calls" })).toBeInTheDocument();
+  });
+
   it("renders the study page for a study route", () => {
     window.history.pushState({}, "", "/study/unit-1");
 
