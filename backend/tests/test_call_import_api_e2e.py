@@ -61,5 +61,14 @@ def test_imported_call_and_programmes_are_available_through_calls_api() -> None:
     programmes = programmes_response.json()
     assert len(programmes) == 10
     assert [programme["identifier"] for programme in programmes] == [
-        str(number) for number in range(1, 11)
+        "I",
+        "II",
+        "III",
+        "IV",
+        "V",
+        "VI",
+        "VII",
+        "VIII",
+        "IX",
+        "X",
     ]
