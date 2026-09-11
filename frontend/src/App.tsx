@@ -1,8 +1,10 @@
+import { CallPage } from "./pages/CallPage";
+import { CallsPage } from "./pages/CallsPage";
 import { ProgrammePage } from "./pages/ProgrammePage";
-import { ProgrammesPage } from "./pages/ProgrammesPage";
 
 type Route =
-  | { name: "programmes" }
+  | { name: "calls" }
+  | { name: "call"; callId: string }
   | { name: "programme"; programmeId: string }
   | { name: "study"; unitId: string }
   | { name: "not-found" };
@@ -11,11 +13,15 @@ export function resolveRoute(pathname: string): Route {
   const segments = pathname.split("/").filter(Boolean);
 
   if (segments.length === 0) {
-    return { name: "programmes" };
+    return { name: "calls" };
   }
 
-  if (segments.length === 1 && segments[0] === "programmes") {
-    return { name: "programmes" };
+  if (segments.length === 1 && segments[0] === "calls") {
+    return { name: "calls" };
+  }
+
+  if (segments.length === 2 && segments[0] === "calls") {
+    return { name: "call", callId: segments[1] };
   }
 
   if (segments.length === 2 && segments[0] === "programmes") {
@@ -50,8 +56,10 @@ export function App() {
   const route = resolveRoute(window.location.pathname);
 
   switch (route.name) {
-    case "programmes":
-      return <ProgrammesPage />;
+    case "calls":
+      return <CallsPage />;
+    case "call":
+      return <CallPage callId={route.callId} />;
     case "programme":
       return <ProgrammePage programmeId={route.programmeId} />;
     case "study":
