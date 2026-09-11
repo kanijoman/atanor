@@ -8,6 +8,10 @@ afterEach(() => {
 });
 
 describe("resolveRoute", () => {
+  it("resolves the root route to programmes", () => {
+    expect(resolveRoute("/")).toEqual({ name: "programmes" });
+  });
+
   it("resolves the programmes route", () => {
     expect(resolveRoute("/programmes")).toEqual({ name: "programmes" });
   });
