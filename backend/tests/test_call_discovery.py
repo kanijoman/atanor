@@ -32,11 +32,13 @@ def test_call_context_rejects_programme_only_text() -> None:
 
 
 def test_discovers_call_from_boe() -> None:
-    calls = discover_calls(source("BOE-A-2024-14098.pdf"))
+    source_document = source("BOE-A-2024-14098.pdf")
+
+    calls = discover_calls(source_document)
 
     assert len(calls) == 1
     assert calls[0].title == "BOE-A-2024-14098.pdf"
-    assert calls[0].source_id == source("BOE-A-2024-14098.pdf").id
+    assert calls[0].source_id == source_document.id
 
 
 def test_discovers_call_from_boja() -> None:
