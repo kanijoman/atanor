@@ -1,6 +1,8 @@
 import re
 from pathlib import Path
 
+import pytest
+
 from app.application.study_programmes import (
     BoeProgrammeDiscoveryStrategy,
     _extract_units,
@@ -27,7 +29,8 @@ def call_for(source_document: Source) -> Call:
 
 def test_discovers_boja_programmes() -> None:
     source_document = source("BOJA24-138-00046-48048-01_00304998.pdf")
-    programmes = discover_programmes(call_for(source_document), source_document)
+    call = call_for(source_document)
+    programmes = discover_programmes(call, source_document)
 
     assert len(programmes) == 7
     assert [programme.identifier for programme in programmes] == [
@@ -37,7 +40,7 @@ def test_discovers_boja_programmes() -> None:
     assert len(programmes[1].units) == 39
     assert programmes[1].units[0].number == 1
     assert programmes[1].units[-1].number == 40
-    assert all(programme.call_id == source_document.id for programme in []) is True
+    assert all(programme.call_id == call.id for programme in programmes)
 
 
 def test_discovers_boe_programmes() -> None:
@@ -57,12 +60,8 @@ def test_discovery_rejects_a_call_from_another_source() -> None:
     source_document = source("BOE-A-2024-14098.pdf")
     unrelated_source = source("Programa_Archiveros_0.pdf")
 
-    try:
+    with pytest.raises(ValueError, match="Call source does not match the supplied source"):
         discover_programmes(call_for(unrelated_source), source_document)
-    except ValueError as exc:
-        assert str(exc) == "Call source does not match the supplied source"
-    else:
-        raise AssertionError("Expected discovery to reject a mismatched call source")
 
 
 def test_boe_units_do_not_cross_section_boundaries() -> None:
