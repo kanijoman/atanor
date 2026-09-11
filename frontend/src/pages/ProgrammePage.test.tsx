@@ -41,11 +41,13 @@ describe("ProgrammePage", () => {
 
     render(<ProgrammePage programmeId="programme-1" />);
 
-    expect(screen.getByRole("heading", { name: "Programme I" })).toBeVisible();
     expect(screen.getByText("Loading programme…")).toBeVisible();
 
     expect(
-      await screen.findByRole("link", {
+      await screen.findByRole("heading", { name: "Programme I" }),
+    ).toBeVisible();
+    expect(
+      screen.getByRole("link", {
         name: /Derecho de acceso a la información pública/,
       }),
     ).toBeVisible();
