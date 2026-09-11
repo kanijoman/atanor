@@ -57,7 +57,7 @@ def test_migrations_round_trip(tmp_path) -> None:
 
         programme_columns = inspector.get_columns("study_programmes")
         assert {column["name"] for column in programme_columns} == {
-            "id", "source_id", "identifier", "title",
+            "id", "call_id", "identifier", "title",
         }
         unit_columns = inspector.get_columns("study_programme_units")
         assert {column["name"] for column in unit_columns} == {
@@ -98,7 +98,7 @@ def test_migrations_round_trip(tmp_path) -> None:
         assert {
             (foreign_key["referred_table"], tuple(foreign_key["constrained_columns"]))
             for foreign_key in programme_foreign_keys
-        } == {("sources", ("source_id",))}
+        } == {("calls", ("call_id",))}
         assert programme_foreign_keys[0]["options"]["ondelete"] == "CASCADE"
 
         unit_foreign_keys = inspector.get_foreign_keys("study_programme_units")
