@@ -10,6 +10,13 @@ class Source:
 
 
 @dataclass(frozen=True)
+class Call:
+    title: str
+    source_id: UUID
+    id: UUID = field(default_factory=uuid4)
+
+
+@dataclass(frozen=True)
 class Knowledge:
     title: str
     description: str | None = None
