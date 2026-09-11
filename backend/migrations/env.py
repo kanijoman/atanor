@@ -1,6 +1,7 @@
 from alembic import context
 from sqlalchemy import engine_from_config, pool
 
+from app.config import settings
 from app.persistence.database import Base
 from app.persistence.models.call import Call
 from app.persistence.models.requirement import Requirement
@@ -8,6 +9,7 @@ from app.persistence.models.source import Source
 from app.persistence.models.study_programme import StudyProgramme, StudyProgrammeUnit
 
 config = context.config
+config.set_main_option("sqlalchemy.url", settings.database_url)
 target_metadata = Base.metadata
 
 
