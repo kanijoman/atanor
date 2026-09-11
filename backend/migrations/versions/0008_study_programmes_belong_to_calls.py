@@ -69,7 +69,6 @@ def upgrade() -> None:
 
     with op.batch_alter_table("study_programmes") as batch_op:
         batch_op.alter_column("call_id", nullable=False)
-        batch_op.drop_constraint("study_programmes_source_id_fkey", type_="foreignkey")
         batch_op.drop_column("source_id")
         batch_op.create_foreign_key(
             "study_programmes_call_id_fkey",
@@ -94,7 +93,6 @@ def downgrade() -> None:
 
     with op.batch_alter_table("study_programmes") as batch_op:
         batch_op.alter_column("source_id", nullable=False)
-        batch_op.drop_constraint("study_programmes_call_id_fkey", type_="foreignkey")
         batch_op.drop_column("call_id")
         batch_op.create_foreign_key(
             "study_programmes_source_id_fkey",
