@@ -12,6 +12,9 @@ dependencies = [
     "pypdf>=6.0,<7.0",
 ]
 
+[project.scripts]
+atanor = "app.cli:main"
+
 [dependency-groups]
 dev = [
     "pytest>=8.0,<9.0",
