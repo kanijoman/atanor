@@ -14,6 +14,9 @@ class InMemorySourceRepository:
     def save(self, source: Source) -> None:
         self.sources.append(source)
 
+    def list_all(self) -> list[Source]:
+        return list(self.sources)
+
 
 class InMemoryCallRepository:
     def __init__(self) -> None:
