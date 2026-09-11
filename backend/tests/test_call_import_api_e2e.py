@@ -10,7 +10,6 @@ from app.application.call_import import import_call_from_pdf
 from app.main import app
 from app.persistence.call_repository import SqlAlchemyCallRepository
 from app.persistence.database import Base
-from app.persistence.models import Call, Source, StudyProgramme, StudyProgrammeUnit
 from app.persistence.source_repository import SqlAlchemySourceRepository
 from app.persistence.study_programme_repository import SqlAlchemyStudyProgrammeRepository
 
@@ -18,7 +17,7 @@ from app.persistence.study_programme_repository import SqlAlchemyStudyProgrammeR
 SAMPLES = Path(__file__).parent / "samples"
 
 
-def test_imported_call_is_available_through_calls_api() -> None:
+def test_imported_call_and_programmes_are_available_through_calls_api() -> None:
     engine = create_engine(
         "sqlite://",
         connect_args={"check_same_thread": False},
@@ -42,15 +41,25 @@ def test_imported_call_is_available_through_calls_api() -> None:
     calls.SessionLocal = session_factory
     try:
         client = TestClient(app)
-        response = client.get("/api/calls")
+        call_response = client.get("/api/calls")
+        programmes_response = client.get(
+            f"/api/calls/{imported_call.id}/programmes"
+        )
     finally:
         calls.SessionLocal = original_session_local
         engine.dispose()
 
-    assert response.status_code == 200
-    assert response.json() == [
+    assert call_response.status_code == 200
+    assert call_response.json() == [
         {
             "id": str(imported_call.id),
             "title": "BOE-A-2024-14098.pdf",
         }
+    ]
+
+    assert programmes_response.status_code == 200
+    programmes = programmes_response.json()
+    assert len(programmes) == 10
+    assert [programme["identifier"] for programme in programmes] == [
+        str(number) for number in range(1, 11)
     ]
