@@ -85,7 +85,7 @@ class StudyProgrammeUnit:
 
 @dataclass(frozen=True)
 class StudyProgramme:
-    source_id: UUID
+    call_id: UUID
     identifier: str
     title: str
     units: tuple[StudyProgrammeUnit, ...] = field(default_factory=tuple)
