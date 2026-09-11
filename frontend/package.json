@@ -7,6 +7,8 @@
     "node": ">=26 <27"
   },
   "scripts": {
+    "dev": "vite",
+    "build": "vite build",
     "test": "vitest run --environment jsdom",
     "test:watch": "vitest --environment jsdom"
   },
