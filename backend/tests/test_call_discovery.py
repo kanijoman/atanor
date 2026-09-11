@@ -11,10 +11,24 @@ def source(name: str) -> Source:
     return Source(title=name, locator=str(SAMPLES / name))
 
 
-def test_call_context_identifies_real_call_documents() -> None:
-    boe = analyse_call_context(source("BOE-A-2024-14098.pdf").locator and " ")
+def test_call_context_requires_combined_call_signals() -> None:
+    context = analyse_call_context(
+        "convocatoria plazas cuerpo sistema selectivo turno"
+    )
 
-    assert boe.signals_present == 0
+    assert context.signals_present == 5
+    assert context.strong_signals_present == 4
+    assert context.nearby_call_signal_pairs == 4
+    assert context.is_strong
+
+
+def test_call_context_rejects_programme_only_text() -> None:
+    context = analyse_call_context("Programa de materias. Cuerpo de Archiveros")
+
+    assert context.signals_present == 1
+    assert context.strong_signals_present == 1
+    assert context.nearby_call_signal_pairs == 0
+    assert not context.is_strong
 
 
 def test_discovers_call_from_boe() -> None:
@@ -22,6 +36,7 @@ def test_discovers_call_from_boe() -> None:
 
     assert len(calls) == 1
     assert calls[0].title == "BOE-A-2024-14098.pdf"
+    assert calls[0].source_id == source("BOE-A-2024-14098.pdf").id
 
 
 def test_discovers_call_from_boja() -> None:
