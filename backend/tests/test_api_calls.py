@@ -1,14 +1,17 @@
 from uuid import uuid4
 
-import pytest
+from fastapi.testclient import TestClient
 
 from app.api import calls
-from app.domain.models import Call, StudyProgramme, StudyProgrammeUnit
+from app.domain.models import Call, StudyProgramme
+from app.main import app
 
 
 class InMemoryCallRepository:
+    calls: list[Call] = []
+
     def __init__(self, _session_factory) -> None:
-        self.calls = []
+        pass
 
     def list_all(self):
         return self.calls
@@ -18,7 +21,7 @@ class InMemoryCallRepository:
 
 
 class InMemoryStudyProgrammeRepository:
-    programmes_by_call = {}
+    programmes_by_call: dict = {}
 
     def __init__(self, _session_factory) -> None:
         pass
@@ -27,14 +30,18 @@ class InMemoryStudyProgrammeRepository:
         return self.programmes_by_call.get(call_id, [])
 
 
+client = TestClient(app)
+
+
 def test_list_calls_returns_available_calls(monkeypatch) -> None:
     call = Call(title="Administrative Management Corps", source_id=uuid4())
-    repository = InMemoryCallRepository(None)
-    repository.calls = [call]
+    InMemoryCallRepository.calls = [call]
+    monkeypatch.setattr(calls, "SqlAlchemyCallRepository", InMemoryCallRepository)
 
-    monkeypatch.setattr(calls, "SqlAlchemyCallRepository", lambda _: repository)
+    response = client.get("/api/calls")
 
-    assert calls.list_calls() == [
+    assert response.status_code == 200
+    assert response.json() == [
         {
             "id": str(call.id),
             "title": "Administrative Management Corps",
@@ -44,26 +51,26 @@ def test_list_calls_returns_available_calls(monkeypatch) -> None:
 
 def test_get_call_returns_call(monkeypatch) -> None:
     call = Call(title="Administrative Management Corps", source_id=uuid4())
-    repository = InMemoryCallRepository(None)
-    repository.calls = [call]
+    InMemoryCallRepository.calls = [call]
+    monkeypatch.setattr(calls, "SqlAlchemyCallRepository", InMemoryCallRepository)
 
-    monkeypatch.setattr(calls, "SqlAlchemyCallRepository", lambda _: repository)
+    response = client.get(f"/api/calls/{call.id}")
 
-    assert calls.get_call(call.id) == {
+    assert response.status_code == 200
+    assert response.json() == {
         "id": str(call.id),
         "title": "Administrative Management Corps",
     }
 
 
 def test_get_call_returns_404_when_call_does_not_exist(monkeypatch) -> None:
-    repository = InMemoryCallRepository(None)
-    monkeypatch.setattr(calls, "SqlAlchemyCallRepository", lambda _: repository)
+    InMemoryCallRepository.calls = []
+    monkeypatch.setattr(calls, "SqlAlchemyCallRepository", InMemoryCallRepository)
 
-    with pytest.raises(Exception) as error:
-        calls.get_call(uuid4())
+    response = client.get(f"/api/calls/{uuid4()}")
 
-    assert error.value.status_code == 404
-    assert error.value.detail == "Call not found"
+    assert response.status_code == 404
+    assert response.json() == {"detail": "Call not found"}
 
 
 def test_list_call_programmes_returns_programmes_for_call(monkeypatch) -> None:
@@ -72,34 +79,23 @@ def test_list_call_programmes_returns_programmes_for_call(monkeypatch) -> None:
         call_id=call.id,
         identifier="I",
         title="General subjects",
-        units=(
-            StudyProgrammeUnit(
-                number=1,
-                title="Constitution",
-                start_page=1,
-                start_order=1,
-                end_page=2,
-                end_order=2,
-            ),
-        ),
     )
+    InMemoryCallRepository.calls = [call]
+    InMemoryStudyProgrammeRepository.programmes_by_call = {
+        call.id: [programme],
+    }
 
-    call_repository = InMemoryCallRepository(None)
-    call_repository.calls = [call]
-    programme_repository = InMemoryStudyProgrammeRepository(None)
-    programme_repository.programmes_by_call = {call.id: [programme]}
-
-    def repository_factory(_):
-        return call_repository
-
-    monkeypatch.setattr(calls, "SqlAlchemyCallRepository", repository_factory)
+    monkeypatch.setattr(calls, "SqlAlchemyCallRepository", InMemoryCallRepository)
     monkeypatch.setattr(
         calls,
         "SqlAlchemyStudyProgrammeRepository",
-        lambda _: programme_repository,
+        InMemoryStudyProgrammeRepository,
     )
 
-    assert calls.list_call_programmes(call.id) == [
+    response = client.get(f"/api/calls/{call.id}/programmes")
+
+    assert response.status_code == 200
+    assert response.json() == [
         {
             "id": str(programme.id),
             "identifier": "I",
@@ -111,11 +107,10 @@ def test_list_call_programmes_returns_programmes_for_call(monkeypatch) -> None:
 def test_list_call_programmes_returns_404_when_call_does_not_exist(
     monkeypatch,
 ) -> None:
-    repository = InMemoryCallRepository(None)
-    monkeypatch.setattr(calls, "SqlAlchemyCallRepository", lambda _: repository)
+    InMemoryCallRepository.calls = []
+    monkeypatch.setattr(calls, "SqlAlchemyCallRepository", InMemoryCallRepository)
 
-    with pytest.raises(Exception) as error:
-        calls.list_call_programmes(uuid4())
+    response = client.get(f"/api/calls/{uuid4()}/programmes")
 
-    assert error.value.status_code == 404
-    assert error.value.detail == "Call not found"
+    assert response.status_code == 404
+    assert response.json() == {"detail": "Call not found"}
