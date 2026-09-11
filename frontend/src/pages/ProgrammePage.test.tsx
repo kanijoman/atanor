@@ -48,10 +48,14 @@ describe("ProgrammePage", () => {
     ).toBeVisible();
     expect(
       screen.getByRole("link", {
+        name: /Organización del Estado/,
+      }),
+    ).toBeVisible();
+    expect(
+      screen.getByRole("link", {
         name: /Derecho de acceso a la información pública/,
       }),
     ).toBeVisible();
-    expect(screen.getByText("Organización del Estado")).toBeVisible();
   });
 
   it("offers a selectable link for each programme unit", async () => {
@@ -87,7 +91,9 @@ describe("ProgrammePage", () => {
 
     render(<ProgrammePage programmeId="programme-1" />);
 
-    expect(await screen.findByText("No programme units are available yet.")).toBeVisible();
+    expect(
+      await screen.findByText("No programme units are available yet."),
+    ).toBeVisible();
   });
 
   it("shows an error when the programme cannot be loaded", async () => {
