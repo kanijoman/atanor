@@ -155,6 +155,32 @@ def test_generates_material_from_a_programme_item_and_persists_it() -> None:
     assert repository.get_by_id(material.id) == material
 
 
+def test_generates_material_when_official_programme_title_describes_supported_topic() -> None:
+    programme_unit = StudyProgrammeUnit(
+        number=7,
+        title="La Ley 19/2013, de 9 de diciembre, de transparencia, acceso a la información",
+        start_page=16,
+        start_order=820,
+        end_page=16,
+        end_order=821,
+    )
+    need = KnowledgeNeed(
+        topic="Derecho de acceso a la información pública",
+        depth=1,
+    )
+    repository = InMemoryKnowledgeRepository()
+
+    material = generate_study_material_for_programme_unit(
+        programme_unit,
+        need,
+        repository,
+    )
+
+    assert material.title == need.topic
+    assert material.description
+    assert repository.get_by_id(material.id) == material
+
+
 def test_rejects_a_knowledge_need_that_does_not_match_the_programme_item() -> None:
     _, programme_unit = real_access_to_public_information_programme()
     need = KnowledgeNeed(
