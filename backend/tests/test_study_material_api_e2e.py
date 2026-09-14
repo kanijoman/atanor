@@ -43,7 +43,8 @@ def test_selected_programme_unit_exposes_candidate_study_material() -> None:
         unit
         for programme in programmes
         for unit in programme.units
-        if unit.title == "Derecho de acceso a la información pública"
+        if "ley 19/2013" in unit.title.casefold()
+        and "transparencia" in unit.title.casefold()
     )
 
     original_session_local = study.SessionLocal
