@@ -1,6 +1,7 @@
 import { CallPage } from "./pages/CallPage";
 import { CallsPage } from "./pages/CallsPage";
 import { ProgrammePage } from "./pages/ProgrammePage";
+import { StudyPage } from "./pages/StudyPage";
 
 type Route =
   | { name: "calls" }
@@ -33,15 +34,6 @@ export function resolveRoute(pathname: string): Route {
   }
 
   return { name: "not-found" };
-}
-
-function StudyPage({ unitId }: { unitId: string }) {
-  return (
-    <main>
-      <h1>Study</h1>
-      <p>Study material for programme unit {unitId} is not available yet.</p>
-    </main>
-  );
 }
 
 function NotFoundPage() {
