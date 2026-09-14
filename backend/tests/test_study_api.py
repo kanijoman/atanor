@@ -107,6 +107,65 @@ def test_get_programme_returns_units_for_candidate_selection(tmp_path, monkeypat
     database.close()
 
 
+def test_get_programme_exposes_study_material_availability(tmp_path, monkeypatch) -> None:
+    database = StudyApiDatabase(tmp_path / "api.db")
+    programme, unit = _seed_programme(database)
+    monkeypatch.setattr("app.api.study.SessionLocal", database.session_factory)
+    client = TestClient(app)
+
+    response = client.get(f"/api/study/programmes/{programme.id}")
+
+    assert response.status_code == 200
+    assert response.json()["units"] == [
+        {
+            "id": str(unit.id),
+            "number": 1,
+            "title": "Derecho de acceso a la información pública",
+            "study_material_available": True,
+        }
+    ]
+    database.close()
+
+
+def test_get_programme_marks_unsupported_units_as_unavailable(
+    tmp_path, monkeypatch
+) -> None:
+    database = StudyApiDatabase(tmp_path / "api.db")
+    programme, _ = _seed_programme(database)
+    unsupported_unit = StudyProgrammeUnit(
+        number=2,
+        title="Organización del Estado",
+        start_page=3,
+        start_order=1,
+        end_page=4,
+        end_order=2,
+    )
+    unsupported_programme = StudyProgramme(
+        call_id=programme.call_id,
+        identifier="II",
+        title="Programa oficial II",
+        units=(unsupported_unit,),
+    )
+    SqlAlchemyStudyProgrammeRepository(database.session_factory).save(
+        unsupported_programme
+    )
+    monkeypatch.setattr("app.api.study.SessionLocal", database.session_factory)
+    client = TestClient(app)
+
+    response = client.get(f"/api/study/programmes/{unsupported_programme.id}")
+
+    assert response.status_code == 200
+    assert response.json()["units"] == [
+        {
+            "id": str(unsupported_unit.id),
+            "number": 2,
+            "title": "Organización del Estado",
+            "study_material_available": False,
+        }
+    ]
+    database.close()
+
+
 def test_get_programme_returns_not_found_for_unknown_programme(tmp_path, monkeypatch) -> None:
     database = StudyApiDatabase(tmp_path / "api.db")
     monkeypatch.setattr("app.api.study.SessionLocal", database.session_factory)
