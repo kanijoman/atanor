@@ -15,6 +15,14 @@ _CANONICAL_SOURCE = Source(
     locator="https://www.boe.es/buscar/act.php?id=BOE-A-2013-12887",
 )
 
+_PROCEDURE_CANONICAL_SOURCE = Source(
+    title=(
+        "Ley 39/2015, de 1 de octubre, del Procedimiento Administrativo "
+        "Común de las Administraciones Públicas"
+    ),
+    locator="https://www.boe.es/buscar/act.php?id=BOE-A-2015-10565",
+)
+
 _STUDY_CONTENT = """1. Concepto y titulares
 El derecho de acceso permite a las personas solicitar información pública en los términos establecidos por la Ley 19/2013. Su reconocimiento constituye uno de los mecanismos principales de transparencia de la actividad pública. (Artículo 12)
 
@@ -46,6 +54,13 @@ Una vez reconocido el derecho, el acceso debe hacerse efectivo en la forma estab
 Las resoluciones en materia de acceso pueden ser objeto de recurso en los términos previstos por la normativa aplicable. Además, la ley establece una reclamación potestativa ante el Consejo de Transparencia y Buen Gobierno como mecanismo específico de revisión. (Artículos 23 y 24)
 """
 
+_PROCEDURE_STUDY_CONTENT = """1. Objeto de la ley
+La Ley 39/2015 establece las bases del procedimiento administrativo común de las Administraciones Públicas y regula los requisitos de validez y eficacia de los actos administrativos, el procedimiento administrativo común, incluida su especialidad sancionadora y la de responsabilidad de las Administraciones Públicas, y los principios a los que debe ajustarse la iniciativa legislativa y la potestad reglamentaria. (Artículo 1)
+
+2. Ámbito subjetivo de aplicación
+La ley se aplica al sector público, que comprende la Administración General del Estado, las Administraciones de las Comunidades Autónomas, las Entidades que integran la Administración Local y el sector público institucional. También determina las entidades que integran este último ámbito. (Artículo 2)
+"""
+
 
 _ACCESS_TOPIC = "Derecho de acceso a la información pública"
 _PROCEDURE_TOPIC = "Procedimiento administrativo común"
@@ -67,6 +82,22 @@ def generate_access_to_public_information_material(
     return repository.save(knowledge)
 
 
+def generate_common_administrative_procedure_material(
+    need: KnowledgeNeed,
+    repository: KnowledgeRepository,
+) -> Knowledge:
+    """Generate candidate-facing material for the common administrative procedure."""
+    if need.topic != _PROCEDURE_TOPIC:
+        raise ValueError(f"Unsupported study topic: {need.topic}")
+
+    knowledge = Knowledge(
+        title=need.topic,
+        description=_PROCEDURE_STUDY_CONTENT,
+        sources=(_PROCEDURE_CANONICAL_SOURCE,),
+    )
+    return repository.save(knowledge)
+
+
 def generate_study_material_for_programme_unit(
     programme_unit: StudyProgrammeUnit,
     need: KnowledgeNeed,
@@ -78,13 +109,21 @@ def generate_study_material_for_programme_unit(
         normalized_title == _ACCESS_TOPIC.casefold()
         or ("ley 19/2013" in normalized_title and "transparencia" in normalized_title)
     )
-    if need.topic != _ACCESS_TOPIC or not supports_access_topic:
-        raise ValueError(
-            f"Knowledge need '{need.topic}' does not match programme item "
-            f"'{programme_unit.title}'"
-        )
+    supports_procedure_topic = (
+        "ley 39/2015" in normalized_title
+        and "procedimiento administrativo común" in normalized_title
+    )
 
-    return generate_access_to_public_information_material(need, repository)
+    if need.topic == _ACCESS_TOPIC and supports_access_topic:
+        return generate_access_to_public_information_material(need, repository)
+
+    if need.topic == _PROCEDURE_TOPIC and supports_procedure_topic:
+        return generate_common_administrative_procedure_material(need, repository)
+
+    raise ValueError(
+        f"Knowledge need '{need.topic}' does not match programme item "
+        f"'{programme_unit.title}'"
+    )
 
 
 def derive_knowledge_needs_for_programme_unit(
@@ -119,4 +158,8 @@ def prepare_programme_unit_for_study(
             "knowledge need"
         )
 
-    return generate_access_to_public_information_material(needs[0], repository)
+    return generate_study_material_for_programme_unit(
+        programme_unit,
+        needs[0],
+        repository,
+    )
