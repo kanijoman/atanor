@@ -4,6 +4,7 @@ type ProgrammeUnit = {
   id: string;
   number: number;
   title: string;
+  study_material_available: boolean;
 };
 
 type Programme = {
@@ -51,9 +52,20 @@ export function ProgrammePage({ programmeId }: ProgrammePageProps) {
             <ul>
               {programme.units.map((unit) => (
                 <li key={unit.id}>
-                  <a href={`/study/${unit.id}`}>
-                    {unit.number}. {unit.title}
-                  </a>
+                  {unit.study_material_available ? (
+                    <a href={`/study/${unit.id}`}>
+                      {unit.number}. {unit.title}
+                    </a>
+                  ) : (
+                    <span>
+                      {unit.number}. {unit.title}
+                    </span>
+                  )}
+                  <span>
+                    {unit.study_material_available
+                      ? "Study material available"
+                      : "Study material not available"}
+                  </span>
                 </li>
               ))}
             </ul>
