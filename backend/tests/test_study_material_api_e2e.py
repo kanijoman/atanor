@@ -39,9 +39,9 @@ def test_selected_programme_unit_exposes_candidate_study_material() -> None:
         programme_repository,
     )
     programmes = programme_repository.list_by_call(imported_call.id)
-    programme = next(programme for programme in programmes if "Ley 19/2013" in programme.title)
     unit = next(
         unit
+        for programme in programmes
         for unit in programme.units
         if unit.title == "Derecho de acceso a la información pública"
     )
