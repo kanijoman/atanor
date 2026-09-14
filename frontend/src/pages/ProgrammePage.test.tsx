@@ -13,11 +13,13 @@ const programme = {
       id: "unit-1",
       number: 1,
       title: "Organización del Estado",
+      study_material_available: false,
     },
     {
       id: "unit-2",
       number: 2,
       title: "Derecho de acceso a la información pública",
+      study_material_available: true,
     },
   ],
 };
@@ -58,7 +60,7 @@ describe("ProgrammePage", () => {
     ).toBeVisible();
   });
 
-  it("offers a selectable link for each programme unit", async () => {
+  it("shows which programme units have study material available", async () => {
     vi.stubGlobal(
       "fetch",
       vi.fn().mockResolvedValue(
@@ -71,11 +73,33 @@ describe("ProgrammePage", () => {
 
     render(<ProgrammePage programmeId="programme-1" />);
 
-    const unitLink = await screen.findByRole("link", {
+    await screen.findByRole("heading", { name: "Programme I" });
+
+    expect(screen.getByText("Study material not available")).toBeVisible();
+    expect(screen.getByText("Study material available")).toBeVisible();
+  });
+
+  it("offers a selectable link only for programme units with study material", async () => {
+    vi.stubGlobal(
+      "fetch",
+      vi.fn().mockResolvedValue(
+        new Response(JSON.stringify(programme), {
+          status: 200,
+          headers: { "Content-Type": "application/json" },
+        }),
+      ),
+    );
+
+    render(<ProgrammePage programmeId="programme-1" />);
+
+    const availableUnitLink = await screen.findByRole("link", {
       name: /Derecho de acceso a la información pública/,
     });
 
-    expect(unitLink).toHaveAttribute("href", "/study/unit-2");
+    expect(availableUnitLink).toHaveAttribute("href", "/study/unit-2");
+    expect(
+      screen.queryByRole("link", { name: /Organización del Estado/ }),
+    ).not.toBeInTheDocument();
   });
 
   it("shows an empty state when the programme has no units", async () => {
