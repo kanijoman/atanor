@@ -2,6 +2,10 @@ from uuid import UUID
 
 from fastapi import APIRouter, HTTPException
 
+from app.application.study_material import (
+    derive_knowledge_needs_for_programme_unit,
+    generate_study_material_for_programme_unit,
+)
 from app.persistence.database import SessionLocal
 from app.persistence.knowledge_repository import SqlAlchemyKnowledgeRepository
 from app.persistence.study_programme_repository import SqlAlchemyStudyProgrammeRepository
@@ -45,6 +49,41 @@ def get_programme(programme_id: UUID) -> dict[str, object]:
             }
             for unit in programme.units
         ],
+    }
+
+
+@router.get("/units/{unit_id}")
+def get_study_material(unit_id: UUID) -> dict[str, object]:
+    programme_repository = SqlAlchemyStudyProgrammeRepository(SessionLocal)
+    programme_unit = programme_repository.get_unit_by_id(unit_id)
+    if programme_unit is None:
+        raise HTTPException(status_code=404, detail="Study programme unit not found")
+
+    knowledge_needs = derive_knowledge_needs_for_programme_unit(programme_unit)
+    if len(knowledge_needs) != 1:
+        raise HTTPException(
+            status_code=422,
+            detail="Study material requires exactly one supported knowledge need",
+        )
+
+    knowledge_need = knowledge_needs[0]
+    knowledge_repository = SqlAlchemyKnowledgeRepository(SessionLocal)
+    knowledge = generate_study_material_for_programme_unit(
+        programme_unit,
+        knowledge_need,
+        knowledge_repository,
+    )
+
+    return {
+        "programme_unit": {
+            "id": str(programme_unit.id),
+            "number": programme_unit.number,
+            "title": programme_unit.title,
+        },
+        "knowledge_need": {
+            "title": knowledge_need.topic,
+        },
+        "study_material": knowledge.description or "",
     }
 
 
