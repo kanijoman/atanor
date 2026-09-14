@@ -101,6 +101,7 @@ def test_get_programme_returns_units_for_candidate_selection(tmp_path, monkeypat
                 "id": str(unit.id),
                 "number": 1,
                 "title": "Derecho de acceso a la información pública",
+                "study_material_available": True,
             }
         ],
     }
