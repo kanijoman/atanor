@@ -69,3 +69,43 @@ def test_selected_programme_unit_exposes_candidate_study_material() -> None:
         "title": "Derecho de acceso a la información pública",
     }
     assert "Artículo 12" in response.json()["study_material"]
+
+
+def test_unsupported_programme_unit_returns_unprocessable_entity() -> None:
+    engine = create_engine(
+        "sqlite://",
+        connect_args={"check_same_thread": False},
+        poolclass=StaticPool,
+    )
+    Base.metadata.create_all(engine)
+    session_factory = sessionmaker(bind=engine, autoflush=False, autocommit=False)
+
+    source_repository = SqlAlchemySourceRepository(session_factory)
+    call_repository = SqlAlchemyCallRepository(session_factory)
+    programme_repository = SqlAlchemyStudyProgrammeRepository(session_factory)
+
+    imported_call = import_call_from_pdf(
+        SAMPLES / "BOE-A-2024-14098.pdf",
+        source_repository,
+        call_repository,
+        programme_repository,
+    )
+    programmes = programme_repository.list_by_call(imported_call.id)
+    unit = next(
+        unit
+        for programme in programmes
+        for unit in programme.units
+        if unit.title.startswith("La Constitución Española de 1978")
+    )
+
+    original_session_local = study.SessionLocal
+    study.SessionLocal = session_factory
+    try:
+        client = TestClient(app)
+        response = client.get(f"/api/study/units/{unit.id}")
+    finally:
+        study.SessionLocal = original_session_local
+        engine.dispose()
+
+    assert response.status_code == 422
+    assert response.json()["detail"] == "Study material is not available for this programme unit"
