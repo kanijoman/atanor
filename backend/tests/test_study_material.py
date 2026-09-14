@@ -202,6 +202,33 @@ def test_derives_knowledge_need_for_ley_39_2015_programme_item() -> None:
     assert needs[0].depth == 1
 
 
+def test_generates_study_material_for_ley_39_2015_programme_item() -> None:
+    programme_unit = StudyProgrammeUnit(
+        number=1,
+        title=(
+            "La Ley 39/2015, de 1 de octubre, del Procedimiento Administrativo "
+            "Común de las Administraciones Públicas. Objeto y ámbito de aplicación"
+        ),
+        start_page=1,
+        start_order=1,
+        end_page=1,
+        end_order=2,
+    )
+
+    needs = derive_knowledge_needs_for_programme_unit(programme_unit)
+    repository = InMemoryKnowledgeRepository()
+
+    knowledge = generate_study_material_for_programme_unit(
+        programme_unit,
+        needs[0],
+        repository,
+    )
+
+    assert knowledge.title == "Procedimiento administrativo común"
+    assert knowledge.description
+    assert knowledge.sources
+
+
 def test_rejects_a_knowledge_need_that_does_not_match_the_programme_item() -> None:
     _, programme_unit = real_access_to_public_information_programme()
     need = KnowledgeNeed(
