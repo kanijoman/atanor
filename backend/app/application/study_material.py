@@ -146,6 +146,18 @@ def derive_knowledge_needs_for_programme_unit(
     )
 
 
+def is_study_material_available_for_programme_unit(
+    programme_unit: StudyProgrammeUnit,
+) -> bool:
+    """Return whether study material can currently be generated for a programme unit."""
+    try:
+        needs = derive_knowledge_needs_for_programme_unit(programme_unit)
+    except ValueError:
+        return False
+
+    return len(needs) == 1
+
+
 def prepare_programme_unit_for_study(
     programme_unit: StudyProgrammeUnit,
     repository: KnowledgeRepository,
