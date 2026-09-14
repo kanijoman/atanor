@@ -5,6 +5,7 @@ from fastapi import APIRouter, HTTPException
 from app.application.study_material import (
     derive_knowledge_needs_for_programme_unit,
     generate_study_material_for_programme_unit,
+    is_study_material_available_for_programme_unit,
 )
 from app.persistence.database import SessionLocal
 from app.persistence.knowledge_repository import SqlAlchemyKnowledgeRepository
@@ -46,6 +47,9 @@ def get_programme(programme_id: UUID) -> dict[str, object]:
                 "id": str(unit.id),
                 "number": unit.number,
                 "title": unit.title,
+                "study_material_available": is_study_material_available_for_programme_unit(
+                    unit
+                ),
             }
             for unit in programme.units
         ],
