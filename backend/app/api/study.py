@@ -59,7 +59,14 @@ def get_study_material(unit_id: UUID) -> dict[str, object]:
     if programme_unit is None:
         raise HTTPException(status_code=404, detail="Study programme unit not found")
 
-    knowledge_needs = derive_knowledge_needs_for_programme_unit(programme_unit)
+    try:
+        knowledge_needs = derive_knowledge_needs_for_programme_unit(programme_unit)
+    except ValueError as exc:
+        raise HTTPException(
+            status_code=422,
+            detail="Study material is not available for this programme unit",
+        ) from exc
+
     if len(knowledge_needs) != 1:
         raise HTTPException(
             status_code=422,
