@@ -48,6 +48,7 @@ Las resoluciones en materia de acceso pueden ser objeto de recurso en los térmi
 
 
 _ACCESS_TOPIC = "Derecho de acceso a la información pública"
+_PROCEDURE_TOPIC = "Procedimiento administrativo común"
 
 
 def generate_access_to_public_information_material(
@@ -89,13 +90,16 @@ def generate_study_material_for_programme_unit(
 def derive_knowledge_needs_for_programme_unit(
     programme_unit: StudyProgrammeUnit,
 ) -> tuple[KnowledgeNeed, ...]:
-    """Derive the first supported knowledge need from a programme item."""
-    normalized_title = programme_unit.title.lower()
+    """Derive supported knowledge needs from a programme item."""
+    normalized_title = programme_unit.title.casefold()
     if (
-        normalized_title == _ACCESS_TOPIC.lower()
+        normalized_title == _ACCESS_TOPIC.casefold()
         or ("ley 19/2013" in normalized_title and "transparencia" in normalized_title)
     ):
         return (KnowledgeNeed(topic=_ACCESS_TOPIC, depth=1),)
+
+    if "ley 39/2015" in normalized_title and "procedimiento administrativo común" in normalized_title:
+        return (KnowledgeNeed(topic=_PROCEDURE_TOPIC, depth=1),)
 
     raise ValueError(
         f"No supported knowledge need can be derived from programme item "
