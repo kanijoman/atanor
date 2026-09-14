@@ -82,6 +82,21 @@ class SqlAlchemyStudyProgrammeRepository:
                 return None
             return self._to_domain(persisted)
 
+    def get_unit_by_id(self, unit_id: UUID) -> DomainStudyProgrammeUnit | None:
+        with self._session_factory() as session:
+            persisted = session.get(StudyProgrammeUnit, unit_id)
+            if persisted is None:
+                return None
+            return DomainStudyProgrammeUnit(
+                id=persisted.id,
+                number=persisted.number,
+                title=persisted.title,
+                start_page=persisted.start_page,
+                start_order=persisted.start_order,
+                end_page=persisted.end_page,
+                end_order=persisted.end_order,
+            )
+
     def list_by_call(self, call_id: UUID) -> list[DomainStudyProgramme]:
         with self._session_factory() as session:
             programmes = session.scalars(
