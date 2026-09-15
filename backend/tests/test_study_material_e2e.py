@@ -21,6 +21,16 @@ class InMemoryKnowledgeRepository:
     def get_by_id(self, knowledge_id: UUID) -> Knowledge | None:
         return self.items.get(knowledge_id)
 
+    def get_by_identity(self, identity_key: tuple[str, int]) -> Knowledge | None:
+        return next(
+            (
+                knowledge
+                for knowledge in self.items.values()
+                if knowledge.identity_key == identity_key
+            ),
+            None,
+        )
+
 
 def test_real_call_to_persisted_candidate_study_material() -> None:
     """The product vertical should work from a real call to candidate material."""
