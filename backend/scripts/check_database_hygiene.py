@@ -9,23 +9,21 @@ records. It does not attempt to prove semantic correctness of imported data.
 
 from __future__ import annotations
 
-from collections import Counter
 from dataclasses import dataclass
 from pathlib import Path
 import sys
 
 from sqlalchemy import func, select
+from sqlalchemy.exc import SQLAlchemyError
 
 BACKEND_ROOT = Path(__file__).resolve().parents[1]
 if str(BACKEND_ROOT) not in sys.path:
     sys.path.insert(0, str(BACKEND_ROOT))
 
-from app.persistence.call_repository import SqlAlchemyCallRepository
 from app.persistence.database import SessionLocal
 from app.persistence.models.call import Call
 from app.persistence.models.source import Source
 from app.persistence.models.study_programme import StudyProgramme, StudyProgrammeUnit
-from app.persistence.study_programme_repository import SqlAlchemyStudyProgrammeRepository
 
 
 _SYNTHETIC_MARKERS = (
@@ -136,7 +134,13 @@ def build_report() -> HygieneReport:
 
 
 def main() -> int:
-    report = build_report()
+    try:
+        report = build_report()
+    except SQLAlchemyError as exc:
+        print("DATABASE HYGIENE")
+        print("status: inconclusive")
+        print(f"error: {exc}")
+        return 2
 
     print("DATABASE HYGIENE")
     print(f"status: {report.status}")
