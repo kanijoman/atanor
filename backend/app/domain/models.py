@@ -21,6 +21,7 @@ class Knowledge:
     title: str
     description: str | None = None
     sources: tuple[Source, ...] = field(default_factory=tuple)
+    identity_key: tuple[str, int] | None = None
     id: UUID = field(default_factory=uuid4)
 
 
@@ -36,12 +37,12 @@ class KnowledgeNeed:
             raise ValueError("Knowledge need depth must be positive")
 
     @property
-    def knowledge_id(self) -> UUID | None:
-        return None if self.knowledge is None else self.knowledge.id
-
-    @property
     def identity_key(self) -> tuple[str, int]:
         return (self.topic, self.depth)
+
+    @property
+    def knowledge_id(self) -> UUID | None:
+        return None if self.knowledge is None else self.knowledge.id
 
 
 @dataclass(frozen=True)
