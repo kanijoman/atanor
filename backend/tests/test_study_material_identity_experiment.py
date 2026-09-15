@@ -1,0 +1,59 @@
+from app.application.study_material import (
+    derive_knowledge_needs_for_programme_unit,
+    generate_study_material_for_programme_unit,
+)
+from app.domain.models import Knowledge, KnowledgeNeed, StudyProgrammeUnit
+
+
+class InMemoryKnowledgeRepository:
+    def __init__(self) -> None:
+        self.items: dict = {}
+
+    def save(self, knowledge: Knowledge) -> Knowledge:
+        self.items[knowledge.id] = knowledge
+        return knowledge
+
+
+def test_same_knowledge_need_from_different_programme_units_is_not_reused_yet() -> None:
+    first_unit = StudyProgrammeUnit(
+        number=1,
+        title="Derecho de acceso a la información pública",
+        start_page=10,
+        start_order=100,
+        end_page=12,
+        end_order=120,
+    )
+    second_unit = StudyProgrammeUnit(
+        number=7,
+        title="La Ley 19/2013, de 9 de diciembre, de transparencia, acceso a la información",
+        start_page=40,
+        start_order=400,
+        end_page=42,
+        end_order=420,
+    )
+    repository = InMemoryKnowledgeRepository()
+
+    first_need = derive_knowledge_needs_for_programme_unit(first_unit)[0]
+    second_need = derive_knowledge_needs_for_programme_unit(second_unit)[0]
+
+    first_material = generate_study_material_for_programme_unit(
+        first_unit,
+        first_need,
+        repository,
+    )
+    second_material = generate_study_material_for_programme_unit(
+        second_unit,
+        second_need,
+        repository,
+    )
+
+    assert first_need.topic == second_need.topic
+    assert first_need.depth == second_need.depth
+    assert first_need.id != second_need.id
+
+    assert first_material.title == second_material.title
+    assert first_material.description == second_material.description
+    assert first_material.sources == second_material.sources
+    assert first_material.id != second_material.id
+
+    assert len(repository.items) == 2
