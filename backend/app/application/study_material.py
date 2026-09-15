@@ -6,6 +6,8 @@ from app.domain.models import Knowledge, KnowledgeNeed, Source, StudyProgrammeUn
 class KnowledgeRepository(Protocol):
     def save(self, knowledge: Knowledge) -> Knowledge: ...
 
+    def get_by_identity(self, identity_key: tuple[str, int]) -> Knowledge | None: ...
+
 
 _CANONICAL_SOURCE = Source(
     title=(
@@ -66,20 +68,34 @@ _ACCESS_TOPIC = "Derecho de acceso a la información pública"
 _PROCEDURE_TOPIC = "Procedimiento administrativo común"
 
 
+def _get_or_generate(
+    need: KnowledgeNeed,
+    repository: KnowledgeRepository,
+    generate: callable,
+) -> Knowledge:
+    existing = repository.get_by_identity(need.identity_key)
+    if existing is not None:
+        return existing
+    return repository.save(generate(need))
+
+
 def generate_access_to_public_information_material(
     need: KnowledgeNeed,
     repository: KnowledgeRepository,
 ) -> Knowledge:
-    """Generate and persist the first candidate-facing study material."""
+    """Generate and persist candidate-facing study material."""
     if need.topic != _ACCESS_TOPIC:
         raise ValueError(f"Unsupported study topic: {need.topic}")
 
-    knowledge = Knowledge(
-        title=need.topic,
-        description=_STUDY_CONTENT,
-        sources=(_CANONICAL_SOURCE,),
+    return _get_or_generate(
+        need,
+        repository,
+        lambda current_need: Knowledge(
+            title=current_need.topic,
+            description=_STUDY_CONTENT,
+            sources=(_CANONICAL_SOURCE,),
+        ),
     )
-    return repository.save(knowledge)
 
 
 def generate_common_administrative_procedure_material(
@@ -90,12 +106,15 @@ def generate_common_administrative_procedure_material(
     if need.topic != _PROCEDURE_TOPIC:
         raise ValueError(f"Unsupported study topic: {need.topic}")
 
-    knowledge = Knowledge(
-        title=need.topic,
-        description=_PROCEDURE_STUDY_CONTENT,
-        sources=(_PROCEDURE_CANONICAL_SOURCE,),
+    return _get_or_generate(
+        need,
+        repository,
+        lambda current_need: Knowledge(
+            title=current_need.topic,
+            description=_PROCEDURE_STUDY_CONTENT,
+            sources=(_PROCEDURE_CANONICAL_SOURCE,),
+        ),
     )
-    return repository.save(knowledge)
 
 
 def generate_study_material_for_programme_unit(
