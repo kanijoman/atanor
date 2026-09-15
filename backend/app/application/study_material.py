@@ -94,6 +94,7 @@ def generate_access_to_public_information_material(
             title=current_need.topic,
             description=_STUDY_CONTENT,
             sources=(_CANONICAL_SOURCE,),
+            identity_key=current_need.identity_key,
         ),
     )
 
@@ -113,6 +114,7 @@ def generate_common_administrative_procedure_material(
             title=current_need.topic,
             description=_PROCEDURE_STUDY_CONTENT,
             sources=(_PROCEDURE_CANONICAL_SOURCE,),
+            identity_key=current_need.identity_key,
         ),
     )
 
