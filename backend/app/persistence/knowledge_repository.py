@@ -1,5 +1,7 @@
 from uuid import UUID
 
+from sqlalchemy import select
+
 from app.domain.models import Knowledge as DomainKnowledge
 from app.persistence.models.knowledge import Knowledge
 
@@ -14,6 +16,7 @@ class SqlAlchemyKnowledgeRepository:
                 id=knowledge.id,
                 title=knowledge.title,
                 description=knowledge.description,
+                identity_key=self._identity_key(knowledge.title, 1),
             )
             session.add(persisted)
             session.commit()
@@ -26,6 +29,20 @@ class SqlAlchemyKnowledgeRepository:
             if persisted is None:
                 return None
             return self._to_domain(persisted)
+
+    def get_by_identity(self, identity_key: tuple[str, int]) -> DomainKnowledge | None:
+        key = self._identity_key(*identity_key)
+        with self._session_factory() as session:
+            persisted = session.scalar(
+                select(Knowledge).where(Knowledge.identity_key == key)
+            )
+            if persisted is None:
+                return None
+            return self._to_domain(persisted)
+
+    @staticmethod
+    def _identity_key(topic: str, depth: int) -> str:
+        return f"{topic}\x1f{depth}"
 
     @staticmethod
     def _to_domain(knowledge: Knowledge) -> DomainKnowledge:
