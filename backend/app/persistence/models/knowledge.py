@@ -12,4 +12,4 @@ class Knowledge(Base):
     id: Mapped[UUID] = mapped_column(primary_key=True, default=uuid4)
     title: Mapped[str] = mapped_column(String(255), nullable=False)
     description: Mapped[str | None] = mapped_column(Text, nullable=True)
-    identity_key: Mapped[str] = mapped_column(String(512), nullable=False, unique=True)
+    identity_key: Mapped[str | None] = mapped_column(String(512), nullable=True)
