@@ -11,12 +11,15 @@ class SqlAlchemyKnowledgeRepository:
         self._session_factory = session_factory
 
     def save(self, knowledge: DomainKnowledge) -> DomainKnowledge:
+        if knowledge.identity_key is None:
+            raise ValueError("Knowledge identity key is required")
+
         with self._session_factory() as session:
             persisted = Knowledge(
                 id=knowledge.id,
                 title=knowledge.title,
                 description=knowledge.description,
-                identity_key=self._identity_key(knowledge.title, 1),
+                identity_key=self._identity_key(*knowledge.identity_key),
             )
             session.add(persisted)
             session.commit()
@@ -46,8 +49,10 @@ class SqlAlchemyKnowledgeRepository:
 
     @staticmethod
     def _to_domain(knowledge: Knowledge) -> DomainKnowledge:
+        topic, depth = knowledge.identity_key.rsplit("\x1f", maxsplit=1)
         return DomainKnowledge(
             id=knowledge.id,
             title=knowledge.title,
             description=knowledge.description,
+            identity_key=(topic, int(depth)),
         )
