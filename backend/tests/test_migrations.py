@@ -48,7 +48,9 @@ def test_migrations_round_trip(tmp_path) -> None:
         assert {column["name"] for column in scope_columns} == {"id", "requirement_id", "context"}
 
         knowledge_columns = inspector.get_columns("knowledge")
-        assert {column["name"] for column in knowledge_columns} == {"id", "title", "description"}
+        assert {column["name"] for column in knowledge_columns} == {
+            "id", "title", "description", "identity_key",
+        }
 
         knowledge_need_columns = inspector.get_columns("knowledge_needs")
         assert {column["name"] for column in knowledge_need_columns} == {
