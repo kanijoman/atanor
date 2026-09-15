@@ -48,11 +48,7 @@ describe("ProgrammePage", () => {
     expect(
       await screen.findByRole("heading", { name: "Programme I" }),
     ).toBeVisible();
-    expect(
-      screen.getByRole("link", {
-        name: /Organización del Estado/,
-      }),
-    ).toBeVisible();
+    expect(screen.getByText("1. Organización del Estado")).toBeVisible();
     expect(
       screen.getByRole("link", {
         name: /Derecho de acceso a la información pública/,
