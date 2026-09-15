@@ -38,12 +38,20 @@ _SYNTHETIC_MARKERS = (
 
 
 @dataclass(frozen=True)
+class SyntheticRecord:
+    entity: str
+    identifier: str
+    value: str
+    marker: str
+
+
+@dataclass(frozen=True)
 class HygieneReport:
     calls: int
     programmes: int
     units: int
     duplicate_units: int
-    synthetic_records: int
+    synthetic_records: tuple[SyntheticRecord, ...]
     source_anomalies: int
     relation_anomalies: int
 
@@ -55,15 +63,58 @@ class HygieneReport:
     def anomaly_count(self) -> int:
         return (
             self.duplicate_units
-            + self.synthetic_records
+            + len(self.synthetic_records)
             + self.source_anomalies
             + self.relation_anomalies
         )
 
 
-def _contains_synthetic_marker(value: str) -> bool:
+def _synthetic_marker(value: str) -> str | None:
     normalized = value.casefold()
-    return any(marker in normalized for marker in _SYNTHETIC_MARKERS)
+    return next(
+        (marker for marker in _SYNTHETIC_MARKERS if marker in normalized),
+        None,
+    )
+
+
+def _find_synthetic_records(
+    sources: list[Source],
+    calls: list[Call],
+    programmes: list[StudyProgramme],
+    units: list[StudyProgrammeUnit],
+) -> tuple[SyntheticRecord, ...]:
+    records: list[SyntheticRecord] = []
+
+    for source in sources:
+        for field, value in (("title", source.title), ("locator", source.locator)):
+            marker = _synthetic_marker(value)
+            if marker is not None:
+                records.append(
+                    SyntheticRecord("source", str(source.id), value, marker)
+                )
+
+    for call in calls:
+        marker = _synthetic_marker(call.title)
+        if marker is not None:
+            records.append(SyntheticRecord("call", str(call.id), call.title, marker))
+
+    for programme in programmes:
+        for field, value in (
+            ("identifier", programme.identifier),
+            ("title", programme.title),
+        ):
+            marker = _synthetic_marker(value)
+            if marker is not None:
+                records.append(
+                    SyntheticRecord("programme", str(programme.id), value, marker)
+                )
+
+    for unit in units:
+        marker = _synthetic_marker(unit.title)
+        if marker is not None:
+            records.append(SyntheticRecord("unit", str(unit.id), unit.title, marker))
+
+    return tuple(records)
 
 
 def build_report() -> HygieneReport:
@@ -95,21 +146,8 @@ def build_report() -> HygieneReport:
         source_anomalies = sum(
             1 for source in sources if not source.title.strip() or not source.locator.strip()
         )
-        synthetic_records = sum(
-            _contains_synthetic_marker(source.title)
-            or _contains_synthetic_marker(source.locator)
-            for source in sources
-        )
-        synthetic_records += sum(
-            _contains_synthetic_marker(call.title) for call in calls
-        )
-        synthetic_records += sum(
-            _contains_synthetic_marker(programme.title)
-            or _contains_synthetic_marker(programme.identifier)
-            for programme in programmes
-        )
-        synthetic_records += sum(
-            _contains_synthetic_marker(unit.title) for unit in units
+        synthetic_records = _find_synthetic_records(
+            sources, calls, programmes, units
         )
 
         relation_anomalies = sum(
@@ -148,9 +186,17 @@ def main() -> int:
     print(f"programmes: {report.programmes}")
     print(f"units: {report.units}")
     print(f"duplicate_units: {report.duplicate_units}")
-    print(f"synthetic_records: {report.synthetic_records}")
+    print(f"synthetic_records: {len(report.synthetic_records)}")
     print(f"source_anomalies: {report.source_anomalies}")
     print(f"relation_anomalies: {report.relation_anomalies}")
+
+    if report.synthetic_records:
+        print("\nSYNTHETIC RECORDS")
+        for record in report.synthetic_records:
+            print(
+                f"- {record.entity} {record.identifier} "
+                f"[{record.marker}]: {record.value}"
+            )
 
     return 0 if report.status == "clean" else 1
 
