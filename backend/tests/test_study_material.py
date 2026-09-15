@@ -28,6 +28,16 @@ class InMemoryKnowledgeRepository:
     def get_by_id(self, knowledge_id: UUID):
         return self.items.get(knowledge_id)
 
+    def get_by_identity(self, identity_key: tuple[str, int]):
+        return next(
+            (
+                knowledge
+                for knowledge in self.items.values()
+                if (knowledge.title, 1) == identity_key
+            ),
+            None,
+        )
+
 
 def real_access_to_public_information_programme() -> tuple[
     StudyProgramme, StudyProgrammeUnit
