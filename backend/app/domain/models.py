@@ -39,6 +39,10 @@ class KnowledgeNeed:
     def knowledge_id(self) -> UUID | None:
         return None if self.knowledge is None else self.knowledge.id
 
+    @property
+    def identity_key(self) -> tuple[str, int]:
+        return (self.topic, self.depth)
+
 
 @dataclass(frozen=True)
 class RequirementScope:
