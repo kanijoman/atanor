@@ -2,7 +2,7 @@ from app.application.study_material import (
     derive_knowledge_needs_for_programme_unit,
     generate_study_material_for_programme_unit,
 )
-from app.domain.models import Knowledge, KnowledgeNeed, StudyProgrammeUnit
+from app.domain.models import Knowledge, StudyProgrammeUnit
 
 
 class InMemoryKnowledgeRepository:
@@ -18,7 +18,7 @@ class InMemoryKnowledgeRepository:
             (
                 knowledge
                 for knowledge in self.items.values()
-                if (knowledge.title, 1) == identity_key
+                if knowledge.identity_key == identity_key
             ),
             None,
         )
