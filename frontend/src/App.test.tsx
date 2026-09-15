@@ -1,10 +1,11 @@
 import "@testing-library/jest-dom/vitest";
-import { afterEach, describe, expect, it } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import { cleanup, render, screen } from "@testing-library/react";
 import { App, resolveRoute } from "./App";
 
 afterEach(() => {
   cleanup();
+  vi.restoreAllMocks();
 });
 
 describe("resolveRoute", () => {
@@ -51,12 +52,40 @@ describe("App", () => {
     expect(screen.getByRole("heading", { name: "Calls" })).toBeInTheDocument();
   });
 
-  it("renders the study page for a study route", () => {
+  it("renders the study page for a study route", async () => {
     window.history.pushState({}, "", "/study/unit-1");
+
+    vi.stubGlobal(
+      "fetch",
+      vi.fn().mockResolvedValue(
+        new Response(
+          JSON.stringify({
+            programme_unit: {
+              id: "unit-1",
+              number: 1,
+              title: "Derecho de acceso a la información pública",
+            },
+            knowledge_need: {
+              title: "Derecho de acceso a la información pública",
+            },
+            study_material:
+              "1. Concepto y titulares\nEl derecho de acceso permite a las personas solicitar información pública.",
+          }),
+          {
+            status: 200,
+            headers: { "Content-Type": "application/json" },
+          },
+        ),
+      ),
+    );
 
     render(<App />);
 
-    expect(screen.getByRole("heading", { name: "Study" })).toBeInTheDocument();
-    expect(screen.getByText(/unit-1/)).toBeInTheDocument();
+    expect(
+      await screen.findByRole("heading", {
+        name: "Derecho de acceso a la información pública",
+      }),
+    ).toBeInTheDocument();
+    expect(screen.getByText(/derecho de acceso permite/)).toBeInTheDocument();
   });
 });
