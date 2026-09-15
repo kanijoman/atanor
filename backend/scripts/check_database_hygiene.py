@@ -36,6 +36,10 @@ _SYNTHETIC_MARKERS = (
     "fake",
 )
 
+_KNOWN_VALIDATION_SOURCE_LOCATORS = {
+    "tests/samples/BOE-A-2024-14098.pdf",
+}
+
 
 @dataclass(frozen=True)
 class SyntheticRecord:
@@ -69,6 +73,15 @@ class HygieneReport:
         )
 
 
+def _normalize_locator(locator: str) -> str:
+    return locator.replace("\\", "/").casefold()
+
+
+def _is_known_validation_source(source: Source) -> bool:
+    locator = source.locator or ""
+    return _normalize_locator(locator) in _KNOWN_VALIDATION_SOURCE_LOCATORS
+
+
 def _synthetic_marker(value: str) -> str | None:
     normalized = value.casefold()
     return next(
@@ -87,6 +100,10 @@ def _find_synthetic_records(
 
     for source in sources:
         for field, value in (("title", source.title), ("locator", source.locator)):
+            if value is None:
+                continue
+            if field == "locator" and _is_known_validation_source(source):
+                continue
             marker = _synthetic_marker(value)
             if marker is not None:
                 records.append(
