@@ -13,8 +13,18 @@ class InMemoryKnowledgeRepository:
         self.items[knowledge.id] = knowledge
         return knowledge
 
+    def get_by_identity(self, identity_key: tuple[str, int]) -> Knowledge | None:
+        return next(
+            (
+                knowledge
+                for knowledge in self.items.values()
+                if (knowledge.title, 1) == identity_key
+            ),
+            None,
+        )
 
-def test_same_knowledge_need_from_different_programme_units_is_not_reused_yet() -> None:
+
+def test_same_knowledge_need_from_different_programme_units_reuses_material() -> None:
     first_unit = StudyProgrammeUnit(
         number=1,
         title="Derecho de acceso a la información pública",
@@ -47,13 +57,10 @@ def test_same_knowledge_need_from_different_programme_units_is_not_reused_yet() 
         repository,
     )
 
-    assert first_need.topic == second_need.topic
-    assert first_need.depth == second_need.depth
+    assert first_need.identity_key == second_need.identity_key
     assert first_need.id != second_need.id
-
+    assert first_material is second_material
     assert first_material.title == second_material.title
     assert first_material.description == second_material.description
     assert first_material.sources == second_material.sources
-    assert first_material.id != second_material.id
-
-    assert len(repository.items) == 2
+    assert len(repository.items) == 1
