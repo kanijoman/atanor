@@ -221,18 +221,16 @@ def derive_covered_aspects(
 
 
 def build_study_coverage_summary(
-    programme_unit: StudyProgrammeUnit,
-    knowledge: Knowledge,
+    knowledge_need: KnowledgeNeed,
+    required_aspects: tuple[str, ...],
+    covered_aspects: tuple[str, ...],
 ) -> dict[str, object]:
-    """Build the candidate-facing summary of study coverage."""
-    required_aspects = derive_required_aspects_for_programme_unit(programme_unit)
-    covered_aspects = derive_covered_aspects(programme_unit, knowledge)
+    """Build a candidate-facing summary from explicit coverage inputs."""
+    required_count = len(required_aspects)
+    covered_count = len(covered_aspects)
     pending_aspects = tuple(
         aspect for aspect in required_aspects if aspect not in covered_aspects
     )
-
-    required_count = len(required_aspects)
-    covered_count = len(covered_aspects)
     coverage_percentage = (covered_count / required_count) * 100 if required_count else 0.0
 
     if covered_count == 0:
@@ -243,6 +241,7 @@ def build_study_coverage_summary(
         status = "partial"
 
     return {
+        "knowledge_need": knowledge_need.topic,
         "status": status,
         "required_aspects": required_aspects,
         "covered_aspects": covered_aspects,
