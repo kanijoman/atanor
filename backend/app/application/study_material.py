@@ -67,6 +67,17 @@ La ley se aplica al sector público, que comprende la Administración General de
 _ACCESS_TOPIC = "Derecho de acceso a la información pública"
 _PROCEDURE_TOPIC = "Procedimiento administrativo común"
 
+_PROCEDURE_REQUIRED_ASPECTS = (
+    "Objeto y finalidad del procedimiento administrativo común",
+    "Ámbito subjetivo de aplicación",
+    "Interesados, capacidad, representación y derechos",
+    "Actividad administrativa, plazos y medios electrónicos",
+    "Actos administrativos: requisitos, eficacia e invalidez",
+    "Procedimiento administrativo común y sus fases",
+    "Procedimientos sancionador y de responsabilidad patrimonial",
+    "Revisión de actos, recursos, iniciativa legislativa y potestad reglamentaria",
+)
+
 
 def _get_or_generate(
     need: KnowledgeNeed,
@@ -169,6 +180,27 @@ def derive_knowledge_needs_for_programme_unit(
 
     raise ValueError(
         f"No supported knowledge need can be derived from programme item "
+        f"'{programme_unit.title}'"
+    )
+
+
+def derive_required_aspects_for_programme_unit(
+    programme_unit: StudyProgrammeUnit,
+) -> tuple[str, ...]:
+    """Derive the aspects currently required to cover a supported study scope."""
+    normalized_title = programme_unit.title.casefold()
+    supports_procedure_topic = (
+        (
+            "ley 39/2015" in normalized_title
+            and "procedimiento administrativo común" in normalized_title
+        )
+        or normalized_title == "las leyes del procedimiento administrativo común de las administraciones"
+    )
+    if supports_procedure_topic:
+        return _PROCEDURE_REQUIRED_ASPECTS
+
+    raise ValueError(
+        f"No supported required-aspect scope can be derived from programme item "
         f"'{programme_unit.title}'"
     )
 
