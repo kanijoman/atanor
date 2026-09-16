@@ -220,6 +220,39 @@ def derive_covered_aspects(
     return required_aspects[:2]
 
 
+def build_study_coverage_summary(
+    programme_unit: StudyProgrammeUnit,
+    knowledge: Knowledge,
+) -> dict[str, object]:
+    """Build the candidate-facing summary of study coverage."""
+    required_aspects = derive_required_aspects_for_programme_unit(programme_unit)
+    covered_aspects = derive_covered_aspects(programme_unit, knowledge)
+    pending_aspects = tuple(
+        aspect for aspect in required_aspects if aspect not in covered_aspects
+    )
+
+    required_count = len(required_aspects)
+    covered_count = len(covered_aspects)
+    coverage_percentage = (covered_count / required_count) * 100 if required_count else 0.0
+
+    if covered_count == 0:
+        status = "missing"
+    elif covered_count == required_count:
+        status = "covered"
+    else:
+        status = "partial"
+
+    return {
+        "status": status,
+        "required_aspects": required_aspects,
+        "covered_aspects": covered_aspects,
+        "pending_aspects": pending_aspects,
+        "covered_count": covered_count,
+        "required_count": required_count,
+        "coverage_percentage": coverage_percentage,
+    }
+
+
 def is_study_material_available_for_programme_unit(
     programme_unit: StudyProgrammeUnit,
 ) -> bool:
