@@ -131,8 +131,11 @@ def generate_study_material_for_programme_unit(
         or ("ley 19/2013" in normalized_title and "transparencia" in normalized_title)
     )
     supports_procedure_topic = (
-        "ley 39/2015" in normalized_title
-        and "procedimiento administrativo común" in normalized_title
+        (
+            "ley 39/2015" in normalized_title
+            and "procedimiento administrativo común" in normalized_title
+        )
+        or normalized_title == "las leyes del procedimiento administrativo común de las administraciones"
     )
 
     if need.topic == _ACCESS_TOPIC and supports_access_topic:
@@ -158,7 +161,10 @@ def derive_knowledge_needs_for_programme_unit(
     ):
         return (KnowledgeNeed(topic=_ACCESS_TOPIC, depth=1),)
 
-    if "ley 39/2015" in normalized_title and "procedimiento administrativo común" in normalized_title:
+    if (
+        "ley 39/2015" in normalized_title
+        and "procedimiento administrativo común" in normalized_title
+    ) or normalized_title == "las leyes del procedimiento administrativo común de las administraciones":
         return (KnowledgeNeed(topic=_PROCEDURE_TOPIC, depth=1),)
 
     raise ValueError(
