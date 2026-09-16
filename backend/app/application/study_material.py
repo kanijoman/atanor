@@ -205,6 +205,21 @@ def derive_required_aspects_for_programme_unit(
     )
 
 
+def derive_covered_aspects(
+    programme_unit: StudyProgrammeUnit,
+    knowledge: Knowledge,
+) -> tuple[str, ...]:
+    """Derive the aspects explicitly covered by the current study material."""
+    required_aspects = derive_required_aspects_for_programme_unit(programme_unit)
+
+    if knowledge.title != _PROCEDURE_TOPIC:
+        raise ValueError(
+            f"Knowledge '{knowledge.title}' does not match the supported coverage scope"
+        )
+
+    return required_aspects[:2]
+
+
 def is_study_material_available_for_programme_unit(
     programme_unit: StudyProgrammeUnit,
 ) -> bool:
