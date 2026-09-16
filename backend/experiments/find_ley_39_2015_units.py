@@ -11,7 +11,7 @@ from __future__ import annotations
 from pathlib import Path
 import sys
 
-from sqlalchemy import select
+from sqlalchemy import or_, select
 
 BACKEND_ROOT = Path(__file__).resolve().parents[1]
 if str(BACKEND_ROOT) not in sys.path:
@@ -21,26 +21,35 @@ from app.persistence.database import SessionLocal
 from app.persistence.models.study_programme import StudyProgramme, StudyProgrammeUnit
 
 
-SEARCH_TERM = "ley 39/2015"
+SEARCH_TERMS = (
+    "ley 39/2015",
+    "procedimiento administrativo común",
+    "administraciones públicas",
+)
 
 
 def main() -> int:
     with SessionLocal() as session:
+        conditions = [
+            StudyProgrammeUnit.title.ilike(f"%{term}%")
+            for term in SEARCH_TERMS
+        ]
         rows = session.execute(
             select(StudyProgramme, StudyProgrammeUnit)
             .join(
                 StudyProgrammeUnit,
                 StudyProgrammeUnit.programme_id == StudyProgramme.id,
             )
-            .where(StudyProgrammeUnit.title.ilike(f"%{SEARCH_TERM}%"))
+            .where(or_(*conditions))
             .order_by(
                 StudyProgramme.identifier,
                 StudyProgrammeUnit.number,
             )
         ).all()
 
-    print("LEY 39/2015 STUDY UNITS")
+    print("LEY 39/2015 STUDY UNIT CANDIDATES")
     print(f"matches: {len(rows)}")
+    print(f"search_terms: {', '.join(SEARCH_TERMS)}")
 
     for programme, unit in rows:
         print()
