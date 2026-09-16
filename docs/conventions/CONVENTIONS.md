@@ -7,8 +7,8 @@
 | Project      | Atanor                      |
 | Document     | CONVENTIONS                 |
 | Status       | 🟢 Active                   |
-| Version      | 0.9                         |
-| Last Updated | 2026-08-18                  |
+| Version      | 0.10                        |
+| Last Updated | 2026-09-16                  |
 | Audience     | Contributors and Developers |
 
 ---
@@ -112,6 +112,42 @@ Next validated need
 Technical quality remains fundamental. Clean boundaries, maintainable code, appropriate tests and sound engineering practices provide the support required to evolve the product safely. However, when deciding between technical improvements, the preferred option is the one that most directly enables or improves a validated product need, provided the resulting design remains maintainable.
 
 A technical task that cannot be connected to a concrete current product need should normally be deferred unless it addresses a demonstrated reliability, security, correctness or maintainability risk.
+
+---
+
+# User Feedback Loop
+
+Every new product-facing capability should provide **observable feedback to the user**.
+
+A capability should not be considered complete merely because its internal behavior is correct or its automated tests pass. The candidate should be able to see, understand or act upon the result of the capability through an appropriate user-facing interface.
+
+For product-facing work, the preferred implementation loop is:
+
+```text
+User problem
+    ↓
+Expected observable behavior
+    ↓
+Test
+    ↓
+Minimal implementation
+    ↓
+API / interface exposure
+    ↓
+User-visible feedback
+    ↓
+Product validation
+```
+
+The feedback may be a status, explanation, available action, warning, progress indicator, result, or other appropriate signal. It does not require a polished UI; a CLI, API response or minimal interface may be sufficient when it allows the intended user behavior to be evaluated.
+
+When a capability changes what Atanor knows or can do, contributors should explicitly ask:
+
+> **What does the candidate see or gain from this change?**
+
+If the answer is only an internal technical improvement, the change should normally be treated as supporting work and connected to the product-facing capability it enables.
+
+This convention does not require every commit to expose a new UI element. It requires each **product-facing capability** to have a meaningful observable effect, and it encourages technical tasks to be evaluated by the user-facing capability they enable.
 
 ---
 
