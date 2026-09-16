@@ -1,3 +1,4 @@
+from dataclasses import dataclass
 from typing import Protocol
 
 from app.domain.models import Knowledge, KnowledgeNeed, Source, StudyProgrammeUnit
@@ -7,6 +8,20 @@ class KnowledgeRepository(Protocol):
     def save(self, knowledge: Knowledge) -> Knowledge: ...
 
     def get_by_identity(self, identity_key: tuple[str, int]) -> Knowledge | None: ...
+
+
+@dataclass(frozen=True)
+class StudyCoverageSummary:
+    """Candidate-facing summary of the current study coverage."""
+
+    knowledge_need: str
+    status: str
+    required_aspects: tuple[str, ...]
+    covered_aspects: tuple[str, ...]
+    pending_aspects: tuple[str, ...]
+    covered_count: int
+    required_count: int
+    coverage_percentage: float
 
 
 _CANONICAL_SOURCE = Source(
@@ -224,7 +239,7 @@ def build_study_coverage_summary(
     knowledge_need: KnowledgeNeed,
     required_aspects: tuple[str, ...],
     covered_aspects: tuple[str, ...],
-) -> dict[str, object]:
+) -> StudyCoverageSummary:
     """Build a candidate-facing summary from explicit coverage inputs."""
     required_count = len(required_aspects)
     covered_count = len(covered_aspects)
@@ -240,16 +255,16 @@ def build_study_coverage_summary(
     else:
         status = "partial"
 
-    return {
-        "knowledge_need": knowledge_need.topic,
-        "status": status,
-        "required_aspects": required_aspects,
-        "covered_aspects": covered_aspects,
-        "pending_aspects": pending_aspects,
-        "covered_count": covered_count,
-        "required_count": required_count,
-        "coverage_percentage": coverage_percentage,
-    }
+    return StudyCoverageSummary(
+        knowledge_need=knowledge_need.topic,
+        status=status,
+        required_aspects=required_aspects,
+        covered_aspects=covered_aspects,
+        pending_aspects=pending_aspects,
+        covered_count=covered_count,
+        required_count=required_count,
+        coverage_percentage=coverage_percentage,
+    )
 
 
 def is_study_material_available_for_programme_unit(
