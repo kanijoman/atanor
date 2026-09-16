@@ -36,8 +36,9 @@ _SYNTHETIC_MARKERS = (
     "fake",
 )
 
+# Values are stored in the same normalized form produced by _normalize_locator.
 _KNOWN_VALIDATION_SOURCE_LOCATORS = {
-    "tests/samples/BOE-A-2024-14098.pdf",
+    "tests/samples/boe-a-2024-14098.pdf",
 }
 
 
