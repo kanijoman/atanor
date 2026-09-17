@@ -70,6 +70,14 @@ describe("App", () => {
             },
             study_material:
               "1. Concepto y titulares\nEl derecho de acceso permite a las personas solicitar información pública.",
+            coverage: {
+              status: "covered",
+              covered_count: 10,
+              required_count: 10,
+              coverage_percentage: 100,
+              covered_aspects: [],
+              pending_aspects: [],
+            },
           }),
           {
             status: 200,
