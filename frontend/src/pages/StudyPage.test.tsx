@@ -15,6 +15,24 @@ const studyResponse = {
   },
   study_material:
     "1. Concepto y titulares\nEl derecho de acceso permite a las personas solicitar información pública. (Artículo 12)",
+  coverage: {
+    status: "partial",
+    covered_count: 2,
+    required_count: 8,
+    coverage_percentage: 25,
+    covered_aspects: [
+      "Objeto y finalidad del procedimiento administrativo común",
+      "Ámbito subjetivo de aplicación",
+    ],
+    pending_aspects: [
+      "Interesados, capacidad, representación y derechos",
+      "Actividad administrativa, plazos y medios electrónicos",
+      "Actos administrativos: requisitos, eficacia e invalidez",
+      "Procedimiento administrativo común y sus fases",
+      "Procedimientos sancionador y de responsabilidad patrimonial",
+      "Revisión de actos, recursos, iniciativa legislativa y potestad reglamentaria",
+    ],
+  },
 };
 
 describe("StudyPage", () => {
@@ -44,6 +62,9 @@ describe("StudyPage", () => {
       screen.getByText("Knowledge need: Derecho de acceso a la información pública"),
     ).toBeVisible();
     expect(screen.getByText(/Artículo 12/)).toBeVisible();
+    expect(screen.getByText("Study coverage")).toBeVisible();
+    expect(screen.getByText("Partial · 2 of 8 aspects covered (25%)")).toBeVisible();
+    expect(screen.getByText("Interesados, capacidad, representación y derechos")).toBeVisible();
     expect(fetchMock).toHaveBeenCalledWith("/api/study/units/unit-2");
   });
 
