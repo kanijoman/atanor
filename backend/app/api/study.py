@@ -3,7 +3,10 @@ from uuid import UUID
 from fastapi import APIRouter, HTTPException
 
 from app.application.study_material import (
+    build_study_coverage_summary,
+    derive_covered_aspects,
     derive_knowledge_needs_for_programme_unit,
+    derive_required_aspects_for_programme_unit,
     generate_study_material_for_programme_unit,
     is_study_material_available_for_programme_unit,
 )
@@ -85,6 +88,14 @@ def get_study_material(unit_id: UUID) -> dict[str, object]:
         knowledge_repository,
     )
 
+    required_aspects = derive_required_aspects_for_programme_unit(programme_unit)
+    covered_aspects = derive_covered_aspects(programme_unit, knowledge)
+    coverage = build_study_coverage_summary(
+        knowledge_need=knowledge_need,
+        required_aspects=required_aspects,
+        covered_aspects=covered_aspects,
+    )
+
     return {
         "programme_unit": {
             "id": str(programme_unit.id),
@@ -95,6 +106,14 @@ def get_study_material(unit_id: UUID) -> dict[str, object]:
             "title": knowledge_need.topic,
         },
         "study_material": knowledge.description or "",
+        "coverage": {
+            "status": coverage.status,
+            "covered_count": coverage.covered_count,
+            "required_count": coverage.required_count,
+            "coverage_percentage": coverage.coverage_percentage,
+            "covered_aspects": list(coverage.covered_aspects),
+            "pending_aspects": list(coverage.pending_aspects),
+        },
     }
 
 
