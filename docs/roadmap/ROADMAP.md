@@ -7,8 +7,8 @@
 | Project | Atanor |
 | Document | ROADMAP |
 | Status | Active |
-| Version | 1.0 |
-| Last Updated | 2026-09-08 |
+| Version | 1.1 |
+| Last Updated | 2026-09-17 |
 | Audience | Contributors and Developers |
 
 ---
@@ -91,7 +91,7 @@ Knowledge Need
 Coverage
 ```
 
-The initial coverage model deliberately distinguishes only `COVERED` and `MISSING`.
+The initial coverage model distinguished only `COVERED` and `MISSING`. Later candidate-facing validation demonstrated that useful coverage feedback requires explicit semantic aspects when partial coverage matters.
 
 ### Stage 4 · Document Structure and Programme Discovery
 
@@ -137,27 +137,36 @@ The current capability demonstrates acquisition, relevance extraction and first 
 
 ### Stage 6 · Candidate Preparation MVP
 
-**Status: Next Product Focus**
+**Status: Initial Candidate Loop Validated**
 
-The next major goal is to compose the validated capabilities into a genuinely useful preparation workflow for an actual candidate.
+The first meaningful candidate preparation loop is now usable through the web application for supported programme units.
 
-The target direction is:
+Validated flow:
 
 ```text
 Convocatoria
     ↓
-Requirements
-    ↓
 Study Programme
     ↓
-Knowledge Needs
+Programme Unit
     ↓
-Knowledge
+Knowledge Need
     ↓
-Preparation
+Candidate Study Material
+    ↓
+Study Coverage Feedback
 ```
 
-The next mini-MVP should establish the smallest meaningful candidate experience rather than expanding infrastructure or completing the theoretical knowledge model in advance.
+The current experience includes:
+
+- programme-level visibility of whether study material is available;
+- direct navigation to supported study units;
+- candidate-facing material grounded in canonical legal sources;
+- explicit semantic coverage feedback showing covered and pending aspects.
+
+The first coverage vertical spans Ley 19/2013 and Ley 39/2015. This demonstrates the end-to-end candidate interaction, but not broad syllabus coverage or pedagogically complete material.
+
+The next objective within this stage should be selected from evidence about the highest-value remaining candidate problem, rather than assumed in advance.
 
 ### Future Capability · Eligibility and Opportunity Discovery
 
@@ -235,6 +244,18 @@ Evidence
 Canonical Knowledge
     ↓
 Learning
+```
+
+Candidate preparation adds an explicit candidate-facing layer:
+
+```text
+Knowledge Need
+    ↓
+Candidate Study Material
+    ↓
+Semantic Coverage Feedback
+    ↓
+Study
 ```
 
 Eligibility and opportunity discovery provide an additional entry point:
