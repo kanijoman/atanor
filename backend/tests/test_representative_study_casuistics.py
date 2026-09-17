@@ -4,7 +4,7 @@ from app.application.study_material import (
     derive_required_aspects_for_programme_unit,
     generate_study_material_for_programme_unit,
 )
-from app.domain.models import KnowledgeNeed, StudyProgrammeUnit
+from app.domain.models import StudyProgrammeUnit
 
 
 class InMemoryKnowledgeRepository:
@@ -58,6 +58,15 @@ def test_ley_39_2015_casuistic_exercises_partial_coverage() -> None:
         needs[0],
         repository,
     )
+
+    assert knowledge.title == needs[0].topic
+    assert knowledge.identity_key == needs[0].identity_key
+    assert knowledge.description
+    assert len(knowledge.sources) == 1
+    assert knowledge.sources[0].locator == (
+        "https://www.boe.es/buscar/act.php?id=BOE-A-2015-10565"
+    )
+    assert repository.get_by_identity(needs[0].identity_key) is knowledge
 
     required_aspects = derive_required_aspects_for_programme_unit(programme_unit)
     covered_aspects = derive_covered_aspects(programme_unit, knowledge)
