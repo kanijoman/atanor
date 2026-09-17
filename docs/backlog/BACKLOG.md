@@ -7,8 +7,8 @@
 | Project | Atanor |
 | Document | BACKLOG |
 | Status | Active |
-| Version | 6.0 |
-| Last Updated | 2026-09-10 |
+| Version | 7.0 |
+| Last Updated | 2026-09-17 |
 | Audience | Contributors and Developers |
 
 ---
@@ -49,6 +49,8 @@ Knowledge Need
 Knowledge Construction
     ↓
 Candidate Study Material
+    ↓
+Study Coverage
 ```
 
 The current implementation supports heterogeneous text-based PDF structures through source-specific application strategies. Scanned/image-only PDFs remain outside the current extraction boundary.
@@ -67,31 +69,55 @@ The current implementation supports heterogeneous text-based PDF structures thro
 - First reusable `Knowledge` construction workflow.
 - Deterministic study-programme discovery for the current BOE, BOJA and Archiveros samples.
 - Persistence and retrieval of discovered study programmes and units.
-- First end-to-end candidate study-material vertical: a real programme point can derive a concrete `KnowledgeNeed`, generate candidate-facing material, persist it and retrieve it.
+- Candidate-facing study material for validated units in two distinct legal domains: Ley 19/2013 and Ley 39/2015.
+- Candidate-facing study-material availability in programme listings, so supported units are directly actionable and unsupported units are identifiable without probing a failing endpoint.
+- Candidate-facing semantic study-coverage summaries showing covered and pending aspects for supported units.
 
-The first end-to-end material case is grounded in the real BOE call sample and derives the narrower knowledge need `Derecho de acceso a la información pública` from the broader programme wording referring to Ley 19/2013. The programme unit itself is preserved unchanged.
+The current candidate study flow preserves the official programme wording while exposing Atanor's derived `KnowledgeNeed`, candidate-facing study material and explicit semantic coverage information.
 
-These capabilities are validated against the project's real PDF samples and focused product tests. They do not imply universal support for arbitrary official-document formats.
+The validated Ley 39/2015 vertical demonstrates that coverage can be represented as an explicit aspect contract rather than inferred from textual coincidence. The current example exposes 2 of 8 required aspects as covered and identifies the remaining aspects as pending.
+
+These capabilities are validated against the project's real PDF samples and focused product tests. They do not imply universal support for arbitrary official-document formats or universal semantic coverage.
 
 ---
 
 ## Current Product Gap
 
-The main unresolved question is now whether the validated application capabilities are exposed as a **usable candidate workflow** rather than only as internal operations and tests.
+The first candidate-facing study loop is now usable end-to-end for the supported programme units:
 
-Atanor can already derive study material from a real programme point, but the candidate does not yet have a simple product interface for selecting a programme point and reading the resulting material.
+```text
+Call
+  ↓
+Programme
+  ↓
+Programme Unit
+  ↓
+Study Material
+  ↓
+Coverage Feedback
+```
 
-The next work should therefore prioritize making the first study-material vertical directly usable, before expanding the knowledge model or introducing additional infrastructure.
+The main product gap is no longer basic access to study material. It is **breadth and usefulness of preparation**: only a small deterministic subset of the imported syllabus is currently supported, and the material itself remains deliberately minimal.
+
+The next step should therefore be selected from the highest-value candidate problem demonstrated by the current product, rather than extending coverage or architecture by default.
 
 ---
 
 ## Immediate Priority
 
-**Expose the first candidate study-material workflow through the existing application interface.**
+**Evaluate the next candidate-facing preparation capability.**
 
-The next task should allow a candidate to select a real study-programme unit and obtain its generated study material, while preserving the programme point and derived Knowledge Need as distinct concepts.
+Candidate feedback now establishes a useful baseline: a programme point can be opened, studied and understood in terms of what Atanor currently covers and what remains pending.
 
-Concrete implementation and acceptance criteria are tracked in GitHub Issue **AT-087**.
+Before implementing another technical vertical, evaluate which missing candidate capability would most improve the preparation workflow. Candidates include, depending on evidence:
+
+- increasing useful study-material breadth;
+- improving the depth and pedagogical quality of existing material;
+- turning coverage gaps into actionable study tasks;
+- introducing a first study-session or progress mechanism;
+- improving opportunity/call discovery and eligibility support.
+
+The choice should be driven by candidate value and evidence from the current workflow.
 
 ---
 
@@ -169,6 +195,8 @@ This preserves traceability between product task, implementation and Git history
 ## Historical Context
 
 The project has completed the initial foundation, source workflow, requirement-discovery, requirement-scope, document-processing, knowledge-acquisition, knowledge-construction, study-programme and first candidate study-material validation iterations.
+
+AT-096 extended the candidate study-material vertical to Ley 39/2015 and introduced explicit semantic coverage feedback. AT-097 exposed material availability directly in the programme listing. Both are now closed after real candidate-facing validation.
 
 The detailed history of those iterations is intentionally not reproduced here. It remains available through Git history and the corresponding project documentation.
 
