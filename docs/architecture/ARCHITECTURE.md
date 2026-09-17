@@ -7,8 +7,8 @@
 | Project | Atanor |
 | Document | ARCHITECTURE |
 | Status | 🟢 Active |
-| Version | 0.9 |
-| Last Updated | 2026-08-18 |
+| Version | 1.0 |
+| Last Updated | 2026-09-17 |
 | Audience | Contributors and Developers |
 
 ---
@@ -28,6 +28,7 @@ This document describes the conceptual and validated technical architecture of A
 - New abstractions require validated product needs.
 - Acquired source material is not automatically canonical Knowledge.
 - Exploratory experiments may inspect implementation behavior without becoming product contracts.
+- Candidate-facing claims such as study coverage must be explicit and traceable rather than inferred from textual coincidence.
 
 # Current Validated Architecture
 
@@ -61,6 +62,10 @@ Relevant Content
 Knowledge
     ↓
 Coverage
+    ↓
+Candidate Study Material
+    ↓
+Study Coverage Feedback
 ```
 
 The source workflow has been validated against real BOE and Junta de Castilla y León samples. Requirement Scope, Knowledge Need and initial Coverage have been validated through domain and persistence tests. AT-043 additionally validated a minimal autonomous acquisition and deterministic relevance-extraction path using a BOE sample.
@@ -69,11 +74,13 @@ AT-044 and AT-045 validated a deterministic document-structure analysis stage fo
 
 The acquisition/extraction path is currently a prototype. It must not be interpreted as proof that arbitrary acquired material is complete, semantically valid or canonical Knowledge.
 
+AT-096 subsequently validated an explicit semantic coverage contract for candidate-facing study material. Partial coverage is represented through required, covered and pending aspects rather than inferred from raw text similarity.
+
 # Architectural Layers
 
 ## Interface Layer
 
-Provides adapters for application use cases. The current implementation uses a minimal standard-library CLI. A future interface may replace or complement it without changing the domain model.
+Provides adapters for application use cases. The current implementation uses a minimal standard-library CLI and a web interface. Interfaces expose validated application behavior without owning domain rules.
 
 ## Application Layer
 
@@ -113,6 +120,26 @@ Relevant content / candidate Knowledge
 
 Acquisition and extraction strategies are replaceable implementation mechanisms. The domain does not assume BOE structure, a particular retrieval technology or a particular extraction algorithm.
 
+Candidate-facing study preparation currently adds a deterministic material and coverage projection:
+
+```text
+Programme Unit
+    ↓
+Knowledge Need
+    ↓
+Candidate Study Material
+    ↓
+Required Aspects
+    ↓
+Covered Aspects
+    ↓
+Pending Aspects
+    ↓
+Study Coverage Summary
+```
+
+This is currently implemented at the application level for validated study-material verticals. It is not yet a generic semantic matching engine.
+
 ## Domain Layer
 
 The current validated model is:
@@ -151,19 +178,30 @@ Represents a unit of knowledge coverage required by a scope. It is valid even wh
 
 Represents reusable knowledge that may satisfy one or more Knowledge Needs. The definitive canonical Knowledge model remains intentionally limited until concrete requirements justify further design.
 
-An external document or extracted text is not automatically equivalent to canonical Knowledge. This distinction is particularly important after AT-043: the BOE experiment demonstrated useful relevant context but also incidental references.
-
 ### Coverage
 
-Represents the result of comparing a Knowledge Need with available Knowledge. The initial model supports only `COVERED` and `MISSING`. Coverage is derived and is not an independent persisted entity. Adding Knowledge may change Coverage without changing the Requirement Scope or Knowledge Need.
+Represents the result of comparing a Knowledge Need with available Knowledge. Coverage is derived and is not an independent persisted entity.
 
-Semantic matching, partial coverage and depth-aware coverage are not currently implemented.
+For the current candidate-facing study-material vertical, useful partial coverage is represented explicitly by a deterministic set of required semantic aspects. The application derives which aspects are covered by the validated study material and builds a typed summary containing:
+
+- coverage status (`missing`, `partial` or `covered`);
+- covered aspect count;
+- required aspect count;
+- coverage percentage;
+- covered aspects;
+- pending aspects.
+
+The candidate-facing summary is therefore an explicit product contract. It must not be inferred by substring matching, article-count coincidence or the mere existence of a `Knowledge` instance.
+
+This semantic aspect mechanism has been validated across Ley 19/2013 and Ley 39/2015 verticals. It remains deterministic and vertical-specific until broader evidence justifies a generic semantic matching abstraction.
 
 ## Persistence Layer
 
 The persistence layer uses SQLAlchemy with SQLite and Alembic. Persistence must not make domain concepts dependent on SQLAlchemy or SQLite-specific behavior. Requirement scopes and knowledge needs are persisted as part of the requirement aggregate.
 
 The current structural-analysis representation is not persisted. Persistence should be introduced only if a downstream workflow demonstrates a concrete need for structural-tree storage, repeatability or auditability.
+
+Candidate-facing coverage summaries are currently derived from application-level contracts and are not independently persisted.
 
 # Source and Requirement Discovery
 
@@ -239,13 +277,25 @@ Coverage
 
 The acquisition prototype extends the implementation around `KnowledgeNeed` without changing this domain boundary.
 
-This layer deliberately does not construct the complete knowledge corpus. The following remain outside the current architecture:
+The candidate-facing study-material vertical extends the progression with derived preparation feedback:
+
+```text
+Knowledge Need
+    ↓
+Candidate Study Material
+    ↓
+Explicit Semantic Coverage
+    ↓
+Candidate Feedback
+```
+
+The following remain outside the current architecture:
 
 - semantic scope discovery;
-- automatic interpretation of requirement meaning;
+- automatic interpretation of arbitrary requirement meaning;
 - OCR;
-- semantic knowledge matching;
-- partial or depth-aware coverage calculation;
+- generic semantic knowledge matching;
+- automatic coverage assessment for arbitrary topics;
 - complete canonical Knowledge construction;
 - learning paths and assessments.
 
@@ -269,11 +319,15 @@ tests/
 
 AT-045 demonstrated this transition explicitly: the structural distinction was first evaluated in `experiments/`, then accepted behaviors were encoded in focused tests. The experiment itself remains exploratory; the validated behavior is now an input to the real application pipeline.
 
+AT-096 followed the same pattern for candidate-facing semantic coverage: an explicit aspect model was tested first, then exposed through the API and web interface once the behavior was validated with a real Ley 39/2015 study unit.
+
 Experiments may expose raw extracted content, sizes, intermediate representations or other implementation details. Tests should verify only behavior that has become part of the accepted contract. This allows uncertain acquisition and extraction approaches to evolve without creating brittle regression expectations.
 
 # Evolution Strategy
 
-Atanor uses evidence-driven architectural evolution. Deferred capabilities include advanced source discovery, semantic requirement resolution, OCR, richer Knowledge Blueprint semantics, canonical Knowledge construction, richer evidence models, semantic coverage, graph or vector persistence, external AI services, web UI and multi-user infrastructure.
+Atanor uses evidence-driven architectural evolution. Deferred capabilities include advanced source discovery, semantic requirement resolution, OCR, richer Knowledge Blueprint semantics, canonical Knowledge construction, richer evidence models, generic semantic coverage, graph or vector persistence, external AI services and multi-user infrastructure.
+
+The current web interface is intentionally minimal. Further frontend architecture should be introduced only when a concrete candidate workflow requires it.
 
 Each capability should be introduced only in response to a concrete product requirement.
 
