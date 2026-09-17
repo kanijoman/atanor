@@ -78,6 +78,7 @@ La Ley 39/2015 establece las bases del procedimiento administrativo común de la
 La ley se aplica al sector público, que comprende la Administración General del Estado, las Administraciones de las Comunidades Autónomas, las Entidades que integran la Administración Local y el sector público institucional. También determina las entidades que integran este último ámbito. (Artículo 2)
 """
 
+
 _ACCESS_TOPIC = "Derecho de acceso a la información pública"
 _PROCEDURE_TOPIC = "Procedimiento administrativo común"
 
@@ -299,3 +300,22 @@ def is_study_material_available_for_programme_unit(
         return False
 
     return len(needs) == 1
+
+
+def prepare_programme_unit_for_study(
+    programme_unit: StudyProgrammeUnit,
+    repository: KnowledgeRepository,
+) -> Knowledge:
+    """Prepare candidate-facing study material for a programme unit."""
+    needs = derive_knowledge_needs_for_programme_unit(programme_unit)
+    if len(needs) != 1:
+        raise ValueError(
+            "Preparing a programme item requires exactly one supported "
+            "knowledge need"
+        )
+
+    return generate_study_material_for_programme_unit(
+        programme_unit,
+        needs[0],
+        repository,
+    )
