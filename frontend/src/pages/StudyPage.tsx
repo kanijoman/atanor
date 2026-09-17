@@ -1,5 +1,14 @@
 import { useEffect, useState } from "react";
 
+type StudyCoverage = {
+  status: "missing" | "partial" | "covered";
+  covered_count: number;
+  required_count: number;
+  coverage_percentage: number;
+  covered_aspects: string[];
+  pending_aspects: string[];
+};
+
 type StudyResponse = {
   programme_unit: {
     id: string;
@@ -10,10 +19,17 @@ type StudyResponse = {
     title: string;
   };
   study_material: string;
+  coverage: StudyCoverage;
 };
 
 type StudyPageProps = {
   unitId: string;
+};
+
+const coverageStatusLabel: Record<StudyCoverage["status"], string> = {
+  missing: "Missing",
+  partial: "Partial",
+  covered: "Covered",
 };
 
 export function StudyPage({ unitId }: StudyPageProps) {
@@ -44,7 +60,40 @@ export function StudyPage({ unitId }: StudyPageProps) {
         <>
           <h1>{study.programme_unit.title}</h1>
           <p>Knowledge need: {study.knowledge_need.title}</p>
-          <div style={{ whiteSpace: "pre-wrap" }}>{study.study_material}</div>
+
+          <section aria-labelledby="study-coverage-heading">
+            <h2 id="study-coverage-heading">Study coverage</h2>
+            <p>
+              {coverageStatusLabel[study.coverage.status]} · {study.coverage.covered_count} of {study.coverage.required_count} aspects covered ({study.coverage.coverage_percentage}%)
+            </p>
+
+            {study.coverage.covered_aspects.length > 0 && (
+              <>
+                <h3>Covered aspects</h3>
+                <ul>
+                  {study.coverage.covered_aspects.map((aspect) => (
+                    <li key={aspect}>{aspect}</li>
+                  ))}
+                </ul>
+              </>
+            )}
+
+            {study.coverage.pending_aspects.length > 0 && (
+              <>
+                <h3>Pending aspects</h3>
+                <ul>
+                  {study.coverage.pending_aspects.map((aspect) => (
+                    <li key={aspect}>{aspect}</li>
+                  ))}
+                </ul>
+              </>
+            )}
+          </section>
+
+          <section aria-labelledby="study-material-heading">
+            <h2 id="study-material-heading">Study material</h2>
+            <div style={{ whiteSpace: "pre-wrap" }}>{study.study_material}</div>
+          </section>
         </>
       )}
     </main>
