@@ -45,8 +45,12 @@ def test_ley_39_2015_casuistic_exercises_partial_coverage() -> None:
     repository = InMemoryKnowledgeRepository()
 
     needs = derive_knowledge_needs_for_programme_unit(programme_unit)
-    assert needs == (
-        KnowledgeNeed(topic="Procedimiento administrativo común", depth=1),
+    assert len(needs) == 1
+    assert needs[0].topic == "Procedimiento administrativo común"
+    assert needs[0].depth == 1
+    assert needs[0].identity_key == (
+        "Procedimiento administrativo común",
+        1,
     )
 
     knowledge = generate_study_material_for_programme_unit(
