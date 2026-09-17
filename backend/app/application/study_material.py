@@ -78,9 +78,21 @@ La Ley 39/2015 establece las bases del procedimiento administrativo común de la
 La ley se aplica al sector público, que comprende la Administración General del Estado, las Administraciones de las Comunidades Autónomas, las Entidades que integran la Administración Local y el sector público institucional. También determina las entidades que integran este último ámbito. (Artículo 2)
 """
 
-
 _ACCESS_TOPIC = "Derecho de acceso a la información pública"
 _PROCEDURE_TOPIC = "Procedimiento administrativo común"
+
+_ACCESS_REQUIRED_ASPECTS = (
+    "Concepto y titulares del derecho de acceso",
+    "Qué se entiende por información pública",
+    "Límites del derecho de acceso",
+    "Protección de datos y acceso parcial",
+    "Solicitud de acceso",
+    "Inadmisión",
+    "Tramitación",
+    "Resolución",
+    "Formalización del acceso",
+    "Recursos y reclamaciones",
+)
 
 _PROCEDURE_REQUIRED_ASPECTS = (
     "Objeto y finalidad del procedimiento administrativo común",
@@ -204,6 +216,13 @@ def derive_required_aspects_for_programme_unit(
 ) -> tuple[str, ...]:
     """Derive the aspects currently required to cover a supported study scope."""
     normalized_title = programme_unit.title.casefold()
+    supports_access_topic = (
+        normalized_title == _ACCESS_TOPIC.casefold()
+        or ("ley 19/2013" in normalized_title and "transparencia" in normalized_title)
+    )
+    if supports_access_topic:
+        return _ACCESS_REQUIRED_ASPECTS
+
     supports_procedure_topic = (
         (
             "ley 39/2015" in normalized_title
@@ -227,12 +246,15 @@ def derive_covered_aspects(
     """Derive the aspects explicitly covered by the current study material."""
     required_aspects = derive_required_aspects_for_programme_unit(programme_unit)
 
-    if knowledge.title != _PROCEDURE_TOPIC:
-        raise ValueError(
-            f"Knowledge '{knowledge.title}' does not match the supported coverage scope"
-        )
+    if knowledge.title == _ACCESS_TOPIC:
+        return required_aspects
 
-    return required_aspects[:2]
+    if knowledge.title == _PROCEDURE_TOPIC:
+        return required_aspects[:2]
+
+    raise ValueError(
+        f"Knowledge '{knowledge.title}' does not match the supported coverage scope"
+    )
 
 
 def build_study_coverage_summary(
@@ -277,22 +299,3 @@ def is_study_material_available_for_programme_unit(
         return False
 
     return len(needs) == 1
-
-
-def prepare_programme_unit_for_study(
-    programme_unit: StudyProgrammeUnit,
-    repository: KnowledgeRepository,
-) -> Knowledge:
-    """Prepare candidate-facing study material for a programme unit."""
-    needs = derive_knowledge_needs_for_programme_unit(programme_unit)
-    if len(needs) != 1:
-        raise ValueError(
-            "Preparing a programme item requires exactly one supported "
-            "knowledge need"
-        )
-
-    return generate_study_material_for_programme_unit(
-        programme_unit,
-        needs[0],
-        repository,
-    )
