@@ -158,6 +158,7 @@ _ACCESS_TOPIC = "Derecho de acceso a la información pública"
 _PROCEDURE_TOPIC = "Procedimiento administrativo común"
 _IDENTITY_ELECTRONIC_SIGNATURE_TOPIC = "Identidad y firma electrónica"
 _DATA_MODELING_TOPIC = "Modelado de datos"
+_OOP_TOPIC = "Programación orientada a objetos"
 _OOP_SOURCE = Source(
     title="Python Documentation, Classes",
     locator="https://docs.python.org/3/tutorial/classes.html",
@@ -220,6 +221,13 @@ _IDENTITY_ELECTRONIC_SIGNATURE_REQUIRED_ASPECTS = (
     "Servicios electrónicos de confianza y certificados",
     "Documento Nacional de Identidad físico y digital",
     "Identificación y firma ante las Administraciones Públicas",
+)
+
+_OOP_REQUIRED_ASPECTS = (
+    "Clases y objetos",
+    "Encapsulación",
+    "Herencia",
+    "Polimorfismo",
 )
 
 _DATA_MODELING_REQUIRED_ASPECTS = (
@@ -334,6 +342,26 @@ El modelado de datos se apoya en metodologías, lenguajes y reglas que permiten 
     )
 
 
+
+def generate_object_oriented_programming_material(
+    need: KnowledgeNeed,
+    repository: KnowledgeRepository,
+) -> Knowledge:
+    """Generate candidate-facing material for object-oriented programming."""
+    if need.topic != _OOP_TOPIC:
+        raise ValueError(f"Unsupported study topic: {need.topic}")
+
+    return _get_or_generate(
+        need,
+        repository,
+        lambda current_need: Knowledge(
+            title=current_need.topic,
+            description=_OOP_STUDY_CONTENT,
+            sources=(_OOP_SOURCE,),
+            identity_key=current_need.identity_key,
+        ),
+    )
+
 def generate_identity_and_electronic_signature_material(
     need: KnowledgeNeed,
     repository: KnowledgeRepository,
@@ -382,6 +410,24 @@ def generate_study_material_for_programme_unit(
         and "dni electrónico" in normalized_title
     )
     supports_personal_data_topic = "protección de datos personales" in normalized_title
+    supports_oop_topic = (
+        "programación orientada a objetos" in normalized_title
+        and "clases" in normalized_title
+        and "objetos" in normalized_title
+        and "herencia" in normalized_title
+        and "polimorfismo" in normalized_title
+        and "encapsulación" in normalized_title
+    )
+    if (
+        "programación orientada a objetos" in normalized_title
+        and "clases" in normalized_title
+        and "objetos" in normalized_title
+        and "herencia" in normalized_title
+        and "polimorfismo" in normalized_title
+        and "encapsulación" in normalized_title
+    ):
+        return _OOP_REQUIRED_ASPECTS
+
     supports_data_modeling_topic = (
         (
             "modelado de datos" in normalized_title
@@ -403,6 +449,9 @@ def generate_study_material_for_programme_unit(
 
     if need.topic == "Protección de datos personales" and supports_personal_data_topic:
         return generate_personal_data_protection_material(need, repository)
+
+    if need.topic == _OOP_TOPIC and supports_oop_topic:
+        return generate_object_oriented_programming_material(need, repository)
 
     if need.topic == _DATA_MODELING_TOPIC and supports_data_modeling_topic:
         return generate_data_modeling_material(need, repository)
@@ -438,6 +487,16 @@ def derive_knowledge_needs_for_programme_unit(
 
     if "protección de datos personales" in normalized_title:
         return (KnowledgeNeed(topic="Protección de datos personales", depth=1),)
+
+    if (
+        "programación orientada a objetos" in normalized_title
+        and "clases" in normalized_title
+        and "objetos" in normalized_title
+        and "herencia" in normalized_title
+        and "polimorfismo" in normalized_title
+        and "encapsulación" in normalized_title
+    ):
+        return (KnowledgeNeed(topic=_OOP_TOPIC, depth=1),)
 
     if (
         (
@@ -523,6 +582,9 @@ def derive_covered_aspects(
         return required_aspects
 
     if knowledge.title == "Protección de datos personales":
+        return required_aspects
+
+    if knowledge.title == _OOP_TOPIC:
         return required_aspects
 
     if knowledge.title == _DATA_MODELING_TOPIC:
