@@ -300,11 +300,17 @@ def generate_data_modeling_material(
         repository,
         lambda current_need: Knowledge(
             title=current_need.topic,
-            description=(
-                "Conceptual representation of the data domain through entities, "
-                "attributes, relationships, and the rules and methodologies used to "
-                "build a data model."
-            ),
+            description="""1. Entidades
+Una entidad representa un objeto, concepto o elemento del dominio que puede identificarse de forma independiente. Un tipo de entidad define una clase de entidades que comparten características comunes. En un modelo de datos, las entidades permiten representar los elementos relevantes del dominio que deben ser almacenados o gestionados.
+
+2. Atributos
+Un atributo representa una propiedad o característica de una entidad. Los atributos describen la información que se necesita conocer sobre una entidad y deben definirse de forma que sus valores sean comprensibles, consistentes y adecuados para el dominio modelado.
+
+3. Relaciones
+Una relación representa una asociación entre entidades o tipos de entidad. Las relaciones permiten expresar cómo se vinculan los elementos del dominio. Su definición debe considerar, entre otros aspectos, la cardinalidad y las reglas que determinan qué asociaciones son válidas.
+
+4. Metodologías y reglas de modelado
+El modelado de datos se apoya en metodologías, lenguajes y reglas que permiten construir representaciones consistentes del dominio. Estas reglas ayudan a definir entidades, atributos y relaciones de forma coherente, evitando ambigüedades y manteniendo la consistencia del modelo. Entre los enfoques y notaciones utilizados en el ámbito del modelado de información se encuentran modelos entidad-relación y otras técnicas de representación formal.""",
             sources=(_DATA_MODELING_SOURCE,),
             identity_key=current_need.identity_key,
         ),
@@ -360,7 +366,10 @@ def generate_study_material_for_programme_unit(
     )
     supports_personal_data_topic = "protección de datos personales" in normalized_title
     supports_data_modeling_topic = (
-        "modelado de datos" in normalized_title
+        (
+            "modelado de datos" in normalized_title
+            or "modelos de datos" in normalized_title
+        )
         and "entidades" in normalized_title
         and "atributos" in normalized_title
         and "relaciones" in normalized_title
@@ -414,7 +423,10 @@ def derive_knowledge_needs_for_programme_unit(
         return (KnowledgeNeed(topic="Protección de datos personales", depth=1),)
 
     if (
-        "modelado de datos" in normalized_title
+        (
+            "modelado de datos" in normalized_title
+            or "modelos de datos" in normalized_title
+        )
         and "entidades" in normalized_title
         and "atributos" in normalized_title
         and "relaciones" in normalized_title
@@ -460,7 +472,10 @@ def derive_required_aspects_for_programme_unit(
         return _PERSONAL_DATA_REQUIRED_ASPECTS
 
     supports_data_modeling_topic = (
-        "modelado de datos" in normalized_title
+        (
+            "modelado de datos" in normalized_title
+            or "modelos de datos" in normalized_title
+        )
         and "entidades" in normalized_title
         and "atributos" in normalized_title
         and "relaciones" in normalized_title
