@@ -261,18 +261,8 @@ def test_data_modelling_study_content_explains_required_technical_concepts() -> 
 
 
 def test_equivalent_programme_wordings_produce_the_same_knowledge_need() -> None:
-    first_unit = StudyProgrammeUnit(
-        number=1,
-        title=(
-            "Modelado de datos, metodologías y reglas. "
-            "Entidades, atributos y relaciones."
-        ),
-        start_page=1,
-        start_order=1,
-        end_page=1,
-        end_order=2,
-    )
-    second_unit = StudyProgrammeUnit(
+    real_unit = real_data_modelling_programme_unit()
+    equivalent_unit = StudyProgrammeUnit(
         number=2,
         title=(
             "Modelos de datos: entidades, atributos, relaciones, "
@@ -284,13 +274,13 @@ def test_equivalent_programme_wordings_produce_the_same_knowledge_need() -> None
         end_order=2,
     )
 
-    first_needs = derive_knowledge_needs_for_programme_unit(first_unit)
-    second_needs = derive_knowledge_needs_for_programme_unit(second_unit)
+    real_needs = derive_knowledge_needs_for_programme_unit(real_unit)
+    equivalent_needs = derive_knowledge_needs_for_programme_unit(equivalent_unit)
 
-    assert first_needs == second_needs
-    assert first_needs[0].identity_key == second_needs[0].identity_key
-    assert first_needs[0].topic == "Modelado de datos"
-    assert first_needs[0].depth == 1
+    assert real_needs == equivalent_needs
+    assert real_needs[0].identity_key == equivalent_needs[0].identity_key
+    assert real_needs[0].topic == "Modelado de datos"
+    assert real_needs[0].depth == 1
 
 
 def test_knowledge_generation_is_independent_from_programme_unit() -> None:
