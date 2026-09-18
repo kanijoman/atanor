@@ -301,6 +301,9 @@ def derive_knowledge_needs_for_programme_unit(
     ):
         return (KnowledgeNeed(topic=_IDENTITY_ELECTRONIC_SIGNATURE_TOPIC, depth=1),)
 
+    if "protección de datos personales" in normalized_title:
+        return (KnowledgeNeed(topic="Protección de datos personales", depth=1),)
+
     raise ValueError(
         f"No supported knowledge need can be derived from programme item "
         f"'{programme_unit.title}'"
