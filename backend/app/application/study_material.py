@@ -158,6 +158,23 @@ _ACCESS_TOPIC = "Derecho de acceso a la información pública"
 _PROCEDURE_TOPIC = "Procedimiento administrativo común"
 _IDENTITY_ELECTRONIC_SIGNATURE_TOPIC = "Identidad y firma electrónica"
 _DATA_MODELING_TOPIC = "Modelado de datos"
+_OOP_SOURCE = Source(
+    title="Python Documentation, Classes",
+    locator="https://docs.python.org/3/tutorial/classes.html",
+)
+
+_OOP_STUDY_CONTENT = """1. Clases y objetos
+Una clase define una estructura y un comportamiento común para un conjunto de objetos. Un objeto es una instancia concreta de una clase y mantiene su propio estado mediante atributos y operaciones mediante métodos.
+
+2. Encapsulación
+La encapsulación consiste en agrupar el estado y el comportamiento relacionados dentro de una misma abstracción y controlar cómo se accede a sus detalles internos. Su objetivo es preservar la coherencia del objeto y reducir dependencias innecesarias respecto de su implementación.
+
+3. Herencia
+La herencia permite definir una clase a partir de otra, reutilizando y especializando su comportamiento. La clase derivada puede incorporar características adicionales o redefinir comportamientos heredados.
+
+4. Polimorfismo
+El polimorfismo permite trabajar con objetos de distintas clases mediante una interfaz o comportamiento común, de forma que una misma operación pueda producir un comportamiento adecuado al tipo concreto del objeto."""
+
 _DATA_MODELING_SOURCE = Source(
     title=(
         "ISO/IEC 19763-12:2015, Information technology — Metamodel framework "
