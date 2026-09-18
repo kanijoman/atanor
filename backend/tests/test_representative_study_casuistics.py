@@ -2,9 +2,10 @@ from app.application.study_material import (
     derive_covered_aspects,
     derive_knowledge_needs_for_programme_unit,
     derive_required_aspects_for_programme_unit,
+    generate_data_modeling_material,
     generate_study_material_for_programme_unit,
 )
-from app.domain.models import StudyProgrammeUnit
+from app.domain.models import KnowledgeNeed, StudyProgrammeUnit
 
 
 class InMemoryKnowledgeRepository:
@@ -290,3 +291,15 @@ def test_equivalent_programme_wordings_produce_the_same_knowledge_need() -> None
     assert first_needs[0].identity_key == second_needs[0].identity_key
     assert first_needs[0].topic == "Modelado de datos"
     assert first_needs[0].depth == 1
+
+
+def test_knowledge_generation_is_independent_from_programme_unit() -> None:
+    repository = InMemoryKnowledgeRepository()
+    need = KnowledgeNeed(topic="Modelado de datos", depth=1)
+
+    knowledge = generate_data_modeling_material(need, repository)
+
+    assert knowledge.title == need.topic
+    assert knowledge.identity_key == need.identity_key
+    assert knowledge.description
+    assert repository.get_by_identity(need.identity_key) is knowledge
