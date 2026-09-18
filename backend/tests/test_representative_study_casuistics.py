@@ -233,7 +233,7 @@ def test_data_modelling_casuistic_represents_structured_technical_concepts() -> 
     assert covered_aspects == required_aspects
 
 
-def test_data_modelling_study_content_explains_required_technical_concepts() -> None:
+def test_data_modelling_study_content_covers_required_semantic_aspects() -> None:
     programme_unit = real_data_modelling_programme_unit()
     repository = InMemoryKnowledgeRepository()
     need = derive_knowledge_needs_for_programme_unit(programme_unit)[0]
@@ -245,19 +245,9 @@ def test_data_modelling_study_content_explains_required_technical_concepts() -> 
     )
 
     content = knowledge.description.casefold()
+    required_aspects = derive_required_aspects_for_programme_unit(programme_unit)
 
-    assert "entidad" in content
-    assert "tipo de entidad" in content
-
-    assert "atributo" in content
-    assert "propiedad" in content
-
-    assert "relación" in content
-    assert "cardinalidad" in content
-
-    assert "metodología" in content
-    assert "regla" in content
-    assert "consistencia" in content
+    assert all(aspect.casefold() in content for aspect in required_aspects)
 
 
 def test_equivalent_programme_wordings_produce_the_same_knowledge_need() -> None:
