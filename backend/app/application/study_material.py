@@ -40,6 +40,35 @@ _PROCEDURE_CANONICAL_SOURCE = Source(
     locator="https://www.boe.es/buscar/act.php?id=BOE-A-2015-10565",
 )
 
+_IDENTITY_EIDAS_SOURCE = Source(
+    title=(
+        "Reglamento (UE) n.º 910/2014 relativo a la identificación electrónica "
+        "y los servicios de confianza para las transacciones electrónicas"
+    ),
+    locator="https://eur-lex.europa.eu/eli/reg/2014/910/oj/spa",
+)
+
+_IDENTITY_TRUST_SERVICES_SOURCE = Source(
+    title=(
+        "Ley 6/2020, de 11 de noviembre, reguladora de determinados aspectos "
+        "de los servicios electrónicos de confianza"
+    ),
+    locator="https://www.boe.es/buscar/act.php?id=BOE-A-2020-14046",
+)
+
+_IDENTITY_DNI_SOURCE = Source(
+    title="Real Decreto 255/2025, de 1 de abril, por el que se regula el Documento Nacional de Identidad",
+    locator="https://www.boe.es/eli/es/rd/2025/04/01/255",
+)
+
+_IDENTITY_ADMIN_ELECTRONIC_SOURCE = Source(
+    title=(
+        "Real Decreto 203/2021, de 30 de marzo, por el que se aprueba el "
+        "Reglamento de actuación y funcionamiento del sector público por medios electrónicos"
+    ),
+    locator="https://www.boe.es/buscar/act.php?id=BOE-A-2021-5032",
+)
+
 _STUDY_CONTENT = """1. Concepto y titulares
 El derecho de acceso permite a las personas solicitar información pública en los términos establecidos por la Ley 19/2013. Su reconocimiento constituye uno de los mecanismos principales de transparencia de la actividad pública. (Artículo 12)
 
@@ -78,9 +107,28 @@ La Ley 39/2015 establece las bases del procedimiento administrativo común de la
 La ley se aplica al sector público, que comprende la Administración General del Estado, las Administraciones de las Comunidades Autónomas, las Entidades que integran la Administración Local y el sector público institucional. También determina las entidades que integran este último ámbito. (Artículo 2)
 """
 
+_IDENTITY_ELECTRONIC_SIGNATURE_STUDY_CONTENT = """1. Marco jurídico
+La identificación electrónica y los servicios de confianza se regulan principalmente por el Reglamento (UE) 910/2014 (eIDAS), complementado en España por la Ley 6/2020 y por el Reglamento de actuación y funcionamiento del sector público por medios electrónicos, aprobado por el Real Decreto 203/2021. El régimen del Documento Nacional de Identidad se regula actualmente por el Real Decreto 255/2025.
+
+2. Identificación electrónica y autenticación
+La identificación electrónica permite acreditar quién es una persona física o jurídica ante un servicio electrónico. La autenticación es el proceso mediante el cual se comprueba esa identidad o la validez de los datos asociados. En el ámbito de las Administraciones Públicas, los sistemas admitidos deben permitir garantizar la identidad de la persona interesada.
+
+3. Firma electrónica y efectos jurídicos
+La firma electrónica son datos electrónicos asociados lógicamente a otros datos que utiliza el firmante para firmar. El Reglamento eIDAS distingue distintos niveles de firma. La firma electrónica cualificada tiene un efecto jurídico equivalente al de la firma manuscrita y no puede rechazarse como prueba por el mero hecho de ser electrónica. (Reglamento (UE) 910/2014, artículos 25 y 26)
+
+4. Servicios electrónicos de confianza y certificados
+El marco eIDAS regula, entre otros, certificados, firmas y sellos electrónicos, sellos de tiempo y servicios de validación y conservación. La Ley 6/2020 complementa este régimen en los aspectos que corresponde desarrollar al ordenamiento español y regula determinados aspectos de los prestadores de servicios electrónicos de confianza.
+
+5. Documento Nacional de Identidad
+El Real Decreto 255/2025 regula el DNI en sus versiones física y digital. El DNI permite acreditar la identidad y permite la identificación electrónica y la firma electrónica de documentos en los términos previstos por la legislación específica. Su versión digital permite acreditar electrónicamente la identidad mediante un dispositivo móvil.
+
+6. Identificación y firma ante las Administraciones Públicas
+El Real Decreto 203/2021 desarrolla los sistemas de identificación y firma de las personas interesadas. Entre otros, contempla sistemas basados en certificados electrónicos cualificados, sellos electrónicos cualificados y sistemas de clave concertada. Las Administraciones deben poder verificar los datos asociados a la firma y vincular la identidad con el acto de firma.
+"""
 
 _ACCESS_TOPIC = "Derecho de acceso a la información pública"
 _PROCEDURE_TOPIC = "Procedimiento administrativo común"
+_IDENTITY_ELECTRONIC_SIGNATURE_TOPIC = "Identidad y firma electrónica"
 
 _ACCESS_REQUIRED_ASPECTS = (
     "Concepto y titulares del derecho de acceso",
@@ -104,6 +152,15 @@ _PROCEDURE_REQUIRED_ASPECTS = (
     "Procedimiento administrativo común y sus fases",
     "Procedimientos sancionador y de responsabilidad patrimonial",
     "Revisión de actos, recursos, iniciativa legislativa y potestad reglamentaria",
+)
+
+_IDENTITY_ELECTRONIC_SIGNATURE_REQUIRED_ASPECTS = (
+    "Marco jurídico de la identificación y firma electrónica",
+    "Identificación electrónica y autenticación",
+    "Firma electrónica y efectos jurídicos",
+    "Servicios electrónicos de confianza y certificados",
+    "Documento Nacional de Identidad físico y digital",
+    "Identificación y firma ante las Administraciones Públicas",
 )
 
 
@@ -158,6 +215,31 @@ def generate_common_administrative_procedure_material(
     )
 
 
+def generate_identity_and_electronic_signature_material(
+    need: KnowledgeNeed,
+    repository: KnowledgeRepository,
+) -> Knowledge:
+    """Generate candidate-facing material for electronic identity and signatures."""
+    if need.topic != _IDENTITY_ELECTRONIC_SIGNATURE_TOPIC:
+        raise ValueError(f"Unsupported study topic: {need.topic}")
+
+    return _get_or_generate(
+        need,
+        repository,
+        lambda current_need: Knowledge(
+            title=current_need.topic,
+            description=_IDENTITY_ELECTRONIC_SIGNATURE_STUDY_CONTENT,
+            sources=(
+                _IDENTITY_EIDAS_SOURCE,
+                _IDENTITY_TRUST_SERVICES_SOURCE,
+                _IDENTITY_DNI_SOURCE,
+                _IDENTITY_ADMIN_ELECTRONIC_SOURCE,
+            ),
+            identity_key=current_need.identity_key,
+        ),
+    )
+
+
 def generate_study_material_for_programme_unit(
     programme_unit: StudyProgrammeUnit,
     need: KnowledgeNeed,
@@ -176,12 +258,19 @@ def generate_study_material_for_programme_unit(
         )
         or normalized_title == "las leyes del procedimiento administrativo común de las administraciones"
     )
+    supports_identity_topic = (
+        "identidad y firma electrónica" in normalized_title
+        and "dni electrónico" in normalized_title
+    )
 
     if need.topic == _ACCESS_TOPIC and supports_access_topic:
         return generate_access_to_public_information_material(need, repository)
 
     if need.topic == _PROCEDURE_TOPIC and supports_procedure_topic:
         return generate_common_administrative_procedure_material(need, repository)
+
+    if need.topic == _IDENTITY_ELECTRONIC_SIGNATURE_TOPIC and supports_identity_topic:
+        return generate_identity_and_electronic_signature_material(need, repository)
 
     raise ValueError(
         f"Knowledge need '{need.topic}' does not match programme item "
@@ -205,6 +294,12 @@ def derive_knowledge_needs_for_programme_unit(
         and "procedimiento administrativo común" in normalized_title
     ) or normalized_title == "las leyes del procedimiento administrativo común de las administraciones":
         return (KnowledgeNeed(topic=_PROCEDURE_TOPIC, depth=1),)
+
+    if (
+        "identidad y firma electrónica" in normalized_title
+        and "dni electrónico" in normalized_title
+    ):
+        return (KnowledgeNeed(topic=_IDENTITY_ELECTRONIC_SIGNATURE_TOPIC, depth=1),)
 
     raise ValueError(
         f"No supported knowledge need can be derived from programme item "
@@ -234,6 +329,13 @@ def derive_required_aspects_for_programme_unit(
     if supports_procedure_topic:
         return _PROCEDURE_REQUIRED_ASPECTS
 
+    supports_identity_topic = (
+        "identidad y firma electrónica" in normalized_title
+        and "dni electrónico" in normalized_title
+    )
+    if supports_identity_topic:
+        return _IDENTITY_ELECTRONIC_SIGNATURE_REQUIRED_ASPECTS
+
     raise ValueError(
         f"No supported required-aspect scope can be derived from programme item "
         f"'{programme_unit.title}'"
@@ -252,6 +354,9 @@ def derive_covered_aspects(
 
     if knowledge.title == _PROCEDURE_TOPIC:
         return required_aspects[:2]
+
+    if knowledge.title == _IDENTITY_ELECTRONIC_SIGNATURE_TOPIC:
+        return required_aspects
 
     raise ValueError(
         f"Knowledge '{knowledge.title}' does not match the supported coverage scope"
