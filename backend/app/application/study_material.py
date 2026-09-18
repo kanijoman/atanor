@@ -286,7 +286,11 @@ def generate_data_modeling_material(
         repository,
         lambda current_need: Knowledge(
             title=current_need.topic,
-            description="",
+            description=(
+                "Conceptual representation of the data domain through entities, "
+                "attributes, relationships, and the rules and methodologies used to "
+                "build a data model."
+            ),
             sources=(),
             identity_key=current_need.identity_key,
         ),
