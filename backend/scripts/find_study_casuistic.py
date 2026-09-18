@@ -8,6 +8,7 @@ from __future__ import annotations
 
 from pathlib import Path
 import sys
+import argparse
 
 BACKEND_ROOT = Path(__file__).resolve().parents[1]
 if str(BACKEND_ROOT) not in sys.path:
@@ -19,7 +20,7 @@ from app.persistence.database import SessionLocal
 from app.persistence.models.study_programme import StudyProgrammeUnit
 
 
-_KEYWORDS = (
+_DEFAULT_KEYWORDS = (
     "protección de datos",
     "datos personales",
     "reglamento general de protección de datos",
@@ -29,6 +30,19 @@ _KEYWORDS = (
 
 
 def main() -> None:
+    parser = argparse.ArgumentParser(
+        description="Find imported programme units matching study casuistic keywords."
+    )
+    parser.add_argument(
+        "keywords",
+        nargs="*",
+        help="Keywords or phrases to search for. Uses default personal-data terms when omitted.",
+    )
+    args = parser.parse_args()
+    keywords = tuple(
+        keyword.casefold() for keyword in (args.keywords or _DEFAULT_KEYWORDS)
+    )
+
     with SessionLocal() as session:
         units = session.scalars(
             select(StudyProgrammeUnit).order_by(
@@ -40,7 +54,7 @@ def main() -> None:
         matches = [
             unit
             for unit in units
-            if any(keyword in unit.title.casefold() for keyword in _KEYWORDS)
+            if any(keyword in unit.title.casefold() for keyword in keywords)
         ]
 
         print(f"matches: {len(matches)}")
