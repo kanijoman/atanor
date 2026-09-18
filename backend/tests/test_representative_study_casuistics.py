@@ -282,3 +282,52 @@ def test_knowledge_generation_is_independent_from_programme_unit() -> None:
     assert knowledge.identity_key == need.identity_key
     assert knowledge.description
     assert repository.get_by_identity(need.identity_key) is knowledge
+
+
+
+def test_oop_casuistic_represents_hierarchical_technical_concepts() -> None:
+    programme_unit = StudyProgrammeUnit(
+        number=1,
+        title=(
+            "Programación orientada a objetos. Clases, objetos, "
+            "herencia, polimorfismo y encapsulación."
+        ),
+        start_page=1,
+        start_order=1,
+        end_page=1,
+        end_order=2,
+    )
+    repository = InMemoryKnowledgeRepository()
+
+    needs = derive_knowledge_needs_for_programme_unit(programme_unit)
+
+    assert len(needs) == 1
+    assert needs[0].topic == "Programación orientada a objetos"
+    assert needs[0].depth == 1
+    assert needs[0].identity_key == (
+        "Programación orientada a objetos",
+        1,
+    )
+
+    knowledge = generate_study_material_for_programme_unit(
+        programme_unit,
+        needs[0],
+        repository,
+    )
+
+    assert knowledge.title == needs[0].topic
+    assert knowledge.identity_key == needs[0].identity_key
+    assert knowledge.description
+    assert len(knowledge.sources) >= 1
+    assert repository.get_by_identity(needs[0].identity_key) is knowledge
+
+    required_aspects = derive_required_aspects_for_programme_unit(programme_unit)
+    covered_aspects = derive_covered_aspects(programme_unit, knowledge)
+
+    assert required_aspects == (
+        "Clases y objetos",
+        "Encapsulación",
+        "Herencia",
+        "Polimorfismo",
+    )
+    assert covered_aspects == required_aspects
