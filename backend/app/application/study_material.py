@@ -262,6 +262,7 @@ def generate_study_material_for_programme_unit(
         "identidad y firma electrónica" in normalized_title
         and "dni electrónico" in normalized_title
     )
+    supports_personal_data_topic = "protección de datos personales" in normalized_title
 
     if need.topic == _ACCESS_TOPIC and supports_access_topic:
         return generate_access_to_public_information_material(need, repository)
@@ -271,6 +272,9 @@ def generate_study_material_for_programme_unit(
 
     if need.topic == _IDENTITY_ELECTRONIC_SIGNATURE_TOPIC and supports_identity_topic:
         return generate_identity_and_electronic_signature_material(need, repository)
+
+    if need.topic == "Protección de datos personales" and supports_personal_data_topic:
+        raise ValueError("Personal data protection study material is not implemented yet")
 
     raise ValueError(
         f"Knowledge need '{need.topic}' does not match programme item "
