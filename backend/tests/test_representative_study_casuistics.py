@@ -180,3 +180,53 @@ def test_personal_data_protection_casuistic_requires_principles_rights_and_oblig
         "Obligaciones y responsabilidad del responsable y encargado del tratamiento",
     )
     assert covered_aspects == required_aspects
+
+
+def real_data_modelling_programme_unit() -> StudyProgrammeUnit:
+    return StudyProgrammeUnit(
+        number=1,
+        title=(
+            "Modelado de datos, metodologías y reglas. Entidades, atributos y relaciones."
+        ),
+        start_page=1,
+        start_order=1,
+        end_page=1,
+        end_order=2,
+    )
+
+
+def test_data_modelling_casuistic_represents_structured_technical_concepts() -> None:
+    programme_unit = real_data_modelling_programme_unit()
+    repository = InMemoryKnowledgeRepository()
+
+    needs = derive_knowledge_needs_for_programme_unit(programme_unit)
+    assert len(needs) == 1
+    assert needs[0].topic == "Modelado de datos"
+    assert needs[0].depth == 1
+    assert needs[0].identity_key == (
+        "Modelado de datos",
+        1,
+    )
+
+    knowledge = generate_study_material_for_programme_unit(
+        programme_unit,
+        needs[0],
+        repository,
+    )
+
+    assert knowledge.title == needs[0].topic
+    assert knowledge.identity_key == needs[0].identity_key
+    assert knowledge.description
+    assert len(knowledge.sources) >= 1
+    assert repository.get_by_identity(needs[0].identity_key) is knowledge
+
+    required_aspects = derive_required_aspects_for_programme_unit(programme_unit)
+    covered_aspects = derive_covered_aspects(programme_unit, knowledge)
+
+    assert required_aspects == (
+        "Entidades",
+        "Atributos",
+        "Relaciones",
+        "Metodologías y reglas de modelado",
+    )
+    assert covered_aspects == required_aspects
