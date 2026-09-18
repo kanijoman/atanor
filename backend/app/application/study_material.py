@@ -69,6 +69,22 @@ _IDENTITY_ADMIN_ELECTRONIC_SOURCE = Source(
     locator="https://www.boe.es/buscar/act.php?id=BOE-A-2021-5032",
 )
 
+_PERSONAL_DATA_GDPR_SOURCE = Source(
+    title=(
+        "Reglamento (UE) 2016/679 del Parlamento Europeo y del Consejo, "
+        "de 27 de abril de 2016"
+    ),
+    locator="https://eur-lex.europa.eu/eli/reg/2016/679/oj/spa",
+)
+
+_PERSONAL_DATA_LOPDGDD_SOURCE = Source(
+    title=(
+        "Ley Orgánica 3/2018, de 5 de diciembre, de Protección de Datos "
+        "Personales y garantía de los derechos digitales"
+    ),
+    locator="https://www.boe.es/buscar/act.php?id=BOE-A-2018-16673",
+)
+
 _STUDY_CONTENT = """1. Concepto y titulares
 El derecho de acceso permite a las personas solicitar información pública en los términos establecidos por la Ley 19/2013. Su reconocimiento constituye uno de los mecanismos principales de transparencia de la actividad pública. (Artículo 12)
 
@@ -105,6 +121,18 @@ La Ley 39/2015 establece las bases del procedimiento administrativo común de la
 
 2. Ámbito subjetivo de aplicación
 La ley se aplica al sector público, que comprende la Administración General del Estado, las Administraciones de las Comunidades Autónomas, las Entidades que integran la Administración Local y el sector público institucional. También determina las entidades que integran este último ámbito. (Artículo 2)
+"""
+
+_PERSONAL_DATA_STUDY_CONTENT = """1. Principios del tratamiento
+El Reglamento (UE) 2016/679 establece principios que deben regir el tratamiento de datos personales, entre ellos la licitud, lealtad y transparencia, la limitación de la finalidad, la minimización de datos, la exactitud, la limitación del plazo de conservación, la integridad y confidencialidad y la responsabilidad proactiva del responsable. (Artículo 5)
+
+2. Derechos de las personas
+Las personas cuyos datos son objeto de tratamiento disponen de derechos frente al responsable, entre ellos los derechos de acceso, rectificación, supresión, limitación del tratamiento, portabilidad y oposición, en los términos previstos por el Reglamento. (Artículos 15 a 22)
+
+3. Obligaciones y responsabilidad
+El responsable debe aplicar medidas adecuadas para garantizar y poder demostrar que el tratamiento cumple el Reglamento. El régimen incluye obligaciones organizativas y técnicas, protección de datos desde el diseño y por defecto, seguridad del tratamiento y, cuando proceda, la notificación de violaciones de seguridad y la realización de evaluaciones de impacto. Los encargados del tratamiento también quedan sujetos a obligaciones específicas. La normativa española complementa el régimen europeo en los ámbitos que le corresponden.
+
+Las referencias principales para este contenido son el Reglamento (UE) 2016/679 y la Ley Orgánica 3/2018.
 """
 
 _IDENTITY_ELECTRONIC_SIGNATURE_STUDY_CONTENT = """1. Marco jurídico
@@ -152,6 +180,12 @@ _PROCEDURE_REQUIRED_ASPECTS = (
     "Procedimiento administrativo común y sus fases",
     "Procedimientos sancionador y de responsabilidad patrimonial",
     "Revisión de actos, recursos, iniciativa legislativa y potestad reglamentaria",
+)
+
+_PERSONAL_DATA_REQUIRED_ASPECTS = (
+    "Principios del tratamiento de datos personales",
+    "Derechos de las personas",
+    "Obligaciones y responsabilidad del responsable y encargado del tratamiento",
 )
 
 _IDENTITY_ELECTRONIC_SIGNATURE_REQUIRED_ASPECTS = (
@@ -210,6 +244,29 @@ def generate_common_administrative_procedure_material(
             title=current_need.topic,
             description=_PROCEDURE_STUDY_CONTENT,
             sources=(_PROCEDURE_CANONICAL_SOURCE,),
+            identity_key=current_need.identity_key,
+        ),
+    )
+
+
+def generate_personal_data_protection_material(
+    need: KnowledgeNeed,
+    repository: KnowledgeRepository,
+) -> Knowledge:
+    """Generate candidate-facing material for personal data protection."""
+    if need.topic != "Protección de datos personales":
+        raise ValueError(f"Unsupported study topic: {need.topic}")
+
+    return _get_or_generate(
+        need,
+        repository,
+        lambda current_need: Knowledge(
+            title=current_need.topic,
+            description=_PERSONAL_DATA_STUDY_CONTENT,
+            sources=(
+                _PERSONAL_DATA_GDPR_SOURCE,
+                _PERSONAL_DATA_LOPDGDD_SOURCE,
+            ),
             identity_key=current_need.identity_key,
         ),
     )
@@ -274,7 +331,7 @@ def generate_study_material_for_programme_unit(
         return generate_identity_and_electronic_signature_material(need, repository)
 
     if need.topic == "Protección de datos personales" and supports_personal_data_topic:
-        raise ValueError("Personal data protection study material is not implemented yet")
+        return generate_personal_data_protection_material(need, repository)
 
     raise ValueError(
         f"Knowledge need '{need.topic}' does not match programme item "
@@ -343,6 +400,9 @@ def derive_required_aspects_for_programme_unit(
     if supports_identity_topic:
         return _IDENTITY_ELECTRONIC_SIGNATURE_REQUIRED_ASPECTS
 
+    if "protección de datos personales" in normalized_title:
+        return _PERSONAL_DATA_REQUIRED_ASPECTS
+
     raise ValueError(
         f"No supported required-aspect scope can be derived from programme item "
         f"'{programme_unit.title}'"
@@ -363,6 +423,9 @@ def derive_covered_aspects(
         return required_aspects[:2]
 
     if knowledge.title == _IDENTITY_ELECTRONIC_SIGNATURE_TOPIC:
+        return required_aspects
+
+    if knowledge.title == "Protección de datos personales":
         return required_aspects
 
     raise ValueError(
