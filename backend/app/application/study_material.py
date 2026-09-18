@@ -166,7 +166,6 @@ _DATA_MODELING_SOURCE = Source(
     locator="https://www.iso.org/standard/61559.html",
 )
 
-
 _ACCESS_REQUIRED_ASPECTS = (
     "Concepto y titulares del derecho de acceso",
     "Qué se entiende por información pública",
@@ -204,6 +203,13 @@ _IDENTITY_ELECTRONIC_SIGNATURE_REQUIRED_ASPECTS = (
     "Servicios electrónicos de confianza y certificados",
     "Documento Nacional de Identidad físico y digital",
     "Identificación y firma ante las Administraciones Públicas",
+)
+
+_DATA_MODELING_REQUIRED_ASPECTS = (
+    "Entidades",
+    "Atributos",
+    "Relaciones",
+    "Metodologías y reglas de modelado",
 )
 
 
@@ -453,6 +459,15 @@ def derive_required_aspects_for_programme_unit(
     if "protección de datos personales" in normalized_title:
         return _PERSONAL_DATA_REQUIRED_ASPECTS
 
+    supports_data_modeling_topic = (
+        "modelado de datos" in normalized_title
+        and "entidades" in normalized_title
+        and "atributos" in normalized_title
+        and "relaciones" in normalized_title
+    )
+    if supports_data_modeling_topic:
+        return _DATA_MODELING_REQUIRED_ASPECTS
+
     raise ValueError(
         f"No supported required-aspect scope can be derived from programme item "
         f"'{programme_unit.title}'"
@@ -476,6 +491,9 @@ def derive_covered_aspects(
         return required_aspects
 
     if knowledge.title == "Protección de datos personales":
+        return required_aspects
+
+    if knowledge.title == _DATA_MODELING_TOPIC:
         return required_aspects
 
     raise ValueError(
