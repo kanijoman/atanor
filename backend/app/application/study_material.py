@@ -273,6 +273,26 @@ def generate_personal_data_protection_material(
     )
 
 
+def generate_data_modeling_material(
+    need: KnowledgeNeed,
+    repository: KnowledgeRepository,
+) -> Knowledge:
+    """Generate candidate-facing material for data modelling."""
+    if need.topic != _DATA_MODELING_TOPIC:
+        raise ValueError(f"Unsupported study topic: {need.topic}")
+
+    return _get_or_generate(
+        need,
+        repository,
+        lambda current_need: Knowledge(
+            title=current_need.topic,
+            description="",
+            sources=(),
+            identity_key=current_need.identity_key,
+        ),
+    )
+
+
 def generate_identity_and_electronic_signature_material(
     need: KnowledgeNeed,
     repository: KnowledgeRepository,
@@ -321,6 +341,12 @@ def generate_study_material_for_programme_unit(
         and "dni electrónico" in normalized_title
     )
     supports_personal_data_topic = "protección de datos personales" in normalized_title
+    supports_data_modeling_topic = (
+        "modelado de datos" in normalized_title
+        and "entidades" in normalized_title
+        and "atributos" in normalized_title
+        and "relaciones" in normalized_title
+    )
 
     if need.topic == _ACCESS_TOPIC and supports_access_topic:
         return generate_access_to_public_information_material(need, repository)
@@ -333,6 +359,9 @@ def generate_study_material_for_programme_unit(
 
     if need.topic == "Protección de datos personales" and supports_personal_data_topic:
         return generate_personal_data_protection_material(need, repository)
+
+    if need.topic == _DATA_MODELING_TOPIC and supports_data_modeling_topic:
+        return generate_data_modeling_material(need, repository)
 
     raise ValueError(
         f"Knowledge need '{need.topic}' does not match programme item "
