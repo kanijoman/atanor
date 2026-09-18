@@ -257,3 +257,36 @@ def test_data_modelling_study_content_explains_required_technical_concepts() -> 
     assert "metodología" in content
     assert "regla" in content
     assert "consistencia" in content
+
+
+def test_equivalent_programme_wordings_produce_the_same_knowledge_need() -> None:
+    first_unit = StudyProgrammeUnit(
+        number=1,
+        title=(
+            "Modelado de datos, metodologías y reglas. "
+            "Entidades, atributos y relaciones."
+        ),
+        start_page=1,
+        start_order=1,
+        end_page=1,
+        end_order=2,
+    )
+    second_unit = StudyProgrammeUnit(
+        number=2,
+        title=(
+            "Modelos de datos: entidades, atributos, relaciones, "
+            "metodologías y reglas de modelado."
+        ),
+        start_page=2,
+        start_order=1,
+        end_page=2,
+        end_order=2,
+    )
+
+    first_needs = derive_knowledge_needs_for_programme_unit(first_unit)
+    second_needs = derive_knowledge_needs_for_programme_unit(second_unit)
+
+    assert first_needs == second_needs
+    assert first_needs[0].identity_key == second_needs[0].identity_key
+    assert first_needs[0].topic == "Modelado de datos"
+    assert first_needs[0].depth == 1
