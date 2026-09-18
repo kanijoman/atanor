@@ -157,6 +157,7 @@ El Real Decreto 203/2021 desarrolla los sistemas de identificación y firma de l
 _ACCESS_TOPIC = "Derecho de acceso a la información pública"
 _PROCEDURE_TOPIC = "Procedimiento administrativo común"
 _IDENTITY_ELECTRONIC_SIGNATURE_TOPIC = "Identidad y firma electrónica"
+_DATA_MODELING_TOPIC = "Modelado de datos"
 
 _ACCESS_REQUIRED_ASPECTS = (
     "Concepto y titulares del derecho de acceso",
@@ -364,6 +365,14 @@ def derive_knowledge_needs_for_programme_unit(
 
     if "protección de datos personales" in normalized_title:
         return (KnowledgeNeed(topic="Protección de datos personales", depth=1),)
+
+    if (
+        "modelado de datos" in normalized_title
+        and "entidades" in normalized_title
+        and "atributos" in normalized_title
+        and "relaciones" in normalized_title
+    ):
+        return (KnowledgeNeed(topic=_DATA_MODELING_TOPIC, depth=1),)
 
     raise ValueError(
         f"No supported knowledge need can be derived from programme item "
