@@ -158,6 +158,14 @@ _ACCESS_TOPIC = "Derecho de acceso a la información pública"
 _PROCEDURE_TOPIC = "Procedimiento administrativo común"
 _IDENTITY_ELECTRONIC_SIGNATURE_TOPIC = "Identidad y firma electrónica"
 _DATA_MODELING_TOPIC = "Modelado de datos"
+_DATA_MODELING_SOURCE = Source(
+    title=(
+        "ISO/IEC 19763-12:2015, Information technology — Metamodel framework "
+        "for interoperability (MFI) — Part 12: Metamodel for information model registration"
+    ),
+    locator="https://www.iso.org/standard/61559.html",
+)
+
 
 _ACCESS_REQUIRED_ASPECTS = (
     "Concepto y titulares del derecho de acceso",
@@ -291,31 +299,7 @@ def generate_data_modeling_material(
                 "attributes, relationships, and the rules and methodologies used to "
                 "build a data model."
             ),
-            sources=(),
-            identity_key=current_need.identity_key,
-        ),
-    )
-
-
-def generate_data_modeling_material(
-    need: KnowledgeNeed,
-    repository: KnowledgeRepository,
-) -> Knowledge:
-    """Generate candidate-facing material for data modelling."""
-    if need.topic != _DATA_MODELING_TOPIC:
-        raise ValueError(f"Unsupported study topic: {need.topic}")
-
-    return _get_or_generate(
-        need,
-        repository,
-        lambda current_need: Knowledge(
-            title=current_need.topic,
-            description=(
-                "Conceptual representation of the data domain through entities, "
-                "attributes, relationships, and the rules and methodologies used to "
-                "build a data model."
-            ),
-            sources=(),
+            sources=(_DATA_MODELING_SOURCE,),
             identity_key=current_need.identity_key,
         ),
     )
@@ -369,12 +353,6 @@ def generate_study_material_for_programme_unit(
         and "dni electrónico" in normalized_title
     )
     supports_personal_data_topic = "protección de datos personales" in normalized_title
-    supports_data_modeling_topic = (
-        "modelado de datos" in normalized_title
-        and "entidades" in normalized_title
-        and "atributos" in normalized_title
-        and "relaciones" in normalized_title
-    )
     supports_data_modeling_topic = (
         "modelado de datos" in normalized_title
         and "entidades" in normalized_title
