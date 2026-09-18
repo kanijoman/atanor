@@ -418,16 +418,6 @@ def generate_study_material_for_programme_unit(
         and "polimorfismo" in normalized_title
         and "encapsulación" in normalized_title
     )
-    if (
-        "programación orientada a objetos" in normalized_title
-        and "clases" in normalized_title
-        and "objetos" in normalized_title
-        and "herencia" in normalized_title
-        and "polimorfismo" in normalized_title
-        and "encapsulación" in normalized_title
-    ):
-        return _OOP_REQUIRED_ASPECTS
-
     supports_data_modeling_topic = (
         (
             "modelado de datos" in normalized_title
@@ -546,6 +536,16 @@ def derive_required_aspects_for_programme_unit(
 
     if "protección de datos personales" in normalized_title:
         return _PERSONAL_DATA_REQUIRED_ASPECTS
+
+    if (
+        "programación orientada a objetos" in normalized_title
+        and "clases" in normalized_title
+        and "objetos" in normalized_title
+        and "herencia" in normalized_title
+        and "polimorfismo" in normalized_title
+        and "encapsulación" in normalized_title
+    ):
+        return _OOP_REQUIRED_ASPECTS
 
     supports_data_modeling_topic = (
         (
