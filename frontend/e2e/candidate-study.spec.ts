@@ -21,7 +21,7 @@ test("allows a candidate to go from a real BOE call to study material", async ({
   ).toBeVisible();
 
   const studyUnit = page.getByRole("link", {
-    name: /Ley 19\/2013.*transparencia/i,
+    name: /Ley 39\/2015.*Procedimiento Administrativo Común/i,
   });
 
   await expect(studyUnit).toBeVisible();
@@ -29,14 +29,12 @@ test("allows a candidate to go from a real BOE call to study material", async ({
 
   await expect(
     page.getByRole("heading", {
-      name: /Ley 19\/2013.*transparencia/i,
+      name: /Ley 39\/2015.*Procedimiento Administrativo Común/i,
     }),
   ).toBeVisible();
 
   await expect(
-    page.getByText(
-      "Knowledge need: Procedimiento administrativo común",
-    ),
+    page.getByText("Knowledge need: Procedimiento administrativo común"),
   ).toBeVisible();
 
   await expect(
@@ -46,6 +44,9 @@ test("allows a candidate to go from a real BOE call to study material", async ({
 
   await expect(
     page.getByRole("heading", { name: "Study coverage" }),
+  ).toBeVisible();
+  await expect(
+    page.getByText("Partial · 2 of 8 aspects covered (25%)"),
   ).toBeVisible();
   await expect(
     page.getByRole("heading", { name: "Covered aspects" }),
