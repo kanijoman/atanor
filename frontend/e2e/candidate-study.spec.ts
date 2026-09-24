@@ -35,14 +35,14 @@ test("allows a candidate to go from a real BOE call to study material", async ({
 
   await expect(
     page.getByText(
-      "Knowledge need: Derecho de acceso a la información pública",
+      "Knowledge need: Procedimiento administrativo común",
     ),
   ).toBeVisible();
 
   await expect(
     page.getByRole("heading", { name: "Study material" }),
   ).toBeVisible();
-  await expect(page.getByText(/Artículo 12/)).toBeVisible();
+  await expect(page.getByText(/Artículo 1/)).toBeVisible();
 
   await expect(
     page.getByRole("heading", { name: "Study coverage" }),
