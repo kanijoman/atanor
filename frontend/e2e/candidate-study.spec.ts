@@ -20,11 +20,8 @@ test("allows a candidate to go from a real BOE call to study material", async ({
     page.getByRole("heading", { name: "Programme I" }),
   ).toBeVisible();
 
-  const programmeContent = await page.getByRole("main").innerText();
-  throw new Error(`Programme I content:\n${programmeContent}`);
-
   const studyUnit = page.getByRole("link", {
-    name: /7\.\s+La Ley 39\/2015.*Procedimiento Administrativo Común/i,
+    name: /11\.\s+Las Leyes del Procedimiento Administrativo Común.*Administraciones Públicas/i,
   });
 
   await expect(studyUnit).toBeVisible();
