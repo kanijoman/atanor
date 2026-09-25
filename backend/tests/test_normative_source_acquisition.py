@@ -7,7 +7,6 @@ from app.application.normative_source import (
     RetrievedSource,
     acquire_normative_source,
 )
-from app.domain.models import Source
 
 
 @dataclass(frozen=True)
@@ -28,12 +27,12 @@ def test_catalog_resolves_ley_39_2015_from_programme_requirement() -> None:
     assert candidate is not None
     assert candidate.authority == "BOE"
     assert candidate.identifier == "BOE-A-2015-10565"
-    assert candidate.source == Source(
-        title=(
-            "Ley 39/2015, de 1 de octubre, del Procedimiento Administrativo "
-            "Común de las Administraciones Públicas"
-        ),
-        locator="https://www.boe.es/buscar/act.php?id=BOE-A-2015-10565",
+    assert candidate.source.title == (
+        "Ley 39/2015, de 1 de octubre, del Procedimiento Administrativo "
+        "Común de las Administraciones Públicas"
+    )
+    assert candidate.source.locator == (
+        "https://www.boe.es/buscar/act.php?id=BOE-A-2015-10565"
     )
 
 
