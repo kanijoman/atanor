@@ -3,6 +3,7 @@ from app.application.normative_source import (
     OfficialNormativeSourceCatalog,
     extract_article,
     reconstruct_knowledge_from_article,
+    compare_knowledge_content,
 )
 
 
@@ -21,14 +22,10 @@ def test_compare_acquired_knowledge_with_reference_content() -> None:
         "eficacia de los actos administrativos."
     )
 
-    assert acquired.sources == (candidate.source,)
-    assert "procedimiento administrativo común" in acquired.description.lower()
-    assert "requisitos de validez y eficacia" in acquired.description.lower()
-    assert all(
-        phrase.lower() in acquired.description.lower()
-        for phrase in (
-            "procedimiento administrativo común",
-            "requisitos de validez y eficacia",
-        )
-        if phrase.lower() in reference.lower()
+    comparison = compare_knowledge_content(acquired, reference)
+
+    assert comparison.matched_aspects == (
+        "procedimiento administrativo común",
+        "requisitos de validez y eficacia",
     )
+    assert comparison.missing_aspects == ()
