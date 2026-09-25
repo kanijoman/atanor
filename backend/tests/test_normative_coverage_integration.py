@@ -46,3 +46,39 @@ def test_acquired_normative_content_feeds_programme_coverage() -> None:
     assert summary.covered_count == 1
     assert summary.pending_aspects == required_aspects[1:]
     assert summary.coverage_percentage == 12.5
+
+
+
+def test_acquired_multiple_articles_feed_programme_coverage() -> None:
+    programme_unit = StudyProgrammeUnit(
+        number=11,
+        title="Las Leyes del Procedimiento Administrativo Común de las Administraciones",
+        start_page=1,
+        start_order=1,
+        end_page=1,
+        end_order=1,
+    )
+
+    candidate = OfficialNormativeSourceCatalog().resolve("Ley 39/2015")
+    assert candidate is not None
+
+    retrieved = HttpSourceRetriever().retrieve(candidate)
+    articles = extract_articles(retrieved, (1, 2))
+    acquired = reconstruct_knowledge_from_articles(retrieved, articles)
+
+    required_aspects = derive_required_aspects_for_programme_unit(programme_unit)
+    covered_aspects = derive_covered_aspects(programme_unit, acquired)
+    summary = build_study_coverage_summary(
+        KnowledgeNeed(topic="Procedimiento administrativo común", depth=1),
+        required_aspects,
+        covered_aspects,
+    )
+
+    assert summary.required_count == 8
+    assert summary.covered_aspects == (
+        "Objeto y finalidad del procedimiento administrativo común",
+        "Ámbito subjetivo de aplicación",
+    )
+    assert summary.covered_count == 2
+    assert summary.pending_aspects == required_aspects[2:]
+    assert summary.coverage_percentage == 25.0
