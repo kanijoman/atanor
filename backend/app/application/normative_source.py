@@ -6,6 +6,13 @@ from app.domain.models import Knowledge, Source
 
 
 @dataclass(frozen=True)
+class KnowledgeComparison:
+    matched_aspects: tuple[str, ...]
+    missing_aspects: tuple[str, ...]
+
+
+
+@dataclass(frozen=True)
 class NormativeSourceCandidate:
     source: Source
     authority: str
@@ -164,6 +171,32 @@ def extract_article(retrieved: RetrievedSource, article_number: int) -> Normativ
         title=title,
         content=" ".join(body),
     )
+def compare_knowledge_content(
+    acquired: Knowledge,
+    reference: str,
+) -> KnowledgeComparison:
+    """Compare acquired content with reference aspects using explicit phrases."""
+    reference_phrases = (
+        phrase.strip()
+        for phrase in reference.split(".")
+        if phrase.strip()
+    )
+    matched: list[str] = []
+    missing: list[str] = []
+    normalized_acquired = _normalize(acquired.description or "")
+
+    for phrase in reference_phrases:
+        normalized_phrase = _normalize(phrase)
+        if normalized_phrase in normalized_acquired:
+            matched.append(phrase)
+        else:
+            missing.append(phrase)
+
+    return KnowledgeComparison(
+        matched_aspects=tuple(matched),
+        missing_aspects=tuple(missing),
+    )
+
 
 def reconstruct_knowledge_from_article(
     retrieved: RetrievedSource,
