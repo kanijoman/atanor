@@ -29,7 +29,7 @@ test("allows a candidate to go from a real BOE call to study material", async ({
 
   await expect(
     page.getByRole("heading", {
-      name: /Ley 39\/2015.*Procedimiento Administrativo Común/i,
+      name: "Las Leyes del Procedimiento Administrativo Común de las Administraciones",
     }),
   ).toBeVisible();
 
