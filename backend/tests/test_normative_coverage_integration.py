@@ -4,6 +4,7 @@ from app.application.normative_source import (
     extract_article,
     extract_articles,
     reconstruct_knowledge_from_article,
+    reconstruct_knowledge_from_articles,
 )
 from app.application.study_material import (
     build_study_coverage_summary,
