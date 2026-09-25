@@ -2,7 +2,7 @@ from dataclasses import dataclass
 from typing import Protocol
 from urllib.request import Request, urlopen
 
-from app.domain.models import Source
+from app.domain.models import Knowledge, Source
 
 
 @dataclass(frozen=True)
@@ -163,6 +163,17 @@ def extract_article(retrieved: RetrievedSource, article_number: int) -> Normativ
         identifier=f"Artículo {article_number}",
         title=title,
         content=" ".join(body),
+    )
+
+def reconstruct_knowledge_from_article(
+    retrieved: RetrievedSource,
+    article: NormativeArticle,
+) -> Knowledge:
+    """Build a Knowledge candidate directly from an extracted normative article."""
+    return Knowledge(
+        title=article.title or article.identifier,
+        description=article.content,
+        sources=(retrieved.candidate.source,),
     )
 
 
