@@ -43,6 +43,18 @@ test("allows a candidate to go from a real BOE call to study material", async ({
   await expect(page.getByText(/Artículo 1/)).toBeVisible();
 
   await expect(
+    page.getByRole("heading", { name: "Sources" }),
+  ).toBeVisible();
+  const canonicalSource = page.getByRole("link", {
+    name: "Ley 39/2015, de 1 de octubre, del Procedimiento Administrativo Común de las Administraciones Públicas",
+  });
+  await expect(canonicalSource).toBeVisible();
+  await expect(canonicalSource).toHaveAttribute(
+    "href",
+    "https://www.boe.es/buscar/act.php?id=BOE-A-2015-10565",
+  );
+
+  await expect(
     page.getByRole("heading", { name: "Study coverage" }),
   ).toBeVisible();
   await expect(
