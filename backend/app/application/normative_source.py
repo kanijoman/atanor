@@ -171,6 +171,37 @@ def extract_article(retrieved: RetrievedSource, article_number: int) -> Normativ
         title=title,
         content=" ".join(body),
     )
+def extract_articles(
+    retrieved: RetrievedSource,
+    article_numbers: tuple[int, ...],
+) -> tuple[NormativeArticle, ...]:
+    """Extract multiple articles from the same normative source."""
+    return tuple(
+        article
+        for article_number in article_numbers
+        if (article := extract_article(retrieved, article_number)) is not None
+    )
+
+
+def reconstruct_knowledge_from_articles(
+    retrieved: RetrievedSource,
+    articles: tuple[NormativeArticle, ...],
+) -> Knowledge:
+    """Build Knowledge from multiple extracted articles of one normative source."""
+    if not articles:
+        raise ValueError("At least one normative article is required")
+
+    description = "\n\n".join(
+        f"{article.identifier}. {article.title}\n{article.content}".strip()
+        for article in articles
+    )
+    return Knowledge(
+        title=retrieved.candidate.source.title,
+        description=description,
+        sources=(retrieved.candidate.source,),
+    )
+
+
 def compare_knowledge_content(
     acquired: Knowledge,
     reference_aspects: tuple[str, ...],
