@@ -19,7 +19,7 @@ def test_acquire_multiple_articles_from_same_boe_source() -> None:
         "Artículo 2",
     )
     assert "Objeto de la Ley" in articles[0].title
-    assert "Ámbito de aplicación" in articles[1].title
+    assert "Ámbito subjetivo de aplicación." in articles[1].title
     assert "tiene por objeto" in knowledge.description
     assert "se aplica al sector público" in knowledge.description
     assert knowledge.sources == (candidate.source,)
