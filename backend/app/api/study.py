@@ -106,6 +106,13 @@ def get_study_material(unit_id: UUID) -> dict[str, object]:
             "title": knowledge_need.topic,
         },
         "study_material": knowledge.description or "",
+        "sources": [
+            {
+                "title": source.title,
+                "locator": source.locator,
+            }
+            for source in knowledge.sources
+        ],
         "coverage": {
             "status": coverage.status,
             "covered_count": coverage.covered_count,
