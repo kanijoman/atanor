@@ -43,9 +43,10 @@ def test_derives_knowledge_need_for_real_electronic_identity_programme_unit() ->
 
     needs = derive_knowledge_needs_for_programme_unit(programme_unit)
 
-    assert needs == (
-        KnowledgeNeed(topic="Identidad y firma electrónica", depth=1),
-    )
+    assert len(needs) == 1
+    assert needs[0].topic == "Identidad y firma electrónica"
+    assert needs[0].depth == 1
+    assert needs[0].identity_key == ("Identidad y firma electrónica", 1)
 
 
 def test_generates_hybrid_electronic_identity_material_with_multiple_canonical_sources() -> None:
