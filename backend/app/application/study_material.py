@@ -606,20 +606,21 @@ def _derive_procedure_covered_aspects(
     content = (knowledge.description or "").casefold()
 
     evidence = (
-        ("tiene por objeto", "establece las bases del procedimiento administrativo común"),
-        ("se aplica al sector público", "administración general del estado"),
+        ("tiene por objeto",),
+        ("se aplica al sector público",),
         ("interesados", "capacidad", "representación", "derechos"),
-        ("plazos", "medios electrónicos"),
+        ("actividad administrativa", "plazos", "medios electrónicos"),
         ("requisitos de validez", "eficacia de los actos administrativos"),
-        ("fases", "procedimiento administrativo común"),
-        ("sancionadora", "responsabilidad de las administraciones públicas"),
-        ("revisión de actos", "recursos", "potestad reglamentaria"),
+        ("fases del procedimiento", "iniciación", "ordenación", "instrucción", "finalización"),
+        ("procedimiento sancionador", "responsabilidad patrimonial"),
+        ("revisión de actos", "recursos administrativos", "iniciativa legislativa"),
     )
 
     return tuple(
         aspect
         for aspect, phrases in zip(required_aspects, evidence)
-        if any(phrase in content for phrase in phrases)
+        if all(phrase in content for phrase in phrases)
+        if phrases
     )
 
 def build_study_coverage_summary(
