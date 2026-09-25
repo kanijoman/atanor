@@ -96,6 +96,75 @@ class HttpSourceRetriever:
 
         return RetrievedSource(candidate=candidate, content=content)
 
+@dataclass(frozen=True)
+class NormativeArticle:
+    identifier: str
+    title: str
+    content: str
+
+
+def extract_article(retrieved: RetrievedSource, article_number: int) -> NormativeArticle | None:
+    """Extract one article from the HTML representation of a normative source."""
+    from html.parser import HTMLParser
+    import re
+
+    class _ArticleParser(HTMLParser):
+        def __init__(self) -> None:
+            super().__init__()
+            self.headings: list[tuple[str, str]] = []
+            self.current_tag: str | None = None
+            self.current_text: list[str] = []
+            self.elements: list[tuple[str, str]] = []
+
+        def handle_starttag(self, tag: str, attrs: list[tuple[str, str | None]]) -> None:
+            self.current_tag = tag
+            self.current_text = []
+
+        def handle_endtag(self, tag: str) -> None:
+            if self.current_tag == tag:
+                text = " ".join("".join(self.current_text).split())
+                if text:
+                    self.elements.append((tag, text))
+                self.current_tag = None
+                self.current_text = []
+
+        def handle_data(self, data: str) -> None:
+            if self.current_tag is not None:
+                self.current_text.append(data)
+
+    parser = _ArticleParser()
+    parser.feed(retrieved.content)
+
+    marker = re.compile(
+        rf"^Artículo\s+{article_number}(?:\.|\s)",
+        re.IGNORECASE,
+    )
+    start = next(
+        (
+            index
+            for index, (_, text) in enumerate(parser.elements)
+            if marker.match(text)
+        ),
+        None,
+    )
+    if start is None:
+        return None
+
+    heading = parser.elements[start][1]
+    title = heading.split(".", 1)[1].strip() if "." in heading else ""
+    body: list[str] = []
+    for tag, text in parser.elements[start + 1 :]:
+        if re.match(r"^Artículo\s+\d+(?:\.|\s)", text, re.IGNORECASE):
+            break
+        if tag in {"p", "div", "li"}:
+            body.append(text)
+
+    return NormativeArticle(
+        identifier=f"Artículo {article_number}",
+        title=title,
+        content=" ".join(body),
+    )
+
 
 def acquire_normative_source(
     text: str,
