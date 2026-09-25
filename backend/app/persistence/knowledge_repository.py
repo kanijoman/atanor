@@ -3,7 +3,9 @@ from uuid import UUID
 from sqlalchemy import select
 
 from app.domain.models import Knowledge as DomainKnowledge
+from app.domain.models import Source as DomainSource
 from app.persistence.models.knowledge import Knowledge
+from app.persistence.models.source import Source
 
 
 class SqlAlchemyKnowledgeRepository:
@@ -23,6 +25,10 @@ class SqlAlchemyKnowledgeRepository:
                 description=knowledge.description,
                 identity_key=identity_key,
             )
+            persisted.sources = [
+                self._get_or_create_source(session, source)
+                for source in knowledge.sources
+            ]
             session.add(persisted)
             session.commit()
             session.refresh(persisted)
@@ -50,6 +56,23 @@ class SqlAlchemyKnowledgeRepository:
         return f"{topic}\x1f{depth}"
 
     @staticmethod
+    def _get_or_create_source(session, source: DomainSource) -> Source:
+        persisted = session.scalar(
+            select(Source).where(Source.locator == (source.locator or ""))
+        )
+        if persisted is not None:
+            return persisted
+
+        persisted = Source(
+            id=source.id,
+            title=source.title,
+            locator=source.locator or "",
+        )
+        session.add(persisted)
+        session.flush()
+        return persisted
+
+    @staticmethod
     def _to_domain(knowledge: Knowledge) -> DomainKnowledge:
         identity_key = None
         if knowledge.identity_key is not None:
@@ -60,5 +83,13 @@ class SqlAlchemyKnowledgeRepository:
             id=knowledge.id,
             title=knowledge.title,
             description=knowledge.description,
+            sources=tuple(
+                DomainSource(
+                    id=source.id,
+                    title=source.title,
+                    locator=source.locator or None,
+                )
+                for source in knowledge.sources
+            ),
             identity_key=identity_key,
         )
