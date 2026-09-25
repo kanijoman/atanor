@@ -2,6 +2,7 @@ from app.application.normative_source import (
     HttpSourceRetriever,
     OfficialNormativeSourceCatalog,
     extract_article,
+    extract_articles,
     reconstruct_knowledge_from_article,
 )
 from app.application.study_material import (
