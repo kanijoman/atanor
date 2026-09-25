@@ -569,14 +569,14 @@ def derive_covered_aspects(
     programme_unit: StudyProgrammeUnit,
     knowledge: Knowledge,
 ) -> tuple[str, ...]:
-    """Derive the aspects explicitly covered by the current study material."""
+    """Derive the aspects covered by the current study material."""
     required_aspects = derive_required_aspects_for_programme_unit(programme_unit)
 
     if knowledge.title == _ACCESS_TOPIC:
         return required_aspects
 
     if knowledge.title == _PROCEDURE_TOPIC:
-        return required_aspects[:2]
+        return _derive_procedure_covered_aspects(knowledge, required_aspects)
 
     if knowledge.title == _IDENTITY_ELECTRONIC_SIGNATURE_TOPIC:
         return required_aspects
@@ -590,10 +590,37 @@ def derive_covered_aspects(
     if knowledge.title == _DATA_MODELING_TOPIC:
         return required_aspects
 
+    if knowledge.description and "procedimiento administrativo común" in knowledge.description.casefold():
+        return _derive_procedure_covered_aspects(knowledge, required_aspects)
+
     raise ValueError(
         f"Knowledge '{knowledge.title}' does not match the supported coverage scope"
     )
 
+
+def _derive_procedure_covered_aspects(
+    knowledge: Knowledge,
+    required_aspects: tuple[str, ...],
+) -> tuple[str, ...]:
+    """Derive procedure coverage from the acquired material content."""
+    content = (knowledge.description or "").casefold()
+
+    evidence = (
+        ("tiene por objeto", "establece las bases del procedimiento administrativo común"),
+        ("se aplica al sector público", "administración general del estado"),
+        ("interesados", "capacidad", "representación", "derechos"),
+        ("plazos", "medios electrónicos"),
+        ("requisitos de validez", "eficacia de los actos administrativos"),
+        ("fases", "procedimiento administrativo común"),
+        ("sancionadora", "responsabilidad de las administraciones públicas"),
+        ("revisión de actos", "recursos", "potestad reglamentaria"),
+    )
+
+    return tuple(
+        aspect
+        for aspect, phrases in zip(required_aspects, evidence)
+        if any(phrase in content for phrase in phrases)
+    )
 
 def build_study_coverage_summary(
     knowledge_need: KnowledgeNeed,
