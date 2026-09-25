@@ -100,6 +100,23 @@ export function StudyPage({ unitId }: StudyPageProps) {
             <h2 id="study-material-heading">Study material</h2>
             <div style={{ whiteSpace: "pre-wrap" }}>{study.study_material}</div>
           </section>
+
+          <section aria-labelledby="study-sources-heading">
+            <h2 id="study-sources-heading">Sources</h2>
+            <ul>
+              {study.sources.map((source) => (
+                <li key={source.title}>
+                  {source.locator ? (
+                    <a href={source.locator} target="_blank" rel="noreferrer">
+                      {source.title}
+                    </a>
+                  ) : (
+                    <span>{source.title}</span>
+                  )}
+                </li>
+              ))}
+            </ul>
+          </section>
         </>
       )}
     </main>
