@@ -9,6 +9,11 @@ type StudyCoverage = {
   pending_aspects: string[];
 };
 
+type StudySource = {
+  title: string;
+  locator: string | null;
+};
+
 type StudyResponse = {
   programme_unit: {
     id: string;
@@ -19,6 +24,7 @@ type StudyResponse = {
     title: string;
   };
   study_material: string;
+  sources: StudySource[];
   coverage: StudyCoverage;
 };
 
