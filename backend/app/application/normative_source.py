@@ -173,14 +173,10 @@ def extract_article(retrieved: RetrievedSource, article_number: int) -> Normativ
     )
 def compare_knowledge_content(
     acquired: Knowledge,
-    reference: str,
+    reference_aspects: tuple[str, ...],
 ) -> KnowledgeComparison:
-    """Compare acquired content with reference aspects using explicit phrases."""
-    reference_phrases = (
-        phrase.strip()
-        for phrase in reference.split(".")
-        if phrase.strip()
-    )
+    """Compare acquired content with explicit reference aspects."""
+    reference_phrases = reference_aspects
     matched: list[str] = []
     missing: list[str] = []
     normalized_acquired = _normalize(acquired.description or "")
