@@ -16,13 +16,12 @@ def test_compare_acquired_knowledge_with_reference_content() -> None:
     assert article is not None
 
     acquired = reconstruct_knowledge_from_article(retrieved, article)
-    reference = (
-        "La Ley 39/2015 establece las bases del procedimiento administrativo común "
-        "de las Administraciones Públicas y regula los requisitos de validez y "
-        "eficacia de los actos administrativos."
+    reference_aspects = (
+        "procedimiento administrativo común",
+        "requisitos de validez y eficacia",
     )
 
-    comparison = compare_knowledge_content(acquired, reference)
+    comparison = compare_knowledge_content(acquired, reference_aspects)
 
     assert comparison.matched_aspects == (
         "procedimiento administrativo común",
