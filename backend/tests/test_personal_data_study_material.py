@@ -1,8 +1,11 @@
 from app.application.study_material import (
+    build_study_coverage_summary,
+    derive_covered_aspects,
     derive_knowledge_needs_for_programme_unit,
+    derive_required_aspects_for_programme_unit,
     generate_study_material_for_programme_unit,
 )
-from app.domain.models import Knowledge, StudyProgrammeUnit
+from app.domain.models import Knowledge, KnowledgeNeed, StudyProgrammeUnit
 
 
 class InMemoryKnowledgeRepository:
@@ -76,3 +79,34 @@ def test_generates_personal_data_study_material_with_canonical_sources() -> None
     assert knowledge.sources[1].locator == (
         "https://www.boe.es/buscar/act.php?id=BOE-A-2018-16673"
     )
+
+
+def test_personal_data_study_material_covers_required_aspects() -> None:
+    programme_unit = real_personal_data_programme_unit()
+    need = derive_knowledge_needs_for_programme_unit(programme_unit)[0]
+    repository = InMemoryKnowledgeRepository()
+
+    knowledge = generate_study_material_for_programme_unit(
+        programme_unit,
+        need,
+        repository,
+    )
+    required_aspects = derive_required_aspects_for_programme_unit(programme_unit)
+    covered_aspects = derive_covered_aspects(programme_unit, knowledge)
+    summary = build_study_coverage_summary(
+        KnowledgeNeed(topic=need.topic, depth=need.depth),
+        required_aspects,
+        covered_aspects,
+    )
+
+    assert required_aspects == (
+        "Principios del tratamiento de datos personales",
+        "Derechos de las personas",
+        "Obligaciones y responsabilidad del responsable y encargado del tratamiento",
+    )
+    assert covered_aspects == required_aspects
+    assert summary.status == "covered"
+    assert summary.covered_count == 3
+    assert summary.required_count == 3
+    assert summary.pending_aspects == ()
+    assert summary.coverage_percentage == 100.0
