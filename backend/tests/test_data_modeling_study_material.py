@@ -1,5 +1,22 @@
-from app.application.study_material import derive_knowledge_needs_for_programme_unit
-from app.domain.models import StudyProgrammeUnit
+from app.application.study_material import (
+    derive_knowledge_needs_for_programme_unit,
+    generate_study_material_for_programme_unit,
+)
+from app.domain.models import Knowledge, StudyProgrammeUnit
+
+
+class InMemoryKnowledgeRepository:
+    def __init__(self) -> None:
+        self.knowledge: Knowledge | None = None
+
+    def save(self, knowledge: Knowledge) -> Knowledge:
+        self.knowledge = knowledge
+        return knowledge
+
+    def get_by_identity(self, identity_key: tuple[str, int]) -> Knowledge | None:
+        if self.knowledge is not None and self.knowledge.identity_key == identity_key:
+            return self.knowledge
+        return None
 
 
 def real_data_modeling_programme_unit() -> StudyProgrammeUnit:
@@ -25,3 +42,33 @@ def test_derives_knowledge_need_for_real_data_modeling_programme_unit() -> None:
     assert needs[0].topic == "Modelado de datos"
     assert needs[0].depth == 1
     assert needs[0].identity_key == ("Modelado de datos", 1)
+
+
+def test_generates_useful_data_modeling_study_material() -> None:
+    programme_unit = real_data_modeling_programme_unit()
+    need = derive_knowledge_needs_for_programme_unit(programme_unit)[0]
+    repository = InMemoryKnowledgeRepository()
+
+    knowledge = generate_study_material_for_programme_unit(
+        programme_unit,
+        need,
+        repository,
+    )
+
+    assert knowledge.title == "Modelado de datos"
+    assert knowledge.identity_key == ("Modelado de datos", 1)
+    assert knowledge.description is not None
+
+    study_content = knowledge.description.casefold()
+    assert "entidades" in study_content
+    assert "atributos" in study_content
+    assert "relaciones" in study_content
+    assert "modelo relacional" in study_content
+    assert "normalización" in study_content
+
+    assert len(knowledge.sources) == 1
+    assert knowledge.sources[0].title == (
+        "ISO/IEC 19763-12:2015, Information technology — Metamodel framework "
+        "for interoperability (MFI) — Part 12: Metamodel for information model registration"
+    )
+    assert knowledge.sources[0].locator == "https://www.iso.org/standard/61559.html"
