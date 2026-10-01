@@ -195,7 +195,7 @@ def _supports_topic(title: str, topic: str) -> bool:
     if topic == "Protección de datos personales":
         return "protección de datos personales" in normalized_title
     if topic == _OOP_TOPIC:
-        return all(term in normalized_title for term in ("programación orientada a objetos", "clases", "objetos", "herencia", "polimorfismo", "encapsulación"))
+        return ("programación orientada a objetos" in normalized_title and all(term in normalized_title for term in ("clases", "objetos", "herencia")) and any(term in normalized_title for term in ("métodos", "sobrecarga", "patrones de diseño", "uml")))
     if topic == _DATA_MODELING_TOPIC:
         return ("modelado de datos" in normalized_title or "modelos de datos" in normalized_title) and all(term in normalized_title for term in ("entidades", "atributos", "relaciones"))
     return False
