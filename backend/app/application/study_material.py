@@ -24,10 +24,6 @@ class StudyCoverageSummary:
     coverage_percentage: float
 
 
-# Preserve the existing module and change only the procedure coverage logic.
-# The full file content is intentionally reconstructed from the current main
-# version, with the procedure matcher made conservative below.
-
 _CANONICAL_SOURCE = Source(
     title="Ley 19/2013, de 9 de diciembre, de transparencia, acceso a la información pública y buen gobierno",
     locator="https://www.boe.es/buscar/act.php?id=BOE-A-2013-12887",
@@ -45,7 +41,6 @@ _PERSONAL_DATA_LOPDGDD_SOURCE = Source(title="Ley Orgánica 3/2018, de 5 de dici
 _OOP_SOURCE = Source(title="Python Documentation, Classes", locator="https://docs.python.org/3/tutorial/classes.html")
 _DATA_MODELING_SOURCE = Source(title="ISO/IEC 19763-12:2015, Information technology — Metamodel framework for interoperability (MFI) — Part 12: Metamodel for information model registration", locator="https://www.iso.org/standard/61559.html")
 
-# Existing study material is retained.
 _STUDY_CONTENT = """1. Concepto y titulares
 El derecho de acceso permite a las personas solicitar información pública en los términos establecidos por la Ley 19/2013. Su reconocimiento constituye uno de los mecanismos principales de transparencia de la actividad pública. (Artículo 12)
 
@@ -127,6 +122,23 @@ La herencia permite definir una clase a partir de otra, reutilizando y especiali
 
 4. Polimorfismo
 El polimorfismo permite trabajar con objetos de distintas clases mediante una interfaz o comportamiento común, de forma que una misma operación pueda producir un comportamiento adecuado al tipo concreto del objeto."""
+_DATA_MODELING_STUDY_CONTENT = """1. Entidades
+Una entidad representa un objeto, concepto o elemento del dominio que puede identificarse de forma independiente. En un modelo de datos, las entidades permiten representar los elementos sobre los que se necesita almacenar o relacionar información.
+
+2. Atributos
+Un atributo representa una propiedad o característica de una entidad. Los atributos describen el estado o las características relevantes de cada instancia y deben definirse de forma que su significado sea claro y consistente.
+
+3. Relaciones
+Una relación representa una asociación entre entidades. Al diseñar un modelo es necesario identificar qué entidades se relacionan y qué reglas de cardinalidad y participación existen entre ellas.
+
+4. Modelo relacional
+El modelo relacional representa los datos mediante relaciones, que en su representación habitual se materializan como tablas. Las filas representan ocurrencias y las columnas representan atributos. Las claves permiten identificar filas y establecer relaciones entre tablas, especialmente mediante claves primarias y foráneas.
+
+5. Normalización
+La normalización organiza las estructuras del modelo relacional para reducir redundancias y evitar anomalías de inserción, modificación y borrado. Se apoya en dependencias entre atributos y en formas normales. De manera introductoria, la primera forma normal exige valores atómicos; la segunda elimina determinadas dependencias parciales respecto de una clave compuesta; y la tercera busca eliminar dependencias transitivas de atributos no clave respecto de la clave.
+
+6. Metodologías y reglas de modelado
+El modelado de datos se apoya en metodologías, lenguajes y reglas que permiten construir representaciones consistentes del dominio. El diseño debe mantener la correspondencia entre las necesidades de información, las entidades y relaciones identificadas y la estructura relacional resultante."""
 _ACCESS_REQUIRED_ASPECTS = ("Concepto y titulares del derecho de acceso", "Qué se entiende por información pública", "Límites del derecho de acceso", "Protección de datos y acceso parcial", "Solicitud de acceso", "Inadmisión", "Tramitación", "Resolución", "Formalización del acceso", "Recursos y reclamaciones")
 _PROCEDURE_REQUIRED_ASPECTS = ("Objeto y finalidad del procedimiento administrativo común", "Ámbito subjetivo de aplicación", "Interesados, capacidad, representación y derechos", "Actividad administrativa, plazos y medios electrónicos", "Actos administrativos: requisitos, eficacia e invalidez", "Procedimiento administrativo común y sus fases", "Procedimientos sancionador y de responsabilidad patrimonial", "Revisión de actos, recursos, iniciativa legislativa y potestad reglamentaria")
 _PERSONAL_DATA_REQUIRED_ASPECTS = ("Principios del tratamiento de datos personales", "Derechos de las personas", "Obligaciones y responsabilidad del responsable y encargado del tratamiento")
@@ -161,7 +173,7 @@ def generate_personal_data_protection_material(need: KnowledgeNeed, repository: 
 
 
 def generate_data_modeling_material(need: KnowledgeNeed, repository: KnowledgeRepository) -> Knowledge:
-    return _material(need, repository, _DATA_MODELING_TOPIC, "1. Entidades\nUna entidad representa un objeto, concepto o elemento del dominio que puede identificarse de forma independiente.\n\n2. Atributos\nUn atributo representa una propiedad o característica de una entidad.\n\n3. Relaciones\nUna relación representa una asociación entre entidades o tipos de entidad.\n\n4. Metodologías y reglas de modelado\nEl modelado de datos se apoya en metodologías, lenguajes y reglas que permiten construir representaciones consistentes del dominio.", (_DATA_MODELING_SOURCE,))
+    return _material(need, repository, _DATA_MODELING_TOPIC, _DATA_MODELING_STUDY_CONTENT, (_DATA_MODELING_SOURCE,))
 
 
 def generate_object_oriented_programming_material(need: KnowledgeNeed, repository: KnowledgeRepository) -> Knowledge:
@@ -249,19 +261,6 @@ def _derive_procedure_covered_aspects(knowledge: Knowledge, required_aspects: tu
     characteristic regulatory subject to be developed, not merely mentioned.
     """
     content = (knowledge.description or "").casefold()
-    evidence = (
-        ("tiene por objeto",),
-        ("se aplica al sector público",),
-        ("interesados", "capacidad", "representación", "derechos"),
-        ("actividad administrativa", "plazos", "medios electrónicos"),
-        # Article 1 mentions this subject but does not develop it.
-        ("requisitos de validez", "eficacia de los actos administrativos", "requisitos de los actos administrativos"),
-        ("fases del procedimiento", "iniciación", "ordenación", "instrucción", "finalización"),
-        ("procedimiento sancionador", "responsabilidad patrimonial"),
-        ("revisión de actos", "recursos administrativos", "iniciativa legislativa"),
-    )
-    # The first experiment must distinguish article-level mention from actual
-    # development. Do not count aspect 5 from the generic phrase in article 1.
     if "tiene por objeto" in content:
         covered = [required_aspects[0]]
     else:
