@@ -1,5 +1,8 @@
 from app.application.study_material import (
+    build_study_coverage_summary,
+    derive_covered_aspects,
     derive_knowledge_needs_for_programme_unit,
+    derive_required_aspects_for_programme_unit,
     generate_study_material_for_programme_unit,
 )
 from app.domain.models import Knowledge, KnowledgeNeed, StudyProgrammeUnit
