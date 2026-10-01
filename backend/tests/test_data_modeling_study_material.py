@@ -110,3 +110,30 @@ def test_data_modeling_study_material_covers_required_aspects() -> None:
     assert summary.required_count == 6
     assert summary.pending_aspects == ()
     assert summary.coverage_percentage == 100.0
+
+
+def test_data_modeling_study_material_reports_partial_coverage() -> None:
+    programme_unit = real_data_modeling_programme_unit()
+    need = derive_knowledge_needs_for_programme_unit(programme_unit)[0]
+    required_aspects = derive_required_aspects_for_programme_unit(programme_unit)
+    covered_aspects = (
+        "Entidades",
+        "Atributos",
+        "Relaciones",
+        "Metodologías y reglas de modelado",
+    )
+
+    summary = build_study_coverage_summary(
+        KnowledgeNeed(topic=need.topic, depth=need.depth),
+        required_aspects,
+        covered_aspects,
+    )
+
+    assert summary.status == "partial"
+    assert summary.covered_count == 4
+    assert summary.required_count == 6
+    assert summary.pending_aspects == (
+        "Modelo relacional",
+        "Normalización",
+    )
+    assert summary.coverage_percentage == (4 / 6) * 100
