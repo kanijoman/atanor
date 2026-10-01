@@ -144,7 +144,7 @@ _PROCEDURE_REQUIRED_ASPECTS = ("Objeto y finalidad del procedimiento administrat
 _PERSONAL_DATA_REQUIRED_ASPECTS = ("Principios del tratamiento de datos personales", "Derechos de las personas", "Obligaciones y responsabilidad del responsable y encargado del tratamiento")
 _IDENTITY_ELECTRONIC_SIGNATURE_REQUIRED_ASPECTS = ("Marco jurídico de la identificación y firma electrónica", "Identificación electrónica y autenticación", "Firma electrónica y efectos jurídicos", "Servicios electrónicos de confianza y certificados", "Documento Nacional de Identidad físico y digital", "Identificación y firma ante las Administraciones Públicas")
 _OOP_REQUIRED_ASPECTS = ("Clases y objetos", "Encapsulación", "Herencia", "Polimorfismo")
-_DATA_MODELING_REQUIRED_ASPECTS = ("Entidades", "Atributos", "Relaciones", "Metodologías y reglas de modelado")
+_DATA_MODELING_REQUIRED_ASPECTS = ("Entidades", "Atributos", "Relaciones", "Modelo relacional", "Normalización", "Metodologías y reglas de modelado")
 
 
 def _get_or_generate(need: KnowledgeNeed, repository: KnowledgeRepository, generate: callable) -> Knowledge:
