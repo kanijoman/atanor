@@ -2,7 +2,7 @@ from app.application.study_material import (
     derive_knowledge_needs_for_programme_unit,
     generate_study_material_for_programme_unit,
 )
-from app.domain.models import Knowledge, StudyProgrammeUnit
+from app.domain.models import Knowledge, KnowledgeNeed, StudyProgrammeUnit
 
 
 class InMemoryKnowledgeRepository:
@@ -72,3 +72,38 @@ def test_generates_useful_data_modeling_study_material() -> None:
         "for interoperability (MFI) — Part 12: Metamodel for information model registration"
     )
     assert knowledge.sources[0].locator == "https://www.iso.org/standard/61559.html"
+
+
+
+def test_data_modeling_study_material_covers_required_aspects() -> None:
+    programme_unit = real_data_modeling_programme_unit()
+    need = derive_knowledge_needs_for_programme_unit(programme_unit)[0]
+    repository = InMemoryKnowledgeRepository()
+
+    knowledge = generate_study_material_for_programme_unit(
+        programme_unit,
+        need,
+        repository,
+    )
+    required_aspects = derive_required_aspects_for_programme_unit(programme_unit)
+    covered_aspects = derive_covered_aspects(programme_unit, knowledge)
+    summary = build_study_coverage_summary(
+        KnowledgeNeed(topic=need.topic, depth=need.depth),
+        required_aspects,
+        covered_aspects,
+    )
+
+    assert required_aspects == (
+        "Entidades",
+        "Atributos",
+        "Relaciones",
+        "Modelo relacional",
+        "Normalización",
+        "Metodologías y reglas de modelado",
+    )
+    assert covered_aspects == required_aspects
+    assert summary.status == "covered"
+    assert summary.covered_count == 6
+    assert summary.required_count == 6
+    assert summary.pending_aspects == ()
+    assert summary.coverage_percentage == 100.0
