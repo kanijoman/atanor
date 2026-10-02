@@ -20,6 +20,16 @@ const studyResponse = {
     covered_count: 2,
     required_count: 8,
     coverage_percentage: 25,
+    required_aspects: [
+      "Objeto y finalidad del procedimiento administrativo común",
+      "Ámbito subjetivo de aplicación",
+      "Interesados, capacidad, representación y derechos",
+      "Actividad administrativa, plazos y medios electrónicos",
+      "Actos administrativos: requisitos, eficacia e invalidez",
+      "Procedimiento administrativo común y sus fases",
+      "Procedimientos sancionador y de responsabilidad patrimonial",
+      "Revisión de actos, recursos, iniciativa legislativa y potestad reglamentaria",
+    ],
     covered_aspects: [
       "Objeto y finalidad del procedimiento administrativo común",
       "Ámbito subjetivo de aplicación",
@@ -64,7 +74,11 @@ describe("StudyPage", () => {
     expect(screen.getByText(/Artículo 12/)).toBeVisible();
     expect(screen.getByText("Study coverage")).toBeVisible();
     expect(screen.getByText("Partial · 2 of 8 aspects covered (25%)")).toBeVisible();
+    expect(screen.getByRole("heading", { name: "Study aspects" })).toBeVisible();
+    expect(screen.getByText("Objeto y finalidad del procedimiento administrativo común")).toBeVisible();
+    expect(screen.getByText("Covered")).toBeVisible();
     expect(screen.getByText("Interesados, capacidad, representación y derechos")).toBeVisible();
+    expect(screen.getAllByText("Pending").length).toBeGreaterThan(0);
     expect(fetchMock).toHaveBeenCalledWith("/api/study/units/unit-2");
   });
 
