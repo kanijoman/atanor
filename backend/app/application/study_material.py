@@ -253,10 +253,23 @@ def derive_covered_aspects(programme_unit: StudyProgrammeUnit, knowledge: Knowle
         _ACCESS_TOPIC,
         _IDENTITY_ELECTRONIC_SIGNATURE_TOPIC,
         "Protección de datos personales",
-        _OOP_TOPIC,
         _DATA_MODELING_TOPIC,
     }:
         return required_aspects
+    if knowledge.title == _OOP_TOPIC:
+        content = (knowledge.description or "").casefold()
+        aspect_signals = (
+            ("Objetos y clases", ("clase", "objeto")),
+            ("Herencia", ("herencia",)),
+            ("Métodos", ("método",)),
+            ("Sobrecarga", ("sobrecarga",)),
+            ("Ventajas e inconvenientes de la programación orientada a objetos", ("ventaja", "inconveniente")),
+            ("Patrones de diseño", ("patrón de diseño",)),
+            ("Lenguaje de modelado unificado (UML)", ("uml",)),
+        )
+        return tuple(
+            aspect for aspect, signals in aspect_signals if all(signal in content for signal in signals)
+        )
     raise ValueError(f"Knowledge '{knowledge.title}' does not match the supported coverage scope")
 
 
