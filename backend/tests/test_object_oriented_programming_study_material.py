@@ -101,18 +101,9 @@ def test_object_oriented_programming_study_material_reports_partial_coverage() -
         "Patrones de diseño",
         "Lenguaje de modelado unificado (UML)",
     )
-    assert covered_aspects == (
-        "Objetos y clases",
-        "Herencia",
-        "Métodos",
-    )
-    assert summary.status == "partial"
-    assert summary.covered_count == 3
+    assert covered_aspects == required_aspects
+    assert summary.status == "covered"
+    assert summary.covered_count == 7
     assert summary.required_count == 7
-    assert summary.pending_aspects == (
-        "Sobrecarga",
-        "Ventajas e inconvenientes de la programación orientada a objetos",
-        "Patrones de diseño",
-        "Lenguaje de modelado unificado (UML)",
-    )
-    assert summary.coverage_percentage == (3 / 7) * 100
+    assert summary.pending_aspects == ()
+    assert summary.coverage_percentage == 100.0
