@@ -48,7 +48,7 @@ Atanor currently supports:
 - requirement discovery and deterministic resolution;
 - user-oriented study requirements;
 - requirement scopes and knowledge needs;
-- binary knowledge coverage (`COVERED` / `MISSING`);
+- semantic study-coverage summaries with covered and pending aspects;
 - autonomous acquisition from an authoritative BOE source;
 - deterministic relevant-content extraction;
 - first reusable `Knowledge` construction;
@@ -159,7 +159,7 @@ Technology choices remain subordinate to validated product requirements.
 
 The first candidate study-material vertical is now proven at the application level, but the candidate does not yet have a simple interface for selecting a programme point and reading its generated material.
 
-The next mini-MVP should therefore expose this capability through the existing application interface before expanding the knowledge model or introducing additional infrastructure.
+The next mini-MVP should therefore turn the existing covered/pending information into an actionable candidate experience before expanding the knowledge model or introducing additional infrastructure.
 
 ## Vision
 
