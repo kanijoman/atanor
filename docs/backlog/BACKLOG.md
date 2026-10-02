@@ -7,8 +7,8 @@
 | Project | Atanor |
 | Document | BACKLOG |
 | Status | Active |
-| Version | 7.0 |
-| Last Updated | 2026-09-17 |
+| Version | 8.0 |
+| Last Updated | 2026-10-02 |
 | Audience | Contributors and Developers |
 
 ---
@@ -75,6 +75,8 @@ The current implementation supports heterogeneous text-based PDF structures thro
 
 The current candidate study flow preserves the official programme wording while exposing Atanor's derived `KnowledgeNeed`, candidate-facing study material and explicit semantic coverage information.
 
+AT-104 validated representative study-content casuistics across legal and technical domains. The experiments established an explicit distinction between programme scope, study requirements, study material and coverage. Coverage is only meaningful when study requirements are independently defined and supported by substantive evidence in the material. The object-oriented programming case also demonstrated that coverage detection must tolerate natural wording differences rather than depend on exact phrase matching.
+
 The validated Ley 39/2015 vertical demonstrates that coverage can be represented as an explicit aspect contract rather than inferred from textual coincidence. The current example exposes 2 of 8 required aspects as covered and identifies the remaining aspects as pending.
 
 These capabilities are validated against the project's real PDF samples and focused product tests. They do not imply universal support for arbitrary official-document formats or universal semantic coverage.
@@ -105,19 +107,11 @@ The next step should therefore be selected from the highest-value candidate prob
 
 ## Immediate Priority
 
-**Evaluate the next candidate-facing preparation capability.**
+**Turn study coverage into an actionable candidate experience.**
 
-Candidate feedback now establishes a useful baseline: a programme point can be opened, studied and understood in terms of what Atanor currently covers and what remains pending.
+AT-104 has established that Atanor can identify what a candidate needs to study and report covered versus pending aspects. The next step should make that information directly actionable in the candidate interface, so that the user can see what remains to study and use the result as part of an ongoing preparation workflow.
 
-Before implementing another technical vertical, evaluate which missing candidate capability would most improve the preparation workflow. Candidates include, depending on evidence:
-
-- increasing useful study-material breadth;
-- improving the depth and pedagogical quality of existing material;
-- turning coverage gaps into actionable study tasks;
-- introducing a first study-session or progress mechanism;
-- improving opportunity/call discovery and eligibility support.
-
-The choice should be driven by candidate value and evidence from the current workflow.
+The next increment must produce an observable candidate-facing improvement. It should not be another internal knowledge-model experiment unless that experiment is necessary to deliver the user-visible behavior.
 
 ---
 
