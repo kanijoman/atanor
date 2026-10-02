@@ -279,7 +279,7 @@ def derive_covered_aspects(programme_unit: StudyProgrammeUnit, knowledge: Knowle
             ("Métodos", ("método",)),
             ("Sobrecarga", ("sobrecarga",)),
             ("Ventajas e inconvenientes de la programación orientada a objetos", ("ventaja", "inconveniente")),
-            ("Patrones de diseño", ("patrón de diseño",)),
+            ("Patrones de diseño", ("patrones de diseño",)),
             ("Lenguaje de modelado unificado (UML)", ("uml",)),
         )
         return tuple(
