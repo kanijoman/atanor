@@ -1,5 +1,8 @@
 from app.application.study_material import (
+    build_study_coverage_summary,
+    derive_covered_aspects,
     derive_knowledge_needs_for_programme_unit,
+    derive_required_aspects_for_programme_unit,
     generate_study_material_for_programme_unit,
 )
 from app.domain.models import Knowledge, StudyProgrammeUnit
@@ -71,3 +74,45 @@ def test_generates_useful_object_oriented_programming_study_material() -> None:
     assert len(knowledge.sources) == 1
     assert knowledge.sources[0].title == "Python Documentation, Classes"
     assert knowledge.sources[0].locator == "https://docs.python.org/3/tutorial/classes.html"
+
+
+
+def test_object_oriented_programming_study_material_reports_partial_coverage() -> None:
+    programme_unit = real_object_oriented_programming_programme_unit()
+    need = derive_knowledge_needs_for_programme_unit(programme_unit)[0]
+    repository = InMemoryKnowledgeRepository()
+    knowledge = generate_study_material_for_programme_unit(programme_unit, need, repository)
+
+    required_aspects = derive_required_aspects_for_programme_unit(programme_unit)
+    covered_aspects = derive_covered_aspects(programme_unit, knowledge)
+
+    summary = build_study_coverage_summary(
+        need,
+        required_aspects,
+        covered_aspects,
+    )
+
+    assert required_aspects == (
+        "Objetos y clases",
+        "Herencia",
+        "Métodos",
+        "Sobrecarga",
+        "Ventajas e inconvenientes de la programación orientada a objetos",
+        "Patrones de diseño",
+        "Lenguaje de modelado unificado (UML)",
+    )
+    assert covered_aspects == (
+        "Objetos y clases",
+        "Herencia",
+        "Métodos",
+    )
+    assert summary.status == "partial"
+    assert summary.covered_count == 3
+    assert summary.required_count == 7
+    assert summary.pending_aspects == (
+        "Sobrecarga",
+        "Ventajas e inconvenientes de la programación orientada a objetos",
+        "Patrones de diseño",
+        "Lenguaje de modelado unificado (UML)",
+    )
+    assert summary.coverage_percentage == (3 / 7) * 100
