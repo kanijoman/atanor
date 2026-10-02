@@ -143,7 +143,15 @@ _ACCESS_REQUIRED_ASPECTS = ("Concepto y titulares del derecho de acceso", "Qué 
 _PROCEDURE_REQUIRED_ASPECTS = ("Objeto y finalidad del procedimiento administrativo común", "Ámbito subjetivo de aplicación", "Interesados, capacidad, representación y derechos", "Actividad administrativa, plazos y medios electrónicos", "Actos administrativos: requisitos, eficacia e invalidez", "Procedimiento administrativo común y sus fases", "Procedimientos sancionador y de responsabilidad patrimonial", "Revisión de actos, recursos, iniciativa legislativa y potestad reglamentaria")
 _PERSONAL_DATA_REQUIRED_ASPECTS = ("Principios del tratamiento de datos personales", "Derechos de las personas", "Obligaciones y responsabilidad del responsable y encargado del tratamiento")
 _IDENTITY_ELECTRONIC_SIGNATURE_REQUIRED_ASPECTS = ("Marco jurídico de la identificación y firma electrónica", "Identificación electrónica y autenticación", "Firma electrónica y efectos jurídicos", "Servicios electrónicos de confianza y certificados", "Documento Nacional de Identidad físico y digital", "Identificación y firma ante las Administraciones Públicas")
-_OOP_REQUIRED_ASPECTS = ("Clases y objetos", "Encapsulación", "Herencia", "Polimorfismo")
+_OOP_REQUIRED_ASPECTS = (
+    "Objetos y clases",
+    "Herencia",
+    "Métodos",
+    "Sobrecarga",
+    "Ventajas e inconvenientes de la programación orientada a objetos",
+    "Patrones de diseño",
+    "Lenguaje de modelado unificado (UML)",
+)
 _DATA_MODELING_REQUIRED_ASPECTS = ("Entidades", "Atributos", "Relaciones", "Modelo relacional", "Normalización", "Metodologías y reglas de modelado")
 
 
