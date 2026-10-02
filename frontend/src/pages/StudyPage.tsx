@@ -5,6 +5,7 @@ type StudyCoverage = {
   covered_count: number;
   required_count: number;
   coverage_percentage: number;
+  required_aspects: string[];
   covered_aspects: string[];
   pending_aspects: string[];
 };
@@ -73,27 +74,18 @@ export function StudyPage({ unitId }: StudyPageProps) {
               {coverageStatusLabel[study.coverage.status]} · {study.coverage.covered_count} of {study.coverage.required_count} aspects covered ({study.coverage.coverage_percentage}%)
             </p>
 
-            {study.coverage.covered_aspects.length > 0 && (
-              <>
-                <h3>Covered aspects</h3>
-                <ul>
-                  {study.coverage.covered_aspects.map((aspect) => (
-                    <li key={aspect}>{aspect}</li>
-                  ))}
-                </ul>
-              </>
-            )}
+            <h3>Study aspects</h3>
+            <ul>
+              {study.coverage.required_aspects.map((aspect) => {
+                const covered = study.coverage.covered_aspects.includes(aspect);
 
-            {study.coverage.pending_aspects.length > 0 && (
-              <>
-                <h3>Pending aspects</h3>
-                <ul>
-                  {study.coverage.pending_aspects.map((aspect) => (
-                    <li key={aspect}>{aspect}</li>
-                  ))}
-                </ul>
-              </>
-            )}
+                return (
+                  <li key={aspect}>
+                    <span>{covered ? "Covered" : "Pending"}</span> · {aspect}
+                  </li>
+                );
+              })}
+            </ul>
           </section>
 
           <section aria-labelledby="study-material-heading">
