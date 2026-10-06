@@ -7,8 +7,8 @@
 | Project | Atanor |
 | Document | ARCHITECTURE |
 | Status | 🟢 Active |
-| Version | 1.0 |
-| Last Updated | 2026-09-17 |
+| Version | 1.1 |
+| Last Updated | 2026-10-06 |
 | Audience | Contributors and Developers |
 
 ---
@@ -80,7 +80,19 @@ AT-096 subsequently validated an explicit semantic coverage contract for candida
 
 ## Interface Layer
 
-Provides adapters for application use cases. The current implementation uses a minimal standard-library CLI and a web interface. Interfaces expose validated application behavior without owning domain rules.
+Provides adapters for application use cases. The current implementation uses a minimal standard-library CLI, a FastAPI HTTP API and a React web interface (`frontend/`). Interfaces expose validated application behavior without owning domain rules.
+
+The HTTP API currently exposes:
+
+| Endpoint | Purpose |
+|---|---|
+| `GET /`, `GET /health` | Application root and health check. |
+| `GET /api/calls`, `/api/calls/{id}` | List and retrieve imported calls. |
+| `GET /api/calls/{id}/programmes` | Programmes belonging to a call. |
+| `GET /api/study/programmes`, `/api/study/programmes/{id}` | Programmes and their units, including study-material availability. |
+| `GET /api/study/units/{id}` | Study material and semantic coverage summary (covered, pending and required aspects) for a unit. |
+
+The web interface follows the candidate flow call → programme → unit → study material and checklist.
 
 ## Application Layer
 

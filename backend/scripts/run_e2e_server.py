@@ -38,4 +38,4 @@ def prepare_database() -> None:
 
 if __name__ == "__main__":
     prepare_database()
-    uvicorn.run(app, host="127.0.0.1", port=8000)
+    uvicorn.run(app, host="127.0.0.1", port=int(os.environ.get("E2E_BACKEND_PORT", "8000")))

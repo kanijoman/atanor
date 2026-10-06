@@ -6,6 +6,10 @@ from app.application.normative_source import (
 )
 
 
+import pytest
+
+
+@pytest.mark.network
 def test_live_boe_retrieval_extracts_ley_39_2015_article_1() -> None:
     candidate = OfficialNormativeSourceCatalog().resolve("Ley 39/2015")
     assert candidate is not None

@@ -228,6 +228,8 @@ def test_data_modelling_casuistic_represents_structured_technical_concepts() -> 
         "Entidades",
         "Atributos",
         "Relaciones",
+        "Modelo relacional",
+        "Normalización",
         "Metodologías y reglas de modelado",
     )
     assert covered_aspects == required_aspects
@@ -289,8 +291,10 @@ def test_oop_casuistic_represents_hierarchical_technical_concepts() -> None:
     programme_unit = StudyProgrammeUnit(
         number=1,
         title=(
-            "Programación orientada a objetos. Clases, objetos, "
-            "herencia, polimorfismo y encapsulación."
+            "Diseño y programación orientada a objetos. Elementos y componentes "
+            "software: objetos, clases, herencia, métodos, sobrecarga. Ventajas "
+            "e inconvenientes. Patrones de diseño y lenguaje de modelado unificado "
+            "(UML)."
         ),
         start_page=1,
         start_order=1,
@@ -325,9 +329,12 @@ def test_oop_casuistic_represents_hierarchical_technical_concepts() -> None:
     covered_aspects = derive_covered_aspects(programme_unit, knowledge)
 
     assert required_aspects == (
-        "Clases y objetos",
-        "Encapsulación",
+        "Objetos y clases",
         "Herencia",
-        "Polimorfismo",
+        "Métodos",
+        "Sobrecarga",
+        "Ventajas e inconvenientes de la programación orientada a objetos",
+        "Patrones de diseño",
+        "Lenguaje de modelado unificado (UML)",
     )
     assert covered_aspects == required_aspects

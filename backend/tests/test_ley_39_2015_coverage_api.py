@@ -79,6 +79,16 @@ def test_get_ley_39_2015_study_material_exposes_coverage_summary(
         "covered_count": 2,
         "required_count": 8,
         "coverage_percentage": 25,
+        "required_aspects": [
+            "Objeto y finalidad del procedimiento administrativo común",
+            "Ámbito subjetivo de aplicación",
+            "Interesados, capacidad, representación y derechos",
+            "Actividad administrativa, plazos y medios electrónicos",
+            "Actos administrativos: requisitos, eficacia e invalidez",
+            "Procedimiento administrativo común y sus fases",
+            "Procedimientos sancionador y de responsabilidad patrimonial",
+            "Revisión de actos, recursos, iniciativa legislativa y potestad reglamentaria",
+        ],
         "covered_aspects": [
             "Objeto y finalidad del procedimiento administrativo común",
             "Ámbito subjetivo de aplicación",
