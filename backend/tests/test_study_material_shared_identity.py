@@ -3,25 +3,7 @@ from app.application.study_material import (
     generate_study_material_for_programme_unit,
 )
 from app.domain.models import Knowledge, StudyProgrammeUnit
-
-
-class InMemoryKnowledgeRepository:
-    def __init__(self) -> None:
-        self.items: dict = {}
-
-    def save(self, knowledge: Knowledge) -> Knowledge:
-        self.items[knowledge.id] = knowledge
-        return knowledge
-
-    def get_by_identity(self, identity_key: tuple[str, int]) -> Knowledge | None:
-        return next(
-            (
-                knowledge
-                for knowledge in self.items.values()
-                if knowledge.identity_key == identity_key
-            ),
-            None,
-        )
+from support import InMemoryKnowledgeRepository
 
 
 def test_same_knowledge_need_from_different_programme_units_reuses_material() -> None:

@@ -2,9 +2,10 @@ import "@testing-library/jest-dom/vitest";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { cleanup, render, screen } from "@testing-library/react";
 
+import type { StudyResponse } from "../api";
 import { StudyPage } from "./StudyPage";
 
-const studyResponse = {
+const studyResponse: StudyResponse = {
   programme_unit: {
     id: "unit-2",
     number: 2,
@@ -86,7 +87,7 @@ describe("StudyPage", () => {
     expect(screen.getAllByText("Covered")).toHaveLength(2);
     expect(screen.getAllByText("Pending")).toHaveLength(6);
     expect(screen.getByRole("link", { name: /Ley 19\/2013/ })).toBeVisible();
-    expect(fetchMock).toHaveBeenCalledWith("/api/study/units/unit-2");
+    expect(fetchMock).toHaveBeenCalledWith("/api/study/units/unit-2", expect.objectContaining({ signal: expect.any(AbortSignal) }));
   });
 
   it("shows an error when study material cannot be loaded", async () => {

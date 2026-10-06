@@ -141,6 +141,6 @@ describe("ProgrammePage", () => {
       name: /Derecho de acceso a la información pública/,
     });
 
-    expect(fetchMock).toHaveBeenCalledWith("/api/study/programmes/programme-1");
+    expect(fetchMock).toHaveBeenCalledWith("/api/study/programmes/programme-1", expect.objectContaining({ signal: expect.any(AbortSignal) }));
   });
 });

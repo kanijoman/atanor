@@ -89,6 +89,16 @@ describe("CallsPage", () => {
     render(<CallsPage />);
 
     await screen.findByRole("link", { name: calls[0].title });
-    expect(fetchMock).toHaveBeenCalledWith("/api/calls");
+    expect(fetchMock).toHaveBeenCalledWith("/api/calls", expect.objectContaining({ signal: expect.any(AbortSignal) }));
+  });
+});
+
+describe("CallsPage failure handling", () => {
+  it("shows an error when the API responds with a server error", async () => {
+    vi.stubGlobal("fetch", vi.fn().mockResolvedValue(new Response("boom", { status: 500 })));
+
+    render(<CallsPage />);
+
+    expect(await screen.findByText("Unable to load calls.")).toBeVisible();
   });
 });

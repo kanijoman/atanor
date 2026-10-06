@@ -1,33 +1,5 @@
-import { useEffect, useState } from "react";
-
-type StudyCoverage = {
-  status: "missing" | "partial" | "covered";
-  covered_count: number;
-  required_count: number;
-  coverage_percentage: number;
-  required_aspects: string[];
-  covered_aspects: string[];
-  pending_aspects: string[];
-};
-
-type StudySource = {
-  title: string;
-  locator: string | null;
-};
-
-type StudyResponse = {
-  programme_unit: {
-    id: string;
-    number: number;
-    title: string;
-  };
-  knowledge_need: {
-    title: string;
-  };
-  study_material: string;
-  sources: StudySource[];
-  coverage: StudyCoverage;
-};
+import { type StudyCoverage, type StudyResponse, fetchJson } from "../api";
+import { useApi } from "../useApi";
 
 type StudyPageProps = {
   unitId: string;
@@ -40,30 +12,18 @@ const coverageStatusLabel: Record<StudyCoverage["status"], string> = {
 };
 
 export function StudyPage({ unitId }: StudyPageProps) {
-  const [study, setStudy] = useState<StudyResponse | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(false);
-
-  useEffect(() => {
-    fetch(`/api/study/units/${unitId}`)
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error("Unable to load study material");
-        }
-        return response.json() as Promise<StudyResponse>;
-      })
-      .then(setStudy)
-      .catch(() => setError(true))
-      .finally(() => setLoading(false));
-  }, [unitId]);
+  const state = useApi(unitId, (signal) =>
+    fetchJson<StudyResponse>(`/api/study/units/${unitId}`, signal),
+  );
+  const study = state.status === "ready" ? state.data : null;
 
   return (
     <main>
-      {loading && <p>Loading study material…</p>}
+      {state.status === "loading" && <p>Loading study material…</p>}
 
-      {!loading && error && <p>Unable to load study material.</p>}
+      {state.status === "error" && <p>Unable to load study material.</p>}
 
-      {!loading && !error && study && (
+      {study && (
         <>
           <h1>{study.programme_unit.title}</h1>
           <p>Knowledge need: {study.knowledge_need.title}</p>

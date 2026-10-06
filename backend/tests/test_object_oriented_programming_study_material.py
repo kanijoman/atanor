@@ -6,20 +6,7 @@ from app.application.study_material import (
     generate_study_material_for_programme_unit,
 )
 from app.domain.models import Knowledge, StudyProgrammeUnit
-
-
-class InMemoryKnowledgeRepository:
-    def __init__(self) -> None:
-        self.knowledge: Knowledge | None = None
-
-    def save(self, knowledge: Knowledge) -> Knowledge:
-        self.knowledge = knowledge
-        return knowledge
-
-    def get_by_identity(self, identity_key: tuple[str, int]) -> Knowledge | None:
-        if self.knowledge is not None and self.knowledge.identity_key == identity_key:
-            return self.knowledge
-        return None
+from support import InMemoryKnowledgeRepository
 
 
 def real_object_oriented_programming_programme_unit() -> StudyProgrammeUnit:
@@ -74,7 +61,6 @@ def test_generates_useful_object_oriented_programming_study_material() -> None:
     assert len(knowledge.sources) == 1
     assert knowledge.sources[0].title == "Python Documentation, Classes"
     assert knowledge.sources[0].locator == "https://docs.python.org/3/tutorial/classes.html"
-
 
 
 def test_object_oriented_programming_study_material_reports_partial_coverage() -> None:

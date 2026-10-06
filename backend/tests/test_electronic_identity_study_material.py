@@ -6,25 +6,7 @@ from app.application.study_material import (
     generate_study_material_for_programme_unit,
 )
 from app.domain.models import KnowledgeNeed, StudyProgrammeUnit
-
-
-class InMemoryKnowledgeRepository:
-    def __init__(self) -> None:
-        self.items = {}
-
-    def save(self, knowledge):
-        self.items[knowledge.id] = knowledge
-        return knowledge
-
-    def get_by_identity(self, identity_key: tuple[str, int]):
-        return next(
-            (
-                knowledge
-                for knowledge in self.items.values()
-                if knowledge.identity_key == identity_key
-            ),
-            None,
-        )
+from support import InMemoryKnowledgeRepository
 
 
 def real_electronic_identity_programme_unit() -> StudyProgrammeUnit:
