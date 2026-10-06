@@ -7,8 +7,8 @@
 | Project | Atanor |
 | Document | BACKLOG |
 | Status | Active |
-| Version | 8.0 |
-| Last Updated | 2026-10-02 |
+| Version | 8.1 |
+| Last Updated | 2026-10-06 |
 | Audience | Contributors and Developers |
 
 ---
@@ -72,6 +72,7 @@ The current implementation supports heterogeneous text-based PDF structures thro
 - Candidate-facing study material for validated units in two distinct legal domains: Ley 19/2013 and Ley 39/2015.
 - Candidate-facing study-material availability in programme listings, so supported units are directly actionable and unsupported units are identifiable without probing a failing endpoint.
 - Candidate-facing semantic study-coverage summaries showing covered and pending aspects for supported units.
+- Actionable study-aspect checklist in the candidate interface, backed by explicitly exposed required aspects (AT-105).
 
 The current candidate study flow preserves the official programme wording while exposing Atanor's derived `KnowledgeNeed`, candidate-facing study material and explicit semantic coverage information.
 
@@ -107,11 +108,11 @@ The next step should therefore be selected from the highest-value candidate prob
 
 ## Immediate Priority
 
-**Turn study coverage into an actionable candidate experience.**
+**Select the next increment of preparation breadth or depth from evidence.**
 
-AT-104 has established that Atanor can identify what a candidate needs to study and report covered versus pending aspects. The next step should make that information directly actionable in the candidate interface, so that the user can see what remains to study and use the result as part of an ongoing preparation workflow.
+AT-105 made covered and pending study aspects actionable in the candidate interface. The next step should be chosen by measuring which programme units of the real samples are supported, then deciding between supporting more units (for example further authoritative BOE sources) or deepening the material for units already supported (for example the pending Ley 39/2015 aspects).
 
-The next increment must produce an observable candidate-facing improvement. It should not be another internal knowledge-model experiment unless that experiment is necessary to deliver the user-visible behavior.
+The next increment must produce an observable candidate-facing improvement. Supporting work, such as moving study-material topics from hardcoded constants into a registry, should be delivered together with the capability that requires it.
 
 ---
 
@@ -146,14 +147,14 @@ Future work is intentionally treated as hypotheses rather than commitments.
 | Artifact | Responsibility |
 | --- | --- |
 | `README.md` | Project introduction, current high-level capability and contributor orientation. |
-| `docs/foundations/FOUNDATIONS.md` | Product mission, vision and foundational principles. |
+| `docs/foundation/FOUNDATIONS.md` | Product mission, vision and foundational principles. |
 | `docs/roadmap/ROADMAP.md` | Strategic product direction and major stages; not individual tasks. |
 | `docs/backlog/BACKLOG.md` | Current product state, active hypothesis and immediate priorities. |
 | GitHub Issues | Concrete tasks, acceptance criteria, discussion and execution status. |
 | `docs/architecture/ARCHITECTURE.md` | Validated architecture, domain/application boundaries and architectural decisions. |
 | `docs/conventions/CONVENTIONS.md` | Engineering and development practices. |
-| `docs/technology/TECHNOLOGY.md` | Adopted, deferred and rejected technology choices. |
-| `docs/migrations/MIGRATIONS.md` | Database migration strategy and conventions. |
+| `docs/architecture/TECHNOLOGY.md` | Adopted, deferred and rejected technology choices. |
+| `docs/architecture/MIGRATIONS.md` | Database migration strategy and conventions. |
 | `backend/experiments/` | Exploratory investigations only while they are actively useful; completed experiments should be removed once their conclusions are captured by product code, tests or documentation. |
 | Git history | Actual implementation history and technical change record. |
 

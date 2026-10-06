@@ -100,13 +100,13 @@ Project documentation is organized by responsibility:
 
 | Document | Purpose |
 |---|---|
-| `docs/foundations/FOUNDATIONS.md` | Product mission, vision and foundational principles. |
+| `docs/foundation/FOUNDATIONS.md` | Product mission, vision and foundational principles. |
 | `docs/roadmap/ROADMAP.md` | Strategic product direction and major stages. |
 | `docs/backlog/BACKLOG.md` | Current product state and immediate priorities. |
 | `docs/architecture/ARCHITECTURE.md` | Validated architecture and architectural decisions. |
 | `docs/conventions/CONVENTIONS.md` | Development and engineering conventions. |
-| `docs/technology/TECHNOLOGY.md` | Technology decisions. |
-| `docs/migrations/MIGRATIONS.md` | Database migration strategy. |
+| `docs/architecture/TECHNOLOGY.md` | Technology decisions. |
+| `docs/architecture/MIGRATIONS.md` | Database migration strategy. |
 | GitHub Issues | Concrete task definition, acceptance criteria, discussion and status. |
 
 The backlog intentionally does not duplicate the detailed history of completed tasks. GitHub Issues and Git history provide the execution record.
@@ -151,15 +151,26 @@ The current backend stack is:
 - Alembic
 - SQLite
 
+The candidate-facing web interface (`frontend/`) uses React, Vite, Vitest and Playwright, managed with pnpm on Node 26. It talks to the backend through `/api`, proxied by the Vite dev server.
+
+### Running locally
+
+```text
+cd backend  && uv sync && uv run alembic upgrade head && uv run uvicorn app.main:app
+cd frontend && pnpm install && pnpm dev
+```
+
+Tests: `uv run pytest` (backend; `test_normative_boe_integration.py` calls the live BOE), `pnpm test` and `pnpm test:e2e` (frontend).
+
 The project deliberately has no mandatory paid dependency and does not currently require Docker, PostgreSQL, vector databases, graph databases, external AI services or crawling infrastructure.
 
 Technology choices remain subordinate to validated product requirements.
 
 ## Current Product Gap
 
-The first candidate study-material vertical is now proven at the application level, but the candidate does not yet have a simple interface for selecting a programme point and reading its generated material.
+The candidate can now browse calls, programmes and units in the web interface, read study material for supported units and see an actionable checklist of covered and pending study aspects (AT-105).
 
-The next mini-MVP should therefore turn the existing covered/pending information into an actionable candidate experience before expanding the knowledge model or introducing additional infrastructure.
+The main gap is breadth and usefulness of preparation: only a small deterministic subset of programme units is supported, and the material is deliberately minimal. The next mini-MVP should be selected from evidence about the highest-value remaining candidate problem before expanding the knowledge model or introducing additional infrastructure.
 
 ## Vision
 

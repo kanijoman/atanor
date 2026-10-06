@@ -7,8 +7,8 @@
 | Project      | Atanor     |
 | Document     | Technology |
 | Status       | 🟢 Active  |
-| Version      | 0.4        |
-| Last Updated | 2026-08-11 |
+| Version      | 0.5        |
+| Last Updated | 2026-10-06 |
 | Audience     | Developers |
 
 ---
@@ -119,6 +119,20 @@ Alembic provides explicit, versioned database schema migrations. Persistent sche
 
 ---
 
+### 3.4 Frontend
+
+| Technology | Status     | Purpose                                   |
+| ---------- | ---------- | ----------------------------------------- |
+| React 19   | 🟢 Adopted | Candidate-facing web interface            |
+| Vite       | 🟢 Adopted | Development server, build and `/api` proxy |
+| Vitest     | 🟢 Adopted | Component and unit tests                  |
+| Playwright | 🟢 Adopted | End-to-end candidate-flow tests           |
+| pnpm       | 🟢 Adopted | Frontend package management (Node 26)     |
+
+The frontend lives in `frontend/` and has no router or state-management dependency; routing is minimal and hand-written.
+
+---
+
 ## 4. Deferred Technologies
 
 Deferred technologies are not rejected. They are simply not justified by the current requirements.
@@ -194,7 +208,7 @@ Containerization should only be introduced when it solves a concrete development
 
 ## 5. Current Technology Stack
 
-The current backend stack is therefore:
+The current stack is therefore (frontend described in section 3.4):
 
 ```text
 Python 3.14
