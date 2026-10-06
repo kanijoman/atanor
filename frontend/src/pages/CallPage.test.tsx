@@ -68,8 +68,8 @@ describe("CallPage", () => {
     render(<CallPage callId="call-1" />);
     await screen.findByRole("heading", { name: call.title });
 
-    expect(fetchMock).toHaveBeenCalledWith("/api/calls/call-1");
-    expect(fetchMock).toHaveBeenCalledWith("/api/calls/call-1/programmes");
+    expect(fetchMock).toHaveBeenCalledWith("/api/calls/call-1", expect.objectContaining({ signal: expect.any(AbortSignal) }));
+    expect(fetchMock).toHaveBeenCalledWith("/api/calls/call-1/programmes", expect.objectContaining({ signal: expect.any(AbortSignal) }));
   });
 
   it("shows an empty state when the call has no programmes", async () => {
