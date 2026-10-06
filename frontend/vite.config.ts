@@ -7,8 +7,10 @@ export default defineConfig({
     exclude: ["e2e/**", "node_modules/**", "dist/**"],
   },
   server: {
+    port: 5174,
+    strictPort: true,
     proxy: {
-      "/api": "http://localhost:8000",
+      "/api": `http://127.0.0.1:${process.env.E2E_BACKEND_PORT ?? "8000"}`,
     },
   },
 });

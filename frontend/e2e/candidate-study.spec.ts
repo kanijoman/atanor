@@ -61,9 +61,12 @@ test("allows a candidate to go from a real BOE call to study material", async ({
     page.getByText("Partial · 2 of 8 aspects covered (25%)"),
   ).toBeVisible();
   await expect(
-    page.getByRole("heading", { name: "Covered aspects" }),
+    page.getByRole("heading", { name: "Study aspects" }),
   ).toBeVisible();
   await expect(
-    page.getByRole("heading", { name: "Pending aspects" }),
+    page.getByText(/^Covered · Objeto y finalidad del procedimiento administrativo común/),
+  ).toBeVisible();
+  await expect(
+    page.getByText(/^Pending · Interesados, capacidad, representación y derechos/),
   ).toBeVisible();
 });

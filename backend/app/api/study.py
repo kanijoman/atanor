@@ -118,6 +118,7 @@ def get_study_material(unit_id: UUID) -> dict[str, object]:
             "covered_count": coverage.covered_count,
             "required_count": coverage.required_count,
             "coverage_percentage": coverage.coverage_percentage,
+            "required_aspects": list(coverage.required_aspects),
             "covered_aspects": list(coverage.covered_aspects),
             "pending_aspects": list(coverage.pending_aspects),
         },
