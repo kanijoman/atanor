@@ -6,20 +6,7 @@ from app.application.study_material import (
     generate_study_material_for_programme_unit,
 )
 from app.domain.models import Knowledge, KnowledgeNeed, StudyProgrammeUnit
-
-
-class InMemoryKnowledgeRepository:
-    def __init__(self) -> None:
-        self.knowledge: Knowledge | None = None
-
-    def save(self, knowledge: Knowledge) -> Knowledge:
-        self.knowledge = knowledge
-        return knowledge
-
-    def get_by_identity(self, identity_key: tuple[str, int]) -> Knowledge | None:
-        if self.knowledge is not None and self.knowledge.identity_key == identity_key:
-            return self.knowledge
-        return None
+from support import InMemoryKnowledgeRepository
 
 
 def real_personal_data_programme_unit() -> StudyProgrammeUnit:

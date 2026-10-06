@@ -6,20 +6,7 @@ from app.application.study_material import (
     generate_study_material_for_programme_unit,
 )
 from app.domain.models import Knowledge, KnowledgeNeed, StudyProgrammeUnit
-
-
-class InMemoryKnowledgeRepository:
-    def __init__(self) -> None:
-        self.knowledge: Knowledge | None = None
-
-    def save(self, knowledge: Knowledge) -> Knowledge:
-        self.knowledge = knowledge
-        return knowledge
-
-    def get_by_identity(self, identity_key: tuple[str, int]) -> Knowledge | None:
-        if self.knowledge is not None and self.knowledge.identity_key == identity_key:
-            return self.knowledge
-        return None
+from support import InMemoryKnowledgeRepository
 
 
 def real_data_modeling_programme_unit() -> StudyProgrammeUnit:
@@ -75,7 +62,6 @@ def test_generates_useful_data_modeling_study_material() -> None:
         "for interoperability (MFI) — Part 12: Metamodel for information model registration"
     )
     assert knowledge.sources[0].locator == "https://www.iso.org/standard/61559.html"
-
 
 
 def test_data_modeling_study_material_covers_required_aspects() -> None:

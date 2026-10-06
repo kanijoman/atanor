@@ -4,19 +4,7 @@ from app.application.study_material import (
     generate_study_material_for_programme_unit,
 )
 from app.domain.models import Knowledge, StudyProgrammeUnit
-
-
-class InMemoryKnowledgeRepository:
-    def __init__(self) -> None:
-        self.knowledge: dict[tuple[str, int], Knowledge] = {}
-
-    def save(self, knowledge: Knowledge) -> Knowledge:
-        if knowledge.identity_key is not None:
-            self.knowledge[knowledge.identity_key] = knowledge
-        return knowledge
-
-    def get_by_identity(self, identity_key: tuple[str, int]) -> Knowledge | None:
-        return self.knowledge.get(identity_key)
+from support import InMemoryKnowledgeRepository
 
 
 def test_current_ley_39_2015_material_covers_two_of_eight_required_aspects() -> None:
