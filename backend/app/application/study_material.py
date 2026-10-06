@@ -297,7 +297,7 @@ def _derive_procedure_covered_aspects(knowledge: Knowledge, required_aspects: tu
     characteristic regulatory subject to be developed, not merely mentioned.
     """
     content = (knowledge.description or "").casefold()
-    if "tiene por objeto" in content:
+    if "tiene por objeto" in content or "establece las bases del procedimiento administrativo común" in content:
         covered = [required_aspects[0]]
     else:
         covered = []
