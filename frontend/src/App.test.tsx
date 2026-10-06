@@ -75,9 +75,11 @@ describe("App", () => {
               covered_count: 10,
               required_count: 10,
               coverage_percentage: 100,
+              required_aspects: [],
               covered_aspects: [],
               pending_aspects: [],
             },
+            sources: [],
           }),
           {
             status: 200,

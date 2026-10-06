@@ -15,6 +15,12 @@ const studyResponse = {
   },
   study_material:
     "1. Concepto y titulares\nEl derecho de acceso permite a las personas solicitar información pública. (Artículo 12)",
+  sources: [
+    {
+      title: "Ley 19/2013, de transparencia, acceso a la información pública y buen gobierno",
+      locator: "https://www.boe.es/buscar/act.php?id=BOE-A-2013-12887",
+    },
+  ],
   coverage: {
     status: "partial",
     covered_count: 2,
@@ -75,10 +81,11 @@ describe("StudyPage", () => {
     expect(screen.getByText("Study coverage")).toBeVisible();
     expect(screen.getByText("Partial · 2 of 8 aspects covered (25%)")).toBeVisible();
     expect(screen.getByRole("heading", { name: "Study aspects" })).toBeVisible();
-    expect(screen.getByText("Objeto y finalidad del procedimiento administrativo común")).toBeVisible();
-    expect(screen.getByText("Covered")).toBeVisible();
-    expect(screen.getByText("Interesados, capacidad, representación y derechos")).toBeVisible();
-    expect(screen.getAllByText("Pending").length).toBeGreaterThan(0);
+    expect(screen.getByText(/Objeto y finalidad del procedimiento administrativo común/, { selector: "li" }).textContent).toMatch(/^Covered/);
+    expect(screen.getByText(/Interesados, capacidad, representación y derechos/, { selector: "li" }).textContent).toMatch(/^Pending/);
+    expect(screen.getAllByText("Covered")).toHaveLength(2);
+    expect(screen.getAllByText("Pending")).toHaveLength(6);
+    expect(screen.getByRole("link", { name: /Ley 19\/2013/ })).toBeVisible();
     expect(fetchMock).toHaveBeenCalledWith("/api/study/units/unit-2");
   });
 
