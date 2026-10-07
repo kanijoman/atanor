@@ -107,6 +107,35 @@ It does **not** yet validate semantic completeness, factual validation, canonica
 
 AT-043 is considered **closed** with **89 passing tests** and no regressions.
 
+## AT-111 - Supported syllabus breadth
+
+### Hypothesis
+
+> **Before choosing the next topics to support, measure how much of the real syllabi Atanor can already prepare.**
+
+### Method
+
+`atanor study-support-report <pdf>...` runs call detection and programme discovery on a PDF without persisting anything and reports, per programme unit, whether study material exists. It was run over the four sample PDFs in `backend/tests/samples/`.
+
+### Result (2026-10-07)
+
+| Sample | Call detected | Programmes | Units | Supported |
+| --- | --- | --- | --- | --- |
+| BOE-A-2024-14098 | yes | 10 (annexes) | 348 | 21 (6%) |
+| BOJA24-138-... | yes | 7 | 269 | 0 (0%) |
+| OPOS_AYTO_LEON_INFORMATICA_B | **no** | 0 | 0 | n/a |
+| Programa_Archiveros_0 | **no** | 0 | 0 | n/a |
+
+Observations:
+
+- Supported units are concentrated in six topics: Ley 19/2013 (4 units), Ley 39/2015 (5), protection of personal data (10), data modelling (2). No unit of the BOJA sample matches any supported topic.
+- Two of the four samples are not recognised as calls by `call_discovery`, so the end-to-end flow produces no programme for them even though the programme-discovery strategies can parse them when given a call. A candidate importing either document would currently receive an error.
+- The unsupported units form a long tail: 478 distinct titles, with the most frequent topic repeated only 8 times. The recurring ones are institutional law (Constitution, Cortes Generales, Poder Judicial, Gobierno y Administracion, Union Europea, acto administrativo, personal al servicio de las Administraciones, presupuesto de gasto, equality policies) and IT/office skills (TCP/IP, Windows, Word, Excel, Access, Outlook).
+
+### Consequence
+
+Adding topics one at a time yields about 1-2 percentage points each on this sample, so breadth needs a repeatable mechanism (a topic registry fed by authoritative sources) rather than hand-written entries, and call detection must be fixed before more programmes become reachable. These findings guide AT-113 to AT-115.
+
 ## Potential future capabilities
 
 These items have emerged from experiments but are intentionally not scheduled until a concrete mini-MVP requires them:

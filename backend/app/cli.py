@@ -7,6 +7,7 @@ from uuid import UUID
 from app.application.call_import import import_call_from_pdf
 from app.application.requirements import get_requirement, list_requirements
 from app.application.source import get_source, import_pdf_source, list_sources
+from app.application.study_support_report import build_support_report, format_support_report
 from app.persistence.call_repository import SqlAlchemyCallRepository
 from app.persistence.database import SessionLocal
 from app.persistence.requirement_repository import SqlAlchemyRequirementRepository
@@ -24,6 +25,7 @@ class Repositories:
     programmes: SqlAlchemyStudyProgrammeRepository
 
 
+REPORT_SEPARATOR = "\n\n"
 CommandHandler = Callable[[argparse.Namespace, argparse.ArgumentParser, Repositories], int]
 
 
@@ -50,6 +52,12 @@ def build_parser() -> argparse.ArgumentParser:
     get_requirement_parser.add_argument("requirement_id", type=int, help="Requirement ID")
 
     subparsers.add_parser("list-requirements", help="List all requirements")
+
+    report_parser = subparsers.add_parser(
+        "study-support-report",
+        help="Report which programme units of call PDFs have study material (no persistence)",
+    )
+    report_parser.add_argument("pdfs", type=Path, nargs="+", help="Paths to call PDFs")
     return parser
 
 
@@ -146,6 +154,18 @@ def _list_requirements(
     return 0
 
 
+def _study_support_report(
+    args: argparse.Namespace, parser: argparse.ArgumentParser, _repositories: Repositories
+) -> int:
+    try:
+        reports = [build_support_report(pdf) for pdf in args.pdfs]
+    except FileNotFoundError as exc:
+        parser.error(str(exc))
+
+    print(REPORT_SEPARATOR.join(format_support_report(report) for report in reports))
+    return 0
+
+
 _COMMANDS: dict[str, CommandHandler] = {
     "import-source": _import_source,
     "import-call": _import_call,
@@ -153,6 +173,7 @@ _COMMANDS: dict[str, CommandHandler] = {
     "list-sources": _list_sources,
     "get-requirement": _get_requirement,
     "list-requirements": _list_requirements,
+    "study-support-report": _study_support_report,
 }
 
 
