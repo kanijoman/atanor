@@ -13,6 +13,7 @@ export type ProgrammeUnit = {
   id: string;
   number: number;
   title: string;
+  section: string | null;
   study_material_available: boolean;
 };
 

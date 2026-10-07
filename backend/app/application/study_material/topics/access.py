@@ -4,6 +4,7 @@ from app.application.normative_source import LEY_19_2013
 from app.application.study_material.coverage import aspects_covered_by_sections
 from app.application.study_material.providers import AcquiredNormativeMaterial, ArticleSection
 from app.application.study_material.topic import StudyTopic
+from app.application.study_material.wording import leading_statement
 
 TOPIC_NAME = "Derecho de acceso a la información pública"
 
@@ -25,7 +26,10 @@ REQUIRED_ASPECTS = tuple(section.aspect for section in SECTIONS)
 
 
 def _matches(title: str) -> bool:
-    return title == TOPIC_NAME.casefold() or ("ley 19/2013" in title and "transparencia" in title)
+    lead = leading_statement(title)
+    return lead.rstrip(".") == TOPIC_NAME.casefold() or (
+        "ley 19/2013" in lead and "transparencia" in lead
+    )
 
 
 TOPIC = StudyTopic(

@@ -102,7 +102,7 @@ The next step should therefore be selected from the highest-value candidate prob
 
 **Re-evaluate the next increment from the evidence gathered by AT-111 to AT-114.**
 
-Measured on the four real samples (`atanor study-support-report`), 6% of the BOE units, 0% of the BOJA units and none of the other two documents are supported, and two of the four samples are not recognised as a convocatoria at all. The candidates for the next increment are:
+Measured on the four real samples (`atanor study-support-report`), 8% of the BOE units, 0% of the BOJA units and none of the other two documents are supported, and two of the four samples are not recognised as a convocatoria at all. The candidates for the next increment are:
 
 - **Breadth through the registry and the acquired provider**: the highest-frequency unsupported topics are institutional law (Constitution, Cortes Generales, Poder Judicial, Gobierno y Administracion, Union Europea, acto administrativo, personal al servicio de las Administraciones) and IT/office skills. Law topics reuse the BOE acquisition mechanism; IT topics need curated or expert-reviewed material.
 - **Recognising more call formats**: the OPOS Ayuntamiento de Leon and Archiveros documents are refused as convocatorias. Fixing detection makes more candidate documents usable.

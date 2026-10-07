@@ -168,7 +168,7 @@ The examination opportunity a source describes.
 
 ### Study Programme and Study Programme Unit
 
-A call contains one or more study programmes, each made of numbered units. A unit is the requirement as the convocatoria states it, with its original wording and its position in the document. Earlier stages modelled requirements and requirement scopes as separate entities; they were merged into the unit (AT-115) because no product flow needed more than one scope per requirement and the unit already carried the requirement's provenance.
+A call contains one or more study programmes, each made of units. A unit is the requirement as the convocatoria states it: its complete official wording (continuation lines joined, gazette page headers and footers removed), its position in the document and, when the programme is divided into blocks that restart numbering, the name of its block (`section`). Units are kept in document order, not ordered by number. Earlier stages modelled requirements and requirement scopes as separate entities; they were merged into the unit (AT-115) because no product flow needed more than one scope per requirement and the unit already carried the requirement's provenance.
 
 ### Knowledge Need
 
@@ -218,6 +218,8 @@ Programme discovery strategy (BOE, BOJA, Archiveros layouts)
     ↓
 Study Programme Units
 ```
+
+A unit usually lists several subjects ("La Ley X. El recurso Y. ..."). A study topic is recognised from the unit's leading statement (its first sentence), so a later mention of another law does not make the unit that law. The rest of the wording is kept as the unit's official scope.
 
 Real samples demonstrate different document structures. The current implementation recognizes only the minimum deterministic structures justified by those samples. `Tema` identifiers and other structured identifiers are preserved as text and are not assigned semantic meaning.
 

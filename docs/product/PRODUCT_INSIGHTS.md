@@ -144,6 +144,10 @@ Adding topics one at a time yields about 1-2 percentage points each on this samp
 
 Earlier entries in this document speak of requirements, requirement scopes and a binary covered/missing coverage. That model was built before programme discovery existed. Once candidates could import a convocatoria and browse its units, the requirement and the unit turned out to be the same thing, no unit ever needed more than one scope, and the requirement code was not on any product path. The two were unified: a programme unit is the requirement, it carries its own persisted knowledge need (also for units without material, which keeps "Atanor knows what it does not know"), and coverage is the single aspect-based summary plus a programme-level count. The older entries are kept as history of how the product was discovered.
 
+## AT-118 - Faithful programme structure and the real scope of a unit
+
+Keeping the complete official wording of each programme unit (previously only its first line was stored) exposed two things the truncation had hidden. First, programmes such as the Cuerpo General Auxiliar de la AGE annex have two blocks that restart numbering, so a candidate saw two different "unit 11" entries; blocks are now kept and units stay in document order. Second, the full wording of a unit is often much wider than the material that matches it: unit 11 of that programme asks for the Ley 39/2015 and the Ley 40/2015, the contentious-administrative appeal and the parties' capacity and representation, while the current material covers eight aspects of the Ley 39/2015 only, so its "8 of 8" coverage overstates what the unit requires. Matching topics from substrings of the whole wording also produced false positives (an employment-statute unit that merely mentions the Ley 19/2013), so a topic is now recognised from the leading statement. Aligning each topic's aspects with the unit's full scope is the next step (the normative material of the vertical slice).
+
 ## Potential future capabilities
 
 These items have emerged from experiments but are intentionally not scheduled until a concrete mini-MVP requires them:
