@@ -6,6 +6,7 @@ from app.application.normative_source.articles import (
     extract_articles,
 )
 from app.application.normative_source.catalog import (
+    CONSTITUCION_ESPANOLA,
     LEY_19_2013,
     LEY_39_2015,
     NormativeSourceCandidate,
@@ -26,6 +27,7 @@ from app.application.normative_source.retrieval import (
 )
 
 __all__ = [
+    "CONSTITUCION_ESPANOLA",
     "LEY_19_2013",
     "LEY_39_2015",
     "HttpSourceRetriever",

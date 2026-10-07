@@ -36,7 +36,14 @@ def test_live_boe_retrieval_extracts_ley_39_2015_article_1() -> None:
 @pytest.mark.network
 @pytest.mark.parametrize(
     ("topic_module", "expected_aspects"),
-    [("procedure", 8), ("access", 10)],
+    [
+        ("procedure", 8),
+        ("access", 10),
+        ("constitution", 4),
+        ("constitutional_court_and_crown", 4),
+        ("cortes_generales", 4),
+        ("judicial_power", 4),
+    ],
 )
 def test_live_boe_pages_cover_every_aspect_of_the_acquired_topics(
     topic_module: str, expected_aspects: int

@@ -18,8 +18,8 @@ _BLOCK_TAGS = frozenset(
     {"h1", "h2", "h3", "h4", "h5", "h6", "p", "div", "li", "blockquote", "td", "th", "tr"}
 )
 _BODY_TAGS = frozenset({"p", "div", "li", "blockquote"})
+_HEADING_TAGS = frozenset({"h1", "h2", "h3", "h4", "h5", "h6"})
 _NOISE = re.compile(r"^(?:Subir|\[Bloque \d+: [^\]]*\])$")
-_ANY_ARTICLE_HEADING = re.compile(r"^Artículo\s+\d+(?:\.|\s)", re.IGNORECASE)
 
 
 class _ElementParser(HTMLParser):
@@ -66,14 +66,26 @@ def _parse_elements(retrieved: RetrievedSource) -> list[tuple[str, str]]:
 
 
 def _find_article_start(elements: list[tuple[str, str]], article_number: int) -> int | None:
-    marker = re.compile(rf"^Artículo\s+{article_number}(?:\.|\s)", re.IGNORECASE)
-    return next((index for index, (_, text) in enumerate(elements) if marker.match(text)), None)
+    """Index of the heading of an article.
+
+    Only headings count: gazette pages also list every article in a navigation
+    index, and articles may be titled `Artículo 1` or `Artículo 1. Objeto.`
+    """
+    marker = re.compile(rf"^Artículo\s+{article_number}(?:\.|\s|$)", re.IGNORECASE)
+    return next(
+        (
+            index
+            for index, (tag, text) in enumerate(elements)
+            if tag in _HEADING_TAGS and marker.match(text)
+        ),
+        None,
+    )
 
 
 def _collect_article_body(elements: list[tuple[str, str]]) -> str:
     body: list[str] = []
     for tag, text in elements:
-        if _ANY_ARTICLE_HEADING.match(text):
+        if tag in _HEADING_TAGS:
             break
         if tag in _BODY_TAGS:
             body.append(text)

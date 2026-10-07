@@ -12,7 +12,7 @@ test("allows a candidate to go from a real BOE call to study material", async ({
 
   await expect(page.getByRole("heading", { name: "Programme I" })).toBeVisible();
 
-  await expect(page.getByText("3 of 28 units have study material")).toBeVisible();
+  await expect(page.getByText("7 of 28 units have study material")).toBeVisible();
   await expect(page.getByRole("heading", { name: "I. Organización pública" })).toBeVisible();
   await expect(
     page.getByRole("heading", { name: "II. Actividad administrativa y ofimática" }),

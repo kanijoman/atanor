@@ -59,7 +59,7 @@ The current implementation supports heterogeneous text-based PDF structures thro
 - Programme-level coverage: how many units of an imported programme have study material.
 - Deterministic study-programme discovery for the current BOE, BOJA and Archiveros samples.
 - Persistence and retrieval of discovered study programmes and units.
-- Candidate-facing study material for six topics: Ley 19/2013 and Ley 39/2015 acquired from the BOE article by article, and four curated topics (personal data protection, electronic identity and signature, object-oriented programming, data modelling).
+- Candidate-facing study material for ten topics: Ley 19/2013, Ley 39/2015 and four topics of the Constitución Española (principles and fundamental rights, Tribunal Constitucional and Corona, Cortes Generales and Defensor del Pueblo, Poder Judicial) acquired from the BOE article by article, and four curated topics (personal data protection, electronic identity and signature, object-oriented programming, data modelling).
 - Explicit material provenance (origin: curated or acquired; review status) shown to the candidate.
 - Bring-your-own convocatoria: a candidate can upload a PDF through the web interface; sources are identified by content hash, so repeated uploads are idempotent, and documents that are not a convocatoria are refused with an explanation.
 - Candidate-facing study-material availability in programme listings, so supported units are directly actionable and unsupported units are identifiable without probing a failing endpoint.
@@ -102,7 +102,7 @@ The next step should therefore be selected from the highest-value candidate prob
 
 **Re-evaluate the next increment from the evidence gathered by AT-111 to AT-114.**
 
-Measured on the four real samples (`atanor study-support-report`), 8% of the BOE units, 0% of the BOJA units and none of the other two documents are supported, and two of the four samples are not recognised as a convocatoria at all. The candidates for the next increment are:
+Measured on the four real samples (`atanor study-support-report`), 9% of the BOE units (7 of 28 in the Cuerpo General Auxiliar annex), 0% of the BOJA units and none of the other two documents are supported, and two of the four samples are not recognised as a convocatoria at all. The candidates for the next increment are:
 
 - **Breadth through the registry and the acquired provider**: the highest-frequency unsupported topics are institutional law (Constitution, Cortes Generales, Poder Judicial, Gobierno y Administracion, Union Europea, acto administrativo, personal al servicio de las Administraciones) and IT/office skills. Law topics reuse the BOE acquisition mechanism; IT topics need curated or expert-reviewed material.
 - **Recognising more call formats**: the OPOS Ayuntamiento de Leon and Archiveros documents are refused as convocatorias. Fixing detection makes more candidate documents usable.

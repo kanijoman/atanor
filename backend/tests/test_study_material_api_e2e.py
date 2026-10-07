@@ -90,7 +90,7 @@ def test_unsupported_programme_unit_returns_unprocessable_entity() -> None:
         unit
         for programme in programmes
         for unit in programme.units
-        if unit.title.startswith("La Constitución Española de 1978")
+        if unit.title.startswith("Informática básica")
     )
 
     app.dependency_overrides[get_session_factory] = lambda: session_factory

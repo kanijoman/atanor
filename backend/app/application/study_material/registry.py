@@ -3,8 +3,12 @@
 from app.application.study_material.topic import StudyTopic
 from app.application.study_material.topics import (
     access,
+    constitution,
+    constitutional_court_and_crown,
+    cortes_generales,
     data_modeling,
     identity,
+    judicial_power,
     object_oriented,
     personal_data,
     procedure,
@@ -17,6 +21,10 @@ TOPICS: tuple[StudyTopic, ...] = (
     personal_data.TOPIC,
     object_oriented.TOPIC,
     data_modeling.TOPIC,
+    constitution.TOPIC,
+    constitutional_court_and_crown.TOPIC,
+    cortes_generales.TOPIC,
+    judicial_power.TOPIC,
 )
 
 

@@ -119,6 +119,11 @@ class AcquiredNormativeMaterial:
         return text
 
 
+def _heading(article: NormativeArticle) -> str:
+    """`Artículo 12. Título.`, or just `Artículo 12.` for untitled articles (Constitution)."""
+    return f"{article.identifier}. {article.title}".rstrip()
+
+
 def _render_section(
     index: int, section: ArticleSection, articles: dict[str, NormativeArticle]
 ) -> str:
@@ -130,5 +135,5 @@ def _render_section(
     if not found:
         return ""
     # Indented so article paragraphs ("1. ...") are never mistaken for section headings.
-    body = "\n".join(f"  {a.identifier}. {a.title}\n  {a.content}".rstrip() for a in found)
+    body = "\n".join(f"  {_heading(a)}\n  {a.content}".rstrip() for a in found)
     return f"{index}. {section.aspect}\n{body}"
