@@ -152,6 +152,10 @@ Keeping the complete official wording of each programme unit (previously only it
 
 Four topics of the Constitución Española (units 1 to 4 of the programme: principles and fundamental rights, Tribunal Constitucional, reform and Corona, Cortes Generales and Defensor del Pueblo, Poder Judicial) are now acquired from the BOE, with aspects taken from the official wording of each unit. The annex went from 3 to 7 of 28 units with material. Two findings: the article extractor assumed titled articles ("Artículo 1. Objeto.") and matched the page's navigation index, so it found nothing in the Constitution, whose articles are untitled headings; and a topic must check that a unit asks for everything the material covers, because the BOJA and Archiveros syllabi open with the same subject ("La Constitución Española de 1978") but list different subtopics. Those units stay unsupported rather than showing material designed for another scope. Every aspect-to-article mapping is still unreviewed and is checked against the live BOE by a `network` test.
 
+## AT-119 (batch B) - Government, State administration and territorial organisation
+
+Three more topics (units 5, 8 and 9 of the programme) were added, built from the Constitution, Ley 50/1997, Ley 40/2015 and Ley 7/1985. They needed two things the earlier topics did not: aspects drawing on articles of several laws (the removal of the Government is in the Constitution and in Ley 50/1997), now supported with per-law labels in the study text, and article titles read from the BOE instead of assumed (the Ley de Bases de Régimen Local has untitled article headings). The annex went from 7 to 10 of 28 units with material. The aspect-to-article mappings were built from the real article titles and all of them are checked against the live BOE. One known gap remains: unit 11 of the same programme asks for Ley 39/2015 and Ley 40/2015 and the contentious-administrative appeal, so its current Ley 39/2015 material still overstates what it covers.
+
 ## Potential future capabilities
 
 These items have emerged from experiments but are intentionally not scheduled until a concrete mini-MVP requires them:
