@@ -1,5 +1,6 @@
 """Candidate-facing study coverage: summary contract and reusable strategies."""
 
+import re
 from dataclasses import dataclass
 
 from app.application.study_material.topic import CoverageStrategy
@@ -47,11 +48,45 @@ def build_study_coverage_summary(
     )
 
 
-def all_required_covered(
-    _knowledge: Knowledge, required_aspects: tuple[str, ...]
+_SECTION_HEADING = re.compile(r"^\d+\.\s+(?P<heading>.+)$")
+MIN_SECTION_WORDS = 15
+
+
+def _sections(text: str) -> dict[str, str]:
+    """Split numbered-section text into {casefolded heading: body}."""
+    sections: dict[str, list[str]] = {}
+    current: list[str] | None = None
+    for line in text.splitlines():
+        heading = _SECTION_HEADING.match(line.strip())
+        if heading:
+            current = sections.setdefault(heading.group("heading").casefold(), [])
+        elif current is not None:
+            current.append(line)
+    return {heading: " ".join(body).strip() for heading, body in sections.items()}
+
+
+def _heading_names_aspect(heading: str, aspect: str) -> bool:
+    normalized_aspect = aspect.casefold()
+    return heading in normalized_aspect or normalized_aspect in heading
+
+
+def aspects_covered_by_sections(
+    knowledge: Knowledge, required_aspects: tuple[str, ...]
 ) -> tuple[str, ...]:
-    """Treat every required aspect as covered (fully curated material)."""
-    return required_aspects
+    """An aspect is covered when the material has a section for it with real content.
+
+    A section names an aspect when its heading and the aspect contain one another
+    (case-insensitively); an empty or token section is not evidence of coverage.
+    """
+    sections = _sections(knowledge.description or "")
+    return tuple(
+        aspect
+        for aspect in required_aspects
+        if any(
+            _heading_names_aspect(heading, aspect) and len(body.split()) >= MIN_SECTION_WORDS
+            for heading, body in sections.items()
+        )
+    )
 
 
 def aspects_covered_by_signals(

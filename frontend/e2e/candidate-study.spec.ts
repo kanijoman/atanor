@@ -29,6 +29,7 @@ test("allows a candidate to go from a real BOE call to study material", async ({
 
   await expect(page.getByRole("heading", { name: "Study material" })).toBeVisible();
   await expect(page.getByText(/Artículo 1/)).toBeVisible();
+  await expect(page.getByText("Curated by Atanor · not yet reviewed by an expert")).toBeVisible();
 
   await expect(page.getByRole("heading", { name: "Sources" })).toBeVisible();
   const canonicalSource = page.getByRole("link", {

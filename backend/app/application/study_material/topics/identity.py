@@ -1,6 +1,6 @@
 """Study topic: Identidad y firma electrónica."""
 
-from app.application.study_material.coverage import all_required_covered
+from app.application.study_material.coverage import aspects_covered_by_sections
 from app.application.study_material.topic import StudyTopic
 from app.domain.models import Source
 
@@ -58,5 +58,5 @@ TOPIC = StudyTopic(
     content_file="identity.md",
     sources=(_EIDAS, _LEY_6_2020, _RD_255_2025, _RD_203_2021),
     required_aspects=REQUIRED_ASPECTS,
-    covered_aspects=all_required_covered,
+    covered_aspects=aspects_covered_by_sections,
 )

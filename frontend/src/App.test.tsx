@@ -79,6 +79,7 @@ describe("App", () => {
               covered_aspects: [],
               pending_aspects: [],
             },
+            provenance: { origin: "curated", review_status: "unreviewed" },
             sources: [],
           }),
           {

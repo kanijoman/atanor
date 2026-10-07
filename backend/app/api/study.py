@@ -8,10 +8,12 @@ from app.api.dependencies import (
     StudyProgrammeRepositoryDep,
 )
 from app.application.study_material import (
+    MaterialProvenance,
     StudyCoverageSummary,
     build_study_coverage_summary,
     derive_covered_aspects,
     derive_knowledge_needs_for_programme_unit,
+    derive_material_provenance,
     derive_required_aspects_for_programme_unit,
     generate_study_material_for_programme_unit,
     is_study_material_available_for_programme_unit,
@@ -78,7 +80,13 @@ def get_study_material(
         required_aspects=derive_required_aspects_for_programme_unit(programme_unit),
         covered_aspects=derive_covered_aspects(programme_unit, knowledge),
     )
-    return _study_material_response(programme_unit, knowledge_need, knowledge, coverage)
+    return _study_material_response(
+        programme_unit,
+        knowledge_need,
+        knowledge,
+        coverage,
+        derive_material_provenance(programme_unit),
+    )
 
 
 def _single_knowledge_need(programme_unit: StudyProgrammeUnit) -> KnowledgeNeed:
@@ -103,6 +111,7 @@ def _study_material_response(
     knowledge_need: KnowledgeNeed,
     knowledge: Knowledge,
     coverage: StudyCoverageSummary,
+    provenance: MaterialProvenance,
 ) -> dict[str, object]:
     return {
         "programme_unit": {
@@ -112,6 +121,10 @@ def _study_material_response(
         },
         "knowledge_need": {
             "title": knowledge_need.topic,
+        },
+        "provenance": {
+            "origin": provenance.origin.value,
+            "review_status": provenance.review_status.value,
         },
         "study_material": knowledge.description or "",
         "sources": [

@@ -75,6 +75,7 @@ def test_get_ley_39_2015_study_material_exposes_coverage_summary(tmp_path, monke
     response = client.get(f"/api/study/units/{unit.id}")
 
     assert response.status_code == 200
+    assert response.json()["provenance"] == {"origin": "curated", "review_status": "unreviewed"}
     assert response.json()["coverage"] == {
         "status": "partial",
         "covered_count": 2,

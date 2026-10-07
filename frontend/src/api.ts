@@ -37,6 +37,11 @@ export type StudySource = {
   locator: string | null;
 };
 
+export type MaterialProvenance = {
+  origin: "curated" | "acquired";
+  review_status: "unreviewed" | "reviewed";
+};
+
 export type StudyResponse = {
   programme_unit: {
     id: string;
@@ -46,6 +51,7 @@ export type StudyResponse = {
   knowledge_need: {
     title: string;
   };
+  provenance: MaterialProvenance;
   study_material: string;
   sources: StudySource[];
   coverage: StudyCoverage;

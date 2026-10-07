@@ -3,7 +3,7 @@
 from typing import Protocol
 
 from app.application.study_material.registry import find_topic_by_name, find_topic_for_title
-from app.application.study_material.topic import StudyTopic
+from app.application.study_material.topic import MaterialProvenance, StudyTopic
 from app.domain.models import Knowledge, KnowledgeNeed, StudyProgrammeUnit
 
 
@@ -40,6 +40,11 @@ def derive_covered_aspects(
 ) -> tuple[str, ...]:
     topic = _topic_for_unit(programme_unit)
     return topic.covered_aspects(knowledge, topic.required_aspects)
+
+
+def derive_material_provenance(programme_unit: StudyProgrammeUnit) -> MaterialProvenance:
+    """Return how the study material for a programme unit was produced and reviewed."""
+    return _topic_for_unit(programme_unit).provenance
 
 
 def generate_material_for_need(need: KnowledgeNeed, repository: KnowledgeRepository) -> Knowledge:

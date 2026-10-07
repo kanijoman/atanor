@@ -14,6 +14,7 @@ const studyResponse: StudyResponse = {
   knowledge_need: {
     title: "Derecho de acceso a la información pública",
   },
+  provenance: { origin: "curated", review_status: "unreviewed" },
   study_material:
     "1. Concepto y titulares\nEl derecho de acceso permite a las personas solicitar información pública. (Artículo 12)",
   sources: [
@@ -80,6 +81,7 @@ describe("StudyPage", () => {
     ).toBeVisible();
     expect(screen.getByText(/Artículo 12/)).toBeVisible();
     expect(screen.getByText("Study coverage")).toBeVisible();
+    expect(screen.getByText("Curated by Atanor · not yet reviewed by an expert")).toBeVisible();
     expect(screen.getByText("Partial · 2 of 8 aspects covered (25%)")).toBeVisible();
     expect(screen.getByRole("heading", { name: "Study aspects" })).toBeVisible();
     expect(

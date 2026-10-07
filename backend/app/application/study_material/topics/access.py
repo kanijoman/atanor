@@ -1,6 +1,6 @@
 """Study topic: Derecho de acceso a la información pública (Ley 19/2013)."""
 
-from app.application.study_material.coverage import all_required_covered
+from app.application.study_material.coverage import aspects_covered_by_sections
 from app.application.study_material.topic import StudyTopic
 from app.domain.models import Source
 
@@ -38,5 +38,5 @@ TOPIC = StudyTopic(
     content_file="access.md",
     sources=(_LEY_19_2013,),
     required_aspects=REQUIRED_ASPECTS,
-    covered_aspects=all_required_covered,
+    covered_aspects=aspects_covered_by_sections,
 )

@@ -1,6 +1,6 @@
 """Study topic: Protección de datos personales."""
 
-from app.application.study_material.coverage import all_required_covered
+from app.application.study_material.coverage import aspects_covered_by_sections
 from app.application.study_material.topic import StudyTopic
 from app.domain.models import Source
 
@@ -36,5 +36,5 @@ TOPIC = StudyTopic(
     content_file="personal_data.md",
     sources=(_GDPR, _LOPDGDD),
     required_aspects=REQUIRED_ASPECTS,
-    covered_aspects=all_required_covered,
+    covered_aspects=aspects_covered_by_sections,
 )
