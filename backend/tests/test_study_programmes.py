@@ -6,8 +6,8 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
 from app.application.study_programmes import (
-    _extract_units,
     discover_programmes,
+    extract_units,
 )
 from app.domain.models import Call, Source
 from app.persistence.database import Base
@@ -80,7 +80,7 @@ def test_discovery_rejects_a_call_from_another_source() -> None:
 
 def test_boe_units_do_not_cross_section_boundaries() -> None:
     source_document = source("BOE-A-2024-14098.pdf")
-    units = _extract_units(source_document)
+    units = extract_units(source_document)
     programmes = discover_programmes(call_for(source_document), source_document)
     section_header = re.compile(r"^[IVXLCDM]+\.\s+.+$")
     section_orders = {unit.order for unit in units if section_header.fullmatch(unit.text)}
