@@ -44,10 +44,10 @@ Atanor currently supports:
 - study-programme discovery for the BOE and BOJA samples (the Archiveros layout is parsed but its document is not recognised as a convocatoria);
 - persistence and retrieval of study programmes and programme units;
 - importing a convocatoria PDF through the web interface, with sources identified by content hash;
-- candidate study material for ten topics, with explicit provenance: Ley 19/2013, Ley 39/2015 and four topics of the Constitución Española are acquired from the BOE article by article, while four topics are curated by Atanor; none has been reviewed by an expert yet;
+- candidate study material for thirteen topics, with explicit provenance: Ley 19/2013, Ley 39/2015 and seven topics on the Constitución Española, the Gobierno, the Administración General del Estado and the territorial organisation (Ley 50/1997, Ley 40/2015, Ley 7/1985) are acquired from the BOE article by article, while four topics are curated by Atanor; none has been reviewed by an expert yet;
 - coverage derived from the material actually produced, shown as an actionable checklist of covered and pending aspects.
 
-Measured on the four real samples, about 9% of the units of the BOE sample (7 of 28 for the Cuerpo General Auxiliar de la AGE) and none of the BOJA sample have study material yet (`atanor study-support-report <pdf>...` reproduces the measurement).
+Measured on the four real samples, about 11% of the units of the BOE sample (10 of 28 for the Cuerpo General Auxiliar de la AGE) and none of the BOJA sample have study material yet (`atanor study-support-report <pdf>...` reproduces the measurement).
 
 These capabilities have been validated against four real PDF samples and focused product tests. Support is intentionally not presented as universal parsing of arbitrary official documents. Scanned/image-only PDFs remain outside the current extraction boundary.
 

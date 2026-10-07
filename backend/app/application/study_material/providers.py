@@ -68,20 +68,35 @@ class CuratedMaterial:
 
 
 @dataclass(frozen=True)
-class ArticleSection:
-    """One required aspect and the articles of the source that develop it."""
+class ArticleRef:
+    """Articles of one law."""
 
-    aspect: str
+    source: NormativeSourceCandidate
     articles: tuple[int, ...]
 
 
 @dataclass(frozen=True)
+class ArticleSection:
+    """One required aspect and the articles that develop it.
+
+    `articles` belong to the material's own source unless `source` says otherwise;
+    `also` adds articles of other laws when an aspect spans several of them.
+    """
+
+    aspect: str
+    articles: tuple[int, ...]
+    source: NormativeSourceCandidate | None = None
+    also: tuple[ArticleRef, ...] = ()
+
+
+@dataclass(frozen=True)
 class AcquiredNormativeMaterial:
-    """Study text assembled from the articles of an authoritative normative source.
+    """Study text assembled from the articles of authoritative normative sources.
 
     Each section is titled with the aspect it develops, so coverage can be
     derived from the text actually acquired. The aspect-to-article mapping is an
-    explicit contract that still needs expert review.
+    explicit contract that still needs expert review. When the material draws on
+    more than one law, every article is labelled with the law it comes from.
     """
 
     candidate: NormativeSourceCandidate
@@ -90,50 +105,82 @@ class AcquiredNormativeMaterial:
         MaterialOrigin.ACQUIRED, ReviewStatus.UNREVIEWED
     )
 
+    def _references(self, section: ArticleSection) -> tuple[ArticleRef, ...]:
+        own = ArticleRef(section.source or self.candidate, section.articles)
+        return (own, *section.also)
+
+    def _candidates(self) -> tuple[NormativeSourceCandidate, ...]:
+        unique = {
+            reference.source.identifier: reference.source
+            for section in self.sections
+            for reference in self._references(section)
+        }
+        return tuple(unique.values())
+
     @property
     def sources(self) -> tuple[Source, ...]:
-        return (self.candidate.source,)
+        return tuple(candidate.source for candidate in self._candidates())
 
     def description(self, retriever: SourceRetriever | None) -> str:
         retriever = retriever or HttpSourceRetriever()
-        try:
-            retrieved = retriever.retrieve(self.candidate)
-        except OSError as exc:
-            raise MaterialUnavailableError(
-                f"Could not retrieve {self.candidate.identifier} from {self.candidate.authority}"
-            ) from exc
-
-        numbers = tuple(number for section in self.sections for number in section.articles)
-        by_identifier = {
-            article.identifier: article for article in extract_articles(retrieved, numbers)
+        candidates = self._candidates()
+        articles = {
+            candidate.identifier: self._acquire(candidate, retriever) for candidate in candidates
         }
+        labelled = len(candidates) > 1
         rendered = [
-            _render_section(index, section, by_identifier)
+            self._render(index, section, articles, labelled)
             for index, section in enumerate(self.sections, start=1)
         ]
         text = "\n\n".join(section for section in rendered if section)
         if not text:
-            raise MaterialUnavailableError(
-                f"No article of {self.candidate.identifier} could be extracted"
-            )
+            names = ", ".join(candidate.identifier for candidate in candidates)
+            raise MaterialUnavailableError(f"No article of {names} could be extracted")
         return text
 
+    def _acquire(
+        self, candidate: NormativeSourceCandidate, retriever: SourceRetriever
+    ) -> dict[str, NormativeArticle]:
+        try:
+            retrieved = retriever.retrieve(candidate)
+        except OSError as exc:
+            raise MaterialUnavailableError(
+                f"Could not retrieve {candidate.identifier} from {candidate.authority}"
+            ) from exc
+        numbers = tuple(
+            number
+            for section in self.sections
+            for reference in self._references(section)
+            if reference.source.identifier == candidate.identifier
+            for number in reference.articles
+        )
+        return {article.identifier: article for article in extract_articles(retrieved, numbers)}
 
-def _heading(article: NormativeArticle) -> str:
-    """`Artículo 12. Título.`, or just `Artículo 12.` for untitled articles (Constitution)."""
-    return f"{article.identifier}. {article.title}".rstrip()
+    def _render(
+        self,
+        index: int,
+        section: ArticleSection,
+        articles: dict[str, dict[str, NormativeArticle]],
+        labelled: bool,
+    ) -> str:
+        entries: list[str] = []
+        for reference in self._references(section):
+            law = reference.source if labelled else None
+            by_identifier = articles[reference.source.identifier]
+            for number in reference.articles:
+                article = by_identifier.get(f"Artículo {number}")
+                if article is not None:
+                    # Indented so article paragraphs ("1. ...") never look like section headings.
+                    entries.append(f"  {_heading(article, law)}\n  {article.content}".rstrip())
+        if not entries:
+            return ""
+        return f"{index}. {section.aspect}\n" + "\n".join(entries)
 
 
-def _render_section(
-    index: int, section: ArticleSection, articles: dict[str, NormativeArticle]
-) -> str:
-    found = [
-        articles[f"Artículo {number}"]
-        for number in section.articles
-        if f"Artículo {number}" in articles
-    ]
-    if not found:
-        return ""
-    # Indented so article paragraphs ("1. ...") are never mistaken for section headings.
-    body = "\n".join(f"  {_heading(a)}\n  {a.content}".rstrip() for a in found)
-    return f"{index}. {section.aspect}\n{body}"
+def _heading(article: NormativeArticle, law: NormativeSourceCandidate | None) -> str:
+    """`Artículo 12. Título.`, or just `Artículo 12.` for untitled articles (Constitution).
+
+    The law's name is prefixed when the material draws on several laws.
+    """
+    heading = f"{article.identifier}. {article.title}".rstrip()
+    return heading if law is None else f"{law.label or law.source.title}, {heading}"
