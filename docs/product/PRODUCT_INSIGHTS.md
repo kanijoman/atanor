@@ -156,6 +156,10 @@ Four topics of the Constitución Española (units 1 to 4 of the programme: princ
 
 Three more topics (units 5, 8 and 9 of the programme) were added, built from the Constitution, Ley 50/1997, Ley 40/2015 and Ley 7/1985. They needed two things the earlier topics did not: aspects drawing on articles of several laws (the removal of the Government is in the Constitution and in Ley 50/1997), now supported with per-law labels in the study text, and article titles read from the BOE instead of assumed (the Ley de Bases de Régimen Local has untitled article headings). The annex went from 7 to 10 of 28 units with material. The aspect-to-article mappings were built from the real article titles and all of them are checked against the live BOE. One known gap remains: unit 11 of the same programme asks for Ley 39/2015 and Ley 40/2015 and the contentious-administrative appeal, so its current Ley 39/2015 material still overstates what it covers.
 
+## AT-119 (batch C) - Public employment and the State budget
+
+Units 13 to 15 of the programme (public employees, their rights and duties, and the State budget) now have material from the Estatuto Básico del Empleado Público, the Seguridad Social de los funcionarios civiles (RDL 4/2000), the Ley General Presupuestaria and article 134 of the Constitution. The annex reached 13 of 28 units with material. While writing the tests a gap in the scope guard appeared: it only required the material's subtopics to be asked for, not that the wording asks for nothing else, so a unit adding "El control del gasto público y la deuda" would have shown as fully covered. The guard is now two-sided: every statement of the wording must be accounted for by the topic. Applying it removed three units of other annexes from the supported count (the whole BOE sample went from 41 to 38 of 348), because their wording asks for more than the material covers. Unit 16 (equality, gender violence, LGTBI, disability and dependency) needs five laws and is left for its own batch.
+
 ## Potential future capabilities
 
 These items have emerged from experiments but are intentionally not scheduled until a concrete mini-MVP requires them:

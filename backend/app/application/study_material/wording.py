@@ -5,16 +5,27 @@ import re
 _SENTENCE_BREAK = re.compile(r"(?<=[.!?])\s+(?=[A-Za-zÁÉÍÓÚÑáéíóúñ¿¡])")
 
 
-def states_subject_with_scope(wording: str, subject: str, scope_terms: tuple[str, ...]) -> bool:
-    """Whether a (casefolded) unit wording asks for `subject` and for everything in `scope_terms`.
+def statements(wording: str) -> list[str]:
+    """The sentences of a unit's wording: each one names a subject the candidate must study."""
+    return [part for part in _SENTENCE_BREAK.split(wording.strip()) if part]
 
-    A topic's material is designed around a concrete scope. A unit that opens with
-    the same subject but asks for something else (another body lists other
-    subtopics) must not be presented as covered by that material.
+
+def states_subject_with_scope(wording: str, subject: str, scope_terms: tuple[str, ...]) -> bool:
+    """Whether a (casefolded) unit wording asks for exactly what a topic's material covers.
+
+    A topic's material is designed around a concrete scope: its `subject` and one
+    marker in `scope_terms` per further statement. The wording matches when it opens
+    with the subject, mentions every marker, and has no statement the topic does not
+    account for. A syllabus that opens with the same subject but lists other
+    subtopics, or asks for more than the material covers, must not be presented as
+    covered by that material.
     """
-    return leading_statement(wording).startswith(subject) and all(
-        term in wording for term in scope_terms
-    )
+    if not leading_statement(wording).startswith(subject):
+        return False
+    if not all(term in wording for term in scope_terms):
+        return False
+    markers = (subject, *scope_terms)
+    return all(any(marker in statement for marker in markers) for statement in statements(wording))
 
 
 def leading_statement(wording: str) -> str:

@@ -25,6 +25,7 @@ REQUIRED_ASPECTS = tuple(section.aspect for section in SECTIONS)
 
 _SUBJECT = "la constitución española de 1978"
 _SCOPE = (
+    "características",
     "principios constitucionales",
     "valores superiores",
     "derechos y deberes fundamentales",

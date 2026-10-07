@@ -26,7 +26,13 @@ SECTIONS = (
 REQUIRED_ASPECTS = tuple(section.aspect for section in SECTIONS)
 
 _SUBJECT = "la administración general del estado"
-_SCOPE = ("órganos centrales", "órganos territoriales", "en el exterior")
+_SCOPE = (
+    "órganos centrales",
+    "órganos superiores y órganos directivos",
+    "órganos territoriales",
+    "otros órganos administrativos",
+    "en el exterior",
+)
 
 
 def _matches(title: str) -> bool:

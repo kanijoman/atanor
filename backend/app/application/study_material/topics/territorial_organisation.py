@@ -42,6 +42,7 @@ REQUIRED_ASPECTS = tuple(section.aspect for section in SECTIONS)
 
 _SUBJECT = "la organización territorial del estado"
 _SCOPE = (
+    "la administración local",
     "comunidades autónomas",
     "distribución de competencias",
     "la provincia, el municipio y la isla",
