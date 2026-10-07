@@ -5,7 +5,7 @@ study-material topics. They are not an expert's judgement and they list key arti
 than every relevant one, so recall is the meaningful measure and precision is not reported.
 """
 
-from collections.abc import Iterable, Mapping, Sequence
+from collections.abc import Callable, Iterable, Mapping, Sequence
 from dataclasses import dataclass
 
 from app.application.normative_source import (
@@ -15,10 +15,12 @@ from app.application.normative_source import (
 from app.application.normative_source.structure import Law, parse_law
 from app.application.study_material.providers import AcquiredNormativeMaterial
 from app.application.study_material.topic import StudyTopic
+from app.application.syllabus_derivation.derive import derive_section
 from app.application.syllabus_derivation.retrieval import rank_divisions
 
 WELL_COVERED_RECALL = 0.8
-DEFAULT_TOP_DIVISIONS = 2
+
+Selector = Callable[[Law, str], tuple[int, ...]]
 
 
 @dataclass(frozen=True)
@@ -44,7 +46,7 @@ class SectionResult:
 
 @dataclass(frozen=True)
 class EvaluationReport:
-    top_divisions: int
+    method: str
     results: tuple[SectionResult, ...]
 
     @property
@@ -89,33 +91,42 @@ def load_laws(gold: Sequence[GoldSection], retriever: SourceRetriever) -> dict[s
     return laws
 
 
-def select_articles(law: Law, query: str, top_divisions: int) -> tuple[int, ...]:
-    """The articles of the `top_divisions` titles/chapters that best match `query`."""
-    ranked = rank_divisions(law, query)[:top_divisions]
-    return tuple(number for item in ranked for number in item.division.article_numbers)
+def select_top_divisions(top_divisions: int) -> Selector:
+    """Baseline: always the articles of the `top_divisions` best matching titles/chapters."""
+
+    def select(law: Law, query: str) -> tuple[int, ...]:
+        ranked = rank_divisions(law, query)[:top_divisions]
+        return tuple(number for item in ranked for number in item.division.article_numbers)
+
+    return select
+
+
+def select_derived(law: Law, query: str) -> tuple[int, ...]:
+    """The derivation engine: relative score threshold, size limit, unresolved when empty."""
+    return derive_section(law, query).articles
 
 
 def evaluate(
     laws: Mapping[str, Law],
     gold: Sequence[GoldSection],
-    top_divisions: int = DEFAULT_TOP_DIVISIONS,
+    selector: Selector = select_derived,
+    method: str = "derived",
 ) -> EvaluationReport:
     results = tuple(
-        SectionResult(
-            section, select_articles(laws[section.law.identifier], section.aspect, top_divisions)
-        )
+        SectionResult(section, selector(laws[section.law.identifier], section.aspect))
         for section in gold
     )
-    return EvaluationReport(top_divisions=top_divisions, results=results)
+    return EvaluationReport(method=method, results=results)
 
 
 def format_report(report: EvaluationReport) -> str:
     total = len(report.results)
     lines = [
-        f"Sections evaluated: {total} (top {report.top_divisions} titles/chapters per aspect)",
+        f"Sections evaluated: {total} (method: {report.method})",
         f"Mean recall of the hand-made articles: {report.mean_recall:.2f}",
         f"Sections with recall >= {WELL_COVERED_RECALL}: {report.well_covered}/{total}",
         f"Mean articles selected per section: {report.mean_selected:.1f}",
+        f"Largest section: {max((len(r.selected) for r in report.results), default=0)} articles",
         f"Sections where no hand-made article was found: {len(report.missed)}",
     ]
     lines.extend(f"  - {r.gold.topic} | {r.gold.aspect}" for r in report.missed)

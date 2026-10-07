@@ -11,7 +11,7 @@ from app.application.syllabus_derivation.evaluation import (
     format_report,
     gold_sections,
     load_laws,
-    select_articles,
+    select_top_divisions,
 )
 
 LAW_HTML = """
@@ -43,9 +43,15 @@ def _gold(aspect: str, articles: tuple[int, ...]) -> GoldSection:
     return GoldSection("Tema", aspect, LEY_19_2013, articles)
 
 
+def _evaluate_top_one(law: Law, gold: list[GoldSection]):
+    return evaluate({LEY_19_2013.identifier: law}, gold, select_top_divisions(1), "top 1")
+
+
 def test_the_articles_of_the_best_matching_chapters_are_selected(law) -> None:
-    assert select_articles(law, "Régimen disciplinario", top_divisions=1) == (3, 4)
-    assert select_articles(law, "Régimen disciplinario", top_divisions=2) == (3, 4, 1, 2)
+    query = "Régimen disciplinario"
+
+    assert select_top_divisions(1)(law, query) == (3, 4)
+    assert select_top_divisions(2)(law, query) == (3, 4, 1, 2)
 
 
 def test_recall_is_the_share_of_hand_made_articles_that_were_selected() -> None:
@@ -62,7 +68,7 @@ def test_the_report_counts_well_covered_and_missed_sections(law) -> None:
         _gold("Tema sin relación alguna", (4,)),
     ]
 
-    report = evaluate({LEY_19_2013.identifier: law}, gold, top_divisions=1)
+    report = _evaluate_top_one(law, gold)
 
     assert [round(r.recall, 2) for r in report.results] == [1.0, 1.0, 0.0]
     assert report.well_covered == 2
@@ -74,7 +80,7 @@ def test_the_report_counts_well_covered_and_missed_sections(law) -> None:
 def test_the_formatted_report_names_the_missed_sections(law) -> None:
     gold = [_gold("Régimen disciplinario", (3,)), _gold("Tema sin relación alguna", (4,))]
 
-    text = format_report(evaluate({LEY_19_2013.identifier: law}, gold, top_divisions=1))
+    text = format_report(_evaluate_top_one(law, gold))
 
     assert "Sections evaluated: 2" in text
     assert "Sections with recall >= 0.8: 1/2" in text
