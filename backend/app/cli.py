@@ -10,11 +10,11 @@ from app.application.source import get_source, import_pdf_source, list_sources
 from app.application.study_material.registry import TOPICS
 from app.application.study_support_report import build_support_report, format_support_report
 from app.application.syllabus_derivation.evaluation import (
-    DEFAULT_TOP_DIVISIONS,
     evaluate,
     format_report,
     gold_sections,
     load_laws,
+    select_top_divisions,
 )
 from app.persistence.call_repository import SqlAlchemyCallRepository
 from app.persistence.database import SessionLocal
@@ -65,8 +65,8 @@ def build_parser() -> argparse.ArgumentParser:
     evaluation_parser.add_argument(
         "--top",
         type=int,
-        default=DEFAULT_TOP_DIVISIONS,
-        help="Titles/chapters selected per aspect",
+        default=None,
+        help="Measure the fixed top-N titles/chapters baseline instead of the derivation engine",
     )
     return parser
 
@@ -150,7 +150,11 @@ def _derive_eval(
 ) -> int:
     gold = gold_sections(TOPICS)
     laws = load_laws(gold, HttpSourceRetriever(timeout=120))
-    print(format_report(evaluate(laws, gold, args.top)))
+    if args.top is None:
+        report = evaluate(laws, gold)
+    else:
+        report = evaluate(laws, gold, select_top_divisions(args.top), f"top {args.top} divisions")
+    print(format_report(report))
     return 0
 
 

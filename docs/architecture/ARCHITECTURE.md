@@ -138,7 +138,7 @@ Every topic exposes its **provenance** (`origin`: curated or acquired; `review_s
 
 ### Syllabus derivation (in progress)
 
-`application/syllabus_derivation/` is the deterministic engine that will replace hand-written topic mappings (no LLM, no new dependencies). So far it holds the retrieval layer: `normative_source/structure.py` parses a consolidated law into its Título › Capítulo › Artículo tree (`Law`, `LawDivision`), `text.py` normalises Spanish text (accents, stopwords, 6-character prefix stems), `retrieval.py` ranks the divisions of a law against a query with BM25 (heading words weighted x4) and `evaluation.py` compares the selection with the hand-made topics. `atanor derive-eval --top N` runs that benchmark against the live BOE.
+`application/syllabus_derivation/` is the deterministic engine that will replace hand-written topic mappings (no LLM, no new dependencies). So far it holds the retrieval layer: `normative_source/structure.py` parses a consolidated law into its Título › Capítulo › Artículo tree (`Law`, `LawDivision`), `text.py` normalises Spanish text (accents, stopwords, 6-character prefix stems), `retrieval.py` ranks the divisions of a law against a query with BM25 (heading words weighted x4) and `derive.py` selects the articles of an aspect (relative score threshold, at most 25 articles, unresolved when nothing matches) and `evaluation.py` compares the selection with the hand-made topics. `atanor derive-eval` (or `--top N` for the fixed baseline) runs that benchmark against the live BOE.
 
 ## Domain Layer
 
