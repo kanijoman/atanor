@@ -86,6 +86,43 @@ LEY_7_1985 = NormativeSourceCandidate(
 )
 
 
+LEY_47_2003 = NormativeSourceCandidate(
+    source=Source(
+        title="Ley 47/2003, de 26 de noviembre, General Presupuestaria",
+        locator="https://www.boe.es/buscar/act.php?id=BOE-A-2003-21614",
+    ),
+    authority="BOE",
+    identifier="BOE-A-2003-21614",
+    label="Ley 47/2003",
+)
+
+TREBEP = NormativeSourceCandidate(
+    source=Source(
+        title=(
+            "Real Decreto Legislativo 5/2015, de 30 de octubre, por el que se aprueba el texto "
+            "refundido de la Ley del Estatuto Básico del Empleado Público"
+        ),
+        locator="https://www.boe.es/buscar/act.php?id=BOE-A-2015-11719",
+    ),
+    authority="BOE",
+    identifier="BOE-A-2015-11719",
+    label="TREBEP",
+)
+
+RDL_4_2000 = NormativeSourceCandidate(
+    source=Source(
+        title=(
+            "Real Decreto Legislativo 4/2000, de 23 de junio, por el que se aprueba el texto "
+            "refundido de la Ley sobre Seguridad Social de los Funcionarios Civiles del Estado"
+        ),
+        locator="https://www.boe.es/buscar/act.php?id=BOE-A-2000-12140",
+    ),
+    authority="BOE",
+    identifier="BOE-A-2000-12140",
+    label="RDL 4/2000",
+)
+
+
 def normalize(value: str) -> str:
     return " ".join(value.casefold().split())
 

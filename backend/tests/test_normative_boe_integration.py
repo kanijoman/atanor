@@ -46,6 +46,9 @@ def test_live_boe_retrieval_extracts_ley_39_2015_article_1() -> None:
         ("government", 4),
         ("state_administration", 6),
         ("territorial_organisation", 5),
+        ("civil_servants", 7),
+        ("civil_servants_rights", 6),
+        ("state_budget", 5),
     ],
 )
 def test_live_boe_pages_cover_every_aspect_of_the_acquired_topics(
