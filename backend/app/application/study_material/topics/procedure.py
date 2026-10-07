@@ -4,7 +4,7 @@ from app.application.normative_source import LEY_39_2015
 from app.application.study_material.coverage import aspects_covered_by_sections
 from app.application.study_material.providers import AcquiredNormativeMaterial, ArticleSection
 from app.application.study_material.topic import StudyTopic
-from app.application.study_material.wording import leading_statement
+from app.application.study_material.wording import statements
 
 TOPIC_NAME = "Procedimiento administrativo común"
 
@@ -29,7 +29,11 @@ _UNIT_LEAD = "las leyes del procedimiento administrativo común de las administr
 
 
 def _matches(title: str) -> bool:
-    lead = leading_statement(title)
+    parts = statements(title)
+    # Only a unit that asks for the law alone: the material covers the Ley 39/2015 and nothing else.
+    if len(parts) != 1:
+        return False
+    lead = parts[0]
     return (
         "ley 39/2015" in lead and "procedimiento administrativo común" in lead
     ) or lead.startswith(_UNIT_LEAD)

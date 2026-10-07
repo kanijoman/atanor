@@ -134,7 +134,7 @@ def test_the_procedure_unit_is_recognised_from_its_complete_wording(auxiliar_agb
     topic = find_topic_for_title(unit.title)
 
     assert topic is not None
-    assert topic.name == "Procedimiento administrativo común"
+    assert topic.name.startswith("Las Leyes del Procedimiento Administrativo Común y del Régimen")
 
 
 def test_persisted_units_keep_document_order_when_numbering_restarts(tmp_path) -> None:

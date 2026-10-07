@@ -123,6 +123,19 @@ RDL_4_2000 = NormativeSourceCandidate(
 )
 
 
+LEY_29_1998 = NormativeSourceCandidate(
+    source=Source(
+        title=(
+            "Ley 29/1998, de 13 de julio, reguladora de la Jurisdicción Contencioso-administrativa"
+        ),
+        locator="https://www.boe.es/buscar/act.php?id=BOE-A-1998-16718",
+    ),
+    authority="BOE",
+    identifier="BOE-A-1998-16718",
+    label="Ley 29/1998",
+)
+
+
 def normalize(value: str) -> str:
     return " ".join(value.casefold().split())
 

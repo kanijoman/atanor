@@ -49,6 +49,7 @@ def test_live_boe_retrieval_extracts_ley_39_2015_article_1() -> None:
         ("civil_servants", 7),
         ("civil_servants_rights", 6),
         ("state_budget", 5),
+        ("administrative_procedure_and_appeals", 6),
     ],
 )
 def test_live_boe_pages_cover_every_aspect_of_the_acquired_topics(
