@@ -3,7 +3,7 @@ from support import InMemoryKnowledgeRepository
 
 from app.application.study_material import (
     derive_knowledge_needs_for_programme_unit,
-    generate_access_to_public_information_material,
+    generate_material_for_need,
     generate_study_material_for_programme_unit,
     prepare_programme_unit_for_study,
 )
@@ -47,7 +47,7 @@ def test_generates_candidate_facing_material_for_access_to_public_information() 
     )
     repository = InMemoryKnowledgeRepository()
 
-    knowledge = generate_access_to_public_information_material(need, repository)
+    knowledge = generate_material_for_need(need, repository)
 
     assert knowledge.title == need.topic
     assert knowledge.description
@@ -64,7 +64,7 @@ def test_candidate_facing_material_contains_explanations_and_relevant_concepts()
     )
     repository = InMemoryKnowledgeRepository()
 
-    material = generate_access_to_public_information_material(need, repository)
+    material = generate_material_for_need(need, repository)
 
     assert "información pública" in material.description.lower()
     assert "límites" in material.description.lower()
@@ -82,7 +82,7 @@ def test_candidate_facing_material_retains_canonical_evidence_reference() -> Non
     )
     repository = InMemoryKnowledgeRepository()
 
-    material = generate_access_to_public_information_material(need, repository)
+    material = generate_material_for_need(need, repository)
 
     assert len(material.sources) == 1
     assert material.sources[0].title.startswith("Ley 19/2013")
@@ -96,7 +96,7 @@ def test_generated_material_can_be_retrieved_after_persistence() -> None:
     )
     repository = InMemoryKnowledgeRepository()
 
-    saved = generate_access_to_public_information_material(need, repository)
+    saved = generate_material_for_need(need, repository)
     retrieved = repository.get_by_id(saved.id)
 
     assert retrieved == saved
@@ -112,8 +112,8 @@ def test_generated_material_is_reproducible_for_the_same_knowledge_need() -> Non
     first_repository = InMemoryKnowledgeRepository()
     second_repository = InMemoryKnowledgeRepository()
 
-    first = generate_access_to_public_information_material(need, first_repository)
-    second = generate_access_to_public_information_material(need, second_repository)
+    first = generate_material_for_need(need, first_repository)
+    second = generate_material_for_need(need, second_repository)
 
     assert first.title == second.title
     assert first.description == second.description

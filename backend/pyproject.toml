@@ -62,7 +62,6 @@ mypy_path = "."
 # Baseline: existing violations tolerated until the file is refactored (AT-110).
 # Remove an entry as soon as its file complies; never add new entries.
 [tool.ruff.lint.per-file-ignores]
-"app/application/study_material.py" = ["E501", "PLR0911"]
 "app/cli.py" = ["C901", "PLR0911", "PLR0912", "PLR0915"]
 # Scripts must set the environment before importing the application.
 "scripts/*.py" = ["E402"]

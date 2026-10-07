@@ -1,3 +1,5 @@
+import pytest
+
 from app.application.normative_source import (
     HttpSourceRetriever,
     OfficialNormativeSourceCatalog,
@@ -14,6 +16,7 @@ from app.application.study_material import (
 from app.domain.models import KnowledgeNeed, StudyProgrammeUnit
 
 
+@pytest.mark.network
 def test_acquired_normative_content_feeds_programme_coverage() -> None:
     programme_unit = StudyProgrammeUnit(
         number=11,
@@ -48,6 +51,7 @@ def test_acquired_normative_content_feeds_programme_coverage() -> None:
     assert summary.coverage_percentage == 12.5
 
 
+@pytest.mark.network
 def test_acquired_multiple_articles_feed_programme_coverage() -> None:
     programme_unit = StudyProgrammeUnit(
         number=11,
