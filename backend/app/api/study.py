@@ -8,6 +8,7 @@ from app.api.dependencies import (
     SourceRetrieverDep,
     StudyProgrammeRepositoryDep,
 )
+from app.application.programme_coverage import summarize_programme_coverage
 from app.application.study_material import (
     MaterialProvenance,
     MaterialUnavailableError,
@@ -47,10 +48,15 @@ def get_programme(programme_id: UUID, repository: StudyProgrammeRepositoryDep) -
     if programme is None:
         raise HTTPException(status_code=404, detail="Study programme not found")
 
+    coverage = summarize_programme_coverage(programme)
     return {
         "id": str(programme.id),
         "identifier": programme.identifier,
         "title": programme.title,
+        "coverage": {
+            "units_total": coverage.units_total,
+            "units_with_material": coverage.units_with_material,
+        },
         "units": [
             {
                 "id": str(unit.id),

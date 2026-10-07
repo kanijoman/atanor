@@ -102,6 +102,7 @@ def test_get_programme_returns_units_for_candidate_selection(tmp_path, monkeypat
         "id": str(programme.id),
         "identifier": "I",
         "title": "Programa oficial",
+        "coverage": {"units_total": 1, "units_with_material": 1},
         "units": [
             {
                 "id": str(unit.id),
@@ -125,6 +126,7 @@ def test_get_programme_exposes_study_material_availability(tmp_path, monkeypatch
     response = client.get(f"/api/study/programmes/{programme.id}")
 
     assert response.status_code == 200
+    assert response.json()["coverage"] == {"units_total": 1, "units_with_material": 1}
     assert response.json()["units"] == [
         {
             "id": str(unit.id),
@@ -162,6 +164,7 @@ def test_get_programme_marks_unsupported_units_as_unavailable(tmp_path, monkeypa
     response = client.get(f"/api/study/programmes/{unsupported_programme.id}")
 
     assert response.status_code == 200
+    assert response.json()["coverage"] == {"units_total": 1, "units_with_material": 0}
     assert response.json()["units"] == [
         {
             "id": str(unsupported_unit.id),
