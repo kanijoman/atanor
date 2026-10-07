@@ -1,3 +1,5 @@
+from support import InMemoryKnowledgeRepository
+
 from app.application.study_material import (
     build_study_coverage_summary,
     derive_covered_aspects,
@@ -6,7 +8,6 @@ from app.application.study_material import (
     generate_study_material_for_programme_unit,
 )
 from app.domain.models import KnowledgeNeed, StudyProgrammeUnit
-from support import InMemoryKnowledgeRepository
 
 
 def real_electronic_identity_programme_unit() -> StudyProgrammeUnit:

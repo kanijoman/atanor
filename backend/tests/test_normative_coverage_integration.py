@@ -42,13 +42,10 @@ def test_acquired_normative_content_feeds_programme_coverage() -> None:
     )
 
     assert summary.required_count == 8
-    assert summary.covered_aspects == (
-        "Objeto y finalidad del procedimiento administrativo común",
-    )
+    assert summary.covered_aspects == ("Objeto y finalidad del procedimiento administrativo común",)
     assert summary.covered_count == 1
     assert summary.pending_aspects == required_aspects[1:]
     assert summary.coverage_percentage == 12.5
-
 
 
 def test_acquired_multiple_articles_feed_programme_coverage() -> None:

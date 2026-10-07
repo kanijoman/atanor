@@ -128,9 +128,7 @@ def test_get_programme_exposes_study_material_availability(tmp_path, monkeypatch
     database.close()
 
 
-def test_get_programme_marks_unsupported_units_as_unavailable(
-    tmp_path, monkeypatch
-) -> None:
+def test_get_programme_marks_unsupported_units_as_unavailable(tmp_path, monkeypatch) -> None:
     database = StudyApiDatabase(tmp_path / "api.db")
     programme, _ = _seed_programme(database)
     unsupported_unit = StudyProgrammeUnit(
@@ -147,9 +145,7 @@ def test_get_programme_marks_unsupported_units_as_unavailable(
         title="Programa oficial II",
         units=(unsupported_unit,),
     )
-    SqlAlchemyStudyProgrammeRepository(database.session_factory).save(
-        unsupported_programme
-    )
+    SqlAlchemyStudyProgrammeRepository(database.session_factory).save(unsupported_programme)
     monkeypatch.setattr("app.api.study.SessionLocal", database.session_factory)
     client = TestClient(app)
 

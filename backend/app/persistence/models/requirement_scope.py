@@ -1,7 +1,13 @@
+from typing import TYPE_CHECKING
+
 from sqlalchemy import ForeignKey, Integer, Text
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.persistence.database import Base
+
+if TYPE_CHECKING:
+    from app.persistence.models.knowledge_need import KnowledgeNeed
+    from app.persistence.models.requirement import Requirement
 
 
 class RequirementScope(Base):
@@ -13,8 +19,8 @@ class RequirementScope(Base):
     )
     context: Mapped[str] = mapped_column(Text, nullable=False)
 
-    requirement: Mapped["Requirement"] = relationship(back_populates="scopes")
-    knowledge_needs: Mapped[list["KnowledgeNeed"]] = relationship(
+    requirement: Mapped[Requirement] = relationship(back_populates="scopes")
+    knowledge_needs: Mapped[list[KnowledgeNeed]] = relationship(
         back_populates="scope",
         cascade="all, delete-orphan",
         passive_deletes=True,

@@ -33,7 +33,10 @@ def test_same_requirement_can_have_different_scopes() -> None:
     technical_scope = RequirementScope(context="Information Technology")
 
     assert general_scope != technical_scope
-    assert requirement.with_scope(general_scope).scopes != requirement.with_scope(technical_scope).scopes
+    assert (
+        requirement.with_scope(general_scope).scopes
+        != requirement.with_scope(technical_scope).scopes
+    )
 
 
 def test_knowledge_need_can_require_different_depths() -> None:

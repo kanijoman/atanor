@@ -1,3 +1,4 @@
+from typing import TYPE_CHECKING
 from uuid import UUID
 
 from sqlalchemy import ForeignKey, Integer, String, Uuid
@@ -5,6 +6,9 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.persistence.database import Base
 from app.persistence.models.knowledge import Knowledge
+
+if TYPE_CHECKING:
+    from app.persistence.models.requirement_scope import RequirementScope
 
 
 class KnowledgeNeed(Base):
@@ -20,5 +24,5 @@ class KnowledgeNeed(Base):
         Uuid(), ForeignKey("knowledge.id"), nullable=True
     )
 
-    scope: Mapped["RequirementScope"] = relationship(back_populates="knowledge_needs")
+    scope: Mapped[RequirementScope] = relationship(back_populates="knowledge_needs")
     knowledge: Mapped[Knowledge | None] = relationship(lazy="joined")

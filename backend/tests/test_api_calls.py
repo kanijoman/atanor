@@ -1,3 +1,4 @@
+from typing import ClassVar
 from uuid import uuid4
 
 from fastapi.testclient import TestClient
@@ -8,7 +9,7 @@ from app.main import app
 
 
 class InMemoryCallRepository:
-    calls: list[Call] = []
+    calls: ClassVar[list[Call]] = []
 
     def __init__(self, _session_factory) -> None:
         pass
@@ -21,7 +22,7 @@ class InMemoryCallRepository:
 
 
 class InMemoryStudyProgrammeRepository:
-    programmes_by_call: dict = {}
+    programmes_by_call: ClassVar[dict] = {}
 
     def __init__(self, _session_factory) -> None:
         pass

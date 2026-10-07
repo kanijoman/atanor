@@ -1,5 +1,5 @@
-from dataclasses import dataclass
 import re
+from dataclasses import dataclass
 
 from app.domain.models import Knowledge, KnowledgeNeed
 
@@ -22,9 +22,7 @@ class DeterministicKnowledgeExtractionStrategy(KnowledgeExtractionStrategy):
 
         lines = [line.strip() for line in text.splitlines() if line.strip()]
         matches = [
-            index
-            for index, line in enumerate(lines)
-            if normalized_topic in _normalize(line)
+            index for index, line in enumerate(lines) if normalized_topic in _normalize(line)
         ]
         if not matches:
             return None

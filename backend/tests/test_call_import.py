@@ -3,7 +3,6 @@ from pathlib import Path
 from app.application.call_import import import_call_from_pdf
 from app.domain.models import Call, Source, StudyProgramme
 
-
 SAMPLES = Path(__file__).parent / "samples"
 
 

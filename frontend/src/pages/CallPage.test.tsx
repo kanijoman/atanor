@@ -68,8 +68,14 @@ describe("CallPage", () => {
     render(<CallPage callId="call-1" />);
     await screen.findByRole("heading", { name: call.title });
 
-    expect(fetchMock).toHaveBeenCalledWith("/api/calls/call-1", expect.objectContaining({ signal: expect.any(AbortSignal) }));
-    expect(fetchMock).toHaveBeenCalledWith("/api/calls/call-1/programmes", expect.objectContaining({ signal: expect.any(AbortSignal) }));
+    expect(fetchMock).toHaveBeenCalledWith(
+      "/api/calls/call-1",
+      expect.objectContaining({ signal: expect.any(AbortSignal) }),
+    );
+    expect(fetchMock).toHaveBeenCalledWith(
+      "/api/calls/call-1/programmes",
+      expect.objectContaining({ signal: expect.any(AbortSignal) }),
+    );
   });
 
   it("shows an empty state when the call has no programmes", async () => {
@@ -77,22 +83,17 @@ describe("CallPage", () => {
       "fetch",
       vi.fn((url: string) =>
         Promise.resolve(
-          new Response(
-            JSON.stringify(url.endsWith("/programmes") ? [] : call),
-            {
-              status: 200,
-              headers: { "Content-Type": "application/json" },
-            },
-          ),
+          new Response(JSON.stringify(url.endsWith("/programmes") ? [] : call), {
+            status: 200,
+            headers: { "Content-Type": "application/json" },
+          }),
         ),
       ),
     );
 
     render(<CallPage callId="call-1" />);
 
-    expect(
-      await screen.findByText("No programmes are available for this call yet."),
-    ).toBeVisible();
+    expect(await screen.findByText("No programmes are available for this call yet.")).toBeVisible();
   });
 
   it("shows an error when either call request fails", async () => {

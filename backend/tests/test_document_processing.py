@@ -29,7 +29,9 @@ def test_process_document_extracts_text_and_analyzes_structure(monkeypatch):
         ]
 
     monkeypatch.setattr(document_processing, "extract_pdf_text", fake_extract_pdf_text)
-    monkeypatch.setattr(document_processing, "analyze_document_structure", fake_analyze_document_structure)
+    monkeypatch.setattr(
+        document_processing, "analyze_document_structure", fake_analyze_document_structure
+    )
 
     result = document_processing.process_document(source)
 

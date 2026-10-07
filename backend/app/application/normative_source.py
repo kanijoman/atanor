@@ -1,4 +1,6 @@
+import re
 from dataclasses import dataclass
+from html.parser import HTMLParser
 from typing import Protocol
 from urllib.request import Request, urlopen
 
@@ -9,7 +11,6 @@ from app.domain.models import Knowledge, Source
 class KnowledgeComparison:
     matched_aspects: tuple[str, ...]
     missing_aspects: tuple[str, ...]
-
 
 
 @dataclass(frozen=True)
@@ -103,6 +104,7 @@ class HttpSourceRetriever:
 
         return RetrievedSource(candidate=candidate, content=content)
 
+
 @dataclass(frozen=True)
 class NormativeArticle:
     identifier: str
@@ -110,67 +112,69 @@ class NormativeArticle:
     content: str
 
 
-def extract_article(retrieved: RetrievedSource, article_number: int) -> NormativeArticle | None:
-    """Extract one article from the HTML representation of a normative source."""
-    from html.parser import HTMLParser
-    import re
+class _ElementParser(HTMLParser):
+    """Collect (tag, normalized text) pairs for every element of an HTML document."""
 
-    class _ArticleParser(HTMLParser):
-        def __init__(self) -> None:
-            super().__init__()
-            self.headings: list[tuple[str, str]] = []
-            self.current_tag: str | None = None
-            self.current_text: list[str] = []
-            self.elements: list[tuple[str, str]] = []
+    def __init__(self) -> None:
+        super().__init__()
+        self.current_tag: str | None = None
+        self.current_text: list[str] = []
+        self.elements: list[tuple[str, str]] = []
 
-        def handle_starttag(self, tag: str, attrs: list[tuple[str, str | None]]) -> None:
-            self.current_tag = tag
+    def handle_starttag(self, tag: str, attrs: list[tuple[str, str | None]]) -> None:
+        self.current_tag = tag
+        self.current_text = []
+
+    def handle_endtag(self, tag: str) -> None:
+        if self.current_tag == tag:
+            text = " ".join("".join(self.current_text).split())
+            if text:
+                self.elements.append((tag, text))
+            self.current_tag = None
             self.current_text = []
 
-        def handle_endtag(self, tag: str) -> None:
-            if self.current_tag == tag:
-                text = " ".join("".join(self.current_text).split())
-                if text:
-                    self.elements.append((tag, text))
-                self.current_tag = None
-                self.current_text = []
+    def handle_data(self, data: str) -> None:
+        if self.current_tag is not None:
+            self.current_text.append(data)
 
-        def handle_data(self, data: str) -> None:
-            if self.current_tag is not None:
-                self.current_text.append(data)
 
-    parser = _ArticleParser()
+_ANY_ARTICLE_HEADING = re.compile(r"^Artículo\s+\d+(?:\.|\s)", re.IGNORECASE)
+_BODY_TAGS = {"p", "div", "li"}
+
+
+def _find_article_start(elements: list[tuple[str, str]], article_number: int) -> int | None:
+    marker = re.compile(rf"^Artículo\s+{article_number}(?:\.|\s)", re.IGNORECASE)
+    return next((index for index, (_, text) in enumerate(elements) if marker.match(text)), None)
+
+
+def _collect_article_body(elements: list[tuple[str, str]]) -> str:
+    body: list[str] = []
+    for tag, text in elements:
+        if _ANY_ARTICLE_HEADING.match(text):
+            break
+        if tag in _BODY_TAGS:
+            body.append(text)
+    return " ".join(body)
+
+
+def extract_article(retrieved: RetrievedSource, article_number: int) -> NormativeArticle | None:
+    """Extract one article from the HTML representation of a normative source."""
+    parser = _ElementParser()
     parser.feed(retrieved.content)
 
-    marker = re.compile(
-        rf"^Artículo\s+{article_number}(?:\.|\s)",
-        re.IGNORECASE,
-    )
-    start = next(
-        (
-            index
-            for index, (_, text) in enumerate(parser.elements)
-            if marker.match(text)
-        ),
-        None,
-    )
+    start = _find_article_start(parser.elements, article_number)
     if start is None:
         return None
 
     heading = parser.elements[start][1]
     title = heading.split(".", 1)[1].strip() if "." in heading else ""
-    body: list[str] = []
-    for tag, text in parser.elements[start + 1 :]:
-        if re.match(r"^Artículo\s+\d+(?:\.|\s)", text, re.IGNORECASE):
-            break
-        if tag in {"p", "div", "li"}:
-            body.append(text)
-
     return NormativeArticle(
         identifier=f"Artículo {article_number}",
         title=title,
-        content=" ".join(body),
+        content=_collect_article_body(parser.elements[start + 1 :]),
     )
+
+
 def extract_articles(
     retrieved: RetrievedSource,
     article_numbers: tuple[int, ...],
@@ -192,8 +196,7 @@ def reconstruct_knowledge_from_articles(
         raise ValueError("At least one normative article is required")
 
     description = "\n\n".join(
-        f"{article.identifier}. {article.title}\n{article.content}".strip()
-        for article in articles
+        f"{article.identifier}. {article.title}\n{article.content}".strip() for article in articles
     )
     return Knowledge(
         title=retrieved.candidate.source.title,

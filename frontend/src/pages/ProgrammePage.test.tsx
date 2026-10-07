@@ -45,9 +45,7 @@ describe("ProgrammePage", () => {
 
     expect(screen.getByText("Loading programme…")).toBeVisible();
 
-    expect(
-      await screen.findByRole("heading", { name: "Programme I" }),
-    ).toBeVisible();
+    expect(await screen.findByRole("heading", { name: "Programme I" })).toBeVisible();
     expect(screen.getByText("1. Organización del Estado")).toBeVisible();
     expect(
       screen.getByRole("link", {
@@ -93,9 +91,7 @@ describe("ProgrammePage", () => {
     });
 
     expect(availableUnitLink).toHaveAttribute("href", "/study/unit-2");
-    expect(
-      screen.queryByRole("link", { name: /Organización del Estado/ }),
-    ).not.toBeInTheDocument();
+    expect(screen.queryByRole("link", { name: /Organización del Estado/ })).not.toBeInTheDocument();
   });
 
   it("shows an empty state when the programme has no units", async () => {
@@ -111,9 +107,7 @@ describe("ProgrammePage", () => {
 
     render(<ProgrammePage programmeId="programme-1" />);
 
-    expect(
-      await screen.findByText("No programme units are available yet."),
-    ).toBeVisible();
+    expect(await screen.findByText("No programme units are available yet.")).toBeVisible();
   });
 
   it("shows an error when the programme cannot be loaded", async () => {
@@ -141,6 +135,9 @@ describe("ProgrammePage", () => {
       name: /Derecho de acceso a la información pública/,
     });
 
-    expect(fetchMock).toHaveBeenCalledWith("/api/study/programmes/programme-1", expect.objectContaining({ signal: expect.any(AbortSignal) }));
+    expect(fetchMock).toHaveBeenCalledWith(
+      "/api/study/programmes/programme-1",
+      expect.objectContaining({ signal: expect.any(AbortSignal) }),
+    );
   });
 });

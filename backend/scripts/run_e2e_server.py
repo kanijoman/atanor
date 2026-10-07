@@ -3,7 +3,6 @@ from __future__ import annotations
 import os
 from pathlib import Path
 
-
 BACKEND_ROOT = Path(__file__).resolve().parents[1]
 E2E_DATABASE = BACKEND_ROOT / "e2e.db"
 
@@ -12,13 +11,14 @@ os.environ["DATABASE_URL"] = f"sqlite:///{E2E_DATABASE.as_posix()}"
 if E2E_DATABASE.exists():
     E2E_DATABASE.unlink()
 
+import uvicorn
+
 from app.application.call_import import import_call_from_pdf
 from app.main import app
 from app.persistence.call_repository import SqlAlchemyCallRepository
-from app.persistence.database import Base, engine, SessionLocal
+from app.persistence.database import Base, SessionLocal, engine
 from app.persistence.source_repository import SqlAlchemySourceRepository
 from app.persistence.study_programme_repository import SqlAlchemyStudyProgrammeRepository
-import uvicorn
 
 
 def prepare_database() -> None:

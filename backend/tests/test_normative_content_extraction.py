@@ -1,7 +1,6 @@
 from app.application.normative_source import (
     OfficialNormativeSourceCatalog,
     RetrievedSource,
-    acquire_normative_source,
     extract_article,
 )
 

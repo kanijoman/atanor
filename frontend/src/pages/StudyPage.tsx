@@ -31,7 +31,9 @@ export function StudyPage({ unitId }: StudyPageProps) {
           <section aria-labelledby="study-coverage-heading">
             <h2 id="study-coverage-heading">Study coverage</h2>
             <p>
-              {coverageStatusLabel[study.coverage.status]} · {study.coverage.covered_count} of {study.coverage.required_count} aspects covered ({study.coverage.coverage_percentage}%)
+              {coverageStatusLabel[study.coverage.status]} · {study.coverage.covered_count} of{" "}
+              {study.coverage.required_count} aspects covered ({study.coverage.coverage_percentage}
+              %)
             </p>
 
             <h3>Study aspects</h3>

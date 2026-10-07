@@ -1,12 +1,12 @@
 from app.domain.models import Knowledge, Source
-from app.persistence.knowledge_repository import SqlAlchemyKnowledgeRepository
 from app.persistence.database import SessionLocal
+from app.persistence.knowledge_repository import SqlAlchemyKnowledgeRepository
 
 
 def test_knowledge_repository_round_trips_sources() -> None:
     repository = SqlAlchemyKnowledgeRepository(SessionLocal)
     source = Source(
-        title="Ley 39/2015, de 1 de octubre, del Procedimiento Administrativo Común de las Administraciones Públicas",
+        title="Ley 39/2015, de 1 de octubre, del Procedimiento Administrativo Común de las Administraciones Públicas",  # noqa: E501
         locator="https://www.boe.es/buscar/act.php?id=BOE-A-2015-10565",
     )
     knowledge = Knowledge(

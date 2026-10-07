@@ -28,12 +28,21 @@ def test_migrations_round_trip(tmp_path) -> None:
 
         requirement_columns = inspector.get_columns("requirements")
         assert {column["name"] for column in requirement_columns} == {
-            "id", "title", "description", "source_id", "created_at", "updated_at",
+            "id",
+            "title",
+            "description",
+            "source_id",
+            "created_at",
+            "updated_at",
         }
 
         source_columns = inspector.get_columns("sources")
         assert {column["name"] for column in source_columns} == {
-            "id", "title", "locator", "created_at", "updated_at",
+            "id",
+            "title",
+            "locator",
+            "created_at",
+            "updated_at",
         }
         source_id = next(column for column in source_columns if column["name"] == "id")
         assert isinstance(source_id["type"], CHAR)
@@ -41,7 +50,9 @@ def test_migrations_round_trip(tmp_path) -> None:
 
         call_columns = inspector.get_columns("calls")
         assert {column["name"] for column in call_columns} == {
-            "id", "source_id", "title",
+            "id",
+            "source_id",
+            "title",
         }
 
         scope_columns = inspector.get_columns("requirement_scopes")
@@ -49,22 +60,38 @@ def test_migrations_round_trip(tmp_path) -> None:
 
         knowledge_columns = inspector.get_columns("knowledge")
         assert {column["name"] for column in knowledge_columns} == {
-            "id", "title", "description", "identity_key",
+            "id",
+            "title",
+            "description",
+            "identity_key",
         }
 
         knowledge_need_columns = inspector.get_columns("knowledge_needs")
         assert {column["name"] for column in knowledge_need_columns} == {
-            "id", "scope_id", "topic", "depth", "knowledge_id",
+            "id",
+            "scope_id",
+            "topic",
+            "depth",
+            "knowledge_id",
         }
 
         programme_columns = inspector.get_columns("study_programmes")
         assert {column["name"] for column in programme_columns} == {
-            "id", "call_id", "identifier", "title",
+            "id",
+            "call_id",
+            "identifier",
+            "title",
         }
         unit_columns = inspector.get_columns("study_programme_units")
         assert {column["name"] for column in unit_columns} == {
-            "id", "programme_id", "number", "title", "start_page", "start_order",
-            "end_page", "end_order",
+            "id",
+            "programme_id",
+            "number",
+            "title",
+            "start_page",
+            "start_order",
+            "end_page",
+            "end_order",
         }
 
         requirement_foreign_keys = inspector.get_foreign_keys("requirements")

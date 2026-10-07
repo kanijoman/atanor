@@ -1,5 +1,5 @@
-from dataclasses import dataclass
 import re
+from dataclasses import dataclass
 
 
 @dataclass(frozen=True)
@@ -20,12 +20,8 @@ TEMA_PATTERN = re.compile(
     r"^Tema\s+(?P<number>\d+)\s*[.\-–—:]?\s*(?P<title>.+)$",
     re.IGNORECASE,
 )
-NUMERIC_PATTERN = re.compile(
-    r"^(?P<marker>\d+(?:\s*\.\s*\d+)*\s*[.)]?)(?:\s+)(?P<title>.+)$"
-)
-ROMAN_PATTERN = re.compile(
-    r"^(?P<marker>[IVXLCDM]+(?:\s*\.\s*\d+)*\s*[.)]?)\s+(?P<title>.+)$"
-)
+NUMERIC_PATTERN = re.compile(r"^(?P<marker>\d+(?:\s*\.\s*\d+)*\s*[.)]?)(?:\s+)(?P<title>.+)$")
+ROMAN_PATTERN = re.compile(r"^(?P<marker>[IVXLCDM]+(?:\s*\.\s*\d+)*\s*[.)]?)\s+(?P<title>.+)$")
 LETTER_PATTERN = re.compile(
     r"^(?P<marker>(?:[A-Z](?:\s*\.\s*\d+)*|[a-z](?:\s*\.\s*\d+)*[.)]))\s+(?P<title>.+)$"
 )

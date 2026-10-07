@@ -6,14 +6,8 @@ from pathlib import Path
 from typing import Protocol
 
 from app.application.call_discovery import discover_and_persist_call
-from app.application.source import import_pdf_source
-from app.domain.models import Call, Source, StudyProgramme
-
-
-class SourceRepository(Protocol):
-    def save(self, source: Source) -> None: ...
-
-    def list_all(self) -> list[Source]: ...
+from app.application.source import SourceRepository, import_pdf_source
+from app.domain.models import Call, StudyProgramme
 
 
 class CallRepository(Protocol):
@@ -35,11 +29,7 @@ def import_call_from_pdf(
     """Import a PDF and persist its discovered call and study programmes."""
     pdf_path = Path(path)
     existing_source = next(
-        (
-            source
-            for source in source_repository.list_all()
-            if source.locator == str(pdf_path)
-        ),
+        (source for source in source_repository.list_all() if source.locator == str(pdf_path)),
         None,
     )
     source = existing_source or import_pdf_source(pdf_path, source_repository)

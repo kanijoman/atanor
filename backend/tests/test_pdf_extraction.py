@@ -10,23 +10,19 @@ def _pdf_with_pages(*texts: str) -> bytes:
     objects = [
         b"<< /Type /Catalog /Pages 2 0 R >>",
         b"<< /Type /Pages /Kids [3 0 R 6 0 R] /Count 2 >>",
-        b"<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 5 0 R >> >> /Contents 4 0 R >>",
+        b"<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 5 0 R >> >> /Contents 4 0 R >>",  # noqa: E501
         None,
         None,
-        b"<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 8 0 R >> >> /Contents 7 0 R >>",
+        b"<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 8 0 R >> >> /Contents 7 0 R >>",  # noqa: E501
         None,
         None,
     ]
 
     content_object_numbers = (4, 7)
-    for text, object_number in zip(texts, content_object_numbers):
+    for text, object_number in zip(texts, content_object_numbers, strict=True):
         stream = f"BT /F1 12 Tf 72 720 Td ({text}) Tj ET".encode()
         objects[object_number - 1] = (
-            b"<< /Length "
-            + str(len(stream)).encode()
-            + b" >>\nstream\n"
-            + stream
-            + b"\nendstream"
+            b"<< /Length " + str(len(stream)).encode() + b" >>\nstream\n" + stream + b"\nendstream"
         )
 
     objects[4] = b"<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>"
@@ -44,8 +40,7 @@ def _pdf_with_pages(*texts: str) -> bytes:
     for offset in offsets[1:]:
         output += f"{offset:010d} 00000 n \n".encode()
     output += (
-        f"trailer\n<< /Size {len(objects) + 1} /Root 1 0 R >>\n"
-        f"startxref\n{xref_offset}\n%%EOF\n"
+        f"trailer\n<< /Size {len(objects) + 1} /Root 1 0 R >>\nstartxref\n{xref_offset}\n%%EOF\n"
     ).encode()
     return bytes(output)
 

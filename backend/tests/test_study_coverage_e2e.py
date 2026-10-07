@@ -15,7 +15,6 @@ from app.persistence.knowledge_repository import SqlAlchemyKnowledgeRepository
 from app.persistence.requirement_repository import SqlAlchemyRequirementRepository
 from app.persistence.source_repository import SqlAlchemySourceRepository
 
-
 SAMPLES_DIR = Path(__file__).parent / "samples"
 
 
@@ -41,9 +40,7 @@ def test_candidate_can_see_knowledge_coverage_for_a_convocatoria(
     )
     assert len(mentions) >= 2
 
-    constitution = knowledge_repository.save(
-        Knowledge(title="Constitución Española")
-    )
+    constitution = knowledge_repository.save(Knowledge(title="Constitución Española"))
 
     covered_requirement = requirement_repository.save(
         Requirement(

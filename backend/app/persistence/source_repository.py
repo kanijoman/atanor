@@ -3,11 +3,12 @@ from uuid import UUID
 from sqlalchemy import select
 
 from app.domain.models import Source as DomainSource
+from app.persistence.database import SessionFactory
 from app.persistence.models.source import Source
 
 
 class SqlAlchemySourceRepository:
-    def __init__(self, session_factory) -> None:
+    def __init__(self, session_factory: SessionFactory) -> None:
         self._session_factory = session_factory
 
     def save(self, source: DomainSource) -> None:
@@ -36,9 +37,7 @@ class SqlAlchemySourceRepository:
 
     def list_all(self) -> list[DomainSource]:
         with self._session_factory() as session:
-            persisted_sources = session.scalars(
-                select(Source).order_by(Source.id)
-            ).all()
+            persisted_sources = session.scalars(select(Source).order_by(Source.id)).all()
 
         return [
             DomainSource(
@@ -46,5 +45,5 @@ class SqlAlchemySourceRepository:
                 title=source.title,
                 locator=source.locator,
             )
-        for source in persisted_sources
+            for source in persisted_sources
         ]

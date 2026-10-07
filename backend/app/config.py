@@ -2,7 +2,6 @@ from pathlib import Path
 
 from pydantic_settings import BaseSettings
 
-
 BACKEND_ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_DATABASE_PATH = BACKEND_ROOT / "atanor.db"
 

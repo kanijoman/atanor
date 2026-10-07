@@ -51,7 +51,7 @@ class RequirementScope:
     knowledge_needs: tuple[KnowledgeNeed, ...] = field(default_factory=tuple)
     id: UUID = field(default_factory=uuid4)
 
-    def requires(self, knowledge_need: KnowledgeNeed) -> "RequirementScope":
+    def requires(self, knowledge_need: KnowledgeNeed) -> RequirementScope:
         return RequirementScope(
             context=self.context,
             knowledge_needs=(*self.knowledge_needs, knowledge_need),
@@ -67,7 +67,7 @@ class Requirement:
     scopes: tuple[RequirementScope, ...] = field(default_factory=tuple)
     id: int | None = None
 
-    def with_scope(self, scope: RequirementScope) -> "Requirement":
+    def with_scope(self, scope: RequirementScope) -> Requirement:
         return Requirement(
             title=self.title,
             source_id=self.source_id,

@@ -35,7 +35,9 @@ def _extract_units(source: Source) -> list[_TextUnit]:
     return units
 
 
-def _unit_span(units, start, end, number, title) -> StudyProgrammeUnit:
+def _unit_span(
+    units: list[_TextUnit], start: int, end: int, number: int, title: str
+) -> StudyProgrammeUnit:
     first = units[start]
     last = units[end - 1]
     return StudyProgrammeUnit(
@@ -64,18 +66,14 @@ class BojaProgrammeDiscoveryStrategy:
         ]
         programmes = []
         for header_index, match in headers:
-            next_header = next(
-                (index for index, _ in headers if index > header_index), len(units)
-            )
+            next_header = next((index for index, _ in headers if index > header_index), len(units))
             continuation = (
                 units[header_index + 1].text
                 if header_index + 1 < next_header
                 and not self._TEMA.fullmatch(units[header_index + 1].text)
                 else ""
             )
-            title = " ".join(
-                part for part in (match.group("title"), continuation) if part
-            )
+            title = " ".join(part for part in (match.group("title"), continuation) if part)
             tema_indices = [
                 index
                 for index in range(header_index + 1, next_header)
@@ -86,16 +84,12 @@ class BojaProgrammeDiscoveryStrategy:
             programme_units = []
             for position, start in enumerate(tema_indices):
                 end = (
-                    tema_indices[position + 1]
-                    if position + 1 < len(tema_indices)
-                    else next_header
+                    tema_indices[position + 1] if position + 1 < len(tema_indices) else next_header
                 )
                 tema = self._TEMA.fullmatch(units[start].text)
                 assert tema is not None
                 programme_units.append(
-                    _unit_span(
-                        units, start, end, int(tema.group(1)), tema.group(2).strip()
-                    )
+                    _unit_span(units, start, end, int(tema.group(1)), tema.group(2).strip())
                 )
             programmes.append(
                 StudyProgramme(
@@ -113,18 +107,12 @@ class ArchiverosProgrammeDiscoveryStrategy:
 
     def discover(self, call: Call, source: Source) -> list[StudyProgramme]:
         units = _extract_units(source)
-        temas = [
-            index for index, unit in enumerate(units) if self._TEMA.fullmatch(unit.text)
-        ]
+        temas = [index for index, unit in enumerate(units) if self._TEMA.fullmatch(unit.text)]
         if not temas:
             return []
         first = temas[0]
         title = next(
-            (
-                unit.text
-                for unit in reversed(units[:first])
-                if "programa" in unit.text.casefold()
-            ),
+            (unit.text for unit in reversed(units[:first]) if "programa" in unit.text.casefold()),
             "Study programme",
         )
         programme_units = []
@@ -133,9 +121,7 @@ class ArchiverosProgrammeDiscoveryStrategy:
             tema = self._TEMA.fullmatch(units[start].text)
             assert tema is not None
             programme_units.append(
-                _unit_span(
-                    units, start, end, int(tema.group(1)), tema.group(2).strip()
-                )
+                _unit_span(units, start, end, int(tema.group(1)), tema.group(2).strip())
             )
         return [
             StudyProgramme(
@@ -154,6 +140,10 @@ class BoeProgrammeDiscoveryStrategy:
     _SECTION = re.compile(r"^[IVXLCDM]+\.\s+.+$")
     _NON_PROGRAMME_SECTION = re.compile(r"^(?:REQUISITOS|MÉRITOS)\b", re.IGNORECASE)
 
+    def _is_programme_item(self, text: str) -> bool:
+        match = self._TOP_LEVEL.fullmatch(text)
+        return match is not None and not self._NON_PROGRAMME_SECTION.match(match.group(2))
+
     def discover(self, call: Call, source: Source) -> list[StudyProgramme]:
         units = _extract_units(source)
         annexes = [
@@ -163,9 +153,7 @@ class BoeProgrammeDiscoveryStrategy:
         ]
         programmes = []
         for annex_index, identifier in annexes:
-            next_annex = next(
-                (index for index, _ in annexes if index > annex_index), len(units)
-            )
+            next_annex = next((index for index, _ in annexes if index > annex_index), len(units))
             programme_index = next(
                 (
                     index
@@ -184,19 +172,14 @@ class BoeProgrammeDiscoveryStrategy:
             item_indices = [
                 index
                 for index in range(programme_index + 1, next_annex)
-                if self._TOP_LEVEL.fullmatch(units[index].text)
-                and not self._NON_PROGRAMME_SECTION.match(
-                    self._TOP_LEVEL.fullmatch(units[index].text).group(2)
-                )
+                if self._is_programme_item(units[index].text)
             ]
             if not item_indices:
                 continue
             programme_units = []
             for position, start in enumerate(item_indices):
                 next_item = (
-                    item_indices[position + 1]
-                    if position + 1 < len(item_indices)
-                    else next_annex
+                    item_indices[position + 1] if position + 1 < len(item_indices) else next_annex
                 )
                 next_section = next(
                     (index for index in section_indices if index > start),
@@ -206,9 +189,7 @@ class BoeProgrammeDiscoveryStrategy:
                 item = self._TOP_LEVEL.fullmatch(units[start].text)
                 assert item is not None
                 programme_units.append(
-                    _unit_span(
-                        units, start, end, int(item.group(1)), item.group(2).strip()
-                    )
+                    _unit_span(units, start, end, int(item.group(1)), item.group(2).strip())
                 )
             programmes.append(
                 StudyProgramme(

@@ -12,8 +12,8 @@ from app.application.study_material import (
 )
 from app.persistence.database import SessionLocal
 from app.persistence.knowledge_repository import SqlAlchemyKnowledgeRepository
+from app.persistence.source_repository import SqlAlchemySourceRepository
 from app.persistence.study_programme_repository import SqlAlchemyStudyProgrammeRepository
-
 
 router = APIRouter(prefix="/api/study", tags=["study"])
 
@@ -21,7 +21,7 @@ router = APIRouter(prefix="/api/study", tags=["study"])
 @router.get("/programmes")
 def list_programmes() -> list[dict[str, object]]:
     repository = SqlAlchemyStudyProgrammeRepository(SessionLocal)
-    programmes = []
+    programmes: list[dict[str, object]] = []
     for source in _list_sources():
         for programme in repository.list_by_source(source):
             programmes.append(
@@ -50,9 +50,7 @@ def get_programme(programme_id: UUID) -> dict[str, object]:
                 "id": str(unit.id),
                 "number": unit.number,
                 "title": unit.title,
-                "study_material_available": is_study_material_available_for_programme_unit(
-                    unit
-                ),
+                "study_material_available": is_study_material_available_for_programme_unit(unit),
             }
             for unit in programme.units
         ],
@@ -126,7 +124,5 @@ def get_study_material(unit_id: UUID) -> dict[str, object]:
 
 
 def _list_sources() -> list[UUID]:
-    from app.persistence.source_repository import SqlAlchemySourceRepository
-
     repository = SqlAlchemySourceRepository(SessionLocal)
     return [source.id for source in repository.list_all()]

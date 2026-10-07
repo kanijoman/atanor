@@ -31,9 +31,7 @@ def test_catalog_resolves_ley_39_2015_from_programme_requirement() -> None:
         "Ley 39/2015, de 1 de octubre, del Procedimiento Administrativo "
         "Común de las Administraciones Públicas"
     )
-    assert candidate.source.locator == (
-        "https://www.boe.es/buscar/act.php?id=BOE-A-2015-10565"
-    )
+    assert candidate.source.locator == ("https://www.boe.es/buscar/act.php?id=BOE-A-2015-10565")
 
 
 def test_catalog_resolves_ley_19_2013_from_knowledge_need() -> None:

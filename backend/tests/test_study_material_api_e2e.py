@@ -14,7 +14,6 @@ from app.persistence.knowledge_repository import SqlAlchemyKnowledgeRepository
 from app.persistence.source_repository import SqlAlchemySourceRepository
 from app.persistence.study_programme_repository import SqlAlchemyStudyProgrammeRepository
 
-
 SAMPLES = Path(__file__).parent / "samples"
 
 
@@ -43,8 +42,7 @@ def test_selected_programme_unit_exposes_candidate_study_material() -> None:
         unit
         for programme in programmes
         for unit in programme.units
-        if "ley 19/2013" in unit.title.casefold()
-        and "transparencia" in unit.title.casefold()
+        if "ley 19/2013" in unit.title.casefold() and "transparencia" in unit.title.casefold()
     )
 
     original_session_local = study.SessionLocal

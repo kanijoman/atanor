@@ -13,7 +13,6 @@ from app.persistence.database import Base
 from app.persistence.knowledge_repository import SqlAlchemyKnowledgeRepository
 from app.persistence.source_repository import SqlAlchemySourceRepository
 
-
 SAMPLES_DIR = Path(__file__).parent / "samples"
 
 

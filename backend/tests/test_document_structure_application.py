@@ -14,11 +14,13 @@ def test_numeric_marker_normalises_spacing_and_terminal_punctuation():
 
 
 def test_roman_and_letter_markers_have_expected_structural_levels():
-    markers = extract_structure_markers([
-        "II Autoridades y personal",
-        "B Oposiciones y concursos",
-        "c) Detalle",
-    ])
+    markers = extract_structure_markers(
+        [
+            "II Autoridades y personal",
+            "B Oposiciones y concursos",
+            "c) Detalle",
+        ]
+    )
 
     assert [(item.kind, item.marker, item.level) for item in markers] == [
         ("roman", "II", 1),
@@ -28,12 +30,14 @@ def test_roman_and_letter_markers_have_expected_structural_levels():
 
 
 def test_non_marker_heading_ends_previous_continuation():
-    markers = extract_structure_markers([
-        "1 Primer apartado.",
-        "CONTENIDO GENERAL",
-        "Texto del apartado siguiente.",
-        "2 Segundo apartado.",
-    ])
+    markers = extract_structure_markers(
+        [
+            "1 Primer apartado.",
+            "CONTENIDO GENERAL",
+            "Texto del apartado siguiente.",
+            "2 Segundo apartado.",
+        ]
+    )
 
     assert markers[0].continuation == ()
     assert markers[1].marker == "2"

@@ -14,7 +14,6 @@ from app.persistence.database import Base
 from app.persistence.requirement_repository import SqlAlchemyRequirementRepository
 from app.persistence.source_repository import SqlAlchemySourceRepository
 
-
 SAMPLES_DIR = Path(__file__).parent / "samples"
 
 
@@ -54,7 +53,6 @@ def test_real_textual_sample_flows_from_source_to_persisted_requirements(
         assert restored.id == requirement.id
         assert restored.title == requirement.title
         assert restored.source_id == source.id
-
 
 
 def test_scanned_sample_is_imported_but_produces_no_requirements(tmp_path: Path) -> None:

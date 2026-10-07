@@ -27,9 +27,7 @@ def test_requirement_preserves_known_and_unknown_knowledge_after_persistence(tmp
     source = Source(title="Call", locator="call.pdf")
     source_repository.save(source)
 
-    known_knowledge = knowledge_repository.save(
-        Knowledge(title="Spanish Constitution")
-    )
+    known_knowledge = knowledge_repository.save(Knowledge(title="Spanish Constitution"))
     requirement = Requirement(
         title="Study topics",
         source_id=source.id,

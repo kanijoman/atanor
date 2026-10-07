@@ -1,6 +1,5 @@
-from uuid import UUID
-
 import pytest
+from support import InMemoryKnowledgeRepository
 
 from app.application.study_material import (
     derive_knowledge_needs_for_programme_unit,
@@ -15,12 +14,9 @@ from app.domain.models import (
     StudyProgramme,
     StudyProgrammeUnit,
 )
-from support import InMemoryKnowledgeRepository
 
 
-def real_access_to_public_information_programme() -> tuple[
-    StudyProgramme, StudyProgrammeUnit
-]:
+def real_access_to_public_information_programme() -> tuple[StudyProgramme, StudyProgrammeUnit]:
     source = Source(
         title="Real examination call",
         locator="call.pdf",
@@ -90,9 +86,7 @@ def test_candidate_facing_material_retains_canonical_evidence_reference() -> Non
 
     assert len(material.sources) == 1
     assert material.sources[0].title.startswith("Ley 19/2013")
-    assert material.sources[0].locator == (
-        "https://www.boe.es/buscar/act.php?id=BOE-A-2013-12887"
-    )
+    assert material.sources[0].locator == ("https://www.boe.es/buscar/act.php?id=BOE-A-2013-12887")
 
 
 def test_generated_material_can_be_retrieved_after_persistence() -> None:

@@ -1,8 +1,8 @@
 from __future__ import annotations
 
+import tempfile
 from collections.abc import Generator
 from pathlib import Path
-import tempfile
 
 import pytest
 from sqlalchemy import create_engine
@@ -11,7 +11,7 @@ from app.persistence.database import Base, SessionLocal
 
 
 @pytest.fixture(scope="session", autouse=True)
-def isolate_database_session() -> Generator[None, None, None]:
+def isolate_database_session() -> Generator[None]:
     """Bind application sessions to a disposable database during pytest runs.
 
     Tests may still create their own engines and session factories explicitly,

@@ -15,7 +15,7 @@ class StudyProgramme(Base):
     )
     identifier: Mapped[str] = mapped_column(String(100), nullable=False)
     title: Mapped[str] = mapped_column(String(255), nullable=False)
-    units: Mapped[list["StudyProgrammeUnit"]] = relationship(
+    units: Mapped[list[StudyProgrammeUnit]] = relationship(
         back_populates="programme",
         cascade="all, delete-orphan",
         order_by="StudyProgrammeUnit.number",

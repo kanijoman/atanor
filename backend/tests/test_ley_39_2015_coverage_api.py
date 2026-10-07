@@ -63,11 +63,9 @@ def _seed_ley_39_2015_programme_unit(
     return programme, unit
 
 
-def test_get_ley_39_2015_study_material_exposes_coverage_summary(
-    tmp_path, monkeypatch
-) -> None:
+def test_get_ley_39_2015_study_material_exposes_coverage_summary(tmp_path, monkeypatch) -> None:
     database = StudyCoverageApiDatabase(tmp_path / "api.db")
-    programme, unit = _seed_ley_39_2015_programme_unit(database)
+    _, unit = _seed_ley_39_2015_programme_unit(database)
     monkeypatch.setattr("app.api.study.SessionLocal", database.session_factory)
     client = TestClient(app)
 

@@ -89,7 +89,10 @@ describe("CallsPage", () => {
     render(<CallsPage />);
 
     await screen.findByRole("link", { name: calls[0].title });
-    expect(fetchMock).toHaveBeenCalledWith("/api/calls", expect.objectContaining({ signal: expect.any(AbortSignal) }));
+    expect(fetchMock).toHaveBeenCalledWith(
+      "/api/calls",
+      expect.objectContaining({ signal: expect.any(AbortSignal) }),
+    );
   });
 });
 

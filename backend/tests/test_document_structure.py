@@ -37,7 +37,10 @@ def test_simple_enumeration_is_nested_under_previous_nested_section():
     result = build_structure_hierarchy(markers)
 
     assert [node.level for node in result] == [1, 2, 3, 4, 4, 4, 4, 1]
-    assert [result[node.parent_index].marker if node.parent_index is not None else None for node in result] == [
+    assert [
+        result[node.parent_index].marker if node.parent_index is not None else None
+        for node in result
+    ] == [
         None,
         "6",
         "6.10",
@@ -80,11 +83,13 @@ def test_top_level_sequence_does_not_inherit_previous_nested_context():
 
 
 def test_simple_numeric_markers_are_structural():
-    markers = classify_structure_markers([
-        marker("1", 1),
-        marker("2", 1),
-        marker("3", 1),
-    ])
+    markers = classify_structure_markers(
+        [
+            marker("1", 1),
+            marker("2", 1),
+            marker("3", 1),
+        ]
+    )
 
     assert [item.classification for item in markers] == [
         "STRUCTURAL",
@@ -94,12 +99,14 @@ def test_simple_numeric_markers_are_structural():
 
 
 def test_nested_numeric_markers_are_structural():
-    markers = classify_structure_markers([
-        marker("2", 1),
-        marker("2.1", 2),
-        marker("2.1.1", 3),
-        marker("2.1.2", 3),
-    ])
+    markers = classify_structure_markers(
+        [
+            marker("2", 1),
+            marker("2.1", 2),
+            marker("2.1.1", 3),
+            marker("2.1.2", 3),
+        ]
+    )
 
     assert [item.classification for item in markers] == [
         "STRUCTURAL",
@@ -110,14 +117,16 @@ def test_nested_numeric_markers_are_structural():
 
 
 def test_numeric_and_letter_enumeration_is_classified_as_enumeration():
-    markers = classify_structure_markers([
-        marker("6.10", 2),
-        marker("1", 1),
-        marker("2", 1),
-        marker("c", 1, "letter"),
-        marker("d", 1, "letter"),
-        marker("7", 1),
-    ])
+    markers = classify_structure_markers(
+        [
+            marker("6.10", 2),
+            marker("1", 1),
+            marker("2", 1),
+            marker("c", 1, "letter"),
+            marker("d", 1, "letter"),
+            marker("7", 1),
+        ]
+    )
 
     assert [item.classification for item in markers] == [
         "STRUCTURAL",
@@ -130,11 +139,13 @@ def test_numeric_and_letter_enumeration_is_classified_as_enumeration():
 
 
 def test_topic_markers_are_structural():
-    markers = extract_structure_markers([
-        "Tema 1 – La Constitución Española.",
-        "Contenido del tema.",
-        "Tema 2 – La Administración General del Estado.",
-    ])
+    markers = extract_structure_markers(
+        [
+            "Tema 1 – La Constitución Española.",
+            "Contenido del tema.",
+            "Tema 2 – La Administración General del Estado.",
+        ]
+    )
 
     assert [(item.kind, item.classification, item.marker) for item in markers] == [
         ("topic", "STRUCTURAL", "Tema 1"),
@@ -143,12 +154,14 @@ def test_topic_markers_are_structural():
 
 
 def test_structural_marker_preserves_continuation():
-    markers = extract_structure_markers([
-        "1 Primer apartado.",
-        "Texto que continúa el apartado.",
-        "Más contenido del mismo apartado.",
-        "2 Segundo apartado.",
-    ])
+    markers = extract_structure_markers(
+        [
+            "1 Primer apartado.",
+            "Texto que continúa el apartado.",
+            "Más contenido del mismo apartado.",
+            "2 Segundo apartado.",
+        ]
+    )
 
     assert markers[0].marker == "1"
     assert markers[0].continuation == (

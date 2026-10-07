@@ -6,7 +6,6 @@ from app.persistence.call_repository import SqlAlchemyCallRepository
 from app.persistence.database import SessionLocal
 from app.persistence.study_programme_repository import SqlAlchemyStudyProgrammeRepository
 
-
 router = APIRouter(prefix="/api/calls", tags=["calls"])
 
 

@@ -1,3 +1,5 @@
+from support import InMemoryKnowledgeRepository
+
 from app.application.study_material import (
     derive_covered_aspects,
     derive_knowledge_needs_for_programme_unit,
@@ -6,7 +8,6 @@ from app.application.study_material import (
     generate_study_material_for_programme_unit,
 )
 from app.domain.models import KnowledgeNeed, StudyProgrammeUnit
-from support import InMemoryKnowledgeRepository
 
 
 def real_ley_39_2015_programme_unit() -> StudyProgrammeUnit:
@@ -74,9 +75,7 @@ def test_ley_39_2015_casuistic_exercises_partial_coverage() -> None:
     assert knowledge.identity_key == needs[0].identity_key
     assert knowledge.description
     assert len(knowledge.sources) == 1
-    assert knowledge.sources[0].locator == (
-        "https://www.boe.es/buscar/act.php?id=BOE-A-2015-10565"
-    )
+    assert knowledge.sources[0].locator == ("https://www.boe.es/buscar/act.php?id=BOE-A-2015-10565")
     assert repository.get_by_identity(needs[0].identity_key) is knowledge
 
     required_aspects = derive_required_aspects_for_programme_unit(programme_unit)
@@ -168,9 +167,7 @@ def test_personal_data_protection_casuistic_requires_principles_rights_and_oblig
 def real_data_modelling_programme_unit() -> StudyProgrammeUnit:
     return StudyProgrammeUnit(
         number=1,
-        title=(
-            "Modelado de datos, metodologías y reglas. Entidades, atributos y relaciones."
-        ),
+        title=("Modelado de datos, metodologías y reglas. Entidades, atributos y relaciones."),
         start_page=1,
         start_order=1,
         end_page=1,
@@ -239,8 +236,7 @@ def test_equivalent_programme_wordings_produce_the_same_knowledge_need() -> None
     equivalent_unit = StudyProgrammeUnit(
         number=2,
         title=(
-            "Modelos de datos: entidades, atributos, relaciones, "
-            "metodologías y reglas de modelado."
+            "Modelos de datos: entidades, atributos, relaciones, metodologías y reglas de modelado."
         ),
         start_page=2,
         start_order=1,

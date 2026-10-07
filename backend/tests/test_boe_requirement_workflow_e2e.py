@@ -14,7 +14,6 @@ from app.persistence.database import Base
 from app.persistence.requirement_repository import SqlAlchemyRequirementRepository
 from app.persistence.source_repository import SqlAlchemySourceRepository
 
-
 SAMPLES_DIR = Path(__file__).parent / "samples"
 
 
@@ -53,10 +52,7 @@ def test_boe_produces_resolved_study_requirements_from_known_knowledge(
     assert known_requirements
     assert result.requirements
     assert len(result.requirements) < len(known_requirements)
-    assert all(
-        requirement.source_id == source.id
-        for requirement in result.requirements
+    assert all(requirement.source_id == source.id for requirement in result.requirements)
+    assert {requirement.title for requirement in result.requirements}.issubset(
+        {requirement.title for requirement in known_requirements}
     )
-    assert {
-        requirement.title for requirement in result.requirements
-    }.issubset({requirement.title for requirement in known_requirements})

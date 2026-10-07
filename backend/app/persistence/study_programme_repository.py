@@ -4,11 +4,13 @@ from sqlalchemy import select
 
 from app.domain.models import (
     StudyProgramme as DomainStudyProgramme,
+)
+from app.domain.models import (
     StudyProgrammeUnit as DomainStudyProgrammeUnit,
 )
+from app.persistence.database import SessionFactory
 from app.persistence.models.call import Call
 from app.persistence.models.study_programme import StudyProgramme, StudyProgrammeUnit
-
 
 _ROMAN_VALUES = {
     "I": 1,
@@ -47,7 +49,7 @@ def _programme_sort_key(programme: DomainStudyProgramme) -> tuple[int, str]:
 
 
 class SqlAlchemyStudyProgrammeRepository:
-    def __init__(self, session_factory) -> None:
+    def __init__(self, session_factory: SessionFactory) -> None:
         self._session_factory = session_factory
 
     def save(self, programme: DomainStudyProgramme) -> DomainStudyProgramme:
@@ -108,7 +110,7 @@ class SqlAlchemyStudyProgrammeRepository:
         )
 
     def list_by_source(self, source_id: UUID) -> list[DomainStudyProgramme]:
-        """Return programmes for calls backed by a source during the transition to call-first APIs."""
+        """Return programmes for calls backed by a source (transition to call-first APIs)."""
         with self._session_factory() as session:
             programmes = session.scalars(
                 select(StudyProgramme)

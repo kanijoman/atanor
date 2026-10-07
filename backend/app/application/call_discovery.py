@@ -84,10 +84,7 @@ def analyse_call_context(text: str) -> CallContextSignals:
     """Analyse deterministic call-context signals without creating domain entities."""
     signal_map = dict(_SIGNALS)
     present = {
-        name: any(
-            re.search(pattern, text, flags=re.IGNORECASE)
-            for pattern in patterns
-        )
+        name: any(re.search(pattern, text, flags=re.IGNORECASE) for pattern in patterns)
         for name, patterns in _SIGNALS
     }
     strong_signals_present = sum(present[name] for name in _STRONG_SIGNAL_NAMES)

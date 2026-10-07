@@ -1,3 +1,5 @@
+from support import InMemoryKnowledgeRepository
+
 from app.application.study_material import (
     build_study_coverage_summary,
     derive_covered_aspects,
@@ -5,8 +7,7 @@ from app.application.study_material import (
     derive_required_aspects_for_programme_unit,
     generate_study_material_for_programme_unit,
 )
-from app.domain.models import Knowledge, KnowledgeNeed, StudyProgrammeUnit
-from support import InMemoryKnowledgeRepository
+from app.domain.models import KnowledgeNeed, StudyProgrammeUnit
 
 
 def real_personal_data_programme_unit() -> StudyProgrammeUnit:
@@ -56,16 +57,12 @@ def test_generates_personal_data_study_material_with_canonical_sources() -> None
     assert knowledge.sources[0].title == (
         "Reglamento (UE) 2016/679 del Parlamento Europeo y del Consejo, de 27 de abril de 2016"
     )
-    assert knowledge.sources[0].locator == (
-        "https://eur-lex.europa.eu/eli/reg/2016/679/oj/spa"
-    )
+    assert knowledge.sources[0].locator == ("https://eur-lex.europa.eu/eli/reg/2016/679/oj/spa")
     assert knowledge.sources[1].title == (
         "Ley Orgánica 3/2018, de 5 de diciembre, de Protección de Datos Personales "
         "y garantía de los derechos digitales"
     )
-    assert knowledge.sources[1].locator == (
-        "https://www.boe.es/buscar/act.php?id=BOE-A-2018-16673"
-    )
+    assert knowledge.sources[1].locator == ("https://www.boe.es/buscar/act.php?id=BOE-A-2018-16673")
 
 
 def test_personal_data_study_material_covers_required_aspects() -> None:

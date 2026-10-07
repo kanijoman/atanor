@@ -8,7 +8,6 @@ from app.api.root import router as root_router
 from app.api.study import router as study_router
 from app.config import settings
 
-
 logging.basicConfig(level=settings.log_level)
 
 logger = logging.getLogger("atanor")

@@ -26,9 +26,7 @@ def _patch_database(monkeypatch, database_path: Path) -> None:
     monkeypatch.setattr("app.cli.SessionLocal", sessionmaker(bind=engine))
 
 
-def test_source_cli_end_to_end_import_get_and_list(
-    tmp_path, monkeypatch, capsys
-) -> None:
+def test_source_cli_end_to_end_import_get_and_list(tmp_path, monkeypatch, capsys) -> None:
     pdf_path = tmp_path / "call.pdf"
     _write_synthetic_pdf(pdf_path)
     _patch_database(monkeypatch, tmp_path / "cli.db")
@@ -77,9 +75,7 @@ def test_import_source_command_returns_error_for_missing_pdf(tmp_path, monkeypat
         raise AssertionError("CLI should reject a missing PDF")
 
 
-def test_list_requirements_command_returns_empty_message(
-    tmp_path, monkeypatch, capsys
-) -> None:
+def test_list_requirements_command_returns_empty_message(tmp_path, monkeypatch, capsys) -> None:
     _patch_database(monkeypatch, tmp_path / "cli.db")
 
     assert main(["list-requirements"]) == 0

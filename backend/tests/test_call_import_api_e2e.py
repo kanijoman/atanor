@@ -13,7 +13,6 @@ from app.persistence.database import Base
 from app.persistence.source_repository import SqlAlchemySourceRepository
 from app.persistence.study_programme_repository import SqlAlchemyStudyProgrammeRepository
 
-
 SAMPLES = Path(__file__).parent / "samples"
 
 
@@ -42,9 +41,7 @@ def test_imported_call_and_programmes_are_available_through_calls_api() -> None:
     try:
         client = TestClient(app)
         call_response = client.get("/api/calls")
-        programmes_response = client.get(
-            f"/api/calls/{imported_call.id}/programmes"
-        )
+        programmes_response = client.get(f"/api/calls/{imported_call.id}/programmes")
     finally:
         calls.SessionLocal = original_session_local
         engine.dispose()

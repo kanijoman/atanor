@@ -1,3 +1,4 @@
+from collections.abc import Callable
 from dataclasses import dataclass
 from typing import Protocol
 
@@ -32,14 +33,37 @@ _PROCEDURE_CANONICAL_SOURCE = Source(
     title="Ley 39/2015, de 1 de octubre, del Procedimiento Administrativo Común de las Administraciones Públicas",
     locator="https://www.boe.es/buscar/act.php?id=BOE-A-2015-10565",
 )
-_IDENTITY_EIDAS_SOURCE = Source(title="Reglamento (UE) n.º 910/2014 relativo a la identificación electrónica y los servicios de confianza para las transacciones electrónicas", locator="https://eur-lex.europa.eu/eli/reg/2014/910/oj/spa")
-_IDENTITY_TRUST_SERVICES_SOURCE = Source(title="Ley 6/2020, de 11 de noviembre, reguladora de determinados aspectos de los servicios electrónicos de confianza", locator="https://www.boe.es/buscar/act.php?id=BOE-A-2020-14046")
-_IDENTITY_DNI_SOURCE = Source(title="Real Decreto 255/2025, de 1 de abril, por el que se regula el Documento Nacional de Identidad", locator="https://www.boe.es/eli/es/rd/2025/04/01/255")
-_IDENTITY_ADMIN_ELECTRONIC_SOURCE = Source(title="Real Decreto 203/2021, de 30 de marzo, por el que se aprueba el Reglamento de actuación y funcionamiento del sector público por medios electrónicos", locator="https://www.boe.es/buscar/act.php?id=BOE-A-2021-5032")
-_PERSONAL_DATA_GDPR_SOURCE = Source(title="Reglamento (UE) 2016/679 del Parlamento Europeo y del Consejo, de 27 de abril de 2016", locator="https://eur-lex.europa.eu/eli/reg/2016/679/oj/spa")
-_PERSONAL_DATA_LOPDGDD_SOURCE = Source(title="Ley Orgánica 3/2018, de 5 de diciembre, de Protección de Datos Personales y garantía de los derechos digitales", locator="https://www.boe.es/buscar/act.php?id=BOE-A-2018-16673")
-_OOP_SOURCE = Source(title="Python Documentation, Classes", locator="https://docs.python.org/3/tutorial/classes.html")
-_DATA_MODELING_SOURCE = Source(title="ISO/IEC 19763-12:2015, Information technology — Metamodel framework for interoperability (MFI) — Part 12: Metamodel for information model registration", locator="https://www.iso.org/standard/61559.html")
+_IDENTITY_EIDAS_SOURCE = Source(
+    title="Reglamento (UE) n.º 910/2014 relativo a la identificación electrónica y los servicios de confianza para las transacciones electrónicas",
+    locator="https://eur-lex.europa.eu/eli/reg/2014/910/oj/spa",
+)
+_IDENTITY_TRUST_SERVICES_SOURCE = Source(
+    title="Ley 6/2020, de 11 de noviembre, reguladora de determinados aspectos de los servicios electrónicos de confianza",
+    locator="https://www.boe.es/buscar/act.php?id=BOE-A-2020-14046",
+)
+_IDENTITY_DNI_SOURCE = Source(
+    title="Real Decreto 255/2025, de 1 de abril, por el que se regula el Documento Nacional de Identidad",
+    locator="https://www.boe.es/eli/es/rd/2025/04/01/255",
+)
+_IDENTITY_ADMIN_ELECTRONIC_SOURCE = Source(
+    title="Real Decreto 203/2021, de 30 de marzo, por el que se aprueba el Reglamento de actuación y funcionamiento del sector público por medios electrónicos",
+    locator="https://www.boe.es/buscar/act.php?id=BOE-A-2021-5032",
+)
+_PERSONAL_DATA_GDPR_SOURCE = Source(
+    title="Reglamento (UE) 2016/679 del Parlamento Europeo y del Consejo, de 27 de abril de 2016",
+    locator="https://eur-lex.europa.eu/eli/reg/2016/679/oj/spa",
+)
+_PERSONAL_DATA_LOPDGDD_SOURCE = Source(
+    title="Ley Orgánica 3/2018, de 5 de diciembre, de Protección de Datos Personales y garantía de los derechos digitales",
+    locator="https://www.boe.es/buscar/act.php?id=BOE-A-2018-16673",
+)
+_OOP_SOURCE = Source(
+    title="Python Documentation, Classes", locator="https://docs.python.org/3/tutorial/classes.html"
+)
+_DATA_MODELING_SOURCE = Source(
+    title="ISO/IEC 19763-12:2015, Information technology — Metamodel framework for interoperability (MFI) — Part 12: Metamodel for information model registration",
+    locator="https://www.iso.org/standard/61559.html",
+)
 
 _STUDY_CONTENT = """1. Concepto y titulares
 El derecho de acceso permite a las personas solicitar información pública en los términos establecidos por la Ley 19/2013. Su reconocimiento constituye uno de los mecanismos principales de transparencia de la actividad pública. (Artículo 12)
@@ -154,10 +178,41 @@ La normalización organiza las estructuras del modelo relacional para reducir re
 
 6. Metodologías y reglas de modelado
 El modelado de datos se apoya en metodologías, lenguajes y reglas que permiten construir representaciones consistentes del dominio. El diseño debe mantener la correspondencia entre las necesidades de información, las entidades y relaciones identificadas y la estructura relacional resultante."""
-_ACCESS_REQUIRED_ASPECTS = ("Concepto y titulares del derecho de acceso", "Qué se entiende por información pública", "Límites del derecho de acceso", "Protección de datos y acceso parcial", "Solicitud de acceso", "Inadmisión", "Tramitación", "Resolución", "Formalización del acceso", "Recursos y reclamaciones")
-_PROCEDURE_REQUIRED_ASPECTS = ("Objeto y finalidad del procedimiento administrativo común", "Ámbito subjetivo de aplicación", "Interesados, capacidad, representación y derechos", "Actividad administrativa, plazos y medios electrónicos", "Actos administrativos: requisitos, eficacia e invalidez", "Procedimiento administrativo común y sus fases", "Procedimientos sancionador y de responsabilidad patrimonial", "Revisión de actos, recursos, iniciativa legislativa y potestad reglamentaria")
-_PERSONAL_DATA_REQUIRED_ASPECTS = ("Principios del tratamiento de datos personales", "Derechos de las personas", "Obligaciones y responsabilidad del responsable y encargado del tratamiento")
-_IDENTITY_ELECTRONIC_SIGNATURE_REQUIRED_ASPECTS = ("Marco jurídico de la identificación y firma electrónica", "Identificación electrónica y autenticación", "Firma electrónica y efectos jurídicos", "Servicios electrónicos de confianza y certificados", "Documento Nacional de Identidad físico y digital", "Identificación y firma ante las Administraciones Públicas")
+_ACCESS_REQUIRED_ASPECTS = (
+    "Concepto y titulares del derecho de acceso",
+    "Qué se entiende por información pública",
+    "Límites del derecho de acceso",
+    "Protección de datos y acceso parcial",
+    "Solicitud de acceso",
+    "Inadmisión",
+    "Tramitación",
+    "Resolución",
+    "Formalización del acceso",
+    "Recursos y reclamaciones",
+)
+_PROCEDURE_REQUIRED_ASPECTS = (
+    "Objeto y finalidad del procedimiento administrativo común",
+    "Ámbito subjetivo de aplicación",
+    "Interesados, capacidad, representación y derechos",
+    "Actividad administrativa, plazos y medios electrónicos",
+    "Actos administrativos: requisitos, eficacia e invalidez",
+    "Procedimiento administrativo común y sus fases",
+    "Procedimientos sancionador y de responsabilidad patrimonial",
+    "Revisión de actos, recursos, iniciativa legislativa y potestad reglamentaria",
+)
+_PERSONAL_DATA_REQUIRED_ASPECTS = (
+    "Principios del tratamiento de datos personales",
+    "Derechos de las personas",
+    "Obligaciones y responsabilidad del responsable y encargado del tratamiento",
+)
+_IDENTITY_ELECTRONIC_SIGNATURE_REQUIRED_ASPECTS = (
+    "Marco jurídico de la identificación y firma electrónica",
+    "Identificación electrónica y autenticación",
+    "Firma electrónica y efectos jurídicos",
+    "Servicios electrónicos de confianza y certificados",
+    "Documento Nacional de Identidad físico y digital",
+    "Identificación y firma ante las Administraciones Públicas",
+)
 _OOP_REQUIRED_ASPECTS = (
     "Objetos y clases",
     "Herencia",
@@ -167,66 +222,154 @@ _OOP_REQUIRED_ASPECTS = (
     "Patrones de diseño",
     "Lenguaje de modelado unificado (UML)",
 )
-_DATA_MODELING_REQUIRED_ASPECTS = ("Entidades", "Atributos", "Relaciones", "Modelo relacional", "Normalización", "Metodologías y reglas de modelado")
+_DATA_MODELING_REQUIRED_ASPECTS = (
+    "Entidades",
+    "Atributos",
+    "Relaciones",
+    "Modelo relacional",
+    "Normalización",
+    "Metodologías y reglas de modelado",
+)
 
 
-def _get_or_generate(need: KnowledgeNeed, repository: KnowledgeRepository, generate: callable) -> Knowledge:
+def _get_or_generate(
+    need: KnowledgeNeed,
+    repository: KnowledgeRepository,
+    generate: Callable[[KnowledgeNeed], Knowledge],
+) -> Knowledge:
     existing = repository.get_by_identity(need.identity_key)
     if existing is not None:
         return existing
     return repository.save(generate(need))
 
 
-def _material(need: KnowledgeNeed, repository: KnowledgeRepository, topic: str, description: str, sources: tuple[Source, ...]) -> Knowledge:
+def _material(
+    need: KnowledgeNeed,
+    repository: KnowledgeRepository,
+    topic: str,
+    description: str,
+    sources: tuple[Source, ...],
+) -> Knowledge:
     if need.topic != topic:
         raise ValueError(f"Unsupported study topic: {need.topic}")
-    return _get_or_generate(need, repository, lambda current_need: Knowledge(title=current_need.topic, description=description, sources=sources, identity_key=current_need.identity_key))
+    return _get_or_generate(
+        need,
+        repository,
+        lambda current_need: Knowledge(
+            title=current_need.topic,
+            description=description,
+            sources=sources,
+            identity_key=current_need.identity_key,
+        ),
+    )
 
 
-def generate_access_to_public_information_material(need: KnowledgeNeed, repository: KnowledgeRepository) -> Knowledge:
+def generate_access_to_public_information_material(
+    need: KnowledgeNeed, repository: KnowledgeRepository
+) -> Knowledge:
     return _material(need, repository, _ACCESS_TOPIC, _STUDY_CONTENT, (_CANONICAL_SOURCE,))
 
 
-def generate_common_administrative_procedure_material(need: KnowledgeNeed, repository: KnowledgeRepository) -> Knowledge:
-    return _material(need, repository, _PROCEDURE_TOPIC, _PROCEDURE_STUDY_CONTENT, (_PROCEDURE_CANONICAL_SOURCE,))
+def generate_common_administrative_procedure_material(
+    need: KnowledgeNeed, repository: KnowledgeRepository
+) -> Knowledge:
+    return _material(
+        need, repository, _PROCEDURE_TOPIC, _PROCEDURE_STUDY_CONTENT, (_PROCEDURE_CANONICAL_SOURCE,)
+    )
 
 
-def generate_personal_data_protection_material(need: KnowledgeNeed, repository: KnowledgeRepository) -> Knowledge:
-    return _material(need, repository, "Protección de datos personales", _PERSONAL_DATA_STUDY_CONTENT, (_PERSONAL_DATA_GDPR_SOURCE, _PERSONAL_DATA_LOPDGDD_SOURCE))
+def generate_personal_data_protection_material(
+    need: KnowledgeNeed, repository: KnowledgeRepository
+) -> Knowledge:
+    return _material(
+        need,
+        repository,
+        "Protección de datos personales",
+        _PERSONAL_DATA_STUDY_CONTENT,
+        (_PERSONAL_DATA_GDPR_SOURCE, _PERSONAL_DATA_LOPDGDD_SOURCE),
+    )
 
 
-def generate_data_modeling_material(need: KnowledgeNeed, repository: KnowledgeRepository) -> Knowledge:
-    return _material(need, repository, _DATA_MODELING_TOPIC, _DATA_MODELING_STUDY_CONTENT, (_DATA_MODELING_SOURCE,))
+def generate_data_modeling_material(
+    need: KnowledgeNeed, repository: KnowledgeRepository
+) -> Knowledge:
+    return _material(
+        need,
+        repository,
+        _DATA_MODELING_TOPIC,
+        _DATA_MODELING_STUDY_CONTENT,
+        (_DATA_MODELING_SOURCE,),
+    )
 
 
-def generate_object_oriented_programming_material(need: KnowledgeNeed, repository: KnowledgeRepository) -> Knowledge:
+def generate_object_oriented_programming_material(
+    need: KnowledgeNeed, repository: KnowledgeRepository
+) -> Knowledge:
     return _material(need, repository, _OOP_TOPIC, _OOP_STUDY_CONTENT, (_OOP_SOURCE,))
 
 
-def generate_identity_and_electronic_signature_material(need: KnowledgeNeed, repository: KnowledgeRepository) -> Knowledge:
-    return _material(need, repository, _IDENTITY_ELECTRONIC_SIGNATURE_TOPIC, _IDENTITY_ELECTRONIC_SIGNATURE_STUDY_CONTENT, (_IDENTITY_EIDAS_SOURCE, _IDENTITY_TRUST_SERVICES_SOURCE, _IDENTITY_DNI_SOURCE, _IDENTITY_ADMIN_ELECTRONIC_SOURCE))
+def generate_identity_and_electronic_signature_material(
+    need: KnowledgeNeed, repository: KnowledgeRepository
+) -> Knowledge:
+    return _material(
+        need,
+        repository,
+        _IDENTITY_ELECTRONIC_SIGNATURE_TOPIC,
+        _IDENTITY_ELECTRONIC_SIGNATURE_STUDY_CONTENT,
+        (
+            _IDENTITY_EIDAS_SOURCE,
+            _IDENTITY_TRUST_SERVICES_SOURCE,
+            _IDENTITY_DNI_SOURCE,
+            _IDENTITY_ADMIN_ELECTRONIC_SOURCE,
+        ),
+    )
 
 
 def _supports_topic(title: str, topic: str) -> bool:
     normalized_title = title.casefold()
     if topic == _ACCESS_TOPIC:
-        return normalized_title == _ACCESS_TOPIC.casefold() or ("ley 19/2013" in normalized_title and "transparencia" in normalized_title)
+        return normalized_title == _ACCESS_TOPIC.casefold() or (
+            "ley 19/2013" in normalized_title and "transparencia" in normalized_title
+        )
     if topic == _PROCEDURE_TOPIC:
-        return (("ley 39/2015" in normalized_title and "procedimiento administrativo común" in normalized_title) or normalized_title == "las leyes del procedimiento administrativo común de las administraciones")
+        return (
+            (
+                "ley 39/2015" in normalized_title
+                and "procedimiento administrativo común" in normalized_title
+            )
+            or normalized_title
+            == "las leyes del procedimiento administrativo común de las administraciones"
+        )
     if topic == _IDENTITY_ELECTRONIC_SIGNATURE_TOPIC:
-        return "identidad y firma electrónica" in normalized_title and "dni electrónico" in normalized_title
+        return (
+            "identidad y firma electrónica" in normalized_title
+            and "dni electrónico" in normalized_title
+        )
     if topic == "Protección de datos personales":
         return "protección de datos personales" in normalized_title
     if topic == _OOP_TOPIC:
-        return ("programación orientada a objetos" in normalized_title and all(term in normalized_title for term in ("clases", "objetos", "herencia")) and any(term in normalized_title for term in ("métodos", "sobrecarga", "patrones de diseño", "uml")))
+        return (
+            "programación orientada a objetos" in normalized_title
+            and all(term in normalized_title for term in ("clases", "objetos", "herencia"))
+            and any(
+                term in normalized_title
+                for term in ("métodos", "sobrecarga", "patrones de diseño", "uml")
+            )
+        )
     if topic == _DATA_MODELING_TOPIC:
-        return ("modelado de datos" in normalized_title or "modelos de datos" in normalized_title) and all(term in normalized_title for term in ("entidades", "atributos", "relaciones"))
+        return (
+            "modelado de datos" in normalized_title or "modelos de datos" in normalized_title
+        ) and all(term in normalized_title for term in ("entidades", "atributos", "relaciones"))
     return False
 
 
-def generate_study_material_for_programme_unit(programme_unit: StudyProgrammeUnit, need: KnowledgeNeed, repository: KnowledgeRepository) -> Knowledge:
+def generate_study_material_for_programme_unit(
+    programme_unit: StudyProgrammeUnit, need: KnowledgeNeed, repository: KnowledgeRepository
+) -> Knowledge:
     if not _supports_topic(programme_unit.title, need.topic):
-        raise ValueError(f"Knowledge need '{need.topic}' does not match programme item '{programme_unit.title}'")
+        raise ValueError(
+            f"Knowledge need '{need.topic}' does not match programme item '{programme_unit.title}'"
+        )
     generators = {
         _ACCESS_TOPIC: generate_access_to_public_information_material,
         _PROCEDURE_TOPIC: generate_common_administrative_procedure_material,
@@ -238,14 +381,27 @@ def generate_study_material_for_programme_unit(programme_unit: StudyProgrammeUni
     return generators[need.topic](need, repository)
 
 
-def derive_knowledge_needs_for_programme_unit(programme_unit: StudyProgrammeUnit) -> tuple[KnowledgeNeed, ...]:
-    for topic in (_ACCESS_TOPIC, _PROCEDURE_TOPIC, _IDENTITY_ELECTRONIC_SIGNATURE_TOPIC, "Protección de datos personales", _OOP_TOPIC, _DATA_MODELING_TOPIC):
+def derive_knowledge_needs_for_programme_unit(
+    programme_unit: StudyProgrammeUnit,
+) -> tuple[KnowledgeNeed, ...]:
+    for topic in (
+        _ACCESS_TOPIC,
+        _PROCEDURE_TOPIC,
+        _IDENTITY_ELECTRONIC_SIGNATURE_TOPIC,
+        "Protección de datos personales",
+        _OOP_TOPIC,
+        _DATA_MODELING_TOPIC,
+    ):
         if _supports_topic(programme_unit.title, topic):
             return (KnowledgeNeed(topic=topic, depth=1),)
-    raise ValueError(f"No supported knowledge need can be derived from programme item '{programme_unit.title}'")
+    raise ValueError(
+        f"No supported knowledge need can be derived from programme item '{programme_unit.title}'"
+    )
 
 
-def derive_required_aspects_for_programme_unit(programme_unit: StudyProgrammeUnit) -> tuple[str, ...]:
+def derive_required_aspects_for_programme_unit(
+    programme_unit: StudyProgrammeUnit,
+) -> tuple[str, ...]:
     topic = derive_knowledge_needs_for_programme_unit(programme_unit)[0].topic
     scopes = {
         _ACCESS_TOPIC: _ACCESS_REQUIRED_ASPECTS,
@@ -258,10 +414,13 @@ def derive_required_aspects_for_programme_unit(programme_unit: StudyProgrammeUni
     return scopes[topic]
 
 
-def derive_covered_aspects(programme_unit: StudyProgrammeUnit, knowledge: Knowledge) -> tuple[str, ...]:
+def derive_covered_aspects(
+    programme_unit: StudyProgrammeUnit, knowledge: Knowledge
+) -> tuple[str, ...]:
     required_aspects = derive_required_aspects_for_programme_unit(programme_unit)
     if knowledge.title == _PROCEDURE_TOPIC or (
-        knowledge.description and "procedimiento administrativo común" in knowledge.description.casefold()
+        knowledge.description
+        and "procedimiento administrativo común" in knowledge.description.casefold()
     ):
         return _derive_procedure_covered_aspects(knowledge, required_aspects)
     if knowledge.title in {
@@ -278,17 +437,24 @@ def derive_covered_aspects(programme_unit: StudyProgrammeUnit, knowledge: Knowle
             ("Herencia", ("herencia",)),
             ("Métodos", ("método",)),
             ("Sobrecarga", ("sobrecarga",)),
-            ("Ventajas e inconvenientes de la programación orientada a objetos", ("ventaja", "inconveniente")),
+            (
+                "Ventajas e inconvenientes de la programación orientada a objetos",
+                ("ventaja", "inconveniente"),
+            ),
             ("Patrones de diseño", ("patrones de diseño",)),
             ("Lenguaje de modelado unificado (UML)", ("uml",)),
         )
         return tuple(
-            aspect for aspect, signals in aspect_signals if all(signal in content for signal in signals)
+            aspect
+            for aspect, signals in aspect_signals
+            if all(signal in content for signal in signals)
         )
     raise ValueError(f"Knowledge '{knowledge.title}' does not match the supported coverage scope")
 
 
-def _derive_procedure_covered_aspects(knowledge: Knowledge, required_aspects: tuple[str, ...]) -> tuple[str, ...]:
+def _derive_procedure_covered_aspects(
+    knowledge: Knowledge, required_aspects: tuple[str, ...]
+) -> tuple[str, ...]:
     """Count an aspect only when the acquired content is substantively about it.
 
     A mere normative mention is not sufficient evidence of study coverage.
@@ -297,7 +463,10 @@ def _derive_procedure_covered_aspects(knowledge: Knowledge, required_aspects: tu
     characteristic regulatory subject to be developed, not merely mentioned.
     """
     content = (knowledge.description or "").casefold()
-    if "tiene por objeto" in content or "establece las bases del procedimiento administrativo común" in content:
+    if (
+        "tiene por objeto" in content
+        or "establece las bases del procedimiento administrativo común" in content
+    ):
         covered = [required_aspects[0]]
     else:
         covered = []
@@ -306,13 +475,32 @@ def _derive_procedure_covered_aspects(knowledge: Knowledge, required_aspects: tu
     return tuple(covered)
 
 
-def build_study_coverage_summary(knowledge_need: KnowledgeNeed, required_aspects: tuple[str, ...], covered_aspects: tuple[str, ...]) -> StudyCoverageSummary:
+def build_study_coverage_summary(
+    knowledge_need: KnowledgeNeed,
+    required_aspects: tuple[str, ...],
+    covered_aspects: tuple[str, ...],
+) -> StudyCoverageSummary:
     required_count = len(required_aspects)
     covered_count = len(covered_aspects)
     pending_aspects = tuple(aspect for aspect in required_aspects if aspect not in covered_aspects)
     coverage_percentage = (covered_count / required_count) * 100 if required_count else 0.0
-    status = "missing" if covered_count == 0 else "covered" if covered_count == required_count else "partial"
-    return StudyCoverageSummary(knowledge_need=knowledge_need.topic, status=status, required_aspects=required_aspects, covered_aspects=covered_aspects, pending_aspects=pending_aspects, covered_count=covered_count, required_count=required_count, coverage_percentage=coverage_percentage)
+    status = (
+        "missing"
+        if covered_count == 0
+        else "covered"
+        if covered_count == required_count
+        else "partial"
+    )
+    return StudyCoverageSummary(
+        knowledge_need=knowledge_need.topic,
+        status=status,
+        required_aspects=required_aspects,
+        covered_aspects=covered_aspects,
+        pending_aspects=pending_aspects,
+        covered_count=covered_count,
+        required_count=required_count,
+        coverage_percentage=coverage_percentage,
+    )
 
 
 def is_study_material_available_for_programme_unit(programme_unit: StudyProgrammeUnit) -> bool:
@@ -323,7 +511,9 @@ def is_study_material_available_for_programme_unit(programme_unit: StudyProgramm
     return len(needs) == 1
 
 
-def prepare_programme_unit_for_study(programme_unit: StudyProgrammeUnit, repository: KnowledgeRepository) -> Knowledge:
+def prepare_programme_unit_for_study(
+    programme_unit: StudyProgrammeUnit, repository: KnowledgeRepository
+) -> Knowledge:
     needs = derive_knowledge_needs_for_programme_unit(programme_unit)
     if len(needs) != 1:
         raise ValueError("Preparing a programme item requires exactly one supported knowledge need")

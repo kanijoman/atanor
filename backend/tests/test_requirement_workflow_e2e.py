@@ -14,7 +14,6 @@ from app.persistence.database import Base
 from app.persistence.requirement_repository import SqlAlchemyRequirementRepository
 from app.persistence.source_repository import SqlAlchemySourceRepository
 
-
 SAMPLES_DIR = Path(__file__).parent / "samples"
 
 
@@ -61,7 +60,4 @@ def test_program_archiveros_produces_study_requirements_from_known_knowledge(
         requirement.title for requirement in known_requirements
     ]
 
-    assert all(
-        requirement.source_id == source.id
-        for requirement in result.requirements
-    )
+    assert all(requirement.source_id == source.id for requirement in result.requirements)

@@ -1,9 +1,10 @@
+from support import InMemoryKnowledgeRepository
+
 from app.application.study_material import (
     derive_knowledge_needs_for_programme_unit,
     generate_study_material_for_programme_unit,
 )
-from app.domain.models import Knowledge, StudyProgrammeUnit
-from support import InMemoryKnowledgeRepository
+from app.domain.models import StudyProgrammeUnit
 
 
 def test_same_knowledge_need_from_different_programme_units_reuses_material() -> None:

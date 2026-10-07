@@ -1,12 +1,11 @@
+import pytest
+
 from app.application.normative_source import (
     HttpSourceRetriever,
     OfficialNormativeSourceCatalog,
     extract_article,
     reconstruct_knowledge_from_article,
 )
-
-
-import pytest
 
 
 @pytest.mark.network

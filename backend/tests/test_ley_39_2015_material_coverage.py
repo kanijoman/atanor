@@ -1,10 +1,11 @@
+from support import InMemoryKnowledgeRepository
+
 from app.application.study_material import (
     derive_covered_aspects,
     derive_knowledge_needs_for_programme_unit,
     generate_study_material_for_programme_unit,
 )
-from app.domain.models import Knowledge, StudyProgrammeUnit
-from support import InMemoryKnowledgeRepository
+from app.domain.models import StudyProgrammeUnit
 
 
 def test_current_ley_39_2015_material_covers_two_of_eight_required_aspects() -> None:

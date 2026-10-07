@@ -1,4 +1,5 @@
 from typing import Protocol
+from uuid import UUID
 
 from app.application.requirement_discovery import (
     RequirementDiscoveryStrategy,
@@ -12,7 +13,7 @@ class RequirementRepository(Protocol):
     def save(self, requirement: Requirement) -> Requirement: ...
     def get_by_id(self, requirement_id: int) -> Requirement | None: ...
     def list_all(self) -> list[Requirement]: ...
-    def list_by_source(self, source_id) -> list[Requirement]: ...
+    def list_by_source(self, source_id: UUID) -> list[Requirement]: ...
 
 
 def persist_requirement_mentions(
@@ -20,9 +21,7 @@ def persist_requirement_mentions(
     repository: RequirementRepository,
 ) -> list[Requirement]:
     return [
-        repository.save(
-            Requirement(title=mention.expression, source_id=mention.source_id)
-        )
+        repository.save(Requirement(title=mention.expression, source_id=mention.source_id))
         for mention in mentions
     ]
 
