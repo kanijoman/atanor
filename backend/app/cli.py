@@ -16,6 +16,11 @@ from app.application.syllabus_derivation.evaluation import (
     load_laws,
     select_top_divisions,
 )
+from app.application.syllabus_derivation.identification_evaluation import (
+    evaluate_identification,
+    format_identification_report,
+    unit_titles,
+)
 from app.persistence.call_repository import SqlAlchemyCallRepository
 from app.persistence.database import SessionLocal
 from app.persistence.source_repository import SqlAlchemySourceRepository
@@ -68,6 +73,11 @@ def build_parser() -> argparse.ArgumentParser:
         default=None,
         help="Measure the fixed top-N titles/chapters baseline instead of the derivation engine",
     )
+    identification_parser = subparsers.add_parser(
+        "identify-eval",
+        help="Measure whether law identification finds the laws of the hand-made topics",
+    )
+    identification_parser.add_argument("pdf", type=Path, help="Path to a call PDF")
     return parser
 
 
@@ -158,6 +168,16 @@ def _derive_eval(
     return 0
 
 
+def _identify_eval(
+    args: argparse.Namespace, parser: argparse.ArgumentParser, _repositories: Repositories
+) -> int:
+    if not args.pdf.is_file():
+        parser.error(f"Source file not found: {args.pdf}")
+    results = evaluate_identification(unit_titles(args.pdf))
+    print(format_identification_report(results))
+    return 0
+
+
 _COMMANDS: dict[str, CommandHandler] = {
     "import-source": _import_source,
     "import-call": _import_call,
@@ -165,6 +185,7 @@ _COMMANDS: dict[str, CommandHandler] = {
     "list-sources": _list_sources,
     "study-support-report": _study_support_report,
     "derive-eval": _derive_eval,
+    "identify-eval": _identify_eval,
 }
 
 
