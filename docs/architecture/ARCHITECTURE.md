@@ -136,6 +136,10 @@ This is currently implemented at the application level for validated study-mater
 
 Every topic exposes its **provenance** (`origin`: curated or acquired; `review_status`: unreviewed or reviewed) so the candidate can tell how the material was produced. Coverage is derived from the material actually produced: an aspect counts as covered only when the text has a section for it with substantive content, so aspects whose articles could not be acquired remain pending. If an acquiring provider cannot reach its source, the API reports the material as temporarily unavailable instead of inventing it.
 
+### Syllabus derivation (in progress)
+
+`application/syllabus_derivation/` is the deterministic engine that will replace hand-written topic mappings (no LLM, no new dependencies). So far it holds the retrieval layer: `normative_source/structure.py` parses a consolidated law into its Título › Capítulo › Artículo tree (`Law`, `LawDivision`), `text.py` normalises Spanish text (accents, stopwords, 6-character prefix stems), `retrieval.py` ranks the divisions of a law against a query with BM25 (heading words weighted x4) and `evaluation.py` compares the selection with the hand-made topics. `atanor derive-eval --top N` runs that benchmark against the live BOE.
+
 ## Domain Layer
 
 The current validated model is:
