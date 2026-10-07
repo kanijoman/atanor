@@ -105,7 +105,7 @@ class AcquiredNormativeMaterial:
         MaterialOrigin.ACQUIRED, ReviewStatus.UNREVIEWED
     )
 
-    def _references(self, section: ArticleSection) -> tuple[ArticleRef, ...]:
+    def references(self, section: ArticleSection) -> tuple[ArticleRef, ...]:
         own = ArticleRef(section.source or self.candidate, section.articles)
         return (own, *section.also)
 
@@ -113,7 +113,7 @@ class AcquiredNormativeMaterial:
         unique = {
             reference.source.identifier: reference.source
             for section in self.sections
-            for reference in self._references(section)
+            for reference in self.references(section)
         }
         return tuple(unique.values())
 
@@ -150,7 +150,7 @@ class AcquiredNormativeMaterial:
         numbers = tuple(
             number
             for section in self.sections
-            for reference in self._references(section)
+            for reference in self.references(section)
             if reference.source.identifier == candidate.identifier
             for number in reference.articles
         )
@@ -164,7 +164,7 @@ class AcquiredNormativeMaterial:
         labelled: bool,
     ) -> str:
         entries: list[str] = []
-        for reference in self._references(section):
+        for reference in self.references(section):
             law = reference.source if labelled else None
             by_identifier = articles[reference.source.identifier]
             for number in reference.articles:

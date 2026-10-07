@@ -23,7 +23,7 @@ _NOISE = re.compile(r"^(?:Subir|\[Bloque \d+: [^\]]*\])$")
 
 
 class _ElementParser(HTMLParser):
-    """Collect (block tag, normalized text) pairs.
+    """Collect (block tag, normalized text) pairs and the CSS class of each block.
 
     Text of inline elements (links, emphasis, spans) belongs to the enclosing
     block, so a paragraph containing a link is a single element.
@@ -32,19 +32,23 @@ class _ElementParser(HTMLParser):
     def __init__(self) -> None:
         super().__init__()
         self.elements: list[tuple[str, str]] = []
+        self.css_classes: list[str] = []  # parallel to `elements`
         self._block: str | None = None
+        self._css = ""
         self._text: list[str] = []
 
     def _flush(self) -> None:
         text = " ".join("".join(self._text).split())
         if self._block is not None and text and not _NOISE.match(text):
             self.elements.append((self._block, text))
+            self.css_classes.append(self._css)
         self._text = []
 
     def handle_starttag(self, tag: str, attrs: list[tuple[str, str | None]]) -> None:
         if tag in _BLOCK_TAGS:
             self._flush()
             self._block = tag
+            self._css = dict(attrs).get("class") or ""
         elif tag == "br":
             self._text.append(" ")
 
@@ -58,11 +62,16 @@ class _ElementParser(HTMLParser):
             self._text.append(data)
 
 
-def _parse_elements(retrieved: RetrievedSource) -> list[tuple[str, str]]:
+def parse_blocks(retrieved: RetrievedSource) -> tuple[list[tuple[str, str]], list[str]]:
+    """The (tag, text) blocks of a document and the CSS class of each one."""
     parser = _ElementParser()
     parser.feed(retrieved.content)
     parser.close()
-    return parser.elements
+    return parser.elements, parser.css_classes
+
+
+def _parse_elements(retrieved: RetrievedSource) -> list[tuple[str, str]]:
+    return parse_blocks(retrieved)[0]
 
 
 def _find_article_start(elements: list[tuple[str, str]], article_number: int) -> int | None:

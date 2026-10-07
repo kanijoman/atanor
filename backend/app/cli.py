@@ -5,8 +5,17 @@ from pathlib import Path
 from uuid import UUID
 
 from app.application.call_import import import_call_from_pdf
+from app.application.normative_source import HttpSourceRetriever
 from app.application.source import get_source, import_pdf_source, list_sources
+from app.application.study_material.registry import TOPICS
 from app.application.study_support_report import build_support_report, format_support_report
+from app.application.syllabus_derivation.evaluation import (
+    DEFAULT_TOP_DIVISIONS,
+    evaluate,
+    format_report,
+    gold_sections,
+    load_laws,
+)
 from app.persistence.call_repository import SqlAlchemyCallRepository
 from app.persistence.database import SessionLocal
 from app.persistence.source_repository import SqlAlchemySourceRepository
@@ -48,6 +57,17 @@ def build_parser() -> argparse.ArgumentParser:
         help="Report which programme units of call PDFs have study material (no persistence)",
     )
     report_parser.add_argument("pdfs", type=Path, nargs="+", help="Paths to call PDFs")
+
+    evaluation_parser = subparsers.add_parser(
+        "derive-eval",
+        help="Measure how much of the hand-made topic mappings automatic derivation recovers",
+    )
+    evaluation_parser.add_argument(
+        "--top",
+        type=int,
+        default=DEFAULT_TOP_DIVISIONS,
+        help="Titles/chapters selected per aspect",
+    )
     return parser
 
 
@@ -125,12 +145,22 @@ def _study_support_report(
     return 0
 
 
+def _derive_eval(
+    args: argparse.Namespace, _parser: argparse.ArgumentParser, _repositories: Repositories
+) -> int:
+    gold = gold_sections(TOPICS)
+    laws = load_laws(gold, HttpSourceRetriever(timeout=120))
+    print(format_report(evaluate(laws, gold, args.top)))
+    return 0
+
+
 _COMMANDS: dict[str, CommandHandler] = {
     "import-source": _import_source,
     "import-call": _import_call,
     "get-source": _get_source,
     "list-sources": _list_sources,
     "study-support-report": _study_support_report,
+    "derive-eval": _derive_eval,
 }
 
 
