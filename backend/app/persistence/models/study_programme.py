@@ -4,6 +4,7 @@ from sqlalchemy import ForeignKey, String, Uuid
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.persistence.database import Base
+from app.persistence.models.knowledge_need import KnowledgeNeed
 
 
 class StudyProgramme(Base):
@@ -38,3 +39,9 @@ class StudyProgrammeUnit(Base):
     end_order: Mapped[int] = mapped_column(nullable=False)
 
     programme: Mapped[StudyProgramme] = relationship(back_populates="units")
+    knowledge_needs: Mapped[list[KnowledgeNeed]] = relationship(
+        back_populates="unit",
+        cascade="all, delete-orphan",
+        passive_deletes=True,
+        lazy="selectin",
+    )

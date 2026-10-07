@@ -14,12 +14,12 @@ from app.application.study_material import (
     StudyCoverageSummary,
     build_study_coverage_summary,
     derive_covered_aspects,
-    derive_knowledge_needs_for_programme_unit,
     derive_material_provenance,
     derive_required_aspects_for_programme_unit,
     generate_study_material_for_programme_unit,
     is_study_material_available_for_programme_unit,
 )
+from app.application.study_needs import ensure_knowledge_needs
 from app.domain.models import Knowledge, KnowledgeNeed, StudyProgrammeUnit
 
 router = APIRouter(prefix="/api/study", tags=["study"])
@@ -74,6 +74,7 @@ def get_study_material(
     if programme_unit is None:
         raise HTTPException(status_code=404, detail="Study programme unit not found")
 
+    programme_unit = ensure_knowledge_needs(programme_unit, programme_repository)
     knowledge_need = _single_knowledge_need(programme_unit)
     try:
         knowledge = generate_study_material_for_programme_unit(
@@ -84,6 +85,7 @@ def get_study_material(
             status_code=503,
             detail="Study material is temporarily unavailable; try again later",
         ) from exc
+    programme_repository.link_knowledge(knowledge_need.id, knowledge.id)
     coverage = build_study_coverage_summary(
         knowledge_need=knowledge_need,
         required_aspects=derive_required_aspects_for_programme_unit(programme_unit),
@@ -99,14 +101,13 @@ def get_study_material(
 
 
 def _single_knowledge_need(programme_unit: StudyProgrammeUnit) -> KnowledgeNeed:
-    try:
-        knowledge_needs = derive_knowledge_needs_for_programme_unit(programme_unit)
-    except ValueError as exc:
+    if not is_study_material_available_for_programme_unit(programme_unit):
         raise HTTPException(
             status_code=422,
             detail="Study material is not available for this programme unit",
-        ) from exc
+        )
 
+    knowledge_needs = programme_unit.knowledge_needs
     if len(knowledge_needs) != 1:
         raise HTTPException(
             status_code=422,

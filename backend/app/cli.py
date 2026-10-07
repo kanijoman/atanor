@@ -5,12 +5,10 @@ from pathlib import Path
 from uuid import UUID
 
 from app.application.call_import import import_call_from_pdf
-from app.application.requirements import get_requirement, list_requirements
 from app.application.source import get_source, import_pdf_source, list_sources
 from app.application.study_support_report import build_support_report, format_support_report
 from app.persistence.call_repository import SqlAlchemyCallRepository
 from app.persistence.database import SessionLocal
-from app.persistence.requirement_repository import SqlAlchemyRequirementRepository
 from app.persistence.source_repository import SqlAlchemySourceRepository
 from app.persistence.study_programme_repository import SqlAlchemyStudyProgrammeRepository
 
@@ -20,7 +18,6 @@ class Repositories:
     """Persistence adapters used by the CLI commands."""
 
     sources: SqlAlchemySourceRepository
-    requirements: SqlAlchemyRequirementRepository
     calls: SqlAlchemyCallRepository
     programmes: SqlAlchemyStudyProgrammeRepository
 
@@ -45,13 +42,6 @@ def build_parser() -> argparse.ArgumentParser:
     get_source_parser.add_argument("source_id", type=UUID, help="Source UUID")
 
     subparsers.add_parser("list-sources", help="List all sources")
-
-    get_requirement_parser = subparsers.add_parser(
-        "get-requirement", help="Get a requirement by ID"
-    )
-    get_requirement_parser.add_argument("requirement_id", type=int, help="Requirement ID")
-
-    subparsers.add_parser("list-requirements", help="List all requirements")
 
     report_parser = subparsers.add_parser(
         "study-support-report",
@@ -123,37 +113,6 @@ def _list_sources(
     return 0
 
 
-def _get_requirement(
-    args: argparse.Namespace, _parser: argparse.ArgumentParser, repositories: Repositories
-) -> int:
-    requirement = get_requirement(args.requirement_id, repositories.requirements)
-    if requirement is None:
-        print(f"Requirement not found: {args.requirement_id}")
-        return 1
-
-    print("Requirement:")
-    print(f"  ID: {requirement.id}")
-    print(f"  Title: {requirement.title}")
-    print(f"  Source ID: {requirement.source_id}")
-    return 0
-
-
-def _list_requirements(
-    _args: argparse.Namespace, _parser: argparse.ArgumentParser, repositories: Repositories
-) -> int:
-    requirements = list_requirements(repositories.requirements)
-    if not requirements:
-        print("No requirements found.")
-        return 0
-
-    print("Requirements:")
-    for index, requirement in enumerate(requirements, start=1):
-        print(f"  {index}. {requirement.id}")
-        print(f"     {requirement.title}")
-        print(f"     Source: {requirement.source_id}")
-    return 0
-
-
 def _study_support_report(
     args: argparse.Namespace, parser: argparse.ArgumentParser, _repositories: Repositories
 ) -> int:
@@ -171,8 +130,6 @@ _COMMANDS: dict[str, CommandHandler] = {
     "import-call": _import_call,
     "get-source": _get_source,
     "list-sources": _list_sources,
-    "get-requirement": _get_requirement,
-    "list-requirements": _list_requirements,
     "study-support-report": _study_support_report,
 }
 
@@ -186,7 +143,6 @@ def main(argv: list[str] | None = None) -> int:
 
     repositories = Repositories(
         sources=SqlAlchemySourceRepository(SessionLocal),
-        requirements=SqlAlchemyRequirementRepository(SessionLocal),
         calls=SqlAlchemyCallRepository(SessionLocal),
         programmes=SqlAlchemyStudyProgrammeRepository(SessionLocal),
     )
