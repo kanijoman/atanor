@@ -140,6 +140,10 @@ Study material for Ley 19/2013 and Ley 39/2015 is now acquired article by articl
 
 Adding topics one at a time yields about 1-2 percentage points each on this sample, so breadth needs a repeatable mechanism (a topic registry fed by authoritative sources) rather than hand-written entries, and call detection must be fixed before more programmes become reachable. These findings guide AT-113 to AT-115.
 
+## AT-115 - One model for requirements and programme units
+
+Earlier entries in this document speak of requirements, requirement scopes and a binary covered/missing coverage. That model was built before programme discovery existed. Once candidates could import a convocatoria and browse its units, the requirement and the unit turned out to be the same thing, no unit ever needed more than one scope, and the requirement code was not on any product path. The two were unified: a programme unit is the requirement, it carries its own persisted knowledge need (also for units without material, which keeps "Atanor knows what it does not know"), and coverage is the single aspect-based summary plus a programme-level count. The older entries are kept as history of how the product was discovered.
+
 ## Potential future capabilities
 
 These items have emerged from experiments but are intentionally not scheduled until a concrete mini-MVP requires them:

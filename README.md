@@ -10,30 +10,24 @@ The first MVP focuses on Spanish public administration examinations. The underly
 
 Atanor aims to solve a problem traditionally addressed by preparation services: turning an official examination requirement into a justified knowledge scope and, eventually, an effective learning journey.
 
-The current product direction is deliberately incremental. A user should be able to provide a supported `convocatoria`, obtain the relevant study requirements and programme structure, and progressively receive the knowledge needed to prepare it.
+The current product direction is deliberately incremental. A user should be able to provide a supported `convocatoria`, obtain the programme structure with its units (the requirements), and progressively receive the knowledge needed to prepare it.
 
 The current validated application flow is:
 
 ```text
 Convocatoria PDF
     ↓
-Source
+Source (identified by content hash)
     ↓
 Document Processing
     ↓
-Requirement Discovery
+Call and Study Programme Discovery
     ↓
-Requirement Resolution
-    ↓
-Study Requirements
-    ↓
-Study Programme Discovery
-    ↓
-Study Programme Units
+Study Programme Units (the requirements)
     ↓
 Knowledge Need
     ↓
-Knowledge Construction
+Study Material (curated or acquired)
     ↓
 Candidate Study Material
 ```
@@ -45,13 +39,8 @@ Atanor currently supports:
 - PDF source import and persistence;
 - deterministic text extraction with page/order provenance;
 - deterministic document structure analysis for the currently observed source families;
-- requirement discovery and deterministic resolution;
-- user-oriented study requirements;
-- requirement scopes and knowledge needs;
-- semantic study-coverage summaries with covered and pending aspects;
-- autonomous acquisition from an authoritative BOE source;
-- deterministic relevant-content extraction;
-- first reusable `Knowledge` construction;
+- call detection and provider-specific study-programme discovery, where each programme unit is the requirement as the convocatoria states it;
+- an explicit knowledge need for every unit, valid even when no material exists for it yet;
 - study-programme discovery for the BOE and BOJA samples (the Archiveros layout is parsed but its document is not recognised as a convocatoria);
 - persistence and retrieval of study programmes and programme units;
 - importing a convocatoria PDF through the web interface, with sources identified by content hash;
