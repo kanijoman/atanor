@@ -4,6 +4,7 @@ from fastapi.testclient import TestClient
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
+from app.api.dependencies import get_session_factory
 from app.domain.models import Call, Source, StudyProgramme, StudyProgrammeUnit
 from app.main import app
 from app.persistence.database import Base
@@ -66,7 +67,9 @@ def _seed_ley_39_2015_programme_unit(
 def test_get_ley_39_2015_study_material_exposes_coverage_summary(tmp_path, monkeypatch) -> None:
     database = StudyCoverageApiDatabase(tmp_path / "api.db")
     _, unit = _seed_ley_39_2015_programme_unit(database)
-    monkeypatch.setattr("app.api.study.SessionLocal", database.session_factory)
+    monkeypatch.setitem(
+        app.dependency_overrides, get_session_factory, lambda: database.session_factory
+    )
     client = TestClient(app)
 
     response = client.get(f"/api/study/units/{unit.id}")

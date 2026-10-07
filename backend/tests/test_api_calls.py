@@ -1,43 +1,50 @@
-from typing import ClassVar
-from uuid import uuid4
+from uuid import UUID, uuid4
 
+import pytest
 from fastapi.testclient import TestClient
 
-from app.api import calls
+from app.api.dependencies import get_call_repository, get_study_programme_repository
 from app.domain.models import Call, StudyProgramme
 from app.main import app
 
 
 class InMemoryCallRepository:
-    calls: ClassVar[list[Call]] = []
+    def __init__(self, calls: list[Call]) -> None:
+        self._calls = calls
 
-    def __init__(self, _session_factory) -> None:
-        pass
+    def list_all(self) -> list[Call]:
+        return self._calls
 
-    def list_all(self):
-        return self.calls
-
-    def get_by_id(self, call_id):
-        return next((call for call in self.calls if call.id == call_id), None)
+    def get_by_id(self, call_id: UUID) -> Call | None:
+        return next((call for call in self._calls if call.id == call_id), None)
 
 
 class InMemoryStudyProgrammeRepository:
-    programmes_by_call: ClassVar[dict] = {}
+    def __init__(self, programmes_by_call: dict[UUID, list[StudyProgramme]]) -> None:
+        self._programmes_by_call = programmes_by_call
 
-    def __init__(self, _session_factory) -> None:
-        pass
-
-    def list_by_call(self, call_id):
-        return self.programmes_by_call.get(call_id, [])
+    def list_by_call(self, call_id: UUID) -> list[StudyProgramme]:
+        return self._programmes_by_call.get(call_id, [])
 
 
-client = TestClient(app)
+@pytest.fixture
+def client() -> TestClient:
+    return TestClient(app)
 
 
-def test_list_calls_returns_available_calls(monkeypatch) -> None:
+@pytest.fixture(autouse=True)
+def clear_overrides():
+    yield
+    app.dependency_overrides.clear()
+
+
+def _use_calls(calls: list[Call]) -> None:
+    app.dependency_overrides[get_call_repository] = lambda: InMemoryCallRepository(calls)
+
+
+def test_list_calls_returns_available_calls(client: TestClient) -> None:
     call = Call(title="Administrative Management Corps", source_id=uuid4())
-    InMemoryCallRepository.calls = [call]
-    monkeypatch.setattr(calls, "SqlAlchemyCallRepository", InMemoryCallRepository)
+    _use_calls([call])
 
     response = client.get("/api/calls")
 
@@ -50,10 +57,9 @@ def test_list_calls_returns_available_calls(monkeypatch) -> None:
     ]
 
 
-def test_get_call_returns_call(monkeypatch) -> None:
+def test_get_call_returns_call(client: TestClient) -> None:
     call = Call(title="Administrative Management Corps", source_id=uuid4())
-    InMemoryCallRepository.calls = [call]
-    monkeypatch.setattr(calls, "SqlAlchemyCallRepository", InMemoryCallRepository)
+    _use_calls([call])
 
     response = client.get(f"/api/calls/{call.id}")
 
@@ -64,9 +70,8 @@ def test_get_call_returns_call(monkeypatch) -> None:
     }
 
 
-def test_get_call_returns_404_when_call_does_not_exist(monkeypatch) -> None:
-    InMemoryCallRepository.calls = []
-    monkeypatch.setattr(calls, "SqlAlchemyCallRepository", InMemoryCallRepository)
+def test_get_call_returns_404_when_call_does_not_exist(client: TestClient) -> None:
+    _use_calls([])
 
     response = client.get(f"/api/calls/{uuid4()}")
 
@@ -74,23 +79,16 @@ def test_get_call_returns_404_when_call_does_not_exist(monkeypatch) -> None:
     assert response.json() == {"detail": "Call not found"}
 
 
-def test_list_call_programmes_returns_programmes_for_call(monkeypatch) -> None:
+def test_list_call_programmes_returns_programmes_for_call(client: TestClient) -> None:
     call = Call(title="Administrative Management Corps", source_id=uuid4())
     programme = StudyProgramme(
         call_id=call.id,
         identifier="I",
         title="General subjects",
     )
-    InMemoryCallRepository.calls = [call]
-    InMemoryStudyProgrammeRepository.programmes_by_call = {
-        call.id: [programme],
-    }
-
-    monkeypatch.setattr(calls, "SqlAlchemyCallRepository", InMemoryCallRepository)
-    monkeypatch.setattr(
-        calls,
-        "SqlAlchemyStudyProgrammeRepository",
-        InMemoryStudyProgrammeRepository,
+    _use_calls([call])
+    app.dependency_overrides[get_study_programme_repository] = lambda: (
+        InMemoryStudyProgrammeRepository({call.id: [programme]})
     )
 
     response = client.get(f"/api/calls/{call.id}/programmes")
@@ -105,11 +103,8 @@ def test_list_call_programmes_returns_programmes_for_call(monkeypatch) -> None:
     ]
 
 
-def test_list_call_programmes_returns_404_when_call_does_not_exist(
-    monkeypatch,
-) -> None:
-    InMemoryCallRepository.calls = []
-    monkeypatch.setattr(calls, "SqlAlchemyCallRepository", InMemoryCallRepository)
+def test_list_call_programmes_returns_404_when_call_does_not_exist(client: TestClient) -> None:
+    _use_calls([])
 
     response = client.get(f"/api/calls/{uuid4()}/programmes")
 

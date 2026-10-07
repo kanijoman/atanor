@@ -2,16 +2,13 @@ from uuid import UUID
 
 from fastapi import APIRouter, HTTPException
 
-from app.persistence.call_repository import SqlAlchemyCallRepository
-from app.persistence.database import SessionLocal
-from app.persistence.study_programme_repository import SqlAlchemyStudyProgrammeRepository
+from app.api.dependencies import CallRepositoryDep, StudyProgrammeRepositoryDep
 
 router = APIRouter(prefix="/api/calls", tags=["calls"])
 
 
 @router.get("")
-def list_calls() -> list[dict[str, object]]:
-    repository = SqlAlchemyCallRepository(SessionLocal)
+def list_calls(repository: CallRepositoryDep) -> list[dict[str, object]]:
     return [
         {
             "id": str(call.id),
@@ -22,8 +19,7 @@ def list_calls() -> list[dict[str, object]]:
 
 
 @router.get("/{call_id}")
-def get_call(call_id: UUID) -> dict[str, object]:
-    repository = SqlAlchemyCallRepository(SessionLocal)
+def get_call(call_id: UUID, repository: CallRepositoryDep) -> dict[str, object]:
     call = repository.get_by_id(call_id)
     if call is None:
         raise HTTPException(status_code=404, detail="Call not found")
@@ -35,12 +31,14 @@ def get_call(call_id: UUID) -> dict[str, object]:
 
 
 @router.get("/{call_id}/programmes")
-def list_call_programmes(call_id: UUID) -> list[dict[str, object]]:
-    call_repository = SqlAlchemyCallRepository(SessionLocal)
+def list_call_programmes(
+    call_id: UUID,
+    call_repository: CallRepositoryDep,
+    programme_repository: StudyProgrammeRepositoryDep,
+) -> list[dict[str, object]]:
     if call_repository.get_by_id(call_id) is None:
         raise HTTPException(status_code=404, detail="Call not found")
 
-    programme_repository = SqlAlchemyStudyProgrammeRepository(SessionLocal)
     return [
         {
             "id": str(programme.id),

@@ -5,6 +5,7 @@ from fastapi.testclient import TestClient
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
+from app.api.dependencies import get_session_factory
 from app.domain.models import Call, Source, StudyProgramme, StudyProgrammeUnit
 from app.main import app
 from app.persistence.database import Base
@@ -67,7 +68,9 @@ def _seed_programme(
 def test_list_programmes_returns_candidate_selectable_programmes(tmp_path, monkeypatch) -> None:
     database = StudyApiDatabase(tmp_path / "api.db")
     programme, _ = _seed_programme(database)
-    monkeypatch.setattr("app.api.study.SessionLocal", database.session_factory)
+    monkeypatch.setitem(
+        app.dependency_overrides, get_session_factory, lambda: database.session_factory
+    )
     client = TestClient(app)
 
     response = client.get("/api/study/programmes")
@@ -86,7 +89,9 @@ def test_list_programmes_returns_candidate_selectable_programmes(tmp_path, monke
 def test_get_programme_returns_units_for_candidate_selection(tmp_path, monkeypatch) -> None:
     database = StudyApiDatabase(tmp_path / "api.db")
     programme, unit = _seed_programme(database)
-    monkeypatch.setattr("app.api.study.SessionLocal", database.session_factory)
+    monkeypatch.setitem(
+        app.dependency_overrides, get_session_factory, lambda: database.session_factory
+    )
     client = TestClient(app)
 
     response = client.get(f"/api/study/programmes/{programme.id}")
@@ -111,7 +116,9 @@ def test_get_programme_returns_units_for_candidate_selection(tmp_path, monkeypat
 def test_get_programme_exposes_study_material_availability(tmp_path, monkeypatch) -> None:
     database = StudyApiDatabase(tmp_path / "api.db")
     programme, unit = _seed_programme(database)
-    monkeypatch.setattr("app.api.study.SessionLocal", database.session_factory)
+    monkeypatch.setitem(
+        app.dependency_overrides, get_session_factory, lambda: database.session_factory
+    )
     client = TestClient(app)
 
     response = client.get(f"/api/study/programmes/{programme.id}")
@@ -146,7 +153,9 @@ def test_get_programme_marks_unsupported_units_as_unavailable(tmp_path, monkeypa
         units=(unsupported_unit,),
     )
     SqlAlchemyStudyProgrammeRepository(database.session_factory).save(unsupported_programme)
-    monkeypatch.setattr("app.api.study.SessionLocal", database.session_factory)
+    monkeypatch.setitem(
+        app.dependency_overrides, get_session_factory, lambda: database.session_factory
+    )
     client = TestClient(app)
 
     response = client.get(f"/api/study/programmes/{unsupported_programme.id}")
@@ -165,7 +174,9 @@ def test_get_programme_marks_unsupported_units_as_unavailable(tmp_path, monkeypa
 
 def test_get_programme_returns_not_found_for_unknown_programme(tmp_path, monkeypatch) -> None:
     database = StudyApiDatabase(tmp_path / "api.db")
-    monkeypatch.setattr("app.api.study.SessionLocal", database.session_factory)
+    monkeypatch.setitem(
+        app.dependency_overrides, get_session_factory, lambda: database.session_factory
+    )
     client = TestClient(app)
 
     response = client.get(f"/api/study/programmes/{uuid4()}")
