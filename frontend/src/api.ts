@@ -16,9 +16,15 @@ export type ProgrammeUnit = {
   study_material_available: boolean;
 };
 
+export type ProgrammeCoverage = {
+  units_total: number;
+  units_with_material: number;
+};
+
 export type Programme = {
   identifier: string;
   title: string;
+  coverage: ProgrammeCoverage;
   units: ProgrammeUnit[];
 };
 

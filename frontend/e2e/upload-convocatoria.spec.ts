@@ -24,6 +24,7 @@ test("a candidate can import a convocatoria and see what is not supported yet", 
   ).toBeVisible({ timeout: IMPORT_TIMEOUT_MS });
   await page.getByRole("link", { name: /^II\.1 —/ }).click();
 
+  await expect(page.getByText("0 of 30 units have study material")).toBeVisible();
   await expect(page.getByText("Study material not available").first()).toBeVisible();
   await expect(page.getByText("Study material available", { exact: true })).toHaveCount(0);
 });

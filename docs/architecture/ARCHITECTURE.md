@@ -90,7 +90,7 @@ The HTTP API currently exposes:
 | `GET /api/calls`, `/api/calls/{id}` | List and retrieve imported calls. |
 | `POST /api/calls?filename=...` | Import the PDF sent as the request body (25 MB limit). 201 for a new call, 200 when the same content was imported before, 413 / 422 with an explanation when the file is too large, not a PDF, or contains no convocatoria. |
 | `GET /api/calls/{id}/programmes` | Programmes belonging to a call. |
-| `GET /api/study/programmes`, `/api/study/programmes/{id}` | Programmes and their units, including study-material availability. |
+| `GET /api/study/programmes`, `/api/study/programmes/{id}` | Programmes and their units, including per-unit study-material availability and a programme-level summary (`units_total`, `units_with_material`). |
 | `GET /api/study/units/{id}` | Study material, provenance (origin and review status) and semantic coverage summary (covered, pending and required aspects) for a unit. Answers 503 when acquired material cannot be retrieved right now. |
 
 The web interface follows the candidate flow import (optional) → call → programme → unit → study material and checklist.

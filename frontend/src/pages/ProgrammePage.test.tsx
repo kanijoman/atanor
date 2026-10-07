@@ -2,12 +2,14 @@ import "@testing-library/jest-dom/vitest";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { cleanup, render, screen, waitFor } from "@testing-library/react";
 
+import type { Programme } from "../api";
 import { ProgrammePage } from "./ProgrammePage";
 
-const programme = {
+const programme: Programme & { id: string } = {
   id: "programme-1",
   identifier: "I",
   title: "Programa oficial",
+  coverage: { units_total: 2, units_with_material: 1 },
   units: [
     {
       id: "unit-1",
@@ -46,6 +48,7 @@ describe("ProgrammePage", () => {
     expect(screen.getByText("Loading programme…")).toBeVisible();
 
     expect(await screen.findByRole("heading", { name: "Programme I" })).toBeVisible();
+    expect(screen.getByText("1 of 2 units have study material")).toBeVisible();
     expect(screen.getByText("1. Organización del Estado")).toBeVisible();
     expect(
       screen.getByRole("link", {
@@ -98,10 +101,17 @@ describe("ProgrammePage", () => {
     vi.stubGlobal(
       "fetch",
       vi.fn().mockResolvedValue(
-        new Response(JSON.stringify({ ...programme, units: [] }), {
-          status: 200,
-          headers: { "Content-Type": "application/json" },
-        }),
+        new Response(
+          JSON.stringify({
+            ...programme,
+            coverage: { units_total: 0, units_with_material: 0 },
+            units: [],
+          }),
+          {
+            status: 200,
+            headers: { "Content-Type": "application/json" },
+          },
+        ),
       ),
     );
 

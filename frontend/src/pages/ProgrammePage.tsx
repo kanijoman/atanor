@@ -20,6 +20,10 @@ export function ProgrammePage({ programmeId }: ProgrammePageProps) {
         <>
           <h1>Programme {state.data.identifier}</h1>
           <p>{state.data.title}</p>
+          <p>
+            {state.data.coverage.units_with_material} of {state.data.coverage.units_total} units
+            have study material
+          </p>
 
           {state.data.units.length === 0 ? (
             <p>No programme units are available yet.</p>

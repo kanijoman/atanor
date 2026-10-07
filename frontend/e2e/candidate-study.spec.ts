@@ -12,6 +12,8 @@ test("allows a candidate to go from a real BOE call to study material", async ({
 
   await expect(page.getByRole("heading", { name: "Programme I" })).toBeVisible();
 
+  await expect(page.getByText("3 of 28 units have study material")).toBeVisible();
+
   const studyUnit = page.getByRole("link", {
     name: /11\.\s+Las Leyes del Procedimiento Administrativo Común.*Administraciones/i,
   });
