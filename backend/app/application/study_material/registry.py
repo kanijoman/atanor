@@ -7,11 +7,14 @@ from app.application.study_material.topics import (
     constitutional_court_and_crown,
     cortes_generales,
     data_modeling,
+    government,
     identity,
     judicial_power,
     object_oriented,
     personal_data,
     procedure,
+    state_administration,
+    territorial_organisation,
 )
 
 TOPICS: tuple[StudyTopic, ...] = (
@@ -25,6 +28,9 @@ TOPICS: tuple[StudyTopic, ...] = (
     constitutional_court_and_crown.TOPIC,
     cortes_generales.TOPIC,
     judicial_power.TOPIC,
+    government.TOPIC,
+    state_administration.TOPIC,
+    territorial_organisation.TOPIC,
 )
 
 

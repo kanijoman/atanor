@@ -11,6 +11,7 @@ class NormativeSourceCandidate:
     source: Source
     authority: str
     identifier: str
+    label: str = ""  # short name used when material mixes several laws
 
 
 class NormativeSourceResolver(Protocol):
@@ -27,6 +28,7 @@ LEY_39_2015 = NormativeSourceCandidate(
     ),
     authority="BOE",
     identifier="BOE-A-2015-10565",
+    label="Ley 39/2015",
 )
 
 LEY_19_2013 = NormativeSourceCandidate(
@@ -39,6 +41,7 @@ LEY_19_2013 = NormativeSourceCandidate(
     ),
     authority="BOE",
     identifier="BOE-A-2013-12887",
+    label="Ley 19/2013",
 )
 
 
@@ -49,6 +52,37 @@ CONSTITUCION_ESPANOLA = NormativeSourceCandidate(
     ),
     authority="BOE",
     identifier="BOE-A-1978-31229",
+    label="Constitución Española",
+)
+
+LEY_50_1997 = NormativeSourceCandidate(
+    source=Source(
+        title="Ley 50/1997, de 27 de noviembre, del Gobierno",
+        locator="https://www.boe.es/buscar/act.php?id=BOE-A-1997-25336",
+    ),
+    authority="BOE",
+    identifier="BOE-A-1997-25336",
+    label="Ley 50/1997",
+)
+
+LEY_40_2015 = NormativeSourceCandidate(
+    source=Source(
+        title="Ley 40/2015, de 1 de octubre, de Régimen Jurídico del Sector Público",
+        locator="https://www.boe.es/buscar/act.php?id=BOE-A-2015-10566",
+    ),
+    authority="BOE",
+    identifier="BOE-A-2015-10566",
+    label="Ley 40/2015",
+)
+
+LEY_7_1985 = NormativeSourceCandidate(
+    source=Source(
+        title="Ley 7/1985, de 2 de abril, Reguladora de las Bases del Régimen Local",
+        locator="https://www.boe.es/buscar/act.php?id=BOE-A-1985-5392",
+    ),
+    authority="BOE",
+    identifier="BOE-A-1985-5392",
+    label="Ley 7/1985",
 )
 
 

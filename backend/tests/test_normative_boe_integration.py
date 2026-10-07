@@ -43,6 +43,9 @@ def test_live_boe_retrieval_extracts_ley_39_2015_article_1() -> None:
         ("constitutional_court_and_crown", 4),
         ("cortes_generales", 4),
         ("judicial_power", 4),
+        ("government", 4),
+        ("state_administration", 6),
+        ("territorial_organisation", 5),
     ],
 )
 def test_live_boe_pages_cover_every_aspect_of_the_acquired_topics(

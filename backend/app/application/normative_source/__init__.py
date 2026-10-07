@@ -7,8 +7,11 @@ from app.application.normative_source.articles import (
 )
 from app.application.normative_source.catalog import (
     CONSTITUCION_ESPANOLA,
+    LEY_7_1985,
     LEY_19_2013,
     LEY_39_2015,
+    LEY_40_2015,
+    LEY_50_1997,
     NormativeSourceCandidate,
     NormativeSourceResolver,
     OfficialNormativeSourceCatalog,
@@ -28,8 +31,11 @@ from app.application.normative_source.retrieval import (
 
 __all__ = [
     "CONSTITUCION_ESPANOLA",
+    "LEY_7_1985",
     "LEY_19_2013",
     "LEY_39_2015",
+    "LEY_40_2015",
+    "LEY_50_1997",
     "HttpSourceRetriever",
     "KnowledgeComparison",
     "NormativeArticle",
