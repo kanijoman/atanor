@@ -1,6 +1,6 @@
 from uuid import UUID, uuid4
 
-from sqlalchemy import ForeignKey, String, Uuid
+from sqlalchemy import ForeignKey, String, Text, Uuid
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.persistence.database import Base
@@ -19,7 +19,7 @@ class StudyProgramme(Base):
     units: Mapped[list[StudyProgrammeUnit]] = relationship(
         back_populates="programme",
         cascade="all, delete-orphan",
-        order_by="StudyProgrammeUnit.number",
+        order_by="(StudyProgrammeUnit.start_page, StudyProgrammeUnit.start_order)",
         lazy="selectin",
     )
 
@@ -32,7 +32,8 @@ class StudyProgrammeUnit(Base):
         ForeignKey("study_programmes.id", ondelete="CASCADE"), nullable=False
     )
     number: Mapped[int] = mapped_column(nullable=False)
-    title: Mapped[str] = mapped_column(String(1000), nullable=False)
+    title: Mapped[str] = mapped_column(Text, nullable=False)
+    section: Mapped[str | None] = mapped_column(String(255), nullable=True)
     start_page: Mapped[int] = mapped_column(nullable=False)
     start_order: Mapped[int] = mapped_column(nullable=False)
     end_page: Mapped[int] = mapped_column(nullable=False)

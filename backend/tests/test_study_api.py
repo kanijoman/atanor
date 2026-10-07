@@ -108,6 +108,7 @@ def test_get_programme_returns_units_for_candidate_selection(tmp_path, monkeypat
                 "id": str(unit.id),
                 "number": 1,
                 "title": "Derecho de acceso a la información pública",
+                "section": None,
                 "study_material_available": True,
             }
         ],
@@ -132,6 +133,7 @@ def test_get_programme_exposes_study_material_availability(tmp_path, monkeypatch
             "id": str(unit.id),
             "number": 1,
             "title": "Derecho de acceso a la información pública",
+            "section": None,
             "study_material_available": True,
         }
     ]
@@ -170,6 +172,7 @@ def test_get_programme_marks_unsupported_units_as_unavailable(tmp_path, monkeypa
             "id": str(unsupported_unit.id),
             "number": 2,
             "title": "Organización del Estado",
+            "section": None,
             "study_material_available": False,
         }
     ]

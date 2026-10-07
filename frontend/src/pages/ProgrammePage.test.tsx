@@ -15,12 +15,14 @@ const programme: Programme & { id: string } = {
       id: "unit-1",
       number: 1,
       title: "Organización del Estado",
+      section: null,
       study_material_available: false,
     },
     {
       id: "unit-2",
       number: 2,
       title: "Derecho de acceso a la información pública",
+      section: null,
       study_material_available: true,
     },
   ],
@@ -148,6 +150,50 @@ describe("ProgrammePage", () => {
     expect(fetchMock).toHaveBeenCalledWith(
       "/api/study/programmes/programme-1",
       expect.objectContaining({ signal: expect.any(AbortSignal) }),
+    );
+  });
+
+  it("groups units by block when numbering restarts in each block", async () => {
+    const blocks: Programme & { id: string } = {
+      ...programme,
+      coverage: { units_total: 2, units_with_material: 1 },
+      units: [
+        {
+          id: "unit-a",
+          number: 1,
+          title: "La Constitución Española de 1978. Características.",
+          section: "I. Organización pública",
+          study_material_available: false,
+        },
+        {
+          id: "unit-b",
+          number: 1,
+          title: "Atención al público: acogida e información al ciudadano.",
+          section: "II. Actividad administrativa y ofimática",
+          study_material_available: true,
+        },
+      ],
+    };
+    vi.stubGlobal(
+      "fetch",
+      vi.fn().mockResolvedValue(
+        new Response(JSON.stringify(blocks), {
+          status: 200,
+          headers: { "Content-Type": "application/json" },
+        }),
+      ),
+    );
+
+    render(<ProgrammePage programmeId="programme-1" />);
+
+    expect(await screen.findByRole("heading", { name: "I. Organización pública" })).toBeVisible();
+    expect(
+      screen.getByRole("heading", { name: "II. Actividad administrativa y ofimática" }),
+    ).toBeVisible();
+    expect(screen.getByText("1. La Constitución Española de 1978. Características.")).toBeVisible();
+    expect(screen.getByRole("link", { name: /1\. Atención al público/ })).toHaveAttribute(
+      "href",
+      "/study/unit-b",
     );
   });
 });

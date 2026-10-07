@@ -56,6 +56,7 @@ class StudyProgrammeUnit:
     end_order: int
     id: UUID = field(default_factory=uuid4)
     knowledge_needs: tuple[KnowledgeNeed, ...] = field(default_factory=tuple)
+    section: str | None = None
 
 
 @dataclass(frozen=True)

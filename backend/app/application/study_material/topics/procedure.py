@@ -4,6 +4,7 @@ from app.application.normative_source import LEY_39_2015
 from app.application.study_material.coverage import aspects_covered_by_sections
 from app.application.study_material.providers import AcquiredNormativeMaterial, ArticleSection
 from app.application.study_material.topic import StudyTopic
+from app.application.study_material.wording import leading_statement
 
 TOPIC_NAME = "Procedimiento administrativo común"
 
@@ -24,13 +25,14 @@ SECTIONS = (
 
 REQUIRED_ASPECTS = tuple(section.aspect for section in SECTIONS)
 
-_UNIT_TITLE = "las leyes del procedimiento administrativo común de las administraciones"
+_UNIT_LEAD = "las leyes del procedimiento administrativo común de las administraciones"
 
 
 def _matches(title: str) -> bool:
+    lead = leading_statement(title)
     return (
-        "ley 39/2015" in title and "procedimiento administrativo común" in title
-    ) or title == _UNIT_TITLE
+        "ley 39/2015" in lead and "procedimiento administrativo común" in lead
+    ) or lead.startswith(_UNIT_LEAD)
 
 
 TOPIC = StudyTopic(

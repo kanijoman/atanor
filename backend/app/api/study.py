@@ -62,6 +62,7 @@ def get_programme(programme_id: UUID, repository: StudyProgrammeRepositoryDep) -
                 "id": str(unit.id),
                 "number": unit.number,
                 "title": unit.title,
+                "section": unit.section,
                 "study_material_available": is_study_material_available_for_programme_unit(unit),
             }
             for unit in programme.units

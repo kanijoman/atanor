@@ -76,6 +76,7 @@ def test_migrations_round_trip(tmp_path) -> None:
             "programme_id",
             "number",
             "title",
+            "section",
             "start_page",
             "start_order",
             "end_page",

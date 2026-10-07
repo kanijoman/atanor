@@ -47,7 +47,7 @@ Atanor currently supports:
 - candidate study material for six topics, with explicit provenance: Ley 19/2013 and Ley 39/2015 are acquired from the BOE article by article, while four topics are curated by Atanor and not yet expert-reviewed;
 - coverage derived from the material actually produced, shown as an actionable checklist of covered and pending aspects.
 
-Measured on the four real samples, about 6% of the units of the BOE sample and none of the BOJA sample have study material yet (`atanor study-support-report <pdf>...` reproduces the measurement).
+Measured on the four real samples, about 8% of the units of the BOE sample and none of the BOJA sample have study material yet (`atanor study-support-report <pdf>...` reproduces the measurement).
 
 These capabilities have been validated against four real PDF samples and focused product tests. Support is intentionally not presented as universal parsing of arbitrary official documents. Scanned/image-only PDFs remain outside the current extraction boundary.
 

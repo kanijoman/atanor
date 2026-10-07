@@ -1,8 +1,9 @@
 """Programme discovery for BOE calls (`ANEXO` sections with a numbered `Programa.` block)."""
 
 import re
+from collections.abc import Callable
 
-from app.application.study_programmes.strategy import build_programme_units
+from app.application.study_programmes.strategy import Sections, build_programme_units
 from app.application.study_programmes.text_units import TextUnit
 from app.domain.models import Call, StudyProgramme
 
@@ -32,6 +33,18 @@ def _indices_between(
     return [index for index in range(start, end) if pattern.fullmatch(units[index].text)]
 
 
+def _section_namer(
+    units: list[TextUnit], section_indices: list[int]
+) -> Callable[[int], str | None]:
+    """Name the block (`I. ...`, `II. ...`) a programme item belongs to."""
+
+    def section_of(start: int) -> str | None:
+        previous = [index for index in section_indices if index < start]
+        return units[previous[-1]].text if previous else None
+
+    return section_of
+
+
 def _discover_annex(
     call: Call, units: list[TextUnit], annex_index: int, next_annex: int, identifier: str
 ) -> StudyProgramme | None:
@@ -51,7 +64,13 @@ def _discover_annex(
         call_id=call.id,
         identifier=identifier,
         title=f"ANEXO {identifier}",
-        units=build_programme_units(units, item_indices, _TOP_LEVEL, next_annex, section_indices),
+        units=build_programme_units(
+            units,
+            item_indices,
+            _TOP_LEVEL,
+            next_annex,
+            Sections(section_indices, _section_namer(units, section_indices)),
+        ),
     )
 
 

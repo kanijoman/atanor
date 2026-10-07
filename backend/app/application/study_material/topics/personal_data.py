@@ -3,6 +3,7 @@
 from app.application.study_material.coverage import aspects_covered_by_sections
 from app.application.study_material.providers import CuratedMaterial
 from app.application.study_material.topic import StudyTopic
+from app.application.study_material.wording import leading_statement
 from app.domain.models import Source
 
 TOPIC_NAME = "Protección de datos personales"
@@ -28,7 +29,7 @@ REQUIRED_ASPECTS = (
 
 
 def _matches(title: str) -> bool:
-    return "protección de datos personales" in title
+    return "protección de datos personales" in leading_statement(title)
 
 
 TOPIC = StudyTopic(

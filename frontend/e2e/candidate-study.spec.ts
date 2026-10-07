@@ -13,6 +13,13 @@ test("allows a candidate to go from a real BOE call to study material", async ({
   await expect(page.getByRole("heading", { name: "Programme I" })).toBeVisible();
 
   await expect(page.getByText("3 of 28 units have study material")).toBeVisible();
+  await expect(page.getByRole("heading", { name: "I. Organización pública" })).toBeVisible();
+  await expect(
+    page.getByRole("heading", { name: "II. Actividad administrativa y ofimática" }),
+  ).toBeVisible();
+  await expect(
+    page.getByText(/Derechos y deberes fundamentales\. Su garantía y suspensión\./),
+  ).toBeVisible();
 
   const studyUnit = page.getByRole("link", {
     name: /11\.\s+Las Leyes del Procedimiento Administrativo Común.*Administraciones/i,
