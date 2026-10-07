@@ -42,6 +42,16 @@ LEY_19_2013 = NormativeSourceCandidate(
 )
 
 
+CONSTITUCION_ESPANOLA = NormativeSourceCandidate(
+    source=Source(
+        title="Constitución Española",
+        locator="https://www.boe.es/buscar/act.php?id=BOE-A-1978-31229",
+    ),
+    authority="BOE",
+    identifier="BOE-A-1978-31229",
+)
+
+
 def normalize(value: str) -> str:
     return " ".join(value.casefold().split())
 
@@ -67,6 +77,7 @@ class OfficialNormativeSourceCatalog:
             ),
             LEY_19_2013,
         ),
+        (("constitución española", "constitucion espanola"), CONSTITUCION_ESPANOLA),
     )
 
     def resolve(self, text: str) -> NormativeSourceCandidate | None:
