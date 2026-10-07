@@ -170,7 +170,7 @@ def test_derives_knowledge_need_for_ley_39_2015_programme_item() -> None:
         number=1,
         title=(
             "La Ley 39/2015, de 1 de octubre, del Procedimiento Administrativo "
-            "Común de las Administraciones Públicas. Objeto y ámbito de aplicación"
+            "Común de las Administraciones Públicas."
         ),
         start_page=1,
         start_order=1,
@@ -190,7 +190,7 @@ def test_generates_study_material_for_ley_39_2015_programme_item() -> None:
         number=1,
         title=(
             "La Ley 39/2015, de 1 de octubre, del Procedimiento Administrativo "
-            "Común de las Administraciones Públicas. Objeto y ámbito de aplicación"
+            "Común de las Administraciones Públicas."
         ),
         start_page=1,
         start_order=1,

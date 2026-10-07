@@ -18,7 +18,10 @@ def test_report_counts_supported_units_for_the_boe_sample() -> None:
     supported_topics = {
         unit.topic for programme in report.programmes for unit in programme.units if unit.supported
     }
-    assert "Procedimiento administrativo común" in supported_topics
+    assert (
+        "Las Leyes del Procedimiento Administrativo Común y del Régimen Jurídico del Sector Público"
+        in supported_topics
+    )
 
 
 def test_report_marks_supported_and_unsupported_units() -> None:

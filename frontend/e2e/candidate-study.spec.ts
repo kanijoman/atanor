@@ -34,31 +34,33 @@ test("allows a candidate to go from a real BOE call to study material", async ({
     }),
   ).toBeVisible();
 
-  await expect(page.getByText("Knowledge need: Procedimiento administrativo común")).toBeVisible();
+  await expect(page.getByText(/^Knowledge need: Las Leyes del Procedimiento/)).toBeVisible();
 
   await expect(page.getByRole("heading", { name: "Study material" })).toBeVisible();
-  await expect(page.getByText(/Artículo 1/)).toBeVisible();
+  await expect(page.getByText(/Ley 29\/1998, Artículo 25\./)).toBeVisible();
   await expect(
     page.getByText("Acquired from an authoritative source · not yet reviewed by an expert"),
   ).toBeVisible();
 
   await expect(page.getByRole("heading", { name: "Sources" })).toBeVisible();
-  const canonicalSource = page.getByRole("link", {
-    name: "Ley 39/2015, de 1 de octubre, del Procedimiento Administrativo Común de las Administraciones Públicas",
-  });
-  await expect(canonicalSource).toBeVisible();
-  await expect(canonicalSource).toHaveAttribute(
-    "href",
-    "https://www.boe.es/buscar/act.php?id=BOE-A-2015-10565",
-  );
+  for (const [title, id] of [
+    ["Ley 39/2015, de 1 de octubre, del Procedimiento Administrativo Común", "BOE-A-2015-10565"],
+    ["Ley 40/2015, de 1 de octubre, de Régimen Jurídico del Sector Público", "BOE-A-2015-10566"],
+    ["Ley 29/1998, de 13 de julio, reguladora de la Jurisdicción", "BOE-A-1998-16718"],
+  ]) {
+    const source = page.getByRole("link", { name: new RegExp(`^${title}`) });
+    await expect(source).toBeVisible();
+    await expect(source).toHaveAttribute("href", `https://www.boe.es/buscar/act.php?id=${id}`);
+  }
 
   await expect(page.getByRole("heading", { name: "Study coverage" })).toBeVisible();
-  await expect(page.getByText("Covered · 8 of 8 aspects covered (100%)")).toBeVisible();
+  await expect(page.getByText("Covered · 6 of 6 aspects covered (100%)")).toBeVisible();
   await expect(page.getByRole("heading", { name: "Study aspects" })).toBeVisible();
   await expect(
-    page.getByText(/^Covered · Objeto y finalidad del procedimiento administrativo común/),
+    page.getByText(/^Covered · El procedimiento administrativo común y sus fases/),
   ).toBeVisible();
+  await expect(page.getByText(/^Covered · El recurso contencioso-administrativo/)).toBeVisible();
   await expect(
-    page.getByText(/^Covered · Interesados, capacidad, representación y derechos/),
+    page.getByText(/^Covered · Las partes: capacidad, legitimación, representación y defensa/),
   ).toBeVisible();
 });

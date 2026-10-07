@@ -3,6 +3,7 @@
 from app.application.study_material.topic import StudyTopic
 from app.application.study_material.topics import (
     access,
+    administrative_procedure_and_appeals,
     civil_servants,
     civil_servants_rights,
     constitution,
@@ -37,6 +38,7 @@ TOPICS: tuple[StudyTopic, ...] = (
     civil_servants.TOPIC,
     civil_servants_rights.TOPIC,
     state_budget.TOPIC,
+    administrative_procedure_and_appeals.TOPIC,
 )
 
 
