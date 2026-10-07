@@ -52,11 +52,13 @@ Atanor currently supports:
 - autonomous acquisition from an authoritative BOE source;
 - deterministic relevant-content extraction;
 - first reusable `Knowledge` construction;
-- study-programme discovery for the current BOE, BOJA and Archiveros samples;
+- study-programme discovery for the BOE and BOJA samples (the Archiveros layout is parsed but its document is not recognised as a convocatoria);
 - persistence and retrieval of study programmes and programme units;
-- a first end-to-end candidate study-material flow from a real programme point to persisted and retrievable material.
+- importing a convocatoria PDF through the web interface, with sources identified by content hash;
+- candidate study material for six topics, with explicit provenance: Ley 19/2013 and Ley 39/2015 are acquired from the BOE article by article, while four topics are curated by Atanor and not yet expert-reviewed;
+- coverage derived from the material actually produced, shown as an actionable checklist of covered and pending aspects.
 
-The first end-to-end material case uses a real BOE call point referring to Ley 19/2013. Atanor derives the narrower `Derecho de acceso a la información pública` knowledge need without modifying the original programme point.
+Measured on the four real samples, about 6% of the units of the BOE sample and none of the BOJA sample have study material yet (`atanor study-support-report <pdf>...` reproduces the measurement).
 
 These capabilities have been validated against four real PDF samples and focused product tests. Support is intentionally not presented as universal parsing of arbitrary official documents. Scanned/image-only PDFs remain outside the current extraction boundary.
 
@@ -168,9 +170,9 @@ Technology choices remain subordinate to validated product requirements.
 
 ## Current Product Gap
 
-The candidate can now browse calls, programmes and units in the web interface, read study material for supported units and see an actionable checklist of covered and pending study aspects (AT-105).
+The candidate can import a convocatoria, browse its programmes and units, read study material for supported units and see which aspects are covered or pending, together with how the material was produced.
 
-The main gap is breadth and usefulness of preparation: only a small deterministic subset of programme units is supported, and the material is deliberately minimal. The next mini-MVP should be selected from evidence about the highest-value remaining candidate problem before expanding the knowledge model or introducing additional infrastructure.
+The main gap is breadth and trust: few programme units are supported, two sample documents are not recognised as convocatorias, and no material or aspect mapping has been reviewed by an expert yet. The next mini-MVP should be selected from that evidence (see `docs/backlog/BACKLOG.md`) before expanding the knowledge model or introducing additional infrastructure.
 
 ## Vision
 

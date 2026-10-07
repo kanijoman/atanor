@@ -14,6 +14,7 @@ class Source(Base):
     id: Mapped[UUID] = mapped_column(Uuid(), primary_key=True, default=uuid4)
     title: Mapped[str] = mapped_column(String(255), nullable=False)
     locator: Mapped[str] = mapped_column(String(2048), nullable=False, unique=True)
+    content_hash: Mapped[str | None] = mapped_column(String(64), nullable=True, unique=True)
     created_at: Mapped[datetime] = mapped_column(
         UTCDateTime, nullable=False, default=lambda: datetime.now(UTC)
     )

@@ -132,6 +132,10 @@ Observations:
 - Two of the four samples are not recognised as calls by `call_discovery`, so the end-to-end flow produces no programme for them even though the programme-discovery strategies can parse them when given a call. A candidate importing either document would currently receive an error.
 - The unsupported units form a long tail: 478 distinct titles, with the most frequent topic repeated only 8 times. The recurring ones are institutional law (Constitution, Cortes Generales, Poder Judicial, Gobierno y Administracion, Union Europea, acto administrativo, personal al servicio de las Administraciones, presupuesto de gasto, equality policies) and IT/office skills (TCP/IP, Windows, Word, Excel, Access, Outlook).
 
+### Update after AT-112 to AT-114
+
+Study material for Ley 19/2013 and Ley 39/2015 is now acquired article by article, and a candidate can import any convocatoria PDF. Importing the four samples confirmed that the OPOS Ayuntamiento de Leon and Archiveros documents are refused as not being a convocatoria, so the call-detection heuristic, not the study material, is the first limit a real candidate would meet. Two further findings came out of acquiring real BOE text: the article parser originally dropped paragraph text around inline links (a latent defect hidden by simple fixtures), and the `knowledge_sources` table had no migration. Both were fixed and guarded by tests.
+
 ### Consequence
 
 Adding topics one at a time yields about 1-2 percentage points each on this sample, so breadth needs a repeatable mechanism (a topic registry fed by authoritative sources) rather than hand-written entries, and call detection must be fixed before more programmes become reachable. These findings guide AT-113 to AT-115.

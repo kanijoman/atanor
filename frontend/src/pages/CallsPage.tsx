@@ -1,5 +1,6 @@
 import { type Call, fetchJson } from "../api";
 import { useApi } from "../useApi";
+import { UploadCallForm } from "./UploadCallForm";
 
 export function CallsPage() {
   const state = useApi("calls", (signal) => fetchJson<Call[]>("/api/calls", signal));
@@ -7,6 +8,8 @@ export function CallsPage() {
   return (
     <main>
       <h1>Calls</h1>
+
+      <UploadCallForm />
 
       {state.status === "loading" && <p>Loading calls…</p>}
 

@@ -61,8 +61,18 @@ export class ApiError extends Error {
   constructor(
     readonly status: number,
     path: string,
+    readonly detail?: string,
   ) {
     super(`Request to ${path} failed with status ${status}`);
+  }
+}
+
+async function readErrorDetail(response: Response): Promise<string | undefined> {
+  try {
+    const body = (await response.json()) as { detail?: unknown };
+    return typeof body.detail === "string" ? body.detail : undefined;
+  } catch {
+    return undefined;
   }
 }
 
@@ -74,4 +84,20 @@ export async function fetchJson<T>(path: string, signal?: AbortSignal): Promise<
   }
 
   return (await response.json()) as T;
+}
+
+/** Imports the convocatoria PDF; the API explains in `ApiError.detail` why it was refused. */
+export async function uploadCall(file: File): Promise<Call> {
+  const path = `/api/calls?filename=${encodeURIComponent(file.name)}`;
+  const response = await fetch(path, {
+    method: "POST",
+    headers: { "Content-Type": "application/pdf" },
+    body: file,
+  });
+
+  if (!response.ok) {
+    throw new ApiError(response.status, path, await readErrorDetail(response));
+  }
+
+  return (await response.json()) as Call;
 }

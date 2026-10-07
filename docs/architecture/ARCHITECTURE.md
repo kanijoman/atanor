@@ -88,11 +88,14 @@ The HTTP API currently exposes:
 |---|---|
 | `GET /`, `GET /health` | Application root and health check. |
 | `GET /api/calls`, `/api/calls/{id}` | List and retrieve imported calls. |
+| `POST /api/calls?filename=...` | Import the PDF sent as the request body (25 MB limit). 201 for a new call, 200 when the same content was imported before, 413 / 422 with an explanation when the file is too large, not a PDF, or contains no convocatoria. |
 | `GET /api/calls/{id}/programmes` | Programmes belonging to a call. |
 | `GET /api/study/programmes`, `/api/study/programmes/{id}` | Programmes and their units, including study-material availability. |
 | `GET /api/study/units/{id}` | Study material, provenance (origin and review status) and semantic coverage summary (covered, pending and required aspects) for a unit. Answers 503 when acquired material cannot be retrieved right now. |
 
-The web interface follows the candidate flow call → programme → unit → study material and checklist.
+The web interface follows the candidate flow import (optional) → call → programme → unit → study material and checklist.
+
+A `Source` is identified by the SHA-256 of its content (`content_hash`), so importing the same document again, from any path, returns the existing call. Uploaded PDFs are stored under `uploads/` as `<hash>.pdf`. Nothing is persisted for a document in which no call is discovered.
 
 ## Application Layer
 

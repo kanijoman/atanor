@@ -5,11 +5,14 @@ themselves. Tests (and other deployments) replace `get_session_factory` through
 `app.dependency_overrides`.
 """
 
+from pathlib import Path
 from typing import Annotated
 
 from fastapi import Depends
 
+from app.application.call_import import CallRepositories
 from app.application.normative_source import HttpSourceRetriever, SourceRetriever
+from app.config import settings
 from app.persistence.call_repository import SqlAlchemyCallRepository
 from app.persistence.database import SessionFactory, SessionLocal
 from app.persistence.knowledge_repository import SqlAlchemyKnowledgeRepository
@@ -24,6 +27,10 @@ def get_session_factory() -> SessionFactory:
 SessionFactoryDep = Annotated[SessionFactory, Depends(get_session_factory)]
 
 
+def get_uploads_dir() -> Path:
+    return Path(settings.uploads_dir)
+
+
 def get_call_repository(session_factory: SessionFactoryDep) -> SqlAlchemyCallRepository:
     return SqlAlchemyCallRepository(session_factory)
 
@@ -32,6 +39,14 @@ def get_study_programme_repository(
     session_factory: SessionFactoryDep,
 ) -> SqlAlchemyStudyProgrammeRepository:
     return SqlAlchemyStudyProgrammeRepository(session_factory)
+
+
+def get_call_import_repositories(session_factory: SessionFactoryDep) -> CallRepositories:
+    return CallRepositories(
+        sources=SqlAlchemySourceRepository(session_factory),
+        calls=SqlAlchemyCallRepository(session_factory),
+        programmes=SqlAlchemyStudyProgrammeRepository(session_factory),
+    )
 
 
 def get_knowledge_repository(session_factory: SessionFactoryDep) -> SqlAlchemyKnowledgeRepository:
@@ -51,5 +66,7 @@ StudyProgrammeRepositoryDep = Annotated[
     SqlAlchemyStudyProgrammeRepository, Depends(get_study_programme_repository)
 ]
 KnowledgeRepositoryDep = Annotated[SqlAlchemyKnowledgeRepository, Depends(get_knowledge_repository)]
+CallImportRepositoriesDep = Annotated[CallRepositories, Depends(get_call_import_repositories)]
+UploadsDirDep = Annotated[Path, Depends(get_uploads_dir)]
 SourceRetrieverDep = Annotated[SourceRetriever, Depends(get_source_retriever)]
 SourceRepositoryDep = Annotated[SqlAlchemySourceRepository, Depends(get_source_repository)]

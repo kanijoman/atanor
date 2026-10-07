@@ -41,6 +41,7 @@ def test_migrations_round_trip(tmp_path) -> None:
             "id",
             "title",
             "locator",
+            "content_hash",
             "created_at",
             "updated_at",
         }

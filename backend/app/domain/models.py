@@ -7,6 +7,7 @@ class Source:
     title: str
     locator: str | None = None
     id: UUID = field(default_factory=uuid4)
+    content_hash: str | None = None
 
 
 @dataclass(frozen=True)

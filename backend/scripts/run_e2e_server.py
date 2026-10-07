@@ -1,16 +1,20 @@
 from __future__ import annotations
 
 import os
+import shutil
 import sys
 from pathlib import Path
 
 BACKEND_ROOT = Path(__file__).resolve().parents[1]
 E2E_DATABASE = BACKEND_ROOT / "e2e.db"
+E2E_UPLOADS = BACKEND_ROOT / "e2e-uploads"
 
 os.environ["DATABASE_URL"] = f"sqlite:///{E2E_DATABASE.as_posix()}"
+os.environ["UPLOADS_DIR"] = str(E2E_UPLOADS)
 
 if E2E_DATABASE.exists():
     E2E_DATABASE.unlink()
+shutil.rmtree(E2E_UPLOADS, ignore_errors=True)
 
 import uvicorn
 
