@@ -1,22 +1,21 @@
 import { type Call, fetchJson } from "../api";
 import { useApi } from "../useApi";
+import { UploadCallForm } from "./UploadCallForm";
 
 export function CallsPage() {
-  const state = useApi("calls", (signal) =>
-    fetchJson<Call[]>("/api/calls", signal),
-  );
+  const state = useApi("calls", (signal) => fetchJson<Call[]>("/api/calls", signal));
 
   return (
     <main>
       <h1>Calls</h1>
 
+      <UploadCallForm />
+
       {state.status === "loading" && <p>Loading calls…</p>}
 
       {state.status === "error" && <p>Unable to load calls.</p>}
 
-      {state.status === "ready" && state.data.length === 0 && (
-        <p>No calls are available yet.</p>
-      )}
+      {state.status === "ready" && state.data.length === 0 && <p>No calls are available yet.</p>}
 
       {state.status === "ready" && state.data.length > 0 && (
         <ul>

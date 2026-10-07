@@ -7,8 +7,8 @@
 | Project      | Atanor                      |
 | Document     | CONVENTIONS                 |
 | Status       | 🟢 Active                   |
-| Version      | 0.10                        |
-| Last Updated | 2026-09-16                  |
+| Version      | 0.11                        |
+| Last Updated | 2026-10-07                  |
 | Audience     | Contributors and Developers |
 
 ---
@@ -392,6 +392,27 @@ Tasks should state the concrete product or user value they are intended to deliv
 The backlog should remain intentionally short and evidence-driven during the early product stage. It should describe the current hypothesis and immediate work rather than attempt to specify the entire future product.
 
 ---
+
+# Code Quality Gates
+
+DRY, SOLID, KISS and Clean Code are enforced by tooling in CI, not left to review. A change is not complete unless every gate passes.
+
+| Area | Gate | Command (from `backend/` or `frontend/`) |
+| --- | --- | --- |
+| Backend lint | `ruff check` (E, F, W, I, B, UP, SIM, C90, PL, RUF; line length 100, complexity ≤ 10, ≤ 5 arguments, ≤ 50 statements) | `uv run ruff check .` |
+| Backend format | `ruff format` | `uv run ruff format --check .` |
+| Backend types | `mypy --strict` on `app/` | `uv run mypy` |
+| Backend tests | `pytest` (live-network tests are marked `network` and excluded by default) | `uv run pytest` |
+| Frontend lint | ESLint (typescript-eslint strict, react-hooks, complexity ≤ 10, ≤ 60 lines per function, ≤ 300 lines per file) and Prettier | `pnpm lint` |
+| Frontend types | `tsc --noEmit` | `pnpm typecheck` |
+| Frontend tests | Vitest, Playwright | `pnpm test`, `pnpm test:e2e` |
+
+Rules of use:
+
+- Existing violations are baselined explicitly (`per-file-ignores` in `backend/pyproject.toml`, ESLint overrides). A baseline entry may only be removed, never added; new code must comply without exceptions.
+- Boy-scout rule: when a file is touched for a feature, its baseline entries are removed in the same change when practical. Files above the size limits are split by responsibility (one reason to change per module) before new behavior is added to them.
+- Prefer small functions with a single responsibility, dependency injection over module-level wiring, and shared helpers over copy-paste (for example the shared in-memory repository fake in `backend/tests/support.py`).
+- Formatting-only changes go in their own commit so behavioral diffs stay reviewable.
 
 # Dependencies
 

@@ -5,14 +5,13 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.pool import StaticPool
 
-from app.api import calls
+from app.api.dependencies import get_session_factory
 from app.application.call_import import import_call_from_pdf
 from app.main import app
 from app.persistence.call_repository import SqlAlchemyCallRepository
 from app.persistence.database import Base
 from app.persistence.source_repository import SqlAlchemySourceRepository
 from app.persistence.study_programme_repository import SqlAlchemyStudyProgrammeRepository
-
 
 SAMPLES = Path(__file__).parent / "samples"
 
@@ -37,16 +36,13 @@ def test_imported_call_and_programmes_are_available_through_calls_api() -> None:
         programme_repository,
     )
 
-    original_session_local = calls.SessionLocal
-    calls.SessionLocal = session_factory
+    app.dependency_overrides[get_session_factory] = lambda: session_factory
     try:
         client = TestClient(app)
         call_response = client.get("/api/calls")
-        programmes_response = client.get(
-            f"/api/calls/{imported_call.id}/programmes"
-        )
+        programmes_response = client.get(f"/api/calls/{imported_call.id}/programmes")
     finally:
-        calls.SessionLocal = original_session_local
+        app.dependency_overrides.clear()
         engine.dispose()
 
     assert call_response.status_code == 200

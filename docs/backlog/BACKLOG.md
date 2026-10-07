@@ -7,8 +7,8 @@
 | Project | Atanor |
 | Document | BACKLOG |
 | Status | Active |
-| Version | 8.1 |
-| Last Updated | 2026-10-06 |
+| Version | 9.0 |
+| Last Updated | 2026-10-07 |
 | Audience | Contributors and Developers |
 
 ---
@@ -69,7 +69,9 @@ The current implementation supports heterogeneous text-based PDF structures thro
 - First reusable `Knowledge` construction workflow.
 - Deterministic study-programme discovery for the current BOE, BOJA and Archiveros samples.
 - Persistence and retrieval of discovered study programmes and units.
-- Candidate-facing study material for validated units in two distinct legal domains: Ley 19/2013 and Ley 39/2015.
+- Candidate-facing study material for six topics: Ley 19/2013 and Ley 39/2015 acquired from the BOE article by article, and four curated topics (personal data protection, electronic identity and signature, object-oriented programming, data modelling).
+- Explicit material provenance (origin: curated or acquired; review status) shown to the candidate.
+- Bring-your-own convocatoria: a candidate can upload a PDF through the web interface; sources are identified by content hash, so repeated uploads are idempotent, and documents that are not a convocatoria are refused with an explanation.
 - Candidate-facing study-material availability in programme listings, so supported units are directly actionable and unsupported units are identifiable without probing a failing endpoint.
 - Candidate-facing semantic study-coverage summaries showing covered and pending aspects for supported units.
 - Actionable study-aspect checklist in the candidate interface, backed by explicitly exposed required aspects (AT-105).
@@ -78,7 +80,7 @@ The current candidate study flow preserves the official programme wording while 
 
 AT-104 validated representative study-content casuistics across legal and technical domains. The experiments established an explicit distinction between programme scope, study requirements, study material and coverage. Coverage is only meaningful when study requirements are independently defined and supported by substantive evidence in the material. The object-oriented programming case also demonstrated that coverage detection must tolerate natural wording differences rather than depend on exact phrase matching.
 
-The validated Ley 39/2015 vertical demonstrates that coverage can be represented as an explicit aspect contract rather than inferred from textual coincidence. The current example exposes 2 of 8 required aspects as covered and identifies the remaining aspects as pending.
+Coverage is an explicit aspect contract derived from the material actually produced: an aspect is covered only when the material has a section for it with substantive content. For Ley 39/2015 each of the 8 required aspects maps to the BOE articles that develop it, so coverage is 8 of 8 when acquisition succeeds and drops for any aspect whose articles are missing. The aspect-to-article mappings are still pending expert review.
 
 These capabilities are validated against the project's real PDF samples and focused product tests. They do not imply universal support for arbitrary official-document formats or universal semantic coverage.
 
@@ -108,11 +110,16 @@ The next step should therefore be selected from the highest-value candidate prob
 
 ## Immediate Priority
 
-**Select the next increment of preparation breadth or depth from evidence.**
+**Re-evaluate the next increment from the evidence gathered by AT-111 to AT-114.**
 
-AT-105 made covered and pending study aspects actionable in the candidate interface. The next step should be chosen by measuring which programme units of the real samples are supported, then deciding between supporting more units (for example further authoritative BOE sources) or deepening the material for units already supported (for example the pending Ley 39/2015 aspects).
+Measured on the four real samples (`atanor study-support-report`), 6% of the BOE units, 0% of the BOJA units and none of the other two documents are supported, and two of the four samples are not recognised as a convocatoria at all. The candidates for the next increment are:
 
-The next increment must produce an observable candidate-facing improvement. Supporting work, such as moving study-material topics from hardcoded constants into a registry, should be delivered together with the capability that requires it.
+- **Breadth through the registry and the acquired provider**: the highest-frequency unsupported topics are institutional law (Constitution, Cortes Generales, Poder Judicial, Gobierno y Administracion, Union Europea, acto administrativo, personal al servicio de las Administraciones) and IT/office skills. Law topics reuse the BOE acquisition mechanism; IT topics need curated or expert-reviewed material.
+- **Recognising more call formats**: the OPOS Ayuntamiento de Leon and Archiveros documents are refused as convocatorias. Fixing detection makes more candidate documents usable.
+- **Expert review of material**: curated topics and every aspect-to-article mapping are `unreviewed`; a minimal way to record review would turn provenance into trust.
+- **Path consolidation**: the requirement/scope/coverage flow built in earlier stages is not on the product path and should be integrated or removed.
+
+The next increment must produce an observable candidate-facing improvement and be justified by this evidence rather than extending the architecture by default.
 
 ---
 

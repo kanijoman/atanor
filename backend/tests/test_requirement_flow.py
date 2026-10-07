@@ -12,7 +12,6 @@ from app.domain.requirement_resolution import (
     resolve_requirement,
 )
 
-
 SAMPLE_NAMES = (
     "BOE-A-2024-14098.pdf",
     "OPOS_AYTO_LEON_INFORMATICA_B.pdf",
@@ -103,8 +102,7 @@ def test_discovery_and_resolution_are_integrated_for_supported_text_pdf_samples(
     assert mentions
 
     requirements = tuple(
-        Requirement(title=mention.expression, source_id=source_id)
-        for mention in mentions
+        Requirement(title=mention.expression, source_id=source_id) for mention in mentions
     )
 
     resolutions = discover_and_resolve_requirements(
@@ -122,10 +120,7 @@ def test_discovery_and_resolution_are_integrated_for_supported_text_pdf_samples(
         }
         for resolution in resolutions
     )
-    assert all(
-        resolution.candidate.source_id == source_id
-        for resolution in resolutions
-    )
+    assert all(resolution.candidate.source_id == source_id for resolution in resolutions)
 
 
 def test_scanned_pdf_remains_an_explicitly_unsupported_discovery_input() -> None:
@@ -162,14 +157,7 @@ def test_discovery_and_resolution_keep_unresolved_candidates_for_internal_curati
 
     assert len(resolutions) == len(mentions)
     assert all(
-        resolution.status is RequirementResolutionStatus.UNRESOLVED
-        for resolution in resolutions
+        resolution.status is RequirementResolutionStatus.UNRESOLVED for resolution in resolutions
     )
-    assert all(
-        resolution.requirement is None
-        for resolution in resolutions
-    )
-    assert all(
-        resolution.candidate.source_id == source_id
-        for resolution in resolutions
-    )
+    assert all(resolution.requirement is None for resolution in resolutions)
+    assert all(resolution.candidate.source_id == source_id for resolution in resolutions)

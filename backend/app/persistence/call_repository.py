@@ -3,11 +3,12 @@ from uuid import UUID
 from sqlalchemy import select
 
 from app.domain.models import Call as DomainCall
+from app.persistence.database import SessionFactory
 from app.persistence.models.call import Call
 
 
 class SqlAlchemyCallRepository:
-    def __init__(self, session_factory) -> None:
+    def __init__(self, session_factory: SessionFactory) -> None:
         self._session_factory = session_factory
 
     def save(self, call: DomainCall) -> DomainCall:

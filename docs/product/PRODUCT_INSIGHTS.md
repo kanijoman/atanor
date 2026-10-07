@@ -107,6 +107,39 @@ It does **not** yet validate semantic completeness, factual validation, canonica
 
 AT-043 is considered **closed** with **89 passing tests** and no regressions.
 
+## AT-111 - Supported syllabus breadth
+
+### Hypothesis
+
+> **Before choosing the next topics to support, measure how much of the real syllabi Atanor can already prepare.**
+
+### Method
+
+`atanor study-support-report <pdf>...` runs call detection and programme discovery on a PDF without persisting anything and reports, per programme unit, whether study material exists. It was run over the four sample PDFs in `backend/tests/samples/`.
+
+### Result (2026-10-07)
+
+| Sample | Call detected | Programmes | Units | Supported |
+| --- | --- | --- | --- | --- |
+| BOE-A-2024-14098 | yes | 10 (annexes) | 348 | 21 (6%) |
+| BOJA24-138-... | yes | 7 | 269 | 0 (0%) |
+| OPOS_AYTO_LEON_INFORMATICA_B | **no** | 0 | 0 | n/a |
+| Programa_Archiveros_0 | **no** | 0 | 0 | n/a |
+
+Observations:
+
+- Supported units are concentrated in six topics: Ley 19/2013 (4 units), Ley 39/2015 (5), protection of personal data (10), data modelling (2). No unit of the BOJA sample matches any supported topic.
+- Two of the four samples are not recognised as calls by `call_discovery`, so the end-to-end flow produces no programme for them even though the programme-discovery strategies can parse them when given a call. A candidate importing either document would currently receive an error.
+- The unsupported units form a long tail: 478 distinct titles, with the most frequent topic repeated only 8 times. The recurring ones are institutional law (Constitution, Cortes Generales, Poder Judicial, Gobierno y Administracion, Union Europea, acto administrativo, personal al servicio de las Administraciones, presupuesto de gasto, equality policies) and IT/office skills (TCP/IP, Windows, Word, Excel, Access, Outlook).
+
+### Update after AT-112 to AT-114
+
+Study material for Ley 19/2013 and Ley 39/2015 is now acquired article by article, and a candidate can import any convocatoria PDF. Importing the four samples confirmed that the OPOS Ayuntamiento de Leon and Archiveros documents are refused as not being a convocatoria, so the call-detection heuristic, not the study material, is the first limit a real candidate would meet. Two further findings came out of acquiring real BOE text: the article parser originally dropped paragraph text around inline links (a latent defect hidden by simple fixtures), and the `knowledge_sources` table had no migration. Both were fixed and guarded by tests.
+
+### Consequence
+
+Adding topics one at a time yields about 1-2 percentage points each on this sample, so breadth needs a repeatable mechanism (a topic registry fed by authoritative sources) rather than hand-written entries, and call detection must be fixed before more programmes become reachable. These findings guide AT-113 to AT-115.
+
 ## Potential future capabilities
 
 These items have emerged from experiments but are intentionally not scheduled until a concrete mini-MVP requires them:

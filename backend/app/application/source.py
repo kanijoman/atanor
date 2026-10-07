@@ -1,3 +1,4 @@
+import hashlib
 from pathlib import Path
 from typing import Protocol
 from uuid import UUID
@@ -10,17 +11,34 @@ class SourceRepository(Protocol):
 
     def get_by_id(self, source_id: UUID) -> Source | None: ...
 
+    def get_by_content_hash(self, content_hash: str) -> Source | None: ...
+
     def list_all(self) -> list[Source]: ...
 
 
-def import_pdf_source(path: str | Path, repository: SourceRepository) -> Source:
+def content_hash_of(content: bytes) -> str:
+    return hashlib.sha256(content).hexdigest()
+
+
+def new_pdf_source(path: str | Path, title: str | None = None) -> Source:
+    """Describe a local PDF as a (not yet persisted) source identified by its content hash."""
     pdf_path = Path(path)
     if not pdf_path.is_file():
         raise FileNotFoundError(f"Source file not found: {pdf_path}")
     if pdf_path.suffix.lower() != ".pdf":
         raise ValueError("Source file must be a PDF")
 
-    source = Source(title=pdf_path.name, locator=str(pdf_path))
+    return Source(
+        title=title or pdf_path.name,
+        locator=str(pdf_path),
+        content_hash=content_hash_of(pdf_path.read_bytes()),
+    )
+
+
+def import_pdf_source(
+    path: str | Path, repository: SourceRepository, title: str | None = None
+) -> Source:
+    source = new_pdf_source(path, title)
     repository.save(source)
     return source
 

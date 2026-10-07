@@ -9,9 +9,9 @@ records. It does not attempt to prove semantic correctness of imported data.
 
 from __future__ import annotations
 
+import sys
 from dataclasses import dataclass
 from pathlib import Path
-import sys
 
 from sqlalchemy import func, select
 from sqlalchemy.exc import SQLAlchemyError
@@ -24,7 +24,6 @@ from app.persistence.database import SessionLocal
 from app.persistence.models.call import Call
 from app.persistence.models.source import Source
 from app.persistence.models.study_programme import StudyProgramme, StudyProgrammeUnit
-
 
 _SYNTHETIC_MARKERS = (
     "test",
@@ -107,9 +106,7 @@ def _find_synthetic_records(
                 continue
             marker = _synthetic_marker(value)
             if marker is not None:
-                records.append(
-                    SyntheticRecord("source", str(source.id), value, marker)
-                )
+                records.append(SyntheticRecord("source", str(source.id), value, marker))
 
     for call in calls:
         marker = _synthetic_marker(call.title)
@@ -123,9 +120,7 @@ def _find_synthetic_records(
         ):
             marker = _synthetic_marker(value)
             if marker is not None:
-                records.append(
-                    SyntheticRecord("programme", str(programme.id), value, marker)
-                )
+                records.append(SyntheticRecord("programme", str(programme.id), value, marker))
 
     for unit in units:
         marker = _synthetic_marker(unit.title)
@@ -164,19 +159,11 @@ def build_report() -> HygieneReport:
         source_anomalies = sum(
             1 for source in sources if not source.title.strip() or not source.locator.strip()
         )
-        synthetic_records = _find_synthetic_records(
-            sources, calls, programmes, units
-        )
+        synthetic_records = _find_synthetic_records(sources, calls, programmes, units)
 
-        relation_anomalies = sum(
-            call.source_id not in source_ids for call in calls
-        )
-        relation_anomalies += sum(
-            programme.call_id not in call_ids for programme in programmes
-        )
-        relation_anomalies += sum(
-            unit.programme_id not in programme_ids for unit in units
-        )
+        relation_anomalies = sum(call.source_id not in source_ids for call in calls)
+        relation_anomalies += sum(programme.call_id not in call_ids for programme in programmes)
+        relation_anomalies += sum(unit.programme_id not in programme_ids for unit in units)
 
     return HygieneReport(
         calls=len(calls),
@@ -211,10 +198,7 @@ def main() -> int:
     if report.synthetic_records:
         print("\nSYNTHETIC RECORDS")
         for record in report.synthetic_records:
-            print(
-                f"- {record.entity} {record.identifier} "
-                f"[{record.marker}]: {record.value}"
-            )
+            print(f"- {record.entity} {record.identifier} [{record.marker}]: {record.value}")
 
     return 0 if report.status == "clean" else 1
 

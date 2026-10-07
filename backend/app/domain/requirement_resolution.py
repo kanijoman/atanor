@@ -25,8 +25,14 @@ class RequirementResolution:
     requirement: Requirement | None = None
 
 
-def resolve_requirement(candidate: RequirementCandidate, requirements: tuple[Requirement, ...]) -> RequirementResolution:
-    matches = tuple(requirement for requirement in requirements if requirement.title == candidate.title)
+def resolve_requirement(
+    candidate: RequirementCandidate, requirements: tuple[Requirement, ...]
+) -> RequirementResolution:
+    matches = tuple(
+        requirement for requirement in requirements if requirement.title == candidate.title
+    )
     if len(matches) == 1:
-        return RequirementResolution(candidate=candidate, status=RequirementResolutionStatus.RESOLVED, requirement=matches[0])
+        return RequirementResolution(
+            candidate=candidate, status=RequirementResolutionStatus.RESOLVED, requirement=matches[0]
+        )
     return RequirementResolution(candidate=candidate, status=RequirementResolutionStatus.UNRESOLVED)

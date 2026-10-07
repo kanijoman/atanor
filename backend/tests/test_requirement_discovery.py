@@ -1,19 +1,18 @@
-import pytest
 from pathlib import Path
 from uuid import UUID
+
+import pytest
 
 from app.application.document_processing import DocumentProcessingResult, process_document
 from app.application.document_structure import analyze_document_structure
 from app.application.requirement_discovery import (
     PdfRequirementDiscoveryStrategy,
-    RequirementDiscoveryStrategy,
     RequirementMention,
     discover_numbered_requirement_mentions,
     discover_requirements,
 )
 from app.application.requirements import discover_and_persist_requirements
 from app.domain.models import Requirement, Source
-
 
 SAMPLES_DIR = Path(__file__).parent / "samples"
 
@@ -68,7 +67,9 @@ def test_discover_numbered_requirement_mentions_normalises_expression_spacing() 
 
 def test_discover_numbered_requirement_mentions_ignores_non_markers() -> None:
     source_id = UUID("44444444-4444-4444-4444-444444444444")
-    result = discover_numbered_requirement_mentions("Texto general\n1. Requisito válido\nSin marcador\nTema 2: otro texto", source_id)
+    result = discover_numbered_requirement_mentions(
+        "Texto general\n1. Requisito válido\nSin marcador\nTema 2: otro texto", source_id
+    )
     assert [mention.expression for mention in result] == ["Requisito válido"]
 
 
@@ -79,7 +80,9 @@ def test_discover_numbered_requirement_mentions_uses_source_id_and_line_locator(
     assert result[0].locator == "line:3"
 
 
-def test_discover_requirements_processes_source_once_and_delegates_result(monkeypatch: pytest.MonkeyPatch) -> None:
+def test_discover_requirements_processes_source_once_and_delegates_result(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
     source = Source(title="call.pdf", locator="/tmp/call.pdf")
     processing_result = _processing_result(source, "PROGRAMA\n1. Constitución Española")
     mentions = [RequirementMention("Constitución Española", source.id, "line:2")]
@@ -90,7 +93,9 @@ def test_discover_requirements_processes_source_once_and_delegates_result(monkey
         calls.append(received_source)
         return processing_result
 
-    monkeypatch.setattr("app.application.document_processing.process_document", fake_process_document)
+    monkeypatch.setattr(
+        "app.application.document_processing.process_document", fake_process_document
+    )
     result = discover_requirements(source, strategy)
 
     assert result == mentions
@@ -98,7 +103,9 @@ def test_discover_requirements_processes_source_once_and_delegates_result(monkey
     assert calls == [source]
 
 
-def test_discover_and_persist_requirements_creates_requirements_from_mentions(monkeypatch: pytest.MonkeyPatch) -> None:
+def test_discover_and_persist_requirements_creates_requirements_from_mentions(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
     source = Source(title="call.pdf", locator="/tmp/call.pdf")
     processing_result = _processing_result(source, "PROGRAMA\n1. Constitución Española")
     mentions = [
@@ -107,7 +114,9 @@ def test_discover_and_persist_requirements_creates_requirements_from_mentions(mo
     ]
     strategy = FakeRequirementDiscoveryStrategy(mentions)
     repository = FakeRequirementRepository()
-    monkeypatch.setattr("app.application.document_processing.process_document", lambda _: processing_result)
+    monkeypatch.setattr(
+        "app.application.document_processing.process_document", lambda _: processing_result
+    )
 
     result = discover_and_persist_requirements(source, strategy, repository)
 
@@ -117,12 +126,16 @@ def test_discover_and_persist_requirements_creates_requirements_from_mentions(mo
     assert strategy.received_result is processing_result
 
 
-def test_discover_and_persist_requirements_returns_empty_when_no_mentions(monkeypatch: pytest.MonkeyPatch) -> None:
+def test_discover_and_persist_requirements_returns_empty_when_no_mentions(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
     source = Source(title="call.pdf", locator="/tmp/call.pdf")
     processing_result = _processing_result(source, "PROGRAMA\n1. Constitución Española")
     strategy = FakeRequirementDiscoveryStrategy([])
     repository = FakeRequirementRepository()
-    monkeypatch.setattr("app.application.document_processing.process_document", lambda _: processing_result)
+    monkeypatch.setattr(
+        "app.application.document_processing.process_document", lambda _: processing_result
+    )
 
     result = discover_and_persist_requirements(source, strategy, repository)
     assert result == []
@@ -131,13 +144,17 @@ def test_discover_and_persist_requirements_returns_empty_when_no_mentions(monkey
 
 def test_pdf_strategy_discovers_numbered_items_inside_program_context() -> None:
     source = Source(title="call.pdf", locator="/tmp/call.pdf")
-    result = PdfRequirementDiscoveryStrategy().discover(_processing_result(source, "1. Requisitos\nPROGRAMA\n1. Constitución Española"))
+    result = PdfRequirementDiscoveryStrategy().discover(
+        _processing_result(source, "1. Requisitos\nPROGRAMA\n1. Constitución Española")
+    )
     assert result == [RequirementMention("Constitución Española", source.id, "line:3")]
 
 
 def test_pdf_strategy_ignores_numbered_items_outside_program_context() -> None:
     source = Source(title="call.pdf", locator="/tmp/call.pdf")
-    result = PdfRequirementDiscoveryStrategy().discover(_processing_result(source, "1. Requisitos\n2. Desarrollo"))
+    result = PdfRequirementDiscoveryStrategy().discover(
+        _processing_result(source, "1. Requisitos\n2. Desarrollo")
+    )
     assert result == []
 
 
@@ -150,7 +167,9 @@ def test_pdf_strategy_discovers_mentions_from_real_boe_sample() -> None:
 
 
 def test_pdf_strategy_discovers_tema_items_from_real_jcyl_sample() -> None:
-    source = Source(title="Programa_Archiveros_0.pdf", locator=str(SAMPLES_DIR / "Programa_Archiveros_0.pdf"))
+    source = Source(
+        title="Programa_Archiveros_0.pdf", locator=str(SAMPLES_DIR / "Programa_Archiveros_0.pdf")
+    )
     result = PdfRequirementDiscoveryStrategy().discover(process_document(source))
     assert result
     assert all(mention.source_id == source.id for mention in result)
@@ -159,7 +178,10 @@ def test_pdf_strategy_discovers_tema_items_from_real_jcyl_sample() -> None:
 
 
 def test_pdf_strategy_returns_no_mentions_for_scanned_pdf_sample() -> None:
-    source = Source(title="OPOS_AYTO_LEON_INFORMATICA_B.pdf", locator=str(SAMPLES_DIR / "OPOS_AYTO_LEON_INFORMATICA_B.pdf"))
+    source = Source(
+        title="OPOS_AYTO_LEON_INFORMATICA_B.pdf",
+        locator=str(SAMPLES_DIR / "OPOS_AYTO_LEON_INFORMATICA_B.pdf"),
+    )
     result = PdfRequirementDiscoveryStrategy().discover(process_document(source))
     assert result == []
 
@@ -180,7 +202,9 @@ def test_pdf_strategy_rejects_non_pdf_sources() -> None:
 
 def test_pdf_strategy_uses_source_id_and_expected_locators() -> None:
     source = Source(title="call.pdf", locator="/tmp/call.pdf")
-    processing_result = _processing_result(source, "INTRODUCCIÓN\nPROGRAMA\n1. Constitución Española\n2. Ley 39/2015")
+    processing_result = _processing_result(
+        source, "INTRODUCCIÓN\nPROGRAMA\n1. Constitución Española\n2. Ley 39/2015"
+    )
     result = PdfRequirementDiscoveryStrategy().discover(processing_result)
     assert [(item.expression, item.source_id, item.locator) for item in result] == [
         ("Constitución Española", source.id, "line:3"),
@@ -190,6 +214,8 @@ def test_pdf_strategy_uses_source_id_and_expected_locators() -> None:
 
 def test_pdf_strategy_consumes_existing_processing_result_without_reprocessing() -> None:
     source = Source(title="call.pdf", locator="/tmp/call.pdf")
-    processing_result = _processing_result(source, "INTRODUCCIÓN\nPROGRAMA\n1. Constitución Española")
+    processing_result = _processing_result(
+        source, "INTRODUCCIÓN\nPROGRAMA\n1. Constitución Española"
+    )
     result = PdfRequirementDiscoveryStrategy().discover(processing_result)
     assert result == [RequirementMention("Constitución Española", source.id, "line:3")]

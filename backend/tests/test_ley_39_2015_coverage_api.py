@@ -4,6 +4,7 @@ from fastapi.testclient import TestClient
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
+from app.api.dependencies import get_session_factory
 from app.domain.models import Call, Source, StudyProgramme, StudyProgrammeUnit
 from app.main import app
 from app.persistence.database import Base
@@ -63,43 +64,27 @@ def _seed_ley_39_2015_programme_unit(
     return programme, unit
 
 
-def test_get_ley_39_2015_study_material_exposes_coverage_summary(
-    tmp_path, monkeypatch
-) -> None:
+def test_get_ley_39_2015_study_material_exposes_coverage_summary(tmp_path, monkeypatch) -> None:
     database = StudyCoverageApiDatabase(tmp_path / "api.db")
-    programme, unit = _seed_ley_39_2015_programme_unit(database)
-    monkeypatch.setattr("app.api.study.SessionLocal", database.session_factory)
+    _, unit = _seed_ley_39_2015_programme_unit(database)
+    monkeypatch.setitem(
+        app.dependency_overrides, get_session_factory, lambda: database.session_factory
+    )
     client = TestClient(app)
 
     response = client.get(f"/api/study/units/{unit.id}")
 
     assert response.status_code == 200
-    assert response.json()["coverage"] == {
-        "status": "partial",
-        "covered_count": 2,
-        "required_count": 8,
-        "coverage_percentage": 25,
-        "required_aspects": [
-            "Objeto y finalidad del procedimiento administrativo común",
-            "Ámbito subjetivo de aplicación",
-            "Interesados, capacidad, representación y derechos",
-            "Actividad administrativa, plazos y medios electrónicos",
-            "Actos administrativos: requisitos, eficacia e invalidez",
-            "Procedimiento administrativo común y sus fases",
-            "Procedimientos sancionador y de responsabilidad patrimonial",
-            "Revisión de actos, recursos, iniciativa legislativa y potestad reglamentaria",
-        ],
-        "covered_aspects": [
-            "Objeto y finalidad del procedimiento administrativo común",
-            "Ámbito subjetivo de aplicación",
-        ],
-        "pending_aspects": [
-            "Interesados, capacidad, representación y derechos",
-            "Actividad administrativa, plazos y medios electrónicos",
-            "Actos administrativos: requisitos, eficacia e invalidez",
-            "Procedimiento administrativo común y sus fases",
-            "Procedimientos sancionador y de responsabilidad patrimonial",
-            "Revisión de actos, recursos, iniciativa legislativa y potestad reglamentaria",
-        ],
-    }
+    assert response.json()["provenance"] == {"origin": "acquired", "review_status": "unreviewed"}
+    coverage = response.json()["coverage"]
+    assert coverage["status"] == "covered"
+    assert coverage["covered_count"] == 8
+    assert coverage["required_count"] == 8
+    assert coverage["coverage_percentage"] == 100
+    assert coverage["covered_aspects"] == coverage["required_aspects"]
+    assert coverage["pending_aspects"] == []
+    assert coverage["required_aspects"][:2] == [
+        "Objeto y finalidad del procedimiento administrativo común",
+        "Ámbito subjetivo de aplicación",
+    ]
     database.close()

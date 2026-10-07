@@ -1,5 +1,8 @@
 from pathlib import Path
 
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
+
 from app.application.knowledge_acquisition import BoeKnowledgeAcquisitionStrategy
 from app.application.knowledge_extraction import DeterministicKnowledgeExtractionStrategy
 from app.application.pdf_extraction import extract_pdf_text
@@ -7,9 +10,6 @@ from app.application.source import import_pdf_source
 from app.domain.models import KnowledgeNeed
 from app.persistence.database import Base
 from app.persistence.source_repository import SqlAlchemySourceRepository
-from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
-
 
 SAMPLES_DIR = Path(__file__).parent / "samples"
 

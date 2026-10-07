@@ -1,9 +1,11 @@
-from dataclasses import dataclass
 import re
+from dataclasses import dataclass
 from typing import Protocol
 from uuid import UUID
 
+from app.application import document_processing
 from app.application.document_processing import DocumentProcessingResult
+from app.application.document_structure import DocumentStructureMarker
 from app.domain.models import Source
 
 
@@ -17,9 +19,7 @@ class RequirementMention:
 
 
 class RequirementDiscoveryStrategy(Protocol):
-    def discover(
-        self, processing_result: DocumentProcessingResult
-    ) -> list[RequirementMention]: ...
+    def discover(self, processing_result: DocumentProcessingResult) -> list[RequirementMention]: ...
 
 
 def discover_requirements(
@@ -27,9 +27,7 @@ def discover_requirements(
     strategy: RequirementDiscoveryStrategy,
 ) -> list[RequirementMention]:
     """Process a source once and discover requirements from the shared result."""
-    from app.application.document_processing import process_document
-
-    return strategy.discover(process_document(source))
+    return strategy.discover(document_processing.process_document(source))
 
 
 _REQUIREMENT_MARKER = re.compile(r"^\s*\d+(?:\.\d+)*[.)]\s+(.+?)\s*$")
@@ -75,9 +73,7 @@ class PdfRequirementDiscoveryStrategy:
         # The application pipeline passes DocumentProcessingResult directly, so the
         # normal path performs no second extraction or structure analysis.
         if isinstance(processing_result, Source):
-            from app.application.document_processing import process_document
-
-            processing_result = process_document(processing_result)
+            processing_result = document_processing.process_document(processing_result)
 
         source = processing_result.source
         if not source.locator:
@@ -89,28 +85,35 @@ class PdfRequirementDiscoveryStrategy:
         if program_start is None:
             return []
 
-        mentions: list[RequirementMention] = []
-        for marker in processing_result.structure:
-            if marker.line_number <= program_start:
-                continue
-            if marker.classification != "STRUCTURAL":
-                continue
-            if marker.kind not in {"numeric", "topic"}:
-                continue
+        return _mentions_after(processing_result, source, program_start)
 
-            if marker.kind == "topic":
-                expression = f"{marker.marker} {marker.title}"
-            else:
-                expression = marker.title
-            expression = " ".join(expression.split())
 
-            if expression:
-                mentions.append(
-                    RequirementMention(
-                        expression=expression,
-                        source_id=source.id,
-                        locator=f"line:{marker.line_number}",
-                    )
+def _mentions_after(
+    processing_result: DocumentProcessingResult, source: Source, program_start: int
+) -> list[RequirementMention]:
+    mentions: list[RequirementMention] = []
+    for marker in processing_result.structure:
+        if not _is_requirement_marker(marker, program_start):
+            continue
+
+        expression = f"{marker.marker} {marker.title}" if marker.kind == "topic" else marker.title
+        expression = " ".join(expression.split())
+
+        if expression:
+            mentions.append(
+                RequirementMention(
+                    expression=expression,
+                    source_id=source.id,
+                    locator=f"line:{marker.line_number}",
                 )
+            )
 
-        return mentions
+    return mentions
+
+
+def _is_requirement_marker(marker: DocumentStructureMarker, program_start: int) -> bool:
+    return (
+        marker.line_number > program_start
+        and marker.classification == "STRUCTURAL"
+        and marker.kind in {"numeric", "topic"}
+    )

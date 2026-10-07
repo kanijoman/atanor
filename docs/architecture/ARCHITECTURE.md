@@ -7,8 +7,8 @@
 | Project | Atanor |
 | Document | ARCHITECTURE |
 | Status | 🟢 Active |
-| Version | 1.1 |
-| Last Updated | 2026-10-06 |
+| Version | 1.2 |
+| Last Updated | 2026-10-07 |
 | Audience | Contributors and Developers |
 
 ---
@@ -88,11 +88,14 @@ The HTTP API currently exposes:
 |---|---|
 | `GET /`, `GET /health` | Application root and health check. |
 | `GET /api/calls`, `/api/calls/{id}` | List and retrieve imported calls. |
+| `POST /api/calls?filename=...` | Import the PDF sent as the request body (25 MB limit). 201 for a new call, 200 when the same content was imported before, 413 / 422 with an explanation when the file is too large, not a PDF, or contains no convocatoria. |
 | `GET /api/calls/{id}/programmes` | Programmes belonging to a call. |
 | `GET /api/study/programmes`, `/api/study/programmes/{id}` | Programmes and their units, including study-material availability. |
-| `GET /api/study/units/{id}` | Study material and semantic coverage summary (covered, pending and required aspects) for a unit. |
+| `GET /api/study/units/{id}` | Study material, provenance (origin and review status) and semantic coverage summary (covered, pending and required aspects) for a unit. Answers 503 when acquired material cannot be retrieved right now. |
 
-The web interface follows the candidate flow call → programme → unit → study material and checklist.
+The web interface follows the candidate flow import (optional) → call → programme → unit → study material and checklist.
+
+A `Source` is identified by the SHA-256 of its content (`content_hash`), so importing the same document again, from any path, returns the existing call. Uploaded PDFs are stored under `uploads/` as `<hash>.pdf`. Nothing is persisted for a document in which no call is discovered.
 
 ## Application Layer
 
@@ -151,6 +154,15 @@ Study Coverage Summary
 ```
 
 This is currently implemented at the application level for validated study-material verticals. It is not yet a generic semantic matching engine.
+
+### Study material providers
+
+`application/study_material/` holds a registry of supported topics (`registry.py`, one module per topic under `topics/`). Each topic declares how its programme unit titles are recognized, its required aspects, a coverage strategy and a **material provider**:
+
+- `CuratedMaterial`: study text written by Atanor, stored as data under `content/`, citing reference sources. Used where open-domain knowledge has no authoritative text online (for example object-oriented programming, data modelling) or where the text needs expert review.
+- `AcquiredNormativeMaterial`: study text assembled from the articles of an authoritative normative source (currently Ley 19/2013 and Ley 39/2015 from the BOE) through `application/normative_source/`. Each required aspect maps explicitly to the articles that develop it, and the result is persisted as `Knowledge` so later requests need no network.
+
+Every topic exposes its **provenance** (`origin`: curated or acquired; `review_status`: unreviewed or reviewed) so the candidate can tell how the material was produced. Coverage is derived from the material actually produced: an aspect counts as covered only when the text has a section for it with substantive content, so aspects whose articles could not be acquired remain pending. If an acquiring provider cannot reach its source, the API reports the material as temporarily unavailable instead of inventing it.
 
 ## Domain Layer
 

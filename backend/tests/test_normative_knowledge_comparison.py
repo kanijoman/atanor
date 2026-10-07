@@ -1,9 +1,9 @@
 from app.application.normative_source import (
     HttpSourceRetriever,
     OfficialNormativeSourceCatalog,
+    compare_knowledge_content,
     extract_article,
     reconstruct_knowledge_from_article,
-    compare_knowledge_content,
 )
 
 

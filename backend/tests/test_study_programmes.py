@@ -2,19 +2,18 @@ import re
 from pathlib import Path
 
 import pytest
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
 
 from app.application.study_programmes import (
-    BoeProgrammeDiscoveryStrategy,
-    _extract_units,
     discover_programmes,
+    extract_units,
 )
 from app.domain.models import Call, Source
 from app.persistence.database import Base
 from app.persistence.models.call import Call as PersistenceCall
 from app.persistence.models.source import Source as PersistenceSource
 from app.persistence.study_programme_repository import SqlAlchemyStudyProgrammeRepository
-from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
 
 SAMPLES = Path(__file__).parent / "samples"
 
@@ -34,7 +33,13 @@ def test_discovers_boja_programmes() -> None:
 
     assert len(programmes) == 7
     assert [programme.identifier for programme in programmes] == [
-        "II.1", "II.A", "II.B", "II.C", "II.D", "II.E", "II.F",
+        "II.1",
+        "II.A",
+        "II.B",
+        "II.C",
+        "II.D",
+        "II.E",
+        "II.F",
     ]
     assert len(programmes[0].units) == 30
     assert len(programmes[1].units) == 39
@@ -50,7 +55,16 @@ def test_discovers_boe_programmes() -> None:
 
     assert len(programmes) == 10
     assert [programme.identifier for programme in programmes] == [
-        "I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X",
+        "I",
+        "II",
+        "III",
+        "IV",
+        "V",
+        "VI",
+        "VII",
+        "VIII",
+        "IX",
+        "X",
     ]
     assert all(programme.units for programme in programmes)
     assert all(programme.call_id == call.id for programme in programmes)
@@ -66,23 +80,17 @@ def test_discovery_rejects_a_call_from_another_source() -> None:
 
 def test_boe_units_do_not_cross_section_boundaries() -> None:
     source_document = source("BOE-A-2024-14098.pdf")
-    units = _extract_units(source_document)
+    units = extract_units(source_document)
     programmes = discover_programmes(call_for(source_document), source_document)
     section_header = re.compile(r"^[IVXLCDM]+\.\s+.+$")
-    section_orders = {
-        unit.order
-        for unit in units
-        if section_header.fullmatch(unit.text)
-    }
+    section_orders = {unit.order for unit in units if section_header.fullmatch(unit.text)}
 
     assert section_orders
 
     for programme in programmes:
         for unit in programme.units:
             crossed_sections = [
-                order
-                for order in section_orders
-                if unit.start_order < order <= unit.end_order
+                order for order in section_orders if unit.start_order < order <= unit.end_order
             ]
             assert not crossed_sections, (
                 f"Programme {programme.identifier} unit {unit.number} "

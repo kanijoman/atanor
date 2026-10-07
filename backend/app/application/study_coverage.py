@@ -60,14 +60,11 @@ def get_study_coverage(
 def _is_covered(requirement: Requirement) -> bool:
     knowledge_needs = _knowledge_needs(requirement)
     return bool(knowledge_needs) and all(
-        knowledge_need.knowledge is not None
-        for knowledge_need in knowledge_needs
+        knowledge_need.knowledge is not None for knowledge_need in knowledge_needs
     )
 
 
 def _knowledge_needs(requirement: Requirement) -> tuple[KnowledgeNeed, ...]:
     return tuple(
-        knowledge_need
-        for scope in requirement.scopes
-        for knowledge_need in scope.knowledge_needs
+        knowledge_need for scope in requirement.scopes for knowledge_need in scope.knowledge_needs
     )

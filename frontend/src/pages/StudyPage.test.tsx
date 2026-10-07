@@ -14,6 +14,7 @@ const studyResponse: StudyResponse = {
   knowledge_need: {
     title: "Derecho de acceso a la información pública",
   },
+  provenance: { origin: "curated", review_status: "unreviewed" },
   study_material:
     "1. Concepto y titulares\nEl derecho de acceso permite a las personas solicitar información pública. (Artículo 12)",
   sources: [
@@ -80,26 +81,32 @@ describe("StudyPage", () => {
     ).toBeVisible();
     expect(screen.getByText(/Artículo 12/)).toBeVisible();
     expect(screen.getByText("Study coverage")).toBeVisible();
+    expect(screen.getByText("Curated by Atanor · not yet reviewed by an expert")).toBeVisible();
     expect(screen.getByText("Partial · 2 of 8 aspects covered (25%)")).toBeVisible();
     expect(screen.getByRole("heading", { name: "Study aspects" })).toBeVisible();
-    expect(screen.getByText(/Objeto y finalidad del procedimiento administrativo común/, { selector: "li" }).textContent).toMatch(/^Covered/);
-    expect(screen.getByText(/Interesados, capacidad, representación y derechos/, { selector: "li" }).textContent).toMatch(/^Pending/);
+    expect(
+      screen.getByText(/Objeto y finalidad del procedimiento administrativo común/, {
+        selector: "li",
+      }).textContent,
+    ).toMatch(/^Covered/);
+    expect(
+      screen.getByText(/Interesados, capacidad, representación y derechos/, { selector: "li" })
+        .textContent,
+    ).toMatch(/^Pending/);
     expect(screen.getAllByText("Covered")).toHaveLength(2);
     expect(screen.getAllByText("Pending")).toHaveLength(6);
     expect(screen.getByRole("link", { name: /Ley 19\/2013/ })).toBeVisible();
-    expect(fetchMock).toHaveBeenCalledWith("/api/study/units/unit-2", expect.objectContaining({ signal: expect.any(AbortSignal) }));
+    expect(fetchMock).toHaveBeenCalledWith(
+      "/api/study/units/unit-2",
+      expect.objectContaining({ signal: expect.any(AbortSignal) }),
+    );
   });
 
   it("shows an error when study material cannot be loaded", async () => {
-    vi.stubGlobal(
-      "fetch",
-      vi.fn().mockResolvedValue(new Response("Not found", { status: 404 })),
-    );
+    vi.stubGlobal("fetch", vi.fn().mockResolvedValue(new Response("Not found", { status: 404 })));
 
     render(<StudyPage unitId="unit-2" />);
 
-    expect(
-      await screen.findByText("Unable to load study material."),
-    ).toBeVisible();
+    expect(await screen.findByText("Unable to load study material.")).toBeVisible();
   });
 });

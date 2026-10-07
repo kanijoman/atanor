@@ -116,9 +116,7 @@ def test_construct_knowledge_returns_none_when_extraction_fails() -> None:
 
 
 def test_construct_knowledge_works_with_boe_acquisition_and_deterministic_extraction() -> None:
-    pdf_path = (
-        Path(__file__).parent / "samples" / "BOE-A-2024-14098.pdf"
-    )
+    pdf_path = Path(__file__).parent / "samples" / "BOE-A-2024-14098.pdf"
     source = Source(
         title="BOE-A-2024-14098",
         locator=str(pdf_path),

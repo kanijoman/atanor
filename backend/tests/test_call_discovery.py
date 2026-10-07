@@ -7,7 +7,6 @@ from app.application.call_discovery import (
 )
 from app.domain.models import Call, Source, StudyProgramme
 
-
 SAMPLES = Path(__file__).parent / "samples"
 
 
@@ -37,9 +36,7 @@ class InMemoryStudyProgrammeRepository:
 
 
 def test_call_context_requires_combined_call_signals() -> None:
-    context = analyse_call_context(
-        "convocatoria plazas cuerpo sistema selectivo turno"
-    )
+    context = analyse_call_context("convocatoria plazas cuerpo sistema selectivo turno")
 
     assert context.signals_present == 5
     assert context.strong_signals_present == 4

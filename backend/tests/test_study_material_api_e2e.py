@@ -5,7 +5,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.pool import StaticPool
 
-from app.api import study
+from app.api.dependencies import get_knowledge_repository, get_session_factory
 from app.application.call_import import import_call_from_pdf
 from app.main import app
 from app.persistence.call_repository import SqlAlchemyCallRepository
@@ -13,7 +13,6 @@ from app.persistence.database import Base
 from app.persistence.knowledge_repository import SqlAlchemyKnowledgeRepository
 from app.persistence.source_repository import SqlAlchemySourceRepository
 from app.persistence.study_programme_repository import SqlAlchemyStudyProgrammeRepository
-
 
 SAMPLES = Path(__file__).parent / "samples"
 
@@ -43,20 +42,16 @@ def test_selected_programme_unit_exposes_candidate_study_material() -> None:
         unit
         for programme in programmes
         for unit in programme.units
-        if "ley 19/2013" in unit.title.casefold()
-        and "transparencia" in unit.title.casefold()
+        if "ley 19/2013" in unit.title.casefold() and "transparencia" in unit.title.casefold()
     )
 
-    original_session_local = study.SessionLocal
-    original_knowledge_repository = study.SqlAlchemyKnowledgeRepository
-    study.SessionLocal = session_factory
-    study.SqlAlchemyKnowledgeRepository = lambda _: knowledge_repository
+    app.dependency_overrides[get_session_factory] = lambda: session_factory
+    app.dependency_overrides[get_knowledge_repository] = lambda: knowledge_repository
     try:
         client = TestClient(app)
         response = client.get(f"/api/study/units/{unit.id}")
     finally:
-        study.SessionLocal = original_session_local
-        study.SqlAlchemyKnowledgeRepository = original_knowledge_repository
+        app.dependency_overrides.clear()
         engine.dispose()
 
     assert response.status_code == 200
@@ -98,13 +93,12 @@ def test_unsupported_programme_unit_returns_unprocessable_entity() -> None:
         if unit.title.startswith("La Constitución Española de 1978")
     )
 
-    original_session_local = study.SessionLocal
-    study.SessionLocal = session_factory
+    app.dependency_overrides[get_session_factory] = lambda: session_factory
     try:
         client = TestClient(app)
         response = client.get(f"/api/study/units/{unit.id}")
     finally:
-        study.SessionLocal = original_session_local
+        app.dependency_overrides.clear()
         engine.dispose()
 
     assert response.status_code == 422

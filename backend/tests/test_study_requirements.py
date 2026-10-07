@@ -12,7 +12,6 @@ from app.application.requirement_discovery import (
 from app.application.requirement_workflow import get_study_requirements
 from app.domain.models import Requirement, Source
 
-
 SAMPLE_NAMES = (
     "BOE-A-2024-14098.pdf",
     "Programa_Archiveros_0.pdf",
@@ -25,9 +24,7 @@ class InMemoryRequirementRepository:
 
     def list_by_source(self, source_id: UUID) -> list[Requirement]:
         return [
-            requirement
-            for requirement in self._requirements
-            if requirement.source_id == source_id
+            requirement for requirement in self._requirements if requirement.source_id == source_id
         ]
 
 
@@ -51,13 +48,21 @@ def _stub_processing_result(source: Source) -> DocumentProcessingResult:
     return DocumentProcessingResult(source=source, text="", structure=())
 
 
-def test_get_study_requirements_returns_resolved_requirements(monkeypatch: pytest.MonkeyPatch) -> None:
+def test_get_study_requirements_returns_resolved_requirements(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
     source = Source(id=uuid4(), title="Call PDF", locator="call.pdf")
-    requirement = Requirement(title="Operating Systems", description="Required knowledge.", source_id=source.id)
+    requirement = Requirement(
+        title="Operating Systems", description="Required knowledge.", source_id=source.id
+    )
     repository = InMemoryRequirementRepository((requirement,))
-    strategy: RequirementDiscoveryStrategy = StubRequirementDiscoveryStrategy(("Operating Systems",))
+    strategy: RequirementDiscoveryStrategy = StubRequirementDiscoveryStrategy(
+        ("Operating Systems",)
+    )
     processing_result = _stub_processing_result(source)
-    monkeypatch.setattr("app.application.document_processing.process_document", lambda _: processing_result)
+    monkeypatch.setattr(
+        "app.application.document_processing.process_document", lambda _: processing_result
+    )
 
     result = get_study_requirements(source, repository, strategy)
 
@@ -66,11 +71,16 @@ def test_get_study_requirements_returns_resolved_requirements(monkeypatch: pytes
     assert all(isinstance(item, Requirement) for item in result.requirements)
 
 
-def test_get_study_requirements_does_not_expose_resolution_details(monkeypatch: pytest.MonkeyPatch) -> None:
+def test_get_study_requirements_does_not_expose_resolution_details(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
     source = Source(id=uuid4(), title="Call PDF", locator="call.pdf")
     repository = InMemoryRequirementRepository()
     strategy: RequirementDiscoveryStrategy = StubRequirementDiscoveryStrategy(())
-    monkeypatch.setattr("app.application.document_processing.process_document", lambda _: _stub_processing_result(source))
+    monkeypatch.setattr(
+        "app.application.document_processing.process_document",
+        lambda _: _stub_processing_result(source),
+    )
 
     result = get_study_requirements(source, repository, strategy)
 
@@ -79,12 +89,19 @@ def test_get_study_requirements_does_not_expose_resolution_details(monkeypatch: 
     assert not hasattr(result, "mentions")
 
 
-def test_get_study_requirements_excludes_unresolved_candidates(monkeypatch: pytest.MonkeyPatch) -> None:
+def test_get_study_requirements_excludes_unresolved_candidates(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
     source = Source(id=uuid4(), title="Call PDF", locator="call.pdf")
     resolved = Requirement(title="Operating Systems", source_id=source.id)
     repository = InMemoryRequirementRepository((resolved,))
-    strategy: RequirementDiscoveryStrategy = StubRequirementDiscoveryStrategy(("Operating Systems", "Unknown requirement"))
-    monkeypatch.setattr("app.application.document_processing.process_document", lambda _: _stub_processing_result(source))
+    strategy: RequirementDiscoveryStrategy = StubRequirementDiscoveryStrategy(
+        ("Operating Systems", "Unknown requirement")
+    )
+    monkeypatch.setattr(
+        "app.application.document_processing.process_document",
+        lambda _: _stub_processing_result(source),
+    )
 
     result = get_study_requirements(source, repository, strategy)
 
@@ -92,11 +109,18 @@ def test_get_study_requirements_excludes_unresolved_candidates(monkeypatch: pyte
     assert all(item.source_id == source.id for item in result.requirements)
 
 
-def test_get_study_requirements_returns_empty_set_when_nothing_is_resolved(monkeypatch: pytest.MonkeyPatch) -> None:
+def test_get_study_requirements_returns_empty_set_when_nothing_is_resolved(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
     source = Source(id=uuid4(), title="Call PDF", locator="missing.pdf")
     repository = InMemoryRequirementRepository()
-    strategy: RequirementDiscoveryStrategy = StubRequirementDiscoveryStrategy(("Unknown requirement",))
-    monkeypatch.setattr("app.application.document_processing.process_document", lambda _: _stub_processing_result(source))
+    strategy: RequirementDiscoveryStrategy = StubRequirementDiscoveryStrategy(
+        ("Unknown requirement",)
+    )
+    monkeypatch.setattr(
+        "app.application.document_processing.process_document",
+        lambda _: _stub_processing_result(source),
+    )
 
     result = get_study_requirements(source, repository, strategy)
 
@@ -112,8 +136,7 @@ def test_supported_real_samples_produce_a_user_oriented_requirement_set(
     source = Source(id=uuid4(), title=sample_name, locator=str(samples_dir / sample_name))
     mentions = PdfRequirementDiscoveryStrategy().discover(source)
     requirements = tuple(
-        Requirement(title=mention.expression, source_id=source.id)
-        for mention in mentions
+        Requirement(title=mention.expression, source_id=source.id) for mention in mentions
     )
     repository = InMemoryRequirementRepository(requirements)
 
@@ -125,11 +148,20 @@ def test_supported_real_samples_produce_a_user_oriented_requirement_set(
     assert all(requirement.source_id == source.id for requirement in result.requirements)
 
 
-def test_user_oriented_result_does_not_require_knowledge_of_internal_resolution(monkeypatch: pytest.MonkeyPatch) -> None:
+def test_user_oriented_result_does_not_require_knowledge_of_internal_resolution(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
     source = Source(id=uuid4(), title="Call PDF", locator="call.pdf")
-    repository = InMemoryRequirementRepository((Requirement(title="Operating Systems", source_id=source.id),))
-    strategy: RequirementDiscoveryStrategy = StubRequirementDiscoveryStrategy(("Operating Systems",))
-    monkeypatch.setattr("app.application.document_processing.process_document", lambda _: _stub_processing_result(source))
+    repository = InMemoryRequirementRepository(
+        (Requirement(title="Operating Systems", source_id=source.id),)
+    )
+    strategy: RequirementDiscoveryStrategy = StubRequirementDiscoveryStrategy(
+        ("Operating Systems",)
+    )
+    monkeypatch.setattr(
+        "app.application.document_processing.process_document",
+        lambda _: _stub_processing_result(source),
+    )
 
     result = get_study_requirements(source, repository, strategy)
 

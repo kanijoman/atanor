@@ -30,10 +30,7 @@ def test_reuses_the_same_knowledge_need_identity_across_real_programme_units() -
         ),
     )
 
-    needs = tuple(
-        derive_knowledge_needs_for_programme_unit(unit)
-        for unit in programme_units
-    )
+    needs = tuple(derive_knowledge_needs_for_programme_unit(unit) for unit in programme_units)
 
     assert len({unit.id for unit in programme_units}) == 3
     assert all(len(unit_needs) == 1 for unit_needs in needs)

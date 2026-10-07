@@ -1,7 +1,9 @@
 from __future__ import annotations
 
+from pathlib import Path
 from uuid import UUID
 
+from app.application.normative_source import NormativeSourceCandidate, RetrievedSource
 from app.domain.models import Knowledge
 
 
@@ -27,3 +29,14 @@ class InMemoryKnowledgeRepository:
             ),
             None,
         )
+
+
+FIXTURES_DIR = Path(__file__).parent / "fixtures"
+
+
+class FixtureSourceRetriever:
+    """Serve saved BOE HTML instead of calling the live service (offline, deterministic)."""
+
+    def retrieve(self, candidate: NormativeSourceCandidate) -> RetrievedSource:
+        html = (FIXTURES_DIR / "boe" / f"{candidate.identifier}.html").read_text(encoding="utf-8")
+        return RetrievedSource(candidate=candidate, content=html)

@@ -39,9 +39,7 @@ def test_source_timestamps_are_persisted_as_utc(tmp_path) -> None:
         repository.save(source)
         after_creation = datetime.now(UTC)
         with session_factory() as session:
-            persisted_source = session.scalar(
-                select(Source).where(Source.id == source.id)
-            )
+            persisted_source = session.scalar(select(Source).where(Source.id == source.id))
         assert persisted_source is not None
         assert persisted_source.id == source.id
         assert persisted_source.created_at.tzinfo == UTC

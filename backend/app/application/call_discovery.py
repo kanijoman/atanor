@@ -84,10 +84,7 @@ def analyse_call_context(text: str) -> CallContextSignals:
     """Analyse deterministic call-context signals without creating domain entities."""
     signal_map = dict(_SIGNALS)
     present = {
-        name: any(
-            re.search(pattern, text, flags=re.IGNORECASE)
-            for pattern in patterns
-        )
+        name: any(re.search(pattern, text, flags=re.IGNORECASE) for pattern in patterns)
         for name, patterns in _SIGNALS
     }
     strong_signals_present = sum(present[name] for name in _STRONG_SIGNAL_NAMES)
@@ -102,21 +99,32 @@ def analyse_call_context(text: str) -> CallContextSignals:
     )
 
 
-def discover_calls(source: Source) -> list[Call]:
-    """Discover calls when a source contains strong deterministic call context."""
+@dataclass(frozen=True)
+class DiscoveredCall:
+    """A call found in a source together with its study programmes."""
+
+    call: Call
+    programmes: list[StudyProgramme]
+
+
+def discover_call(source: Source) -> DiscoveredCall | None:
+    """Find the call of a source when it has strong deterministic call context."""
     processing = process_document(source)
     if len(processing.text.strip()) < 100:
-        return []
+        return None
 
-    signals = analyse_call_context(processing.text)
-    if not signals.is_strong:
-        return []
+    if not analyse_call_context(processing.text).is_strong:
+        return None
 
     call = Call(title=source.title, source_id=source.id)
-    if not discover_programmes(call, source):
-        return []
+    programmes = discover_programmes(call, source)
+    return DiscoveredCall(call, programmes) if programmes else None
 
-    return [call]
+
+def discover_calls(source: Source) -> list[Call]:
+    """Discover calls when a source contains strong deterministic call context."""
+    discovered = discover_call(source)
+    return [discovered.call] if discovered else []
 
 
 def discover_and_persist_call(
@@ -132,11 +140,20 @@ def discover_and_persist_call(
     if existing_call is not None:
         return existing_call
 
-    calls = discover_calls(source)
-    if not calls:
+    discovered = discover_call(source)
+    if discovered is None:
         return None
 
-    call = call_repository.save(calls[0])
-    for programme in discover_programmes(call, source):
+    return persist_call(discovered, call_repository, programme_repository)
+
+
+def persist_call(
+    discovered: DiscoveredCall,
+    call_repository: CallRepository,
+    programme_repository: StudyProgrammeRepository,
+) -> Call:
+    """Persist a discovered call together with its study programmes."""
+    saved = call_repository.save(discovered.call)
+    for programme in discovered.programmes:
         programme_repository.save(programme)
-    return call
+    return saved

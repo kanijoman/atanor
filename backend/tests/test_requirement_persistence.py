@@ -7,7 +7,11 @@ from sqlalchemy.orm import sessionmaker
 
 from app.domain.models import (
     KnowledgeNeed as DomainKnowledgeNeed,
+)
+from app.domain.models import (
     Requirement as DomainRequirement,
+)
+from app.domain.models import (
     RequirementScope as DomainRequirementScope,
 )
 from app.persistence.database import Base
@@ -175,8 +179,7 @@ def test_requirement_repository_round_trips_complete_domain_aggregate(tmp_path) 
             "General Administration",
         ]
         assert [
-            (need.topic, need.depth, need.knowledge)
-            for need in restored.scopes[0].knowledge_needs
+            (need.topic, need.depth, need.knowledge) for need in restored.scopes[0].knowledge_needs
         ] == [
             ("Process synchronization", 4, None),
             ("Memory management", 3, None),

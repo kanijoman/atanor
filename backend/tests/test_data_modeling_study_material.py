@@ -1,3 +1,5 @@
+from support import InMemoryKnowledgeRepository
+
 from app.application.study_material import (
     build_study_coverage_summary,
     derive_covered_aspects,
@@ -5,16 +7,14 @@ from app.application.study_material import (
     derive_required_aspects_for_programme_unit,
     generate_study_material_for_programme_unit,
 )
-from app.domain.models import Knowledge, KnowledgeNeed, StudyProgrammeUnit
-from support import InMemoryKnowledgeRepository
+from app.domain.models import KnowledgeNeed, StudyProgrammeUnit
 
 
 def real_data_modeling_programme_unit() -> StudyProgrammeUnit:
     return StudyProgrammeUnit(
         number=12,
         title=(
-            "Modelos de datos. Entidades, atributos y relaciones. "
-            "Modelo relacional. Normalización."
+            "Modelos de datos. Entidades, atributos y relaciones. Modelo relacional. Normalización."
         ),
         start_page=86779,
         start_order=1,

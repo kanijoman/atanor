@@ -2,41 +2,47 @@ from uuid import UUID
 
 from fastapi import APIRouter, HTTPException
 
+from app.api.dependencies import (
+    KnowledgeRepositoryDep,
+    SourceRepositoryDep,
+    SourceRetrieverDep,
+    StudyProgrammeRepositoryDep,
+)
 from app.application.study_material import (
+    MaterialProvenance,
+    MaterialUnavailableError,
+    StudyCoverageSummary,
     build_study_coverage_summary,
     derive_covered_aspects,
     derive_knowledge_needs_for_programme_unit,
+    derive_material_provenance,
     derive_required_aspects_for_programme_unit,
     generate_study_material_for_programme_unit,
     is_study_material_available_for_programme_unit,
 )
-from app.persistence.database import SessionLocal
-from app.persistence.knowledge_repository import SqlAlchemyKnowledgeRepository
-from app.persistence.study_programme_repository import SqlAlchemyStudyProgrammeRepository
-
+from app.domain.models import Knowledge, KnowledgeNeed, StudyProgrammeUnit
 
 router = APIRouter(prefix="/api/study", tags=["study"])
 
 
 @router.get("/programmes")
-def list_programmes() -> list[dict[str, object]]:
-    repository = SqlAlchemyStudyProgrammeRepository(SessionLocal)
-    programmes = []
-    for source in _list_sources():
-        for programme in repository.list_by_source(source):
-            programmes.append(
-                {
-                    "id": str(programme.id),
-                    "identifier": programme.identifier,
-                    "title": programme.title,
-                }
-            )
-    return programmes
+def list_programmes(
+    source_repository: SourceRepositoryDep,
+    programme_repository: StudyProgrammeRepositoryDep,
+) -> list[dict[str, object]]:
+    return [
+        {
+            "id": str(programme.id),
+            "identifier": programme.identifier,
+            "title": programme.title,
+        }
+        for source in source_repository.list_all()
+        for programme in programme_repository.list_by_source(source.id)
+    ]
 
 
 @router.get("/programmes/{programme_id}")
-def get_programme(programme_id: UUID) -> dict[str, object]:
-    repository = SqlAlchemyStudyProgrammeRepository(SessionLocal)
+def get_programme(programme_id: UUID, repository: StudyProgrammeRepositoryDep) -> dict[str, object]:
     programme = repository.get_by_id(programme_id)
     if programme is None:
         raise HTTPException(status_code=404, detail="Study programme not found")
@@ -50,9 +56,7 @@ def get_programme(programme_id: UUID) -> dict[str, object]:
                 "id": str(unit.id),
                 "number": unit.number,
                 "title": unit.title,
-                "study_material_available": is_study_material_available_for_programme_unit(
-                    unit
-                ),
+                "study_material_available": is_study_material_available_for_programme_unit(unit),
             }
             for unit in programme.units
         ],
@@ -60,12 +64,41 @@ def get_programme(programme_id: UUID) -> dict[str, object]:
 
 
 @router.get("/units/{unit_id}")
-def get_study_material(unit_id: UUID) -> dict[str, object]:
-    programme_repository = SqlAlchemyStudyProgrammeRepository(SessionLocal)
+def get_study_material(
+    unit_id: UUID,
+    programme_repository: StudyProgrammeRepositoryDep,
+    knowledge_repository: KnowledgeRepositoryDep,
+    retriever: SourceRetrieverDep,
+) -> dict[str, object]:
     programme_unit = programme_repository.get_unit_by_id(unit_id)
     if programme_unit is None:
         raise HTTPException(status_code=404, detail="Study programme unit not found")
 
+    knowledge_need = _single_knowledge_need(programme_unit)
+    try:
+        knowledge = generate_study_material_for_programme_unit(
+            programme_unit, knowledge_need, knowledge_repository, retriever
+        )
+    except MaterialUnavailableError as exc:
+        raise HTTPException(
+            status_code=503,
+            detail="Study material is temporarily unavailable; try again later",
+        ) from exc
+    coverage = build_study_coverage_summary(
+        knowledge_need=knowledge_need,
+        required_aspects=derive_required_aspects_for_programme_unit(programme_unit),
+        covered_aspects=derive_covered_aspects(programme_unit, knowledge),
+    )
+    return _study_material_response(
+        programme_unit,
+        knowledge_need,
+        knowledge,
+        coverage,
+        derive_material_provenance(programme_unit),
+    )
+
+
+def _single_knowledge_need(programme_unit: StudyProgrammeUnit) -> KnowledgeNeed:
     try:
         knowledge_needs = derive_knowledge_needs_for_programme_unit(programme_unit)
     except ValueError as exc:
@@ -79,23 +112,16 @@ def get_study_material(unit_id: UUID) -> dict[str, object]:
             status_code=422,
             detail="Study material requires exactly one supported knowledge need",
         )
+    return knowledge_needs[0]
 
-    knowledge_need = knowledge_needs[0]
-    knowledge_repository = SqlAlchemyKnowledgeRepository(SessionLocal)
-    knowledge = generate_study_material_for_programme_unit(
-        programme_unit,
-        knowledge_need,
-        knowledge_repository,
-    )
 
-    required_aspects = derive_required_aspects_for_programme_unit(programme_unit)
-    covered_aspects = derive_covered_aspects(programme_unit, knowledge)
-    coverage = build_study_coverage_summary(
-        knowledge_need=knowledge_need,
-        required_aspects=required_aspects,
-        covered_aspects=covered_aspects,
-    )
-
+def _study_material_response(
+    programme_unit: StudyProgrammeUnit,
+    knowledge_need: KnowledgeNeed,
+    knowledge: Knowledge,
+    coverage: StudyCoverageSummary,
+    provenance: MaterialProvenance,
+) -> dict[str, object]:
     return {
         "programme_unit": {
             "id": str(programme_unit.id),
@@ -104,6 +130,10 @@ def get_study_material(unit_id: UUID) -> dict[str, object]:
         },
         "knowledge_need": {
             "title": knowledge_need.topic,
+        },
+        "provenance": {
+            "origin": provenance.origin.value,
+            "review_status": provenance.review_status.value,
         },
         "study_material": knowledge.description or "",
         "sources": [
@@ -123,10 +153,3 @@ def get_study_material(unit_id: UUID) -> dict[str, object]:
             "pending_aspects": list(coverage.pending_aspects),
         },
     }
-
-
-def _list_sources() -> list[UUID]:
-    from app.persistence.source_repository import SqlAlchemySourceRepository
-
-    repository = SqlAlchemySourceRepository(SessionLocal)
-    return [source.id for source in repository.list_all()]

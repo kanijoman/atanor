@@ -10,8 +10,8 @@ synthetic by the database hygiene check.
 
 from __future__ import annotations
 
-from pathlib import Path
 import sys
+from pathlib import Path
 
 from sqlalchemy import select
 
@@ -48,9 +48,7 @@ def main() -> int:
     for source in sources:
         source_calls = [call for call in calls if call.source_id == source.id]
         source_programmes = [
-            programme
-            for call in source_calls
-            for programme in programmes_by_call.get(call.id, [])
+            programme for call in source_calls for programme in programmes_by_call.get(call.id, [])
         ]
         source_units = [
             unit

@@ -1,11 +1,10 @@
 from pathlib import Path
-from uuid import UUID
+
+from support import InMemoryKnowledgeRepository
 
 from app.application.study_material import prepare_programme_unit_for_study
 from app.application.study_programmes import discover_programmes
-from app.domain.models import Call, Knowledge, Source
-from support import InMemoryKnowledgeRepository
-
+from app.domain.models import Call, Source
 
 SAMPLES = Path(__file__).parent / "samples"
 CALL = SAMPLES / "BOE-A-2024-14098.pdf"
@@ -17,9 +16,7 @@ def test_real_call_to_persisted_candidate_study_material() -> None:
     call = Call(title="Real BOE examination call", source_id=source.id)
     programmes = discover_programmes(call, source)
     programme = next(programme for programme in programmes if programme.identifier == "I")
-    programme_unit = next(
-        unit for unit in programme.units if "Ley 19/2013" in unit.title
-    )
+    programme_unit = next(unit for unit in programme.units if "Ley 19/2013" in unit.title)
     repository = InMemoryKnowledgeRepository()
 
     material = prepare_programme_unit_for_study(programme_unit, repository)

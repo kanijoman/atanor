@@ -1,18 +1,27 @@
+from uuid import UUID
+
 from sqlalchemy import select
 
 from app.domain.models import (
     Knowledge as DomainKnowledge,
+)
+from app.domain.models import (
     KnowledgeNeed as DomainKnowledgeNeed,
+)
+from app.domain.models import (
     Requirement as DomainRequirement,
+)
+from app.domain.models import (
     RequirementScope as DomainRequirementScope,
 )
+from app.persistence.database import SessionFactory
 from app.persistence.models.knowledge_need import KnowledgeNeed
 from app.persistence.models.requirement import Requirement
 from app.persistence.models.requirement_scope import RequirementScope
 
 
 class SqlAlchemyRequirementRepository:
-    def __init__(self, session_factory) -> None:
+    def __init__(self, session_factory: SessionFactory) -> None:
         self._session_factory = session_factory
 
     def save(self, requirement: DomainRequirement) -> DomainRequirement:
@@ -51,12 +60,10 @@ class SqlAlchemyRequirementRepository:
 
     def list_all(self) -> list[DomainRequirement]:
         with self._session_factory() as session:
-            requirements = session.scalars(
-                select(Requirement).order_by(Requirement.id)
-            ).all()
+            requirements = session.scalars(select(Requirement).order_by(Requirement.id)).all()
             return [self._to_domain(requirement) for requirement in requirements]
 
-    def list_by_source(self, source_id) -> list[DomainRequirement]:
+    def list_by_source(self, source_id: UUID) -> list[DomainRequirement]:
         with self._session_factory() as session:
             requirements = session.scalars(
                 select(Requirement)

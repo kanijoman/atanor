@@ -4,7 +4,7 @@ from uuid import UUID
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
-from app.application.source import get_source, import_pdf_source, list_sources
+from app.application.source import get_source, list_sources
 from app.cli import main
 from app.persistence.database import Base
 from app.persistence.models.source import Source as SourceModel
