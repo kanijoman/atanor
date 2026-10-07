@@ -47,38 +47,6 @@ class KnowledgeNeed:
 
 
 @dataclass(frozen=True)
-class RequirementScope:
-    context: str
-    knowledge_needs: tuple[KnowledgeNeed, ...] = field(default_factory=tuple)
-    id: UUID = field(default_factory=uuid4)
-
-    def requires(self, knowledge_need: KnowledgeNeed) -> RequirementScope:
-        return RequirementScope(
-            context=self.context,
-            knowledge_needs=(*self.knowledge_needs, knowledge_need),
-            id=self.id,
-        )
-
-
-@dataclass(frozen=True)
-class Requirement:
-    title: str
-    source_id: UUID
-    description: str | None = None
-    scopes: tuple[RequirementScope, ...] = field(default_factory=tuple)
-    id: int | None = None
-
-    def with_scope(self, scope: RequirementScope) -> Requirement:
-        return Requirement(
-            title=self.title,
-            source_id=self.source_id,
-            description=self.description,
-            scopes=(*self.scopes, scope),
-            id=self.id,
-        )
-
-
-@dataclass(frozen=True)
 class StudyProgrammeUnit:
     number: int
     title: str
@@ -87,6 +55,7 @@ class StudyProgrammeUnit:
     end_page: int
     end_order: int
     id: UUID = field(default_factory=uuid4)
+    knowledge_needs: tuple[KnowledgeNeed, ...] = field(default_factory=tuple)
 
 
 @dataclass(frozen=True)

@@ -7,6 +7,7 @@ from dataclasses import dataclass
 from typing import Protocol
 
 from app.application.document_processing import process_document
+from app.application.study_needs import attach_knowledge_needs
 from app.application.study_programmes import discover_programmes
 from app.domain.models import Call, Source, StudyProgramme
 
@@ -155,5 +156,5 @@ def persist_call(
     """Persist a discovered call together with its study programmes."""
     saved = call_repository.save(discovered.call)
     for programme in discovered.programmes:
-        programme_repository.save(programme)
+        programme_repository.save(attach_knowledge_needs(programme))
     return saved
