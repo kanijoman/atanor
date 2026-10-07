@@ -1,11 +1,12 @@
 from pathlib import Path
+from urllib.error import URLError
 from uuid import uuid4
 
 from fastapi.testclient import TestClient
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
-from app.api.dependencies import get_session_factory
+from app.api.dependencies import get_session_factory, get_source_retriever
 from app.domain.models import Call, Source, StudyProgramme, StudyProgrammeUnit
 from app.main import app
 from app.persistence.database import Base
@@ -183,4 +184,26 @@ def test_get_programme_returns_not_found_for_unknown_programme(tmp_path, monkeyp
 
     assert response.status_code == 404
     assert response.json() == {"detail": "Study programme not found"}
+    database.close()
+
+
+class _OfflineRetriever:
+    def retrieve(self, candidate):
+        raise URLError("no network")
+
+
+def test_get_study_material_answers_503_when_the_source_is_unreachable(
+    tmp_path, monkeypatch
+) -> None:
+    database = StudyApiDatabase(tmp_path / "api.db")
+    _, unit = _seed_programme(database)
+    monkeypatch.setitem(
+        app.dependency_overrides, get_session_factory, lambda: database.session_factory
+    )
+    monkeypatch.setitem(app.dependency_overrides, get_source_retriever, _OfflineRetriever)
+
+    response = TestClient(app).get(f"/api/study/units/{unit.id}")
+
+    assert response.status_code == 503
+    assert response.json()["detail"] == "Study material is temporarily unavailable; try again later"
     database.close()

@@ -150,3 +150,18 @@ def test_migrations_round_trip(tmp_path) -> None:
         assert "study_programme_units" not in tables
     finally:
         engine.dispose()
+
+
+def test_knowledge_sources_table_is_created_by_migrations(tmp_path) -> None:
+    database_url = f"sqlite:///{tmp_path / 'sources.db'}"
+    config = Config(str(Path(__file__).parents[1] / "alembic.ini"))
+    config.set_main_option("sqlalchemy.url", database_url)
+    engine = create_engine(database_url)
+    try:
+        command.upgrade(config, "head")
+
+        columns = inspect(engine).get_columns("knowledge_sources")
+
+        assert {column["name"] for column in columns} == {"knowledge_id", "source_id"}
+    finally:
+        engine.dispose()

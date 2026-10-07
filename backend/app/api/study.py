@@ -5,10 +5,12 @@ from fastapi import APIRouter, HTTPException
 from app.api.dependencies import (
     KnowledgeRepositoryDep,
     SourceRepositoryDep,
+    SourceRetrieverDep,
     StudyProgrammeRepositoryDep,
 )
 from app.application.study_material import (
     MaterialProvenance,
+    MaterialUnavailableError,
     StudyCoverageSummary,
     build_study_coverage_summary,
     derive_covered_aspects,
@@ -66,15 +68,22 @@ def get_study_material(
     unit_id: UUID,
     programme_repository: StudyProgrammeRepositoryDep,
     knowledge_repository: KnowledgeRepositoryDep,
+    retriever: SourceRetrieverDep,
 ) -> dict[str, object]:
     programme_unit = programme_repository.get_unit_by_id(unit_id)
     if programme_unit is None:
         raise HTTPException(status_code=404, detail="Study programme unit not found")
 
     knowledge_need = _single_knowledge_need(programme_unit)
-    knowledge = generate_study_material_for_programme_unit(
-        programme_unit, knowledge_need, knowledge_repository
-    )
+    try:
+        knowledge = generate_study_material_for_programme_unit(
+            programme_unit, knowledge_need, knowledge_repository, retriever
+        )
+    except MaterialUnavailableError as exc:
+        raise HTTPException(
+            status_code=503,
+            detail="Study material is temporarily unavailable; try again later",
+        ) from exc
     coverage = build_study_coverage_summary(
         knowledge_need=knowledge_need,
         required_aspects=derive_required_aspects_for_programme_unit(programme_unit),

@@ -3,12 +3,13 @@ from support import InMemoryKnowledgeRepository
 from app.application.study_material import (
     derive_covered_aspects,
     derive_knowledge_needs_for_programme_unit,
+    derive_required_aspects_for_programme_unit,
     generate_study_material_for_programme_unit,
 )
 from app.domain.models import StudyProgrammeUnit
 
 
-def test_current_ley_39_2015_material_covers_two_of_eight_required_aspects() -> None:
+def test_acquired_ley_39_2015_material_covers_every_required_aspect() -> None:
     programme_unit = StudyProgrammeUnit(
         number=11,
         title="Las Leyes del Procedimiento Administrativo Común de las Administraciones",
@@ -28,7 +29,5 @@ def test_current_ley_39_2015_material_covers_two_of_eight_required_aspects() -> 
 
     covered_aspects = derive_covered_aspects(programme_unit, knowledge)
 
-    assert covered_aspects == (
-        "Objeto y finalidad del procedimiento administrativo común",
-        "Ámbito subjetivo de aplicación",
-    )
+    assert len(covered_aspects) == 8
+    assert covered_aspects == derive_required_aspects_for_programme_unit(programme_unit)

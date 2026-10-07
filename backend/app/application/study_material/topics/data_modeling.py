@@ -1,6 +1,7 @@
 """Study topic: Modelado de datos."""
 
 from app.application.study_material.coverage import aspects_covered_by_sections
+from app.application.study_material.providers import CuratedMaterial
 from app.application.study_material.topic import StudyTopic
 from app.domain.models import Source
 
@@ -33,8 +34,7 @@ def _matches(title: str) -> bool:
 TOPIC = StudyTopic(
     name=TOPIC_NAME,
     matches=_matches,
-    content_file="data_modeling.md",
-    sources=(_ISO_19763_12,),
+    provider=CuratedMaterial("data_modeling.md", (_ISO_19763_12,)),
     required_aspects=REQUIRED_ASPECTS,
     covered_aspects=aspects_covered_by_sections,
 )

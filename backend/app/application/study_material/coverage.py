@@ -57,7 +57,7 @@ def _sections(text: str) -> dict[str, str]:
     sections: dict[str, list[str]] = {}
     current: list[str] | None = None
     for line in text.splitlines():
-        heading = _SECTION_HEADING.match(line.strip())
+        heading = _SECTION_HEADING.match(line)
         if heading:
             current = sections.setdefault(heading.group("heading").casefold(), [])
         elif current is not None:

@@ -4,6 +4,12 @@ from app.application.study_material.coverage import (
     StudyCoverageSummary,
     build_study_coverage_summary,
 )
+from app.application.study_material.providers import (
+    MaterialOrigin,
+    MaterialProvenance,
+    MaterialUnavailableError,
+    ReviewStatus,
+)
 from app.application.study_material.service import (
     KnowledgeRepository,
     derive_covered_aspects,
@@ -15,12 +21,12 @@ from app.application.study_material.service import (
     is_study_material_available_for_programme_unit,
     prepare_programme_unit_for_study,
 )
-from app.application.study_material.topic import MaterialOrigin, MaterialProvenance, ReviewStatus
 
 __all__ = [
     "KnowledgeRepository",
     "MaterialOrigin",
     "MaterialProvenance",
+    "MaterialUnavailableError",
     "ReviewStatus",
     "StudyCoverageSummary",
     "build_study_coverage_summary",

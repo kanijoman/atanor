@@ -75,33 +75,16 @@ def test_get_ley_39_2015_study_material_exposes_coverage_summary(tmp_path, monke
     response = client.get(f"/api/study/units/{unit.id}")
 
     assert response.status_code == 200
-    assert response.json()["provenance"] == {"origin": "curated", "review_status": "unreviewed"}
-    assert response.json()["coverage"] == {
-        "status": "partial",
-        "covered_count": 2,
-        "required_count": 8,
-        "coverage_percentage": 25,
-        "required_aspects": [
-            "Objeto y finalidad del procedimiento administrativo común",
-            "Ámbito subjetivo de aplicación",
-            "Interesados, capacidad, representación y derechos",
-            "Actividad administrativa, plazos y medios electrónicos",
-            "Actos administrativos: requisitos, eficacia e invalidez",
-            "Procedimiento administrativo común y sus fases",
-            "Procedimientos sancionador y de responsabilidad patrimonial",
-            "Revisión de actos, recursos, iniciativa legislativa y potestad reglamentaria",
-        ],
-        "covered_aspects": [
-            "Objeto y finalidad del procedimiento administrativo común",
-            "Ámbito subjetivo de aplicación",
-        ],
-        "pending_aspects": [
-            "Interesados, capacidad, representación y derechos",
-            "Actividad administrativa, plazos y medios electrónicos",
-            "Actos administrativos: requisitos, eficacia e invalidez",
-            "Procedimiento administrativo común y sus fases",
-            "Procedimientos sancionador y de responsabilidad patrimonial",
-            "Revisión de actos, recursos, iniciativa legislativa y potestad reglamentaria",
-        ],
-    }
+    assert response.json()["provenance"] == {"origin": "acquired", "review_status": "unreviewed"}
+    coverage = response.json()["coverage"]
+    assert coverage["status"] == "covered"
+    assert coverage["covered_count"] == 8
+    assert coverage["required_count"] == 8
+    assert coverage["coverage_percentage"] == 100
+    assert coverage["covered_aspects"] == coverage["required_aspects"]
+    assert coverage["pending_aspects"] == []
+    assert coverage["required_aspects"][:2] == [
+        "Objeto y finalidad del procedimiento administrativo común",
+        "Ámbito subjetivo de aplicación",
+    ]
     database.close()

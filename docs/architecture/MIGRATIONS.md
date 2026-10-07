@@ -27,6 +27,12 @@ uv run alembic downgrade -1
 
 The initial migration establishes the baseline persistence schema represented by the current SQLAlchemy models. It does not attempt to reconstruct the historical evolution of the project.
 
+## Keep models and migrations in step
+
+Every table or column added to the SQLAlchemy models needs a migration. A model-only change works in tests that call `create_all()` but breaks databases built with Alembic. For example, `knowledge_sources` existed in the models without a migration until `0011_knowledge_sources`. A migration test that inspects the migrated schema protects each such table.
+
+Data migrations are allowed when stored data becomes stale. `0012_reset_acquired_topic_material` removes cached study material for topics that are now acquired from authoritative sources, so it is regenerated with provenance.
+
 ## Tests
 
 Migration tests create an isolated SQLite database, apply all migrations to `head`, verify the resulting schema, and then downgrade to `base`.

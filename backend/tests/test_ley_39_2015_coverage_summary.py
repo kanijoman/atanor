@@ -22,10 +22,12 @@ def test_builds_candidate_facing_coverage_summary_for_ley_39_2015() -> None:
     knowledge = Knowledge(
         title="Procedimiento administrativo común",
         description=(
-            "1. Objeto de la ley\n"
-            "La Ley 39/2015 establece las bases del procedimiento administrativo común.\n\n"
+            "1. Objeto y finalidad del procedimiento administrativo común\n"
+            "  Esta ley establece las bases del procedimiento administrativo común de las "
+            "Administraciones Públicas y regula los requisitos de validez y eficacia.\n\n"
             "2. Ámbito subjetivo de aplicación\n"
-            "La ley se aplica al sector público."
+            "  La ley se aplica al sector público, que comprende la Administración General del "
+            "Estado, las comunidades autónomas y las entidades de la Administración Local."
         ),
         sources=(
             Source(

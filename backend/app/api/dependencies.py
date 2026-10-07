@@ -9,6 +9,7 @@ from typing import Annotated
 
 from fastapi import Depends
 
+from app.application.normative_source import HttpSourceRetriever, SourceRetriever
 from app.persistence.call_repository import SqlAlchemyCallRepository
 from app.persistence.database import SessionFactory, SessionLocal
 from app.persistence.knowledge_repository import SqlAlchemyKnowledgeRepository
@@ -41,9 +42,14 @@ def get_source_repository(session_factory: SessionFactoryDep) -> SqlAlchemySourc
     return SqlAlchemySourceRepository(session_factory)
 
 
+def get_source_retriever() -> SourceRetriever:
+    return HttpSourceRetriever()
+
+
 CallRepositoryDep = Annotated[SqlAlchemyCallRepository, Depends(get_call_repository)]
 StudyProgrammeRepositoryDep = Annotated[
     SqlAlchemyStudyProgrammeRepository, Depends(get_study_programme_repository)
 ]
 KnowledgeRepositoryDep = Annotated[SqlAlchemyKnowledgeRepository, Depends(get_knowledge_repository)]
+SourceRetrieverDep = Annotated[SourceRetriever, Depends(get_source_retriever)]
 SourceRepositoryDep = Annotated[SqlAlchemySourceRepository, Depends(get_source_repository)]

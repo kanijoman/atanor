@@ -29,7 +29,9 @@ test("allows a candidate to go from a real BOE call to study material", async ({
 
   await expect(page.getByRole("heading", { name: "Study material" })).toBeVisible();
   await expect(page.getByText(/Artículo 1/)).toBeVisible();
-  await expect(page.getByText("Curated by Atanor · not yet reviewed by an expert")).toBeVisible();
+  await expect(
+    page.getByText("Acquired from an authoritative source · not yet reviewed by an expert"),
+  ).toBeVisible();
 
   await expect(page.getByRole("heading", { name: "Sources" })).toBeVisible();
   const canonicalSource = page.getByRole("link", {
@@ -42,12 +44,12 @@ test("allows a candidate to go from a real BOE call to study material", async ({
   );
 
   await expect(page.getByRole("heading", { name: "Study coverage" })).toBeVisible();
-  await expect(page.getByText("Partial · 2 of 8 aspects covered (25%)")).toBeVisible();
+  await expect(page.getByText("Covered · 8 of 8 aspects covered (100%)")).toBeVisible();
   await expect(page.getByRole("heading", { name: "Study aspects" })).toBeVisible();
   await expect(
     page.getByText(/^Covered · Objeto y finalidad del procedimiento administrativo común/),
   ).toBeVisible();
   await expect(
-    page.getByText(/^Pending · Interesados, capacidad, representación y derechos/),
+    page.getByText(/^Covered · Interesados, capacidad, representación y derechos/),
   ).toBeVisible();
 });

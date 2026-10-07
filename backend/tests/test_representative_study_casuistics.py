@@ -52,7 +52,7 @@ def real_personal_data_protection_programme_unit() -> StudyProgrammeUnit:
     )
 
 
-def test_ley_39_2015_casuistic_exercises_partial_coverage() -> None:
+def test_ley_39_2015_casuistic_acquires_material_for_every_required_aspect() -> None:
     programme_unit = real_ley_39_2015_programme_unit()
     repository = InMemoryKnowledgeRepository()
 
@@ -82,8 +82,7 @@ def test_ley_39_2015_casuistic_exercises_partial_coverage() -> None:
     covered_aspects = derive_covered_aspects(programme_unit, knowledge)
 
     assert len(required_aspects) == 8
-    assert covered_aspects == required_aspects[:2]
-    assert covered_aspects != required_aspects
+    assert covered_aspects == required_aspects
 
 
 def test_identity_and_electronic_signature_casuistic_uses_multiple_canonical_sources() -> None:

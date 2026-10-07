@@ -6,6 +6,7 @@ from pathlib import Path
 
 import pytest
 from sqlalchemy import create_engine
+from support import FixtureSourceRetriever
 
 from app.persistence.database import Base, SessionLocal
 
@@ -32,3 +33,16 @@ def isolate_database_session() -> Generator[None]:
         finally:
             SessionLocal.remove() if hasattr(SessionLocal, "remove") else None
             engine.dispose()
+
+
+@pytest.fixture(autouse=True)
+def offline_normative_sources(monkeypatch: pytest.MonkeyPatch) -> None:
+    """Never reach the live BOE from tests: acquired material uses saved fixtures.
+
+    Tests that need the real service are marked `network` and build their own
+    HttpSourceRetriever explicitly.
+    """
+    monkeypatch.setattr(
+        "app.application.study_material.providers.HttpSourceRetriever", FixtureSourceRetriever
+    )
+    monkeypatch.setattr("app.api.dependencies.HttpSourceRetriever", FixtureSourceRetriever)

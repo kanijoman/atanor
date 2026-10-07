@@ -1,6 +1,7 @@
 """Study topic: Programación orientada a objetos."""
 
 from app.application.study_material.coverage import aspects_covered_by_signals
+from app.application.study_material.providers import CuratedMaterial
 from app.application.study_material.topic import StudyTopic
 from app.domain.models import Source
 
@@ -49,8 +50,7 @@ def _matches(title: str) -> bool:
 TOPIC = StudyTopic(
     name=TOPIC_NAME,
     matches=_matches,
-    content_file="object_oriented.md",
-    sources=(_PYTHON_CLASSES,),
+    provider=CuratedMaterial("object_oriented.md", (_PYTHON_CLASSES,)),
     required_aspects=REQUIRED_ASPECTS,
     covered_aspects=aspects_covered_by_signals(_ASPECT_SIGNALS),
 )
