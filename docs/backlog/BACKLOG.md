@@ -30,23 +30,17 @@ The current validated application flow is:
 ```text
 Convocatoria PDF
     ↓
-Source
+Source (identified by content hash)
     ↓
 Document Processing
     ↓
-Requirement Discovery
+Call and Study Programme Discovery
     ↓
-Requirement Resolution
-    ↓
-Study Requirements
-    ↓
-Study Programme Discovery
-    ↓
-Study Programme Units
+Study Programme Units (the requirements)
     ↓
 Knowledge Need
     ↓
-Knowledge Construction
+Study Material (curated or acquired)
     ↓
 Candidate Study Material
     ↓
@@ -60,13 +54,9 @@ The current implementation supports heterogeneous text-based PDF structures thro
 - PDF source import and persistence.
 - Deterministic document text extraction with page/order provenance.
 - Document structure analysis for the currently observed source families.
-- Requirement discovery and deterministic requirement resolution.
-- User-oriented study requirement projection.
-- Requirement scopes and knowledge needs.
-- Binary knowledge coverage assessment (`COVERED` / `MISSING`).
-- Autonomous acquisition from an authoritative BOE source.
-- Deterministic relevant-content extraction for acquired material.
-- First reusable `Knowledge` construction workflow.
+- Call detection and provider-specific study-programme discovery; a programme unit is the requirement as the convocatoria states it.
+- A persisted knowledge need for every programme unit, valid even without material, linked to the knowledge that satisfies it.
+- Programme-level coverage: how many units of an imported programme have study material.
 - Deterministic study-programme discovery for the current BOE, BOJA and Archiveros samples.
 - Persistence and retrieval of discovered study programmes and units.
 - Candidate-facing study material for six topics: Ley 19/2013 and Ley 39/2015 acquired from the BOE article by article, and four curated topics (personal data protection, electronic identity and signature, object-oriented programming, data modelling).
@@ -117,7 +107,6 @@ Measured on the four real samples (`atanor study-support-report`), 6% of the BOE
 - **Breadth through the registry and the acquired provider**: the highest-frequency unsupported topics are institutional law (Constitution, Cortes Generales, Poder Judicial, Gobierno y Administracion, Union Europea, acto administrativo, personal al servicio de las Administraciones) and IT/office skills. Law topics reuse the BOE acquisition mechanism; IT topics need curated or expert-reviewed material.
 - **Recognising more call formats**: the OPOS Ayuntamiento de Leon and Archiveros documents are refused as convocatorias. Fixing detection makes more candidate documents usable.
 - **Expert review of material**: curated topics and every aspect-to-article mapping are `unreviewed`; a minimal way to record review would turn provenance into trust.
-- **Path consolidation**: the requirement/scope/coverage flow built in earlier stages is not on the product path and should be integrated or removed.
 
 The next increment must produce an observable candidate-facing improvement and be justified by this evidence rather than extending the architecture by default.
 

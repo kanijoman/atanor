@@ -7,8 +7,8 @@
 | Project | Atanor |
 | Document | ROADMAP |
 | Status | Active |
-| Version | 1.1 |
-| Last Updated | 2026-09-17 |
+| Version | 1.2 |
+| Last Updated | 2026-10-07 |
 | Audience | Contributors and Developers |
 
 ---
@@ -57,7 +57,7 @@ Established the technical and development foundations of Atanor, including the b
 
 **Status: Completed**
 
-Established the ability to import authoritative PDF sources, process their text and discover structured examination requirements.
+Established the ability to import authoritative PDF sources, process their text and detect structured examination requirements.
 
 Validated direction:
 
@@ -68,30 +68,28 @@ Source
     ↓
 Document Processing
     ↓
-Requirement Discovery
-    ↓
-Requirement
+Requirement discovery
 ```
 
-Real official-document samples demonstrated that source structures differ. Scanned/image-only PDFs remain outside the current extraction boundary.
+Real official-document samples demonstrated that source structures differ, so the generic numbered-line requirement discovery of this stage was superseded by provider-specific programme discovery (Stage 4). Scanned/image-only PDFs remain outside the current extraction boundary.
 
-### Stage 3 · Requirement Context and Candidate Study Scope
+### Stage 3 · Knowledge Needs and Coverage
 
 **Status: Completed**
 
-Established the contextual layer needed to turn requirements into study-oriented knowledge needs.
+Established the layer that turns requirements into study-oriented knowledge needs.
 
 ```text
-Requirement
-    ↓
-Requirement Scope
+Programme Unit (requirement)
     ↓
 Knowledge Need
+    ↓
+Knowledge
     ↓
 Coverage
 ```
 
-The initial coverage model distinguished only `COVERED` and `MISSING`. Later candidate-facing validation demonstrated that useful coverage feedback requires explicit semantic aspects when partial coverage matters.
+This stage first modelled requirements with a separate contextual scope. Product validation showed that a programme unit already is the requirement and that no unit needed more than one scope, so the two were merged (AT-115) and every unit now carries its own persisted knowledge need. The initial coverage model distinguished only covered and missing; candidate-facing validation demonstrated that useful coverage feedback requires explicit semantic aspects when partial coverage matters.
 
 ### Stage 4 · Document Structure and Programme Discovery
 
@@ -115,25 +113,21 @@ The implementation deliberately keeps provider-specific structure in the applica
 
 ### Stage 5 · Knowledge Acquisition and Construction
 
-**Status: Prototype Validated / Implemented**
+**Status: Implemented for two normative topics**
 
-Validated the first path from a `KnowledgeNeed` to reusable `Knowledge` through authoritative source acquisition and deterministic relevance extraction.
+Validated the path from a `KnowledgeNeed` to reusable `Knowledge` through authoritative source acquisition. The first experiment (AT-043) used literal line matching on a local PDF; it was superseded by article-level acquisition from the BOE (AT-113) and retired.
 
 ```text
 Knowledge Need
     ↓
-Knowledge Acquisition
+Authoritative source (BOE)
     ↓
-Source Material
+Article extraction
     ↓
-Relevant Content
-    ↓
-Knowledge Construction
-    ↓
-Knowledge
+Knowledge (study material with provenance)
 ```
 
-The current capability demonstrates acquisition, relevance extraction and first knowledge construction, but does not yet establish semantic completeness, universal source support or fully validated canonical knowledge.
+Acquired and curated material coexist: topics without an authoritative online text, or whose text needs expert review, use curated material. Both carry an explicit origin and review status. The capability covers Ley 19/2013 and Ley 39/2015; it does not yet establish universal source support, expert-reviewed aspect mappings or fully validated canonical knowledge.
 
 ### Stage 6 · Candidate Preparation MVP
 
@@ -233,9 +227,7 @@ The reusable conceptual model remains:
 ```text
 Source
     ↓
-Requirement
-    ↓
-Requirement Scope
+Programme Unit (requirement)
     ↓
 Knowledge Need
     ↓

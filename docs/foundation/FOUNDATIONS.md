@@ -9,8 +9,8 @@
 | Project      | Atanor                      |
 | Document     | FOUNDATIONS                 |
 | Status       | 🟢 Active                   |
-| Version      | 0.5                         |
-| Last Updated | 2026-08-13                  |
+| Version      | 0.6                         |
+| Last Updated | 2026-10-07                  |
 | Audience     | Contributors and Developers |
 
 ---
@@ -56,20 +56,18 @@ does not, by itself, determine which concepts must be covered, how they should b
 The current validated intermediate model is deliberately smaller than the long-term vision:
 
 ```text
-Requirement
-    ↓
-Requirement Scope
+Programme Unit (the requirement as the convocatoria states it)
     ↓
 Knowledge Need
     ↓
-Coverage
-    ↓
 Knowledge
+    ↓
+Coverage
 ```
 
-A Requirement Scope expresses the contextual knowledge coverage required by a requirement. A Knowledge Need represents a unit of that required coverage and remains valid even when corresponding Knowledge is not yet available.
+A requirement, as an examination call states it, is a programme unit. A Knowledge Need represents the knowledge that unit requires, derived without modifying the official wording, and remains valid even when corresponding Knowledge is not yet available.
 
-The initial Coverage model is deliberately limited to `COVERED` and `MISSING`.
+Coverage is derived. A need without Knowledge is missing; when material exists, coverage is expressed through an explicit contract of required aspects, each of them covered or pending (`missing`, `partial` or `covered`).
 
 This model is a validated foundation for future knowledge construction. It does not assume that a complete Knowledge Blueprint, semantic matching system or global corpus already exists.
 
@@ -86,7 +84,7 @@ When a new requirement is introduced, Atanor should eventually evaluate whether 
 Conceptually:
 
 ```text
-Requirement Scope
+Programme Unit
        ↓
 Knowledge Need
        ↓
@@ -146,26 +144,24 @@ A requirement identifies an expected area or source of knowledge. It does not ne
 Atanor therefore distinguishes:
 
 ```text
-Requirement
-    ↓
-Requirement Scope
+Programme Unit
     ↓
 Knowledge Need
     ↓
-Coverage + Depth
-    ↓
 Knowledge
+    ↓
+Coverage + Depth
 ```
 
 ## Knowledge Is Independent of Curriculum
 
 Canonical knowledge must not belong to a single examination or syllabus. The same knowledge may be required by multiple curricula, topics or learning paths.
 
-## Scope and Needs Are Independent of Availability
+## Needs Are Independent of Availability
 
-A Requirement Scope describes what is required in context. A Knowledge Need describes required coverage regardless of whether the corresponding knowledge exists.
+A Knowledge Need describes the knowledge a requirement demands regardless of whether the corresponding knowledge exists. Every programme unit has one, including those Atanor cannot yet prepare material for.
 
-Adding Knowledge may change Coverage without changing the requirement context or its needs.
+Adding Knowledge may change Coverage without changing the requirement or its needs.
 
 ## Knowledge Is Built on Demand
 
@@ -206,11 +202,11 @@ Atanor aims to make that refinement dynamic and traceable.
 The current validated foundation is:
 
 ```text
-Requirement
-    ↓
-Requirement Scope
+Programme Unit
     ↓
 Knowledge Need
+    ↓
+Knowledge
     ↓
 Coverage
 ```

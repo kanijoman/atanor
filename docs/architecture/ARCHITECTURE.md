@@ -7,7 +7,7 @@
 | Project | Atanor |
 | Document | ARCHITECTURE |
 | Status | 🟢 Active |
-| Version | 1.2 |
+| Version | 2.0 |
 | Last Updated | 2026-10-07 |
 | Audience | Contributors and Developers |
 
@@ -23,7 +23,7 @@ This document describes the conceptual and validated technical architecture of A
 - Application use cases orchestrate domain behavior and persistence.
 - Sources and their representations are distinct from requirements and knowledge.
 - External document structures must not become intrinsic domain structures.
-- Requirement expressions remain distinguishable from canonical requirements.
+- The official wording of a programme unit is preserved; the knowledge need derived from it never modifies it.
 - Persistence technology is an implementation detail.
 - New abstractions require validated product needs.
 - Acquired source material is not automatically canonical Knowledge.
@@ -33,48 +33,34 @@ This document describes the conceptual and validated technical architecture of A
 # Current Validated Architecture
 
 ```text
-PDF Source
+PDF (uploaded or local)
     ↓
-Import
-    ↓
-Persist Source
+Source (identified by content hash)
     ↓
 Text Extraction
     ↓
 Document Structure Analysis
     ↓
-Requirement Discovery / Knowledge Extraction
+Call detection
     ↓
-Requirement Mention
+Study Programme discovery (provider-specific strategies)
     ↓
-Requirement
-    ↓
-Requirement Scope
+Study Programme Unit  (the requirement as the convocatoria states it)
     ↓
 Knowledge Need
     ↓
-Knowledge Acquisition
+Study Material (curated or acquired from an authoritative source)  =  Knowledge
     ↓
-Source Material
-    ↓
-Relevant Content
-    ↓
-Knowledge
-    ↓
-Coverage
-    ↓
-Candidate Study Material
-    ↓
-Study Coverage Feedback
+Study Coverage Summary
 ```
 
-The source workflow has been validated against real BOE and Junta de Castilla y León samples. Requirement Scope, Knowledge Need and initial Coverage have been validated through domain and persistence tests. AT-043 additionally validated a minimal autonomous acquisition and deterministic relevance-extraction path using a BOE sample.
+The source workflow has been validated against real BOE and Junta de Andalucía samples. Call and programme discovery are deterministic and provider-specific. A programme unit is the requirement as the convocatoria states it: its official wording is preserved and never modified by the knowledge need derived from it.
 
 AT-044 and AT-045 validated a deterministic document-structure analysis stage for supported text-based PDFs. The stage currently separates marker detection, local classification (`STRUCTURAL` / `ENUMERATION`) and hierarchy construction. This representation is an application processing result, not a new domain concept.
 
-The acquisition/extraction path is currently a prototype. It must not be interpreted as proof that arbitrary acquired material is complete, semantically valid or canonical Knowledge.
+Study material is either curated by Atanor or acquired from an authoritative source. Acquired material is not proof that arbitrary acquired content is complete, semantically valid or canonical Knowledge; its provenance and review status are therefore explicit.
 
-AT-096 subsequently validated an explicit semantic coverage contract for candidate-facing study material. Partial coverage is represented through required, covered and pending aspects rather than inferred from raw text similarity.
+AT-096 and AT-112 established an explicit semantic coverage contract for candidate-facing study material. Partial coverage is represented through required, covered and pending aspects, derived from the material actually produced rather than inferred from raw text similarity.
 
 # Architectural Layers
 
@@ -114,26 +100,12 @@ Hierarchy Construction
     ↓
 Structured Document Representation
     ↓
-Downstream Requirement / Knowledge Extraction
+Call and programme discovery
 ```
 
 The first three stages are deterministic and evidence-driven. AT-045 established that local context is sufficient for the currently observed distinction between meaningful structural markers and internal enumerations. The implementation must remain replaceable and must not be treated as a universal document parser.
 
-The current application flow distinguishes three stages during knowledge acquisition:
-
-```text
-Knowledge Need
-    ↓
-Acquisition strategy
-    ↓
-Source material
-    ↓
-Extraction strategy
-    ↓
-Relevant content / candidate Knowledge
-```
-
-Acquisition and extraction strategies are replaceable implementation mechanisms. The domain does not assume BOE structure, a particular retrieval technology or a particular extraction algorithm.
+Knowledge acquisition is one kind of material provider (see below). Retrieval and article extraction are replaceable implementation mechanisms; the domain does not assume BOE structure or a particular retrieval technology.
 
 Candidate-facing study preparation currently adds a deterministic material and coverage projection:
 
@@ -171,11 +143,11 @@ The current validated model is:
 ```text
 Source
     ↓
-Requirement Mention
+Call
     ↓
-Requirement
+Study Programme
     ↓
-Requirement Scope
+Study Programme Unit  (= the requirement)
     ↓
 Knowledge Need
     ↓
@@ -184,19 +156,23 @@ Knowledge
 Coverage
 ```
 
-Document structure remains outside this model. Structural markers, classifications, hierarchy levels, parent relationships and continuation text are processing information used to improve downstream extraction; they are not currently domain entities.
+Document structure remains outside this model. Structural markers, classifications, hierarchy levels, parent relationships and continuation text are processing information used by call and programme discovery; they are not domain entities.
 
-### Requirement
+### Source
 
-Represents a requirement in the application domain. Provenance remains explicit through its source relationship.
+A document the candidate provides, identified by the SHA-256 of its content so the same document is never imported twice.
 
-### Requirement Scope
+### Call
 
-Represents the knowledge coverage required by a requirement in a specific contextual examination setting. A requirement may have multiple scopes.
+The examination opportunity a source describes.
+
+### Study Programme and Study Programme Unit
+
+A call contains one or more study programmes, each made of numbered units. A unit is the requirement as the convocatoria states it, with its original wording and its position in the document. Earlier stages modelled requirements and requirement scopes as separate entities; they were merged into the unit (AT-115) because no product flow needed more than one scope per requirement and the unit already carried the requirement's provenance.
 
 ### Knowledge Need
 
-Represents a unit of knowledge coverage required by a scope. It is valid even when corresponding Knowledge does not exist.
+Represents the knowledge a programme unit demands. Every unit has one, derived without modifying its wording: supported units get the topic Atanor can prepare material for, any other unit keeps its official wording as the topic. It is valid even when corresponding Knowledge does not exist, and it records which Knowledge, if any, satisfies it.
 
 ### Knowledge
 
@@ -204,7 +180,7 @@ Represents reusable knowledge that may satisfy one or more Knowledge Needs. The 
 
 ### Coverage
 
-Represents the result of comparing a Knowledge Need with available Knowledge. Coverage is derived and is not an independent persisted entity.
+Represents the result of comparing a Knowledge Need with available Knowledge. Coverage is derived and is not an independent persisted entity. A need without Knowledge is missing; for a unit with study material, coverage is expressed through required aspects as described below. At programme level, coverage is the number of units that have study material.
 
 For the current candidate-facing study-material vertical, useful partial coverage is represented explicitly by a deterministic set of required semantic aspects. The application derives which aspects are covered by the validated study material and builds a typed summary containing:
 
@@ -221,28 +197,26 @@ This semantic aspect mechanism has been validated across Ley 19/2013 and Ley 39/
 
 ## Persistence Layer
 
-The persistence layer uses SQLAlchemy with SQLite and Alembic. Persistence must not make domain concepts dependent on SQLAlchemy or SQLite-specific behavior. Requirement scopes and knowledge needs are persisted as part of the requirement aggregate.
+The persistence layer uses SQLAlchemy with SQLite and Alembic. Persistence must not make domain concepts dependent on SQLAlchemy or SQLite-specific behavior. Knowledge needs are persisted with the programme unit they belong to, and link to the Knowledge that satisfies them.
 
 The current structural-analysis representation is not persisted. Persistence should be introduced only if a downstream workflow demonstrates a concrete need for structural-tree storage, repeatability or auditability.
 
 Candidate-facing coverage summaries are currently derived from application-level contracts and are not independently persisted.
 
-# Source and Requirement Discovery
+# Call and Programme Discovery
 
-Requirement Discovery is a validated capability rather than a universal document parser.
+Call and programme discovery are validated capabilities rather than a universal document parser.
 
 ```text
 Source
     ↓
 Document Structure Detection
     ↓
-Marker Classification
+Call detection
     ↓
-Hierarchy Construction
+Programme discovery strategy (BOE, BOJA, Archiveros layouts)
     ↓
-Requirement Mention
-    ↓
-Requirement
+Study Programme Units
 ```
 
 Real samples demonstrate different document structures. The current implementation recognizes only the minimum deterministic structures justified by those samples. `Tema` identifiers and other structured identifiers are preserved as text and are not assigned semantic meaning.
@@ -251,29 +225,29 @@ The current validated structural representation preserves raw marker information
 
 Scanned PDFs remain outside the supported extraction boundary; OCR is future work.
 
-Requirement expression is not requirement identity. Semantic entity resolution is not currently implemented.
+Two units with similar wording are not assumed to be the same requirement. Semantic entity resolution is not currently implemented.
 
-# Knowledge Acquisition and Extraction Boundary
+# Knowledge Acquisition Boundary
 
-AT-043 established the first application-level knowledge acquisition path. Its architecture intentionally separates:
+AT-043 established the first autonomous acquisition experiment and AT-113 brought acquisition into the product for the first normative topics. Its architecture intentionally separates:
 
 ```text
 Knowledge Need
       ↓
-Acquisition
+Authoritative source (catalog entry)
       ↓
-External Source Material
+Retrieved source content
       ↓
-Relevance Extraction
+Article extraction
       ↓
-Candidate Knowledge
+Study material (Knowledge) with explicit aspect-to-article mapping
 ```
 
-The first implementation uses the BOE as an experimental source and a deterministic literal/context extraction strategy. This is evidence for the architecture of the workflow, not a commitment to BOE-only acquisition or literal matching as the final solution.
+The implementation currently covers two BOE laws with a deterministic article extractor. The earlier local-PDF acquisition prototype with literal line matching was retired once article-level acquisition replaced it. This is evidence for the architecture of the workflow, not a commitment to BOE-only acquisition.
 
 Provider-specific document structures must remain outside the domain model. Different BOE documents, and different providers, may expose different layouts or levels of structure. A source adapter may exploit known structure when evidence justifies it, but the domain must continue to represent `Source`, `KnowledgeNeed` and `Knowledge` independently.
 
-The current extraction strategy may return relevant context mixed with incidental references. Therefore the following distinction must remain explicit:
+Acquired content may contain material that is not part of what a candidate needs. Therefore the following distinction must remain explicit:
 
 ```text
 Source Material
@@ -285,21 +259,21 @@ Validated / Canonical Knowledge
 
 Semantic validation, completeness assessment, richer provenance, freshness and quality scoring remain future capabilities until a concrete candidate-facing workflow requires them.
 
-# Requirement Scope Boundary
+# Knowledge Need Boundary
 
 The current validated progression is:
 
 ```text
-Requirement
-    ↓
-Requirement Scope
+Study Programme Unit (requirement)
     ↓
 Knowledge Need
+    ↓
+Knowledge
     ↓
 Coverage
 ```
 
-The acquisition prototype extends the implementation around `KnowledgeNeed` without changing this domain boundary.
+Acquisition and curation extend the implementation around `KnowledgeNeed` without changing this domain boundary.
 
 The candidate-facing study-material vertical extends the progression with derived preparation feedback:
 
@@ -315,7 +289,7 @@ Candidate Feedback
 
 The following remain outside the current architecture:
 
-- semantic scope discovery;
+- interpreting a programme unit into several finer needs automatically;
 - automatic interpretation of arbitrary requirement meaning;
 - OCR;
 - generic semantic knowledge matching;
